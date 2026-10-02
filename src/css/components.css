@@ -1,8 +1,8 @@
 @layer fruit.components {
-  .f-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 32px; padding: 5px 13px; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-control); box-shadow: 0 1px 2px rgb(0 0 0 / 4%); font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background var(--f-motion); }
+  .f-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 32px; padding: 5px 13px; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-control); box-shadow: var(--f-control-shadow); font-size: 13px; font-weight: 500; text-decoration: none; white-space: nowrap; }
   .f-button:hover { background: var(--f-surface-secondary); }
-  .f-button--primary { color: var(--f-on-accent); border-color: transparent; background: var(--f-accent); }
-  .f-button--primary:hover { background: var(--f-accent-hover); }
+  .f-button--primary { color: var(--f-on-accent); border-color: transparent; background: var(--f-accent-fill); }
+  .f-button--primary:hover { background: var(--f-accent-fill-hover); }
   .f-button--danger { color: var(--f-danger); }
   .f-button--ghost { background: transparent; border-color: transparent; box-shadow: none; }
   .f-button--ghost:hover { background: var(--f-hover); }
@@ -10,7 +10,7 @@
   .f-button[aria-pressed='true'] { background: var(--f-selection); color: var(--f-selection-text); }
   .f-field { display: grid; gap: 7px; }
   .f-label { font-size: 13px; font-weight: 500; }
-  .f-input { width: 100%; min-height: 34px; padding: 6px 10px; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-control); box-shadow: inset 0 1px 2px rgb(0 0 0 / 3%); }
+  .f-input { width: 100%; min-height: 34px; padding: 6px 10px; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-control); box-shadow: var(--f-input-shadow); }
   .f-input::placeholder { color: var(--f-tertiary); }
   .f-input:focus { border-color: var(--f-accent); }
   .f-input[aria-invalid='true'] { border-color: var(--f-danger); }
@@ -22,7 +22,7 @@
   .f-search > .f-input { padding-left: 33px; background: var(--f-hover); box-shadow: none; }
   .f-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
   .f-switch > input { appearance: none; width: 34px; height: 20px; margin: 0; border: 1px solid var(--f-border); border-radius: 20px; background: var(--f-tertiary); position: relative; flex-shrink: 0; cursor: pointer; transition: background var(--f-motion); }
-  .f-switch > input::before { content: ''; position: absolute; width: 16px; height: 16px; top: 1px; left: 1px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 20%); transition: transform var(--f-motion); }
+  .f-switch > input::before { content: ''; position: absolute; width: 16px; height: 16px; top: 1px; left: 1px; border-radius: 50%; background: var(--f-switch-thumb); box-shadow: var(--f-switch-shadow); transition: transform var(--f-motion); }
   .f-switch > input:checked { background: var(--f-accent); border-color: var(--f-accent); }
   .f-switch > input:checked::before { transform: translateX(14px); }
   .f-check { display: inline-flex; align-items: center; gap: 8px; }
@@ -31,7 +31,7 @@
   .f-segmented > label { position: relative; cursor: pointer; }
   .f-segmented > label > input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .f-segmented > label > span { display: block; border-radius: 5px; padding: 4px 13px; font-size: 12px; }
-  .f-segmented > label > input:checked + span { background: var(--f-control); box-shadow: 0 1px 4px rgb(0 0 0 / 12%); }
+  .f-segmented > label > input:checked + span { background: var(--f-control); box-shadow: var(--f-segmented-shadow); }
   .f-segmented > label > input:focus-visible + span { outline: 3px solid var(--f-accent); outline-offset: 2px; }
   .f-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; padding: 1px 6px; border-radius: 6px; background: var(--f-hover); color: var(--f-secondary); font-size: 11px; font-variant-numeric: tabular-nums; }
   .f-card { padding: var(--f-space-6); border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-surface); }
@@ -39,7 +39,7 @@
   .f-disclosure > summary { padding: 14px 16px; cursor: pointer; font-weight: 500; }
   .f-disclosure > :not(summary) { padding: 0 16px 16px; }
   .f-dialog { width: min(480px, calc(100% - 32px)); padding: 0; color: var(--f-text); background: var(--f-surface); border: 1px solid var(--f-border); border-radius: var(--f-radius-lg); box-shadow: var(--f-shadow); }
-  .f-dialog::backdrop { background: rgb(0 0 0 / 25%); backdrop-filter: blur(5px); }
+  .f-dialog::backdrop { background: var(--f-backdrop); backdrop-filter: blur(5px); }
   .f-dialog__header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--f-border); }
   .f-dialog__header h2 { font-size: 16px; font-weight: 600; }
   .f-dialog__body { display: grid; gap: 18px; padding: 22px; }

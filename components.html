@@ -19,7 +19,7 @@
   &lt;span class="f-label"&gt;Your name&lt;/span&gt;
   &lt;input class="f-input"&gt;
 &lt;/label&gt;</pre></section>
-        <section class="f-card component-card"><h2>Selection controls</h2><p>Real inputs. Keyboard accessible, without JavaScript.</p><div class="f-stack"><label class="f-switch"><input type="checkbox" role="switch" checked><span>Show message previews</span></label><label class="f-check"><input type="checkbox" checked>Play a sound for new messages</label><div class="f-row" role="group" aria-label="Message density"><label class="f-check"><input type="radio" name="density" value="comfortable" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact">Compact</label></div></div><pre class="code">&lt;label class="f-switch"&gt;
+        <section class="f-card component-card"><h2>Selection controls</h2><p>Real inputs. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><label class="f-switch"><input type="checkbox" role="switch" name="previews" value="1" x-model="previews" checked><span>Show message previews</span></label><label class="f-check"><input type="checkbox" name="sounds" value="1" x-model="sounds" checked>Play a sound for new messages</label><div class="f-row" role="group" aria-label="Message density"><label class="f-check"><input type="radio" name="density" value="comfortable" x-model="density" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact" x-model="density">Compact</label></div><output class="f-help" x-cloak x-text="'Previews ' + (previews ? 'on' : 'off') + ' · Sound ' + (sounds ? 'on' : 'off') + ' · ' + density + ' density'"></output></form><pre class="code">&lt;label class="f-switch"&gt;
   &lt;input type="checkbox" role="switch"&gt;
   &lt;span&gt;Show message previews&lt;/span&gt;
 &lt;/label&gt;</pre></section>
@@ -61,7 +61,16 @@ Alpine.start();</pre></article>
 &lt;x-fruit::switch
   wire:model="previews"&gt;
   Show previews
-&lt;/x-fruit::switch&gt;</pre></article>
+&lt;/x-fruit::switch&gt;
+
+&lt;x-fruit::checkbox wire:model="sounds"&gt;
+  Play a sound
+&lt;/x-fruit::checkbox&gt;
+
+&lt;x-fruit::radio name="density"
+  value="compact" wire:model="density"&gt;
+  Compact
+&lt;/x-fruit::radio&gt;</pre></article>
       </div></section>
     </main>
     <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/">Explore the Mail example <span aria-hidden="true">↗</span></a></footer>

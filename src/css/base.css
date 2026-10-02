@@ -1,5 +1,6 @@
 @layer fruit.base {
   :where(.fruit-ui) { margin: 0; font: 14px/1.5 var(--f-font); background: var(--f-bg); color: var(--f-text); -webkit-font-smoothing: antialiased; }
+  :where(html.fruit-ui) > body { margin: 0; }
   :where(.fruit-ui, .fruit-ui *) { box-sizing: border-box; }
   :where(.fruit-ui) :where(button, input, select, textarea) { font: inherit; color: inherit; }
   :where(.fruit-ui) :where(button, a, input, select, textarea, summary):focus-visible { outline: 3px solid var(--f-accent); outline-offset: 3px; }
