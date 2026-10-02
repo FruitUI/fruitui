@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" class="fruit-ui" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FruitUI — thoughtful, Apple-inspired interfaces built with HTML and CSS. Explore our Mail example.">
+  <title>Mail · FruitUI</title>
+  <link rel="stylesheet" href="/src/fruitui.css">
+  <link rel="stylesheet" href="/examples/shared/showcase.css">
+  <script type="module" src="/examples/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#mail">Skip to Mail</a>
+  <div class="showcase">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FruitUI home">
+        <svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>
+        FruitUI<span class="f-sr-only"> home</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/" aria-current="page">Examples</a><a href="/components.html">Components</a></nav>
+      <div class="appearance-control" x-data="appearance">
+        <svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg>
+        <label class="f-sr-only" for="appearance">Appearance</label>
+        <select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+      </div>
+    </header>
+    <main>
+      <div class="page-intro">
+        <div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>A little more human.</h1><p>The Mail experience. Reimagined in HTML &amp; CSS.</p></div>
+        <span class="example-tag">Interactive example · 01</span>
+      </div>
+      <section id="mail" class="f-mail" aria-label="Mail example" x-data="mailDemo" :data-view="view" :data-sidebar="sidebarVisible ? 'visible' : 'hidden'">
+        <div class="f-toolbar f-mail__sidebar-toolbar">
+          <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+        <header class="f-toolbar f-mail__toolbar" aria-label="Mail actions">
+          <button class="f-button f-button--ghost f-button--icon f-mail__back" type="button" @click="view = 'list'" aria-label="Back to messages" title="Back to messages"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg></button>
+          <button class="f-button f-button--ghost f-button--icon f-mail__sidebar-toggle" type="button" @click="sidebarVisible = !sidebarVisible" :aria-expanded="sidebarVisible" aria-controls="mailboxes" aria-label="Toggle mailboxes" title="Toggle mailboxes"><svg class="f-icon" aria-hidden="true"><use href="#i-sidebar"/></svg></button>
+          <div class="f-mail__title"><h1 x-text="mailboxTitle">All Inboxes</h1><p><span x-text="filtered.length">8</span> messages<span x-show="mailbox === 'inbox'">, <span x-text="unreadCount">3</span> unread</span></p></div>
+          <label class="f-sr-only" for="mobile-mailbox">Mailbox</label>
+          <select id="mobile-mailbox" class="f-input f-mail__mobile-mailboxes" :value="mailbox" @change="setMailbox($event.target.value)"><option value="inbox">Inboxes</option><option value="flagged">Flagged</option><option value="drafts">Drafts</option><option value="sent">Sent</option><option value="archive">Archive</option><option value="trash">Trash</option><option value="junk">Junk</option><option value="work">Work</option><option value="personal">Personal</option></select>
+          <div class="f-toolbar__group" aria-label="Message actions">
+            <button class="f-button f-button--ghost f-button--icon" type="button" @click="move('archive')" :disabled="!message || mailbox === 'archive'" aria-label="Archive message" title="Archive"><svg class="f-icon" aria-hidden="true"><use href="#i-archive"/></svg></button>
+            <button class="f-button f-button--ghost f-button--icon" type="button" @click="move('trash')" :disabled="!message || mailbox === 'trash'" aria-label="Delete message" title="Move to Trash"><svg class="f-icon" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            <button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFlag" :disabled="!message" :aria-pressed="message?.flagged ?? false" aria-label="Flag message" title="Flag"><svg class="f-icon" aria-hidden="true"><use href="#i-flag"/></svg></button>
+            <button class="f-button f-button--ghost f-button--icon" type="button" @click="compose('reply')" :disabled="!message" aria-label="Reply to message" title="Reply"><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg></button>
+          </div>
+          <div class="f-toolbar__spacer"></div>
+          <button class="f-button f-button--ghost f-button--icon" type="button" @click="compose()" aria-label="Compose message" title="New message"><svg class="f-icon" aria-hidden="true"><use href="#i-compose"/></svg></button>
+          <div class="f-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="mail-search">Search messages</label><input id="mail-search" class="f-input" type="search" placeholder="Search" x-model="query" @input="syncSelection"></div>
+        </header>
+        <nav id="mailboxes" class="f-sidebar f-mail__sidebar" aria-label="Mailboxes">
+          <p class="f-sidebar__heading">Favorites</p>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('inbox')" :aria-current="mailbox === 'inbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>All Inboxes<span class="f-badge" x-text="unreadCount">3</span></button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('flagged')" :aria-current="mailbox === 'flagged' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-flag"/></svg>Flagged<span class="f-badge" x-text="count('flagged')">1</span></button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('drafts')" :aria-current="mailbox === 'drafts' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg>Drafts<span class="f-badge" x-text="count('drafts')">1</span></button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('sent')" :aria-current="mailbox === 'sent' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-send"/></svg>Sent</button>
+          <p class="f-sidebar__heading">iCloud</p>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('inbox')"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Inbox</button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('archive')" :aria-current="mailbox === 'archive' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-archive"/></svg>Archive</button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('junk')" :aria-current="mailbox === 'junk' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-junk"/></svg>Junk</button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('trash')" :aria-current="mailbox === 'trash' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-trash"/></svg>Trash</button>
+          <p class="f-sidebar__heading">On My Mac</p>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('work')" :aria-current="mailbox === 'work' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg>Work</button>
+          <button class="f-sidebar__item" type="button" @click="setMailbox('personal')" :aria-current="mailbox === 'personal' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg>Personal</button>
+          <div class="f-mail__account"><span class="f-avatar">AM</span><div>Alex Morgan<small>alex@example.com</small></div></div>
+        </nav>
+        <section class="f-mail__list-pane" aria-label="Message list">
+          <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
+          <div class="f-mail__list" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
+            <template x-for="item in filtered" :key="item.id">
+              <button class="f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
+                <span class="f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
+                <span class="f-mail__message-top"><span class="f-mail__sender" x-text="item.sender"></span><span class="f-mail__time" x-text="item.time"></span></span>
+                <span class="f-mail__subject" x-text="item.subject"></span><span class="f-mail__preview" x-text="item.preview"></span>
+                <span class="f-sr-only" x-show="item.flagged">Flagged</span>
+              </button>
+            </template>
+            <div class="f-mail__empty" x-show="filtered.length === 0" x-cloak><div><h2>No messages</h2><p x-text="query ? 'Try another search.' : 'You’re all caught up.'"></p></div></div>
+            <noscript><div class="f-mail__message" aria-current="true"><span class="f-mail__sender">Sophie Chen</span><span class="f-mail__subject">A fresh start for FruitUI</span><span class="f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></div><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></noscript>
+          </div>
+        </section>
+        <article class="f-mail__reader" aria-label="Reading pane" aria-live="polite">
+          <div x-show="message">
+            <header class="f-mail__message-header"><h2 x-text="message?.subject">A fresh start for FruitUI</h2><div class="f-mail__sender-detail"><span class="f-avatar" x-text="message?.initials">SC</span><div><strong x-text="message?.sender">Sophie Chen</strong><p>To: <span x-text="message?.mailbox === 'sent' ? message.email : 'Alex Morgan'">Alex Morgan</span></p></div><time class="f-mail__date" x-text="message?.date">Today at 10:42 AM</time></div></header>
+            <div class="f-mail__body">
+              <p x-text="message?.body[0]">Hey Alex,</p>
+              <p x-text="message?.body[1]">I’ve been thinking about what makes our favorite apps feel so effortless. The quiet details. The right amount of space. Controls that feel familiar from the very first click.</p>
+              <div class="message-feature" x-show="message?.feature"><p class="eyebrow">Less friction. More feeling.</p><h3>Thoughtfully familiar.<br>Beautifully simple.</h3><p>A foundation for the interfaces you want to use.</p><div class="f-row"><span class="f-badge">CSS first</span><span class="f-badge">Laravel ready</span><span class="f-badge">Made for humans</span></div></div>
+              <p x-show="message?.body[2]" x-text="message?.body[2]">That’s the idea behind FruitUI. A small, thoughtful foundation for building interfaces that feel at home — starting with this little inbox.</p>
+              <p x-show="message?.body[3]" x-text="message?.body[3]">Let’s make something we’ll love using every day.</p>
+              <p class="signature" x-show="message?.body[4]" x-text="message?.body[4]">Sophie</p>
+              <a class="f-mail__attachment" x-show="message?.attachment" href="/attachments/fruitui-design-notes.txt" download><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg><span>FruitUI — design notes.txt<small>Text document · 1 KB</small></span><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg></a>
+              <div class="f-mail__reply"><button class="f-button" type="button" @click="compose('reply')"><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg>Reply</button><button class="f-button f-button--ghost" type="button" @click="compose('forward')"><svg class="f-icon" aria-hidden="true"><use href="#i-forward"/></svg>Forward</button></div>
+            </div>
+          </div>
+          <div class="f-mail__empty" x-show="!message" x-cloak><div><h2>No message selected</h2><p>Choose a message to read it here.</p></div></div>
+        </article>
+        <dialog class="f-dialog" x-ref="composer" aria-labelledby="compose-title">
+          <form @submit.prevent="send">
+            <header class="f-dialog__header"><h2 id="compose-title">New Message</h2><button class="f-button f-button--ghost f-button--icon" type="button" @click="$refs.composer.close()" aria-label="Close compose"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
+            <div class="f-dialog__body"><label class="f-field"><span class="f-label">To</span><input class="f-input" type="email" x-model="composeTo" required autofocus></label><label class="f-field"><span class="f-label">Subject</span><input class="f-input" x-model="composeSubject" required pattern=".*\S.*"></label><label class="f-field"><span class="f-label">Message</span><textarea class="f-input" rows="7" x-model="composeBody" required></textarea></label><p class="f-help">This is a demo. Messages stay in this browser session.</p></div>
+            <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.composer.close()">Cancel</button><button class="f-button f-button--primary" type="submit"><svg class="f-icon" aria-hidden="true"><use href="#i-send"/></svg>Send</button></footer>
+          </form>
+        </dialog>
+        <div class="f-toast" role="status" x-show="notice" x-text="notice" x-cloak></div>
+      </section>
+      <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>HTML &amp; CSS at heart. A little Alpine for the interactions.</span><span>Try searching, switching mailboxes, or writing a message.</span></div>
+    </main>
+    <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/components.html#integration">Made for HTML, Alpine &amp; Laravel <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</body>
+</html>

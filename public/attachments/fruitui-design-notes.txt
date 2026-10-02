@@ -1,0 +1,15 @@
+FruitUI / Design notes
+
+Start with the content. Keep navigation familiar. Use space with purpose.
+
+Foundation
+- System fonts, semantic color tokens, and consistent spacing.
+- Native HTML controls with visible keyboard focus.
+- Light and dark appearances, reduced motion, and narrow layouts.
+
+First reference interface: Mail
+- Mailbox sidebar, message list, and reading pane.
+- Restrained translucent navigation and clear selection states.
+- CSS for appearance; Alpine or Livewire for behavior.
+
+This is a sample attachment for the FruitUI Mail demonstration.

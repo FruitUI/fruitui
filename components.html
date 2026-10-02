@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" class="fruit-ui" data-theme="system">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="FruitUI’s CSS-first controls and Laravel integration."><title>Components · FruitUI</title><link rel="stylesheet" href="/src/fruitui.css"><link rel="stylesheet" href="/examples/shared/showcase.css"><script type="module" src="/examples/main.js"></script></head>
+<body>
+  <a class="skip-link" href="#components">Skip to components</a>
+  <div class="showcase">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Examples</a><a href="/components.html" aria-current="page">Components</a></nav>
+      <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+    </header>
+    <main id="components">
+      <div class="page-intro"><div><p class="eyebrow">The small things, considered</p><h1>Good interfaces start here.</h1><p>Native HTML. Shared styles. Just enough behavior.</p></div><span class="example-tag">Foundation · 0.1</span></div>
+      <div class="component-grid">
+        <section class="f-card component-card"><h2>Buttons</h2><p>A clear primary action, with quiet supporting controls.</p><div class="f-row"><button class="f-button f-button--primary" type="button">Primary</button><button class="f-button" type="button">Default</button><button class="f-button f-button--ghost" type="button">Quiet</button><button class="f-button f-button--danger" type="button">Delete</button><button class="f-button" type="button" disabled>Disabled</button></div><pre class="code">&lt;button class="f-button f-button--primary"&gt;
+  Continue
+&lt;/button&gt;</pre></section>
+        <section class="f-card component-card"><h2>Text fields</h2><p>Familiar controls, with explicit labels and helpful context.</p><label class="f-field"><span class="f-label">Your name</span><input class="f-input" placeholder="Alex Morgan" autocomplete="name" aria-describedby="name-help"><span class="f-help" id="name-help">How you’ll appear to your teammates.</span></label><pre class="code">&lt;label class="f-field"&gt;
+  &lt;span class="f-label"&gt;Your name&lt;/span&gt;
+  &lt;input class="f-input"&gt;
+&lt;/label&gt;</pre></section>
+        <section class="f-card component-card"><h2>Selection controls</h2><p>Real inputs. Keyboard accessible, without JavaScript.</p><div class="f-stack"><label class="f-switch"><input type="checkbox" role="switch" checked><span>Show message previews</span></label><label class="f-check"><input type="checkbox" checked>Play a sound for new messages</label><div class="f-row" role="group" aria-label="Message density"><label class="f-check"><input type="radio" name="density" value="comfortable" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact">Compact</label></div></div><pre class="code">&lt;label class="f-switch"&gt;
+  &lt;input type="checkbox" role="switch"&gt;
+  &lt;span&gt;Show message previews&lt;/span&gt;
+&lt;/label&gt;</pre></section>
+        <section class="f-card component-card"><h2>Segmented controls</h2><p>A small set of related choices, powered by native radios.</p><fieldset style="border: 0; margin: 0; padding: 0"><legend class="f-sr-only">Preview position</legend><div class="f-segmented"><label><input type="radio" name="preview" value="right" checked><span>Right</span></label><label><input type="radio" name="preview" value="below"><span>Below</span></label><label><input type="radio" name="preview" value="off"><span>Off</span></label></div></fieldset><label class="f-field"><span class="f-label">Default mailbox</span><select class="f-input"><option>All Inboxes</option><option>Flagged</option><option>Archive</option></select></label><pre class="code">&lt;div class="f-segmented"&gt;
+  &lt;label&gt;&lt;input type="radio" name="view"&gt;
+    &lt;span&gt;Right&lt;/span&gt;&lt;/label&gt;
+&lt;/div&gt;</pre></section>
+        <section class="f-card component-card"><h2>Disclosure</h2><p>Let people reveal the details when they need them.</p><details class="f-disclosure"><summary>What makes FruitUI CSS first?</summary><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure all work with native HTML and CSS. Add Alpine or Livewire when your interface needs state or server actions.</p></details><pre class="code">&lt;details class="f-disclosure"&gt;
+  &lt;summary&gt;More details&lt;/summary&gt;
+  &lt;p&gt;The details, when you need them.&lt;/p&gt;
+&lt;/details&gt;</pre></section>
+        <section class="f-card component-card" x-data="fruitDialog"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. A little Alpine to open.</p><div><button class="f-button" type="button" @click="open">Open dialog</button></div><dialog class="f-dialog" x-ref="dialog" aria-labelledby="dialog-title"><header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header><div class="f-dialog__body"><p>Good dialogs ask for one thing at a time. This one just wanted to say hello.</p></div><footer class="f-dialog__footer"><button class="f-button f-button--primary" type="button" @click="close" autofocus>Got it</button></footer></dialog><pre class="code">&lt;div x-data="fruitDialog"&gt;
+  &lt;button @click="open"&gt;Open&lt;/button&gt;
+  &lt;dialog class="f-dialog" x-ref="dialog"&gt;
+    …
+  &lt;/dialog&gt;
+&lt;/div&gt;</pre></section>
+      </div>
+      <section id="integration" class="integration"><h2>Fits the way you build.</h2><p>Use the CSS on its own, add Alpine for local behavior, or let Laravel and Livewire handle your data.</p><div class="integration-grid">
+        <article class="f-card"><h3>HTML &amp; CSS</h3><pre class="code">import 'fruitui/css';
+
+&lt;main class="fruit-ui"&gt;
+  &lt;button class="f-button"&gt;
+    Hello, world
+  &lt;/button&gt;
+&lt;/main&gt;</pre></article>
+        <article class="f-card"><h3>Alpine.js</h3><pre class="code">import Alpine from 'alpinejs';
+import fruitUI from 'fruitui/alpine';
+
+fruitUI(Alpine);
+Alpine.start();</pre></article>
+        <article class="f-card"><h3>Laravel &amp; Livewire</h3><pre class="code">&lt;x-fruit::button
+  wire:click="save"
+  wire:loading.attr="disabled"
+  variant="primary"&gt;
+  Save changes
+&lt;/x-fruit::button&gt;
+
+&lt;x-fruit::switch
+  wire:model="previews"&gt;
+  Show previews
+&lt;/x-fruit::switch&gt;</pre></article>
+      </div></section>
+    </main>
+    <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/">Explore the Mail example <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</body>
+</html>

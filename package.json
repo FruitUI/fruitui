@@ -1,0 +1,24 @@
+{
+  "name": "fruitui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An Apple-inspired, CSS-first interface framework for HTML and Laravel.",
+  "type": "module",
+  "exports": {
+    "./css": "./src/fruitui.css",
+    "./alpine": "./src/js/alpine.js"
+  },
+  "files": ["src/css", "src/fruitui.css", "src/js"],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.63.0",
+    "alpinejs": "^3.17.4",
+    "vite": "^8.3.2"
+  }
+}

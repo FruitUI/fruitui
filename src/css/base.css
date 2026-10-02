@@ -1,0 +1,20 @@
+@layer fruit.base {
+  :where(.fruit-ui) { margin: 0; font: 14px/1.5 var(--f-font); background: var(--f-bg); color: var(--f-text); -webkit-font-smoothing: antialiased; }
+  :where(.fruit-ui, .fruit-ui *) { box-sizing: border-box; }
+  :where(.fruit-ui) :where(button, input, select, textarea) { font: inherit; color: inherit; }
+  :where(.fruit-ui) :where(button, a, input, select, textarea, summary):focus-visible { outline: 3px solid var(--f-accent); outline-offset: 3px; }
+  :where(.fruit-ui) :where(button) { cursor: pointer; }
+  :where(.fruit-ui) :where(button:disabled, input:disabled, select:disabled, textarea:disabled) { opacity: .45; cursor: not-allowed; }
+  :where(.fruit-ui) :where(a) { color: var(--f-accent); text-underline-offset: 3px; }
+  :where(.fruit-ui) :where(h1, h2, h3, p) { margin: 0; }
+  :where(.fruit-ui) :where(svg) { display: block; }
+  :where(.fruit-ui) [hidden], :where(.fruit-ui) [x-cloak] { display: none !important; }
+  :where(.fruit-ui) ::selection { background: var(--f-selection); }
+  .f-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+  .f-muted { color: var(--f-secondary); }
+  .f-icon { width: 19px; height: 19px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  @media (prefers-reduced-motion: reduce) {
+    :where(.fruit-ui) { --f-motion: 0ms; }
+    :where(.fruit-ui) *, :where(.fruit-ui) *::before, :where(.fruit-ui) *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
+}
