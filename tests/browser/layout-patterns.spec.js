@@ -19,7 +19,7 @@ for (const appearance of ['light', 'dark']) {
       const frame = page.locator(frameSelector);
       await expect(frame).toHaveClass(/f-workspace/);
       const splitters = frame.getByRole('separator');
-      expect(await splitters.count()).toBeGreaterThan(0);
+      await expect.poll(() => splitters.count()).toBeGreaterThan(0);
       for (const handle of await splitters.all()) {
         await expect(handle).toHaveAttribute('aria-valuenow', /\d+/);
         const pane = page.locator(`#${await handle.getAttribute('aria-controls')}`);
