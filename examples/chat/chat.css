@@ -60,13 +60,12 @@
 .chat-you { color: var(--f-secondary); font-size: 10px; }
 .chat-message time { color: var(--f-secondary); font-size: 9px; }
 .chat-message-body { margin-top: 5px; font-size: 12px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
-.chat-attachment { display: flex; align-items: center; gap: 10px; max-width: 300px; margin-top: 13px; padding: 12px; border: 1px solid var(--f-border); border-radius: 10px; background: var(--f-surface-secondary); color: var(--f-text); text-decoration: none; }
-.chat-attachment:hover { background: var(--f-hover); }
+.chat-attachment { --f-attachment-gap: 10px; --f-attachment-padding: 12px; max-width: 300px; margin-top: 13px; }
 .chat-file-mark { display: grid; place-items: center; width: 35px; height: 40px; border-radius: 6px; background: var(--f-surface); border: 1px solid var(--f-border); color: var(--f-accent); flex-shrink: 0; }
 .chat-file-mark .f-icon { width: 18px; height: 18px; }
 .chat-attachment strong { font-size: 11px; font-weight: 600; }
-.chat-attachment small { display: block; color: var(--f-secondary); font-size: 9px; margin-top: 3px; }
-.chat-attachment > .f-icon { margin-left: auto; width: 15px; height: 15px; color: var(--f-secondary); flex-shrink: 0; }
+.chat-attachment .f-attachment__detail { font-size: 9px; margin-top: 3px; }
+.chat-attachment > .f-icon { width: 15px; height: 15px; }
 .chat-message-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
 .chat-reactions { display: flex; flex-wrap: wrap; gap: 5px; }
 .chat-reactions:empty { display: none; }
@@ -114,11 +113,8 @@
 .chat-result-meta time { margin-left: auto; }
 .chat-result-body { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; overflow-wrap: anywhere; font-size: 12px; line-height: 1.7; margin-top: 5px; }
 .chat-result small { display: block; font-size: 10px; color: var(--f-selection-text); margin-top: 8px; }
-.chat-empty { display: grid; justify-items: center; place-content: center; gap: 10px; min-height: 240px; padding: 25px; text-align: center; }
-.chat-empty > .f-icon { width: 32px; height: 32px; color: var(--f-tertiary); }
-.chat-empty h3 { font-size: 17px; font-weight: 600; }
-.chat-empty p { color: var(--f-secondary); font-size: 12px; }
-.chat-empty-room { min-height: 150px; }
+.chat-empty { --f-empty-min-height: 240px; --f-empty-padding: 25px; }
+.chat-empty-room { --f-empty-min-height: 150px; }
 .chat-dialog { max-height: calc(100dvh - 32px); overflow: auto; }
 .chat-details-description { margin-top: 7px; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
 .chat-member-list { list-style: none; margin-top: 16px; }

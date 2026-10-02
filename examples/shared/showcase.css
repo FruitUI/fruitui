@@ -36,6 +36,21 @@
 .component-card { display: grid; align-content: start; gap: 22px; }
 .component-card h2 { font-size: 15px; font-weight: 600; }
 .component-card > p { color: var(--f-secondary); font-size: 12px; margin-top: -15px; }
+.component-card { min-width: 0; scroll-margin-top: 24px; }
+.component-card h3 { font-size: 13px; }
+.component-card--wide { grid-column: 1 / -1; }
+.gallery-index { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 24px; font-size: 12px; }
+.gallery-index a { color: var(--f-selection-text); }
+.gallery-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.gallery-fieldset legend { margin-bottom: 8px; font-size: 12px; }
+.gallery-source { min-width: 0; }
+.gallery-source > summary { cursor: pointer; padding-block: 6px; font-size: 12px; font-weight: 600; }
+.gallery-toast { position: static; transform: none; width: auto; max-width: 100%; }
+.showcase .gallery-mail { height: 420px; }
+.showcase .f-mail.gallery-mail { --f-mail-mobile-height: 420px; }
+.gallery-boundary { margin-top: 28px; }
+.gallery-boundary h2 { font-size: 16px; margin-bottom: 8px; }
+.gallery-boundary p { font-size: 12px; color: var(--f-secondary); }
 .code { display: block; margin: 0; padding: 15px; font: 11px/1.8 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--f-surface-secondary); border-radius: 7px; color: var(--f-secondary); }
 .integration { margin-top: 32px; }
 .integration h2 { margin-bottom: 10px; font-size: 20px; letter-spacing: -.5px; }

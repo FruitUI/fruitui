@@ -11,6 +11,7 @@ final class ComponentContract
     public const INPUT_TYPES = ['text', 'email', 'password', 'search', 'tel', 'url'];
     public const BUTTON_VARIANTS = ['default', 'primary', 'ghost', 'danger'];
     public const BUTTON_TYPES = ['button', 'submit', 'reset'];
+    public const CONVERSATION_ROW_VARIANTS = ['quiet', 'filled'];
 
     public static function input(mixed $type, ComponentAttributeBag $attributes): void
     {
@@ -34,6 +35,20 @@ final class ComponentContract
         };
 
         self::semantics($component, $attributes, $component, $type);
+    }
+
+    public static function conversationRow(mixed $variant, ComponentAttributeBag $attributes): void
+    {
+        self::option('conversation-row', 'variant', $variant, self::CONVERSATION_ROW_VARIANTS);
+        self::semantics('conversation-row', $attributes, 'button', 'button');
+    }
+
+    public static function attachment(ComponentAttributeBag $attributes): void
+    {
+        self::semantics('attachment', $attributes, 'link');
+        if (! $attributes->has('href') && ! $attributes->has(':href') && ! $attributes->has('x-bind:href')) {
+            throw new InvalidArgumentException('FruitUI attachment requires href on its native link.');
+        }
     }
 
     /** Native roles are fixed; structural containers allow documented grouping roles. */

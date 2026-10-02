@@ -10,41 +10,219 @@
       <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
     </header>
     <main id="components">
-      <div class="page-intro"><div><p class="eyebrow">The small things, considered</p><h1>Good interfaces start here.</h1><p>Native HTML. Shared styles. Just enough behavior.</p></div><span class="example-tag">Foundation · 0.1</span></div>
+      <div class="page-intro"><div><p class="eyebrow">The small things, considered</p><h1>Good interfaces start here.</h1><p>Every public CSS family, with native HTML and Blade usage. System light and dark appearances throughout.</p></div><span class="example-tag">Foundation · 0.1</span></div>
+<nav class="gallery-index" aria-label="Component index"><a href="#component-button">Button</a><a href="#component-input">Input</a><a href="#component-field">Field</a><a href="#component-switch">Switch</a><a href="#component-checkbox">Checkbox</a><a href="#component-radio">Radio</a><a href="#component-select">Select</a><a href="#component-textarea">Textarea</a><a href="#component-search">Search</a><a href="#component-segmented">Segmented</a><a href="#component-disclosure">Disclosure</a><a href="#component-dialog">Dialog</a><a href="#component-avatar">Avatar</a><a href="#component-sidebar">Sidebar</a><a href="#component-toolbar">Toolbar</a><a href="#component-card">Card</a><a href="#component-badge">Badge</a><a href="#component-toast">Toast</a><a href="#component-row">Row</a><a href="#component-stack">Stack</a><a href="#component-muted">Muted</a><a href="#component-screen-reader">Screen Reader</a><a href="#component-icon">Icon</a><a href="#component-conversation-list">Conversation List</a><a href="#component-conversation-row">Conversation Row</a><a href="#component-attachment">Attachment</a><a href="#component-empty-state">Empty State</a><a href="#component-mail">Mail</a></nav>
       <div class="component-grid">
-        <section class="f-card component-card"><h2>Buttons</h2><p>A clear primary action, with quiet supporting controls.</p><div class="f-row"><button class="f-button f-button--primary" type="button">Primary</button><button class="f-button" type="button">Default</button><button class="f-button f-button--ghost" type="button">Quiet</button><button class="f-button f-button--danger" type="button">Delete</button><button class="f-button" type="button" disabled>Disabled</button></div><pre class="code">&lt;button class="f-button f-button--primary"&gt;
-  Continue
-&lt;/button&gt;</pre></section>
-        <section class="f-card component-card"><h2>Text fields</h2><p>Familiar controls, with explicit labels and helpful context.</p><label class="f-field"><span class="f-label">Your name</span><input class="f-input" placeholder="Alex Morgan" autocomplete="name" aria-describedby="name-help"><span class="f-help" id="name-help">How you’ll appear to your teammates.</span></label><pre class="code">&lt;label class="f-field"&gt;
-  &lt;span class="f-label"&gt;Your name&lt;/span&gt;
-  &lt;input class="f-input"&gt;
-&lt;/label&gt;</pre></section>
-        <section class="f-card component-card"><h2>Selection controls</h2><p>Real inputs. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><label class="f-switch"><input type="checkbox" role="switch" name="previews" value="1" x-model="previews" checked><span>Show message previews</span></label><label class="f-check"><input type="checkbox" name="sounds" value="1" x-model="sounds" checked>Play a sound for new messages</label><div class="f-row" role="group" aria-label="Message density"><label class="f-check"><input type="radio" name="density" value="comfortable" x-model="density" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact" x-model="density">Compact</label></div><output class="f-help" x-cloak x-text="'Previews ' + (previews ? 'on' : 'off') + ' · Sound ' + (sounds ? 'on' : 'off') + ' · ' + density + ' density'"></output></form><pre class="code">&lt;label class="f-switch"&gt;
-  &lt;input type="checkbox" role="switch"&gt;
+        <section id="component-button" data-component="button" class="f-card component-card"><h2>Buttons</h2><p>One action control, with four visual variants and native disabled state.</p><div class="f-row"><button class="f-button f-button--primary" type="button">Primary</button><button class="f-button" type="button">Default</button><button class="f-button f-button--ghost" type="button">Quiet</button><button class="f-button f-button--danger" type="button">Delete</button><button class="f-button" type="button" disabled>Disabled</button><button class="f-button f-button--icon" type="button" aria-label="Add an item"><svg class="f-icon " aria-hidden="true"><use href="#i-plus"/></svg></button><button class="f-button" type="button" aria-pressed="true">Pinned</button></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;button&quot;&gt;Continue&lt;/button&gt;
+&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-pressed=&quot;true&quot;&gt;Pinned&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::button variant=&quot;primary&quot; wire:click=&quot;save&quot;&gt;Save&lt;/x-fruit::button&gt;
+&lt;x-fruit::button disabled&gt;Unavailable&lt;/x-fruit::button&gt;</pre></details></section>
+        <section id="component-input" data-component="input" class="f-card component-card"><h2>Text fields</h2><p>Single-line text entry; email, password, search, tel, and url retain native editing.</p><label class="f-field"><span class="f-label">Your name</span><input class="f-input" placeholder="Alex Morgan" autocomplete="name" aria-describedby="name-help"><span class="f-help" id="name-help">How you’ll appear to your teammates.</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Your name&lt;/span&gt;
+  &lt;input class=&quot;f-input&quot; autocomplete=&quot;name&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
+  &lt;x-fruit::input type=&quot;email&quot; name=&quot;email&quot; wire:model=&quot;email&quot; required /&gt;
+&lt;/label&gt;</pre></details></section>
+        <section id="component-field" data-component="field" class="f-card component-card"><h2>Labels, help, and errors</h2><p>Field composition keeps the label and validation message connected to the native input.</p><div class="f-stack"><label class="f-field"><span class="f-label">Contact email</span><input class="f-input" type="email" value="alex@" aria-invalid="true" aria-describedby="contact-error"><span class="f-error" id="contact-error">Enter a complete email address.</span></label><label class="f-field"><span class="f-label">Workspace ID</span><input class="f-input" value="forma" readonly><span class="f-help">This identifier is read only.</span></label><label class="f-field"><span class="f-label">Invitation code</span><input class="f-input" disabled value="Not available"></label></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
+  &lt;input class=&quot;f-input&quot; aria-invalid=&quot;true&quot; aria-describedby=&quot;email-error&quot;&gt;
+  &lt;span class=&quot;f-error&quot; id=&quot;email-error&quot;&gt;Enter a valid email.&lt;/span&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
+  &lt;x-fruit::input wire:model=&quot;email&quot; aria-describedby=&quot;email-error&quot; /&gt;
+  @error(&quot;email&quot;) &lt;span class=&quot;f-error&quot; id=&quot;email-error&quot;&gt;{{ $message }}&lt;/span&gt; @enderror
+&lt;/label&gt;</pre></details></section>
+        <section class="f-card component-card"><h2>Selection controls</h2><p>Independent native values. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><div id="component-switch" data-component="switch" class="f-stack"><h3>Switch</h3><label class="f-switch"><input type="checkbox" role="switch" name="previews" value="1" x-model="previews" checked><span>Show message previews</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-switch&quot;&gt;
+  &lt;input type=&quot;checkbox&quot; role=&quot;switch&quot; name=&quot;previews&quot; checked&gt;
   &lt;span&gt;Show message previews&lt;/span&gt;
-&lt;/label&gt;</pre></section>
-        <section class="f-card component-card"><h2>Segmented controls</h2><p>A small set of related choices, powered by native radios.</p><fieldset style="border: 0; margin: 0; padding: 0"><legend class="f-sr-only">Preview position</legend><div class="f-segmented"><label><input type="radio" name="preview" value="right" checked><span>Right</span></label><label><input type="radio" name="preview" value="below"><span>Below</span></label><label><input type="radio" name="preview" value="off"><span>Off</span></label></div></fieldset><label class="f-field"><span class="f-label">Default mailbox</span><select class="f-input"><option>All Inboxes</option><option>Flagged</option><option>Archive</option></select></label><pre class="code">&lt;div class="f-segmented"&gt;
-  &lt;label&gt;&lt;input type="radio" name="view"&gt;
-    &lt;span&gt;Right&lt;/span&gt;&lt;/label&gt;
-&lt;/div&gt;</pre></section>
-        <section class="f-card component-card"><h2>Disclosure</h2><p>Let people reveal the details when they need them.</p><details class="f-disclosure"><summary>What makes FruitUI CSS first?</summary><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure all work with native HTML and CSS. Add Alpine or Livewire when your interface needs state or server actions.</p></details><pre class="code">&lt;details class="f-disclosure"&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::switch name=&quot;previews&quot; wire:model=&quot;previews&quot;&gt;Show previews&lt;/x-fruit::switch&gt;</pre></details></div><div id="component-checkbox" data-component="checkbox" class="f-stack"><h3>Checkbox</h3><label class="f-check"><input type="checkbox" name="sounds" value="1" x-model="sounds" checked>Play a sound for new messages</label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-check&quot;&gt;
+  &lt;input type=&quot;checkbox&quot; name=&quot;sounds&quot; value=&quot;1&quot;&gt;
+  Play a sound
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::checkbox name=&quot;sounds&quot; wire:model=&quot;sounds&quot;&gt;Play a sound&lt;/x-fruit::checkbox&gt;</pre></details></div><div id="component-radio" data-component="radio" class="f-stack"><h3>Radio</h3><fieldset class="gallery-fieldset"><legend>Message density</legend><div class="f-row"><label class="f-check"><input type="radio" name="density" value="comfortable" x-model="density" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact" x-model="density">Compact</label></div></fieldset><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset&gt;
+  &lt;legend&gt;Density&lt;/legend&gt;
+  &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;density&quot; value=&quot;comfortable&quot; checked&gt;Comfortable&lt;/label&gt;
+  &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;density&quot; value=&quot;compact&quot;&gt;Compact&lt;/label&gt;
+&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::radio name=&quot;density&quot; value=&quot;comfortable&quot; wire:model=&quot;density&quot;&gt;Comfortable&lt;/x-fruit::radio&gt;
+&lt;x-fruit::radio name=&quot;density&quot; value=&quot;compact&quot; wire:model=&quot;density&quot;&gt;Compact&lt;/x-fruit::radio&gt;</pre></details></div><output class="f-help" x-cloak x-text="'Previews ' + (previews ? 'on' : 'off') + ' · Sound ' + (sounds ? 'on' : 'off') + ' · ' + density + ' density'"></output></form></section>
+        <section id="component-select" data-component="select" class="f-card component-card"><h2>Select</h2><p>Native option selection, including multiple selection when the application needs it.</p><label class="f-field"><span class="f-label">Default mailbox</span><select class="f-input"><option>All Inboxes</option><option>Flagged</option><option>Archive</option></select></label><label class="f-field"><span class="f-label">Included folders</span><select class="f-input" multiple size="3"><option selected>Inbox</option><option>Sent</option><option>Archive</option></select></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label&gt;Default mailbox
+  &lt;select class=&quot;f-input&quot; name=&quot;mailbox&quot;&gt;&lt;option&gt;All Inboxes&lt;/option&gt;&lt;/select&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label&gt;Default mailbox
+  &lt;x-fruit::select name=&quot;mailbox&quot; wire:model=&quot;mailbox&quot;&gt;
+    &lt;option value=&quot;all&quot;&gt;All Inboxes&lt;/option&gt;
+  &lt;/x-fruit::select&gt;
+&lt;/label&gt;</pre></details></section>
+        <section id="component-textarea" data-component="textarea" class="f-card component-card"><h2>Textarea</h2><p>Multiple lines of text, with native editing and resizing.</p><label class="f-field"><span class="f-label">Internal note</span><textarea class="f-input" rows="4" placeholder="A little context for your team."></textarea><span class="f-help">Enter inserts a new line.</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Internal note&lt;/span&gt;
+  &lt;textarea class=&quot;f-input&quot; name=&quot;note&quot; rows=&quot;4&quot;&gt;&lt;/textarea&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+  &lt;span class=&quot;f-label&quot;&gt;Internal note&lt;/span&gt;
+  &lt;x-fruit::textarea name=&quot;note&quot; rows=&quot;4&quot; wire:model=&quot;note&quot; /&gt;
+&lt;/label&gt;</pre></details></section>
+        <section id="component-search" data-component="search" class="f-card component-card"><h2>Search field</h2><p>An icon and a native search input. Search results belong to the application.</p><div class="f-search"><svg class="f-icon " aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="gallery-search">Search the workspace</label><input class="f-input" id="gallery-search" type="search" placeholder="Search the workspace"></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-search&quot;&gt;
+  &lt;!-- Optional decorative SVG with class=&quot;f-icon&quot; --&gt;
+  &lt;label class=&quot;f-sr-only&quot; for=&quot;search&quot;&gt;Search&lt;/label&gt;
+  &lt;input class=&quot;f-input&quot; id=&quot;search&quot; type=&quot;search&quot;&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-search&quot;&gt;
+  &lt;label class=&quot;f-sr-only&quot; for=&quot;search&quot;&gt;Search&lt;/label&gt;
+  &lt;x-fruit::input id=&quot;search&quot; type=&quot;search&quot; wire:model.live=&quot;query&quot; /&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-segmented" data-component="segmented" class="f-card component-card"><h2>Segmented choices</h2><p>Native radios select one value. This control retains radio semantics.</p><fieldset class="gallery-fieldset"><legend>Preview position</legend><div class="f-segmented"><label><input type="radio" name="preview" value="right" checked><span>Right</span></label><label><input type="radio" name="preview" value="below"><span>Below</span></label><label><input type="radio" name="preview" value="off"><span>Off</span></label></div></fieldset><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset&gt;
+  &lt;legend&gt;Preview position&lt;/legend&gt;
+  &lt;div class=&quot;f-segmented&quot;&gt;
+    &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;right&quot; checked&gt;&lt;span&gt;Right&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;below&quot;&gt;&lt;span&gt;Below&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;fieldset&gt;
+  &lt;legend&gt;Preview position&lt;/legend&gt;
+  &lt;div class=&quot;f-segmented&quot;&gt;
+    &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;right&quot; wire:model=&quot;preview&quot;&gt;&lt;span&gt;Right&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;below&quot; wire:model=&quot;preview&quot;&gt;&lt;span&gt;Below&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/fieldset&gt;</pre></details></section>
+        <section id="component-disclosure" data-component="disclosure" class="f-card component-card"><h2>Disclosure</h2><p>Reveal supporting content with native Enter/Space and open state.</p><details class="f-disclosure"><summary>What makes FruitUI CSS first?</summary><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.</p></details><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-disclosure&quot;&gt;
   &lt;summary&gt;More details&lt;/summary&gt;
   &lt;p&gt;The details, when you need them.&lt;/p&gt;
-&lt;/details&gt;</pre></section>
-        <section class="f-card component-card" x-data="fruitDialog"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. A little Alpine to open.</p><div><button class="f-button" type="button" @click="open">Open dialog</button></div><dialog class="f-dialog" x-ref="dialog" aria-labelledby="dialog-title"><header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header><div class="f-dialog__body"><p>Good dialogs ask for one thing at a time. This one just wanted to say hello.</p></div><footer class="f-dialog__footer"><button class="f-button f-button--primary" type="button" @click="close" autofocus>Got it</button></footer></dialog><pre class="code">&lt;div x-data="fruitDialog"&gt;
-  &lt;button @click="open"&gt;Open&lt;/button&gt;
-  &lt;dialog class="f-dialog" x-ref="dialog"&gt;
-    …
+&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::disclosure title=&quot;More details&quot;&gt;
+  The details, when you need them.
+&lt;/x-fruit::disclosure&gt;</pre></details></section>
+        <section id="component-dialog" data-component="dialog" class="f-card component-card"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. The optional fruitDialog helper opens and closes it.</p><div x-data="fruitDialog"><button class="f-button" type="button" @click="open">Open dialog</button><dialog class="f-dialog" x-ref="dialog" aria-labelledby="dialog-title"><header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header><div class="f-dialog__body"><p>Good dialogs ask for one thing at a time.</p></div><footer class="f-dialog__footer"><button class="f-button f-button--primary" type="button" @click="close" autofocus>Got it</button></footer></dialog></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;fruitDialog&quot;&gt;
+  &lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;open&quot;&gt;Open&lt;/button&gt;
+  &lt;dialog class=&quot;f-dialog&quot; x-ref=&quot;dialog&quot; aria-label=&quot;Welcome&quot;&gt;
+    &lt;div class=&quot;f-dialog__body&quot;&gt;Welcome.&lt;/div&gt;
+    &lt;footer class=&quot;f-dialog__footer&quot;&gt;&lt;button class=&quot;f-button&quot; @click=&quot;close&quot; type=&quot;button&quot;&gt;Close&lt;/button&gt;&lt;/footer&gt;
   &lt;/dialog&gt;
-&lt;/div&gt;</pre></section>
-        <section class="f-card component-card"><h2>People and context</h2><p>A small identity cue, shared by Mail, Support, and Chat.</p><div class="f-row"><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><p class="f-help">Studio North</p></div></div><pre class="code">&lt;span class="f-avatar" aria-hidden="true"&gt;SC&lt;/span&gt;
-&lt;span&gt;Sophie Chen&lt;/span&gt;</pre></section>
-        <section class="f-card component-card"><h2>Grouped navigation</h2><p>Native disclosure reveals independent links. Shared by Mail accounts, Support mailboxes, Chat navigation, and Admin sections.</p><nav class="f-sidebar" aria-label="Reference interfaces"><details class="f-sidebar__group"><summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg><span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary><a class="f-sidebar__item f-sidebar__item--nested" href="/">Mail</a><a class="f-sidebar__item f-sidebar__item--nested" href="/support.html">Support</a><a class="f-sidebar__item f-sidebar__item--nested" href="/chat.html">Chat</a><a class="f-sidebar__item f-sidebar__item--nested" href="/admin.html">Admin</a></details></nav><pre class="code">&lt;details class="f-sidebar__group"&gt;
-  &lt;summary class="f-sidebar__item"&gt;Examples&lt;/summary&gt;
-  &lt;a class="f-sidebar__item f-sidebar__item--nested"
-     href="/"&gt;Mail&lt;/a&gt;
-&lt;/details&gt;</pre></section>
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div x-data=&quot;fruitDialog&quot;&gt;
+  &lt;x-fruit::button @click=&quot;open&quot;&gt;Open&lt;/x-fruit::button&gt;
+  &lt;x-fruit::dialog x-ref=&quot;dialog&quot; aria-label=&quot;Welcome&quot;&gt;
+    &lt;div class=&quot;f-dialog__body&quot;&gt;Welcome.&lt;/div&gt;
+    &lt;x-fruit::button @click=&quot;close&quot;&gt;Close&lt;/x-fruit::button&gt;
+  &lt;/x-fruit::dialog&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-avatar" data-component="avatar" class="f-card component-card"><h2>People and context</h2><p>Initials provide an identity cue; the adjacent name supplies the accessible identity.</p><div class="f-row"><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><p class="f-help">Studio North</p></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
+&lt;span&gt;Sophie Chen&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;{{ $person-&gt;initials }}&lt;/span&gt;
+&lt;span&gt;{{ $person-&gt;name }}&lt;/span&gt;</pre></details></section>
+        <section id="component-sidebar" data-component="sidebar" class="f-card component-card"><h2>Grouped navigation</h2><p>Native disclosure reveals independent links. Counts and navigation state belong to the application.</p><nav class="f-sidebar" aria-label="Reference interfaces"><p class="f-sidebar__heading">Workspaces</p><details class="f-sidebar__group"><summary class="f-sidebar__item"><svg class="f-icon " aria-hidden="true"><use href="#i-folder"/></svg><span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary><a class="f-sidebar__item f-sidebar__item--nested" href="/">Mail</a><a class="f-sidebar__item f-sidebar__item--nested" href="/support.html">Support</a><a class="f-sidebar__item f-sidebar__item--nested" href="/chat.html">Chat</a><a class="f-sidebar__item f-sidebar__item--nested" href="/admin.html">Admin</a></details></nav><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;
+  &lt;details class=&quot;f-sidebar__group&quot; open&gt;
+    &lt;summary class=&quot;f-sidebar__item&quot;&gt;Work account&lt;/summary&gt;
+    &lt;a class=&quot;f-sidebar__item f-sidebar__item--nested&quot; href=&quot;/inbox&quot; aria-current=&quot;page&quot;&gt;Inbox&lt;/a&gt;
+  &lt;/details&gt;
+&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;nav class=&quot;f-sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;
+  &lt;details class=&quot;f-sidebar__group&quot; open&gt;
+    &lt;summary class=&quot;f-sidebar__item&quot;&gt;{{ $account-&gt;name }}&lt;/summary&gt;
+    &lt;a class=&quot;f-sidebar__item f-sidebar__item--nested&quot; href=&quot;{{ route(&#x27;inbox&#x27;) }}&quot;&gt;Inbox&lt;/a&gt;
+  &lt;/details&gt;
+&lt;/nav&gt;</pre></details></section>
+        <section id="component-toolbar" data-component="toolbar" class="f-card component-card"><h2>Toolbar</h2><p>Arrange independent actions with groups and flexible spacing; no extra keyboard model is added.</p><div class="f-toolbar"><strong>Inbox</strong><div class="f-toolbar__spacer"></div><div class="f-toolbar__group"><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Archive conversation"><svg class="f-icon " aria-hidden="true"><use href="#i-archive"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Compose a message"><svg class="f-icon " aria-hidden="true"><use href="#i-compose"/></svg></button></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toolbar&quot;&gt;
+  &lt;strong&gt;Inbox&lt;/strong&gt;
+  &lt;div class=&quot;f-toolbar__spacer&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;f-toolbar__group&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot;&gt;Compose&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-toolbar&quot;&gt;
+  &lt;strong&gt;Inbox&lt;/strong&gt;
+  &lt;div class=&quot;f-toolbar__spacer&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;f-toolbar__group&quot;&gt;&lt;x-fruit::button wire:click=&quot;compose&quot;&gt;Compose&lt;/x-fruit::button&gt;&lt;/div&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-card" data-component="card" class="f-card component-card"><h2>Card</h2><p>Group related content in a section; contained controls retain their own behavior.</p><section class="f-card f-stack" aria-label="Workspace summary"><h3>Forma workspace</h3><p class="f-help">A place for the people and projects you care about.</p><div><button class="f-button" type="button">View workspace</button></div></section><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-card&quot;&gt;
+  &lt;h3&gt;Workspace&lt;/h3&gt;
+  &lt;p&gt;Related content, together.&lt;/p&gt;
+&lt;/section&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::card class=&quot;f-stack&quot;&gt;
+  &lt;h3&gt;Workspace&lt;/h3&gt;
+  &lt;x-fruit::button wire:click=&quot;openWorkspace&quot;&gt;View workspace&lt;/x-fruit::button&gt;
+&lt;/x-fruit::card&gt;</pre></details></section>
+        <section id="component-badge" data-component="badge" class="f-card component-card"><h2>Badges</h2><p>Compact informational labels and counts. A badge has no selection behavior.</p><div class="f-row"><span class="f-badge">Unread</span><span class="f-badge">12 conversations</span><span class="f-badge">Studio plan</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-badge&quot;&gt;12 unread&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-badge&quot;&gt;{{ $unreadCount }} unread&lt;/span&gt;</pre></details></section>
+        <section id="component-toast" data-component="toast" class="f-card component-card"><h2>Status messages</h2><p>A short update after an action. The application owns its text and lifetime.</p><div class="f-toast gallery-toast" role="status">Conversation archived.</div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toast&quot; role=&quot;status&quot;&gt;Conversation archived.&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-toast&quot; role=&quot;status&quot; x-show=&quot;notice&quot; x-text=&quot;notice&quot; x-cloak&gt;&lt;/div&gt;</pre></details></section>
+        <section id="component-row" data-component="row" class="f-card component-card"><h2>Horizontal layout</h2><p>Arrange independent content and controls. The row owns no value or interaction state.</p><div class="f-row"><label class="f-check"><input type="checkbox" name="include-archived">Include archived</label><span class="f-badge">Optional</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-row&quot;&gt;
+  &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot;&gt;Include archived&lt;/label&gt;
+  &lt;span class=&quot;f-badge&quot;&gt;Optional&lt;/span&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-row&quot;&gt;
+  &lt;x-fruit::checkbox wire:model=&quot;archived&quot;&gt;Include archived&lt;/x-fruit::checkbox&gt;
+  &lt;span class=&quot;f-badge&quot;&gt;Optional&lt;/span&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-stack" data-component="stack" class="f-card component-card"><h2>Vertical layout</h2><p>Space related elements with the shared spacing token.</p><div class="f-stack"><strong>Your account</strong><p class="f-help">Two mailboxes connected.</p><label class="f-field"><span class="f-label">Account name</span><input class="f-input" value="Work"></label></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-stack&quot;&gt;
+  &lt;h3&gt;Your account&lt;/h3&gt;
+  &lt;p&gt;Two mailboxes connected.&lt;/p&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-stack&quot;&gt;
+  &lt;h3&gt;{{ $account-&gt;name }}&lt;/h3&gt;
+  &lt;x-fruit::input aria-label=&quot;Account name&quot; wire:model=&quot;name&quot; /&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-muted" data-component="muted" class="f-card component-card"><h2>Secondary text</h2><p>Use the semantic secondary color for supporting content in either appearance.</p><p class="f-muted">Last updated a moment ago.</p><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;p class=&quot;f-muted&quot;&gt;Last updated a moment ago.&lt;/p&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;p class=&quot;f-muted&quot;&gt;Updated {{ $record-&gt;updated_at-&gt;diffForHumans() }}&lt;/p&gt;</pre></details></section>
+        <section id="component-screen-reader" data-component="screen-reader" class="f-card component-card"><h2>Accessible labels</h2><p>Visually hide a label while keeping it available to assistive technology.</p><div class="f-search"><label class="f-sr-only" for="accessible-search">Search messages in this example</label><input class="f-input" id="accessible-search" type="search" placeholder="Search messages"></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-sr-only&quot; for=&quot;query&quot;&gt;Search messages&lt;/label&gt;
+&lt;input class=&quot;f-input&quot; id=&quot;query&quot; type=&quot;search&quot;&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-sr-only&quot; for=&quot;query&quot;&gt;Search messages&lt;/label&gt;
+&lt;x-fruit::input id=&quot;query&quot; type=&quot;search&quot; wire:model.live=&quot;query&quot; /&gt;</pre></details></section>
+        <section id="component-icon" data-component="icon" class="f-card component-card"><h2>Icons</h2><p>Shared sizing and strokes for your own SVG artwork; decorative icons remain hidden from assistive technology.</p><div class="f-row"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><span>Search</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;svg class=&quot;f-icon&quot; viewBox=&quot;0 0 24 24&quot; aria-hidden=&quot;true&quot;&gt;
+  &lt;circle cx=&quot;10&quot; cy=&quot;10&quot; r=&quot;6&quot;/&gt;
+  &lt;path d=&quot;m15 15 5 5&quot;/&gt;
+&lt;/svg&gt;
+&lt;span&gt;Search&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#your-search-icon&quot; /&gt;&lt;/svg&gt;
+&lt;span&gt;Search&lt;/span&gt;</pre></details></section>
+        <section id="component-conversation-list" data-component="conversation-list" class="f-card component-card"><h2>Conversation list</h2><p>Mail and Support share this native list. List items contain independent opening buttons.</p><ul class="f-conversation-list" role="list" aria-label="Sample conversations"><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Jordan Lee</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A little help with our team plan</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li></ul><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ul class=&quot;f-conversation-list&quot; role=&quot;list&quot; aria-label=&quot;Conversations&quot;&gt;
+  &lt;li&gt;&lt;button class=&quot;f-conversation-row&quot; type=&quot;button&quot;&gt;
+    &lt;span class=&quot;f-conversation-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
+    &lt;span class=&quot;f-conversation-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
+  &lt;/button&gt;&lt;/li&gt;
+&lt;/ul&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::conversation-list aria-label=&quot;Conversations&quot;&gt;
+  @foreach ($conversations as $conversation)
+    &lt;li&gt;&lt;x-fruit::conversation-row wire:click=&quot;open({{ $conversation-&gt;id }})&quot;&gt;
+      {{ $conversation-&gt;sender }}
+      &lt;x-slot:preview&gt;{{ $conversation-&gt;preview }}&lt;/x-slot:preview&gt;
+    &lt;/x-fruit::conversation-row&gt;&lt;/li&gt;
+  @endforeach
+&lt;/x-fruit::conversation-list&gt;</pre></details></section>
+        <section id="component-conversation-row" data-component="conversation-row" class="f-card component-card"><h2>Conversation row</h2><p>A button opens one conversation. Quiet and filled are visual variants; selection controls stay outside the button.</p><div x-data="{ opened: false }" class="f-stack"><button class="f-conversation-row f-conversation-row--filled" type="button" @click="opened = !opened" :aria-current="opened ? 'true' : null"><span class="f-avatar f-conversation-row__leading" aria-hidden="true">SC</span><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">Open this conversation to see its current state.</span><span class="f-conversation-row__meta">Work mailbox</span></button><label class="f-check"><input type="checkbox" name="selected-conversation" value="42">Select this conversation for a bulk action</label><p class="f-help" x-text="opened ? 'Conversation open. The checkbox keeps its own value.' : 'Conversation closed.'">Conversation closed.</p><button class="f-conversation-row" type="button" disabled><span class="f-conversation-row__title">Unavailable conversation</span></button></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-conversation-row f-conversation-row--filled&quot; type=&quot;button&quot; aria-current=&quot;true&quot;&gt;
+  &lt;span class=&quot;f-avatar f-conversation-row__leading&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
+  &lt;span class=&quot;f-conversation-row__top&quot;&gt;
+    &lt;span class=&quot;f-conversation-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
+    &lt;span class=&quot;f-conversation-row__time&quot;&gt;10:42&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;span class=&quot;f-conversation-row__subtitle&quot;&gt;A fresh start&lt;/span&gt;
+  &lt;span class=&quot;f-conversation-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
+  &lt;span class=&quot;f-conversation-row__meta&quot;&gt;Work mailbox&lt;/span&gt;
+&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::conversation-row variant=&quot;filled&quot; aria-current=&quot;true&quot; wire:click=&quot;open(42)&quot;&gt;
+  Sophie Chen
+  &lt;x-slot:leading&gt;&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;&lt;/x-slot:leading&gt;
+  &lt;x-slot:trailing&gt;10:42&lt;/x-slot:trailing&gt;
+  &lt;x-slot:subtitle&gt;A fresh start&lt;/x-slot:subtitle&gt;
+  &lt;x-slot:preview&gt;A few thoughts…&lt;/x-slot:preview&gt;
+  &lt;x-slot:meta&gt;Work mailbox&lt;/x-slot:meta&gt;
+&lt;/x-fruit::conversation-row&gt;</pre></details></section>
+        <section id="component-attachment" data-component="attachment" class="f-card component-card"><h2>Attachment link</h2><p>Mail and Chat share the same native download link. Icons, file details, and the URL belong to the caller.</p><a class="f-attachment" href="/attachments/fruitui-design-notes.txt" download><svg class="f-icon f-attachment__leading" aria-hidden="true"><use href="#i-file"/></svg><span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span><svg class="f-icon f-attachment__trailing" aria-hidden="true"><use href="#i-download"/></svg></a><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-attachment&quot; href=&quot;/notes.txt&quot; download&gt;
+  &lt;span class=&quot;f-attachment__body&quot;&gt;Design notes.txt
+    &lt;small class=&quot;f-attachment__detail&quot;&gt;Text document · 1 KB&lt;/small&gt;
+  &lt;/span&gt;
+&lt;/a&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::attachment href=&quot;/notes.txt&quot; download&gt;
+  Design notes.txt
+  &lt;x-slot:detail&gt;Text document · 1 KB&lt;/x-slot:detail&gt;
+&lt;/x-fruit::attachment&gt;</pre></details></section>
+        <section id="component-empty-state" data-component="empty-state" class="f-card component-card"><h2>Empty state</h2><p>The same informational arrangement supports empty mailboxes, queues, channels, and customer results.</p><div class="f-empty-state"><svg class="f-icon f-empty-state__icon" aria-hidden="true"><use href="#i-inbox"/></svg><h3 class="f-empty-state__title">You’re all caught up.</h3><p class="f-empty-state__description">New conversations will appear here.</p><div class="f-empty-state__actions"><button class="f-button" type="button">Clear filters</button></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-empty-state&quot;&gt;
+  &lt;h3 class=&quot;f-empty-state__title&quot;&gt;No conversations&lt;/h3&gt;
+  &lt;p class=&quot;f-empty-state__description&quot;&gt;Try another search.&lt;/p&gt;
+  &lt;div class=&quot;f-empty-state__actions&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot;&gt;Clear filters&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::empty-state&gt;
+  &lt;x-slot:title&gt;&lt;h3&gt;No conversations&lt;/h3&gt;&lt;/x-slot:title&gt;
+  Try another search.
+  &lt;x-slot:actions&gt;&lt;x-fruit::button wire:click=&quot;clearFilters&quot;&gt;Clear filters&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;
+&lt;/x-fruit::empty-state&gt;</pre></details></section>
+        <section id="component-mail" data-component="mail" class="f-card component-card component-card--wide"><h2>Responsive Mail layout</h2><p>The original reference pattern remains public CSS. Container queries choose its layout; application state selects the phone screen.</p><div class="f-mail-container"><section class="f-mail gallery-mail" data-view="list" aria-label="Mail layout sample"><div class="f-toolbar f-mail__sidebar-toolbar"><strong>Mail</strong></div><header class="f-toolbar f-mail__toolbar"><strong>All Inboxes</strong></header><header class="f-mail__mobile-header"><h3 class="f-mail__large-title">All Inboxes</h3></header><nav class="f-sidebar f-mail__sidebar" aria-label="Sample mailboxes"><p class="f-sidebar__heading">All Accounts</p><a class="f-sidebar__item" href="/">All Inboxes</a></nav><section class="f-mail__list-pane" aria-label="Sample message list"><ul class="f-conversation-list" role="list"><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li></ul></section><article class="f-mail__reader" aria-label="Sample reading pane"><header class="f-mail__message-header"><h3>A fresh start for FruitUI</h3></header><div class="f-mail__body"><p>The same container adapts from three panes to a phone-sized list.</p><p><a href="/">Explore the working Mail example</a></p></div></article></section></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-mail-container&quot;&gt;
+  &lt;section class=&quot;f-mail&quot; data-view=&quot;list&quot;&gt;
+    &lt;div class=&quot;f-toolbar f-mail__sidebar-toolbar&quot;&gt;Mail&lt;/div&gt;
+    &lt;header class=&quot;f-toolbar f-mail__toolbar&quot;&gt;Actions&lt;/header&gt;
+    &lt;header class=&quot;f-mail__mobile-header&quot;&gt;All Inboxes&lt;/header&gt;
+    &lt;nav class=&quot;f-sidebar f-mail__sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;…&lt;/nav&gt;
+    &lt;section class=&quot;f-mail__list-pane&quot; aria-label=&quot;Messages&quot;&gt;…&lt;/section&gt;
+    &lt;article class=&quot;f-mail__reader&quot; aria-label=&quot;Reading pane&quot;&gt;…&lt;/article&gt;
+  &lt;/section&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-mail-container&quot;&gt;
+  &lt;section class=&quot;f-mail&quot; :data-view=&quot;view&quot;&gt;
+    &lt;!-- Same CSS layout; render application data with Blade. --&gt;
+    &lt;section class=&quot;f-mail__list-pane&quot; aria-label=&quot;Messages&quot;&gt;
+      &lt;x-fruit::conversation-list&gt;
+        &lt;li&gt;&lt;x-fruit::conversation-row wire:click=&quot;open(42)&quot;&gt;Sophie Chen&lt;/x-fruit::conversation-row&gt;&lt;/li&gt;
+      &lt;/x-fruit::conversation-list&gt;
+    &lt;/section&gt;
+    &lt;!-- Add the toolbars, navigation, and reader shown in the HTML example. --&gt;
+  &lt;/section&gt;
+&lt;/div&gt;</pre></details></section>
       </div>
+      <section class="gallery-boundary"><h2>Example compositions</h2><p>Admin tables, charts, breadcrumbs, and customer tabs remain in the Admin example. Support inspectors and Chat threads remain in their examples. They compose the cataloged controls; they are not yet public package APIs. See the <a href="/admin.html">Admin</a>, <a href="/support.html">Support</a>, and <a href="/chat.html">Chat</a> examples for those arrangements.</p></section>
       <section id="integration" class="integration"><h2>Fits the way you build.</h2><p>Use the CSS on its own, add Alpine for local behavior, or let Laravel and Livewire handle your data.</p><div class="integration-grid">
         <article class="f-card"><h3>HTML &amp; CSS</h3><pre class="code">import 'fruitui/css';
 

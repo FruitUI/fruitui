@@ -32,21 +32,15 @@
 .support-list-order { display: flex; justify-content: space-between; align-items: center; margin: 5px 0; font-size: 10px; color: var(--f-secondary); }
 .support-list-order .f-button { min-height: 28px; min-width: 28px; padding: 5px; }
 .support-list-order .f-icon { width: 15px; height: 15px; }
-.support-ticket-list { min-height: 0; overflow: auto; padding: 0 7px 8px; }
-.support-ticket { position: relative; display: block; width: 100%; padding: 14px 12px; border: 0; border-radius: 9px; background: transparent; color: var(--f-text); text-align: left; }
-.support-ticket::after { content: ''; position: absolute; bottom: 0; left: 12px; right: 12px; border-bottom: 1px solid var(--f-border); }
-.support-ticket:hover { background: var(--f-hover); }
-.support-ticket[aria-current='true'] { background: var(--f-selection); }
-.support-ticket[aria-current='true']::after { border-color: transparent; }
-.support-ticket:focus-visible { outline-offset: -3px; }
+.support-ticket-list { --f-conversation-list-padding: 0 7px 8px; }
+.support-ticket { --f-conversation-row-leading-inset: 12px; }
 .support-ticket-avatar { display: none; }
-.support-ticket-top { display: flex; align-items: center; gap: 6px; }
-.support-ticket-top strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; font-size: 12px; }
-.support-ticket-time { margin-left: auto; color: var(--f-secondary); font-size: 10px; flex-shrink: 0; }
-.support-unread { width: 6px; height: 6px; border-radius: 50%; background: var(--f-accent); flex-shrink: 0; }
-.support-ticket-subject { display: block; margin-top: 4px; font-size: 12px; font-weight: 550; line-height: 1.45; }
-.support-ticket-preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 4px; font-size: 11px; color: var(--f-secondary); line-height: 1.55; }
-.support-ticket-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; font-size: 9px; color: var(--f-secondary); }
+.support-ticket-top { align-items: center; gap: 6px; }
+.support-ticket-top strong { font-size: 12px; }
+.support-unread { width: 6px; height: 6px; }
+.support-ticket-subject { margin-top: 4px; font-weight: 550; line-height: 1.45; white-space: normal; }
+.support-ticket-preview { margin-top: 4px; font-size: 11px; line-height: 1.55; }
+.support-ticket-meta { margin-top: 8px; font-size: 9px; }
 .support-ticket-origin { padding: 1px 5px; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); }
 .support-ticket-meta > .f-badge { margin-left: auto; padding: 0 5px; font-size: 9px; }
 .support-priority { display: inline-flex; align-items: center; gap: 3px; color: var(--f-danger); font-weight: 500; }
@@ -115,10 +109,7 @@
 .support-related + .support-related { margin-top: 12px; }
 .support-related small { display: block; margin-top: 5px; color: var(--f-secondary); font-size: 9px; }
 .support-related .f-icon { position: absolute; right: 0; top: 5px; width: 11px; height: 11px; color: var(--f-secondary); }
-.support-empty { display: grid; align-content: center; justify-items: center; min-height: 200px; height: 100%; gap: 10px; padding: 24px; text-align: center; color: var(--f-secondary); }
-.support-empty > .f-icon { width: 32px; height: 32px; margin-bottom: 5px; color: var(--f-tertiary); }
-.support-empty h2, .support-empty h3 { font-size: 15px; font-weight: 600; color: var(--f-text); }
-.support-empty p { font-size: 12px; }
+.support-empty { --f-empty-title-size: 15px; height: 100%; }
 .support-queues-toggle, .support-back, .support-customer-back, .support-customer-toggle { display: none; }
 .support-new-dialog { max-height: calc(100dvh - 32px); overflow: auto; }
 @container support (max-width: 1100px) {
@@ -156,11 +147,8 @@
   .support-list-tools .f-input { min-height: 42px; font-size: 16px; }
   .support-list-tools .f-search > .f-icon { top: 13px; }
   .support-list-order { font-size: 12px; }
-  .support-ticket-list { padding: 0; }
-  .support-ticket { border-radius: 0; padding: 16px 16px 16px 66px; }
-  .support-ticket::after { left: 66px; right: 0; }
-  .support-ticket[aria-current='true'] { background: transparent; }
-  .support-ticket[aria-current='true']::after { border-color: var(--f-border); }
+  .support-ticket-list { --f-conversation-list-padding: 0; }
+  .support-ticket { --f-conversation-row-radius: 0px; --f-conversation-row-padding: 16px; --f-conversation-row-leading-inset: 66px; --f-conversation-separator-end: 0px; --f-conversation-current-background: transparent; --f-conversation-current-border: var(--f-border); }
   .support-ticket-avatar { display: grid; position: absolute; left: 16px; top: 17px; width: 36px; height: 36px; font-size: 12px; }
   .support-ticket-top strong { font-size: 15px; }
   .support-ticket-time { font-size: 11px; }

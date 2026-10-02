@@ -1,0 +1,308 @@
+[
+  {
+    "id": "button",
+    "kind": "primitive",
+    "classes": [
+      "f-button"
+    ],
+    "blade": [
+      "button"
+    ],
+    "uses": []
+  },
+  {
+    "id": "input",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "input"
+    ],
+    "uses": []
+  },
+  {
+    "id": "field",
+    "kind": "composition",
+    "classes": [
+      "f-field",
+      "f-label",
+      "f-help",
+      "f-error"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "switch",
+    "kind": "primitive",
+    "classes": [
+      "f-switch"
+    ],
+    "blade": [
+      "switch"
+    ],
+    "uses": []
+  },
+  {
+    "id": "checkbox",
+    "kind": "primitive",
+    "classes": [
+      "f-check"
+    ],
+    "blade": [
+      "checkbox"
+    ],
+    "uses": []
+  },
+  {
+    "id": "radio",
+    "kind": "primitive",
+    "classes": [
+      "f-check"
+    ],
+    "blade": [
+      "radio"
+    ],
+    "uses": []
+  },
+  {
+    "id": "select",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "select"
+    ],
+    "uses": []
+  },
+  {
+    "id": "textarea",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "textarea"
+    ],
+    "uses": []
+  },
+  {
+    "id": "search",
+    "kind": "composition",
+    "classes": [
+      "f-search"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "segmented",
+    "kind": "composition",
+    "classes": [
+      "f-segmented"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "disclosure",
+    "kind": "primitive",
+    "classes": [
+      "f-disclosure"
+    ],
+    "blade": [
+      "disclosure"
+    ],
+    "uses": []
+  },
+  {
+    "id": "dialog",
+    "kind": "primitive",
+    "classes": [
+      "f-dialog"
+    ],
+    "blade": [
+      "dialog"
+    ],
+    "uses": []
+  },
+  {
+    "id": "avatar",
+    "kind": "pattern",
+    "classes": [
+      "f-avatar"
+    ],
+    "blade": [],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "sidebar",
+    "kind": "pattern",
+    "classes": [
+      "f-sidebar"
+    ],
+    "blade": [],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "toolbar",
+    "kind": "composition",
+    "classes": [
+      "f-toolbar"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "card",
+    "kind": "primitive",
+    "classes": [
+      "f-card"
+    ],
+    "blade": [
+      "card"
+    ],
+    "uses": []
+  },
+  {
+    "id": "badge",
+    "kind": "composition",
+    "classes": [
+      "f-badge"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "toast",
+    "kind": "composition",
+    "classes": [
+      "f-toast"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "row",
+    "kind": "utility",
+    "classes": [
+      "f-row"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "stack",
+    "kind": "utility",
+    "classes": [
+      "f-stack"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "muted",
+    "kind": "utility",
+    "classes": [
+      "f-muted"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "screen-reader",
+    "kind": "utility",
+    "classes": [
+      "f-sr-only"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "icon",
+    "kind": "utility",
+    "classes": [
+      "f-icon"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "conversation-list",
+    "kind": "pattern",
+    "classes": [
+      "f-conversation-list"
+    ],
+    "blade": [
+      "conversation-list"
+    ],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "conversation-row",
+    "kind": "pattern",
+    "classes": [
+      "f-conversation-row"
+    ],
+    "blade": [
+      "conversation-row"
+    ],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "attachment",
+    "kind": "pattern",
+    "classes": [
+      "f-attachment"
+    ],
+    "blade": [
+      "attachment"
+    ],
+    "uses": [
+      "index.html",
+      "chat.html"
+    ]
+  },
+  {
+    "id": "empty-state",
+    "kind": "pattern",
+    "classes": [
+      "f-empty-state"
+    ],
+    "blade": [
+      "empty-state"
+    ],
+    "uses": [
+      "index.html",
+      "support.html",
+      "chat.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "mail",
+    "kind": "reference",
+    "classes": [
+      "f-mail",
+      "f-mail-container"
+    ],
+    "blade": [],
+    "uses": [
+      "index.html"
+    ]
+  }
+]

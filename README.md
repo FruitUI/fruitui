@@ -8,6 +8,10 @@ The [component policy](docs/component-policy.md) defines the boundary between to
 
 Every component, pattern, example, and interaction state must support dark mode. FruitUI's CSS follows the system appearance automatically, including changes while the page is open, without JavaScript.
 
+The [component gallery](components.html) covers every public CSS family with live specimens and HTML/Blade usage. The [component guide](docs/components.md) documents compositions, slots, native behavior, and presentation tokens. A [checked catalog](docs/component-catalog.json) ties core CSS, Blade adapters, gallery coverage, and actual pattern consumers together.
+
+Mail and Support share the same Conversation List and Conversation Row, including separators, hover/current states, text truncation, and previews. Mail uses the filled current-row appearance; Support uses the quiet appearance. Each example supplies its own responsive geometry and application actions. Mail and Chat share Attachment; all four examples share Empty State. These patterns ship in the CSS package and have Blade wrappers. A bulk-selection checkbox sits beside a conversation-opening button and keeps its own value.
+
 ## Run the examples
 
 Requires Node 20.19+ or 22.12+.
@@ -181,7 +185,7 @@ Import `fruitui/css` in your app’s Vite entry and wrap the layout in `fruit-ui
 </x-fruit::card>
 ```
 
-Available components: `button` (`default`, `primary`, `ghost`, `danger`), `input`, `checkbox`, `radio`, `switch`, `select`, `textarea`, `card`, `disclosure` (with a `title` prop), and `dialog`. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`.
+Available components: `button` (`default`, `primary`, `ghost`, `danger`), `input`, `checkbox`, `radio`, `switch`, `select`, `textarea`, `card`, `disclosure` (with a `title` prop), `dialog`, `conversation-list`, `conversation-row` (`quiet`, `filled`), `attachment`, and `empty-state`. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`. Conversation Row always uses `type="button"`; its slots contain noninteractive identity/preview content, while action bindings reach the button. Conversation List accepts native `li` children. Attachment requires a native URL; Empty State composes informational content and independent recovery actions. See the [pattern guide](docs/components.md) for HTML, Blade, and slot examples.
 
 Input accepts only `text`, `email`, `password`, `search`, `tel`, and `url`; `text` is the default. Use the dedicated selection components for checkbox, radio, and switch semantics. Other native control families need their own primitive when a real use arises. Controls keep their native element and role; normal value/action bindings remain available, while `as`, incompatible type/role attributes, and client bindings that change type/role are rejected.
 
@@ -258,7 +262,7 @@ Use Livewire’s existing Alpine instance when combining the two. For a manually
 
 ```text
 src/fruitui.css                CSS entry point
-src/css/                      Tokens, controls, layout, Mail pattern
+src/css/                      Tokens, controls, layout, shared patterns, Mail shell
 src/js/alpine.js              Optional Alpine helpers
 src/Laravel/                  Service provider and optional Livewire component
 resources/views/components/  Thin Blade wrappers for native elements
@@ -271,6 +275,8 @@ admin.html                    Administration reference interface
 components.html               Component gallery and integration examples
 tests/                        Browser, component-contract, and Laravel integration checks
 docs/component-policy.md      Component contracts and change acceptance rules
+docs/component-catalog.json   Checked public CSS/Blade inventory and reuse evidence
+docs/components.md            Public compositions, slots, and presentation tokens
 AGENTS.md                     Contributor rules for component work
 ```
 

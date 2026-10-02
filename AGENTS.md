@@ -11,5 +11,6 @@ Read [docs/component-policy.md](docs/component-policy.md) before adding or chang
 - Preserve native form attributes, labels, `x-model`, `wire:model`, and action attributes on the real control. Protect fixed element/type/role semantics instead of allowing polymorphic `as` or client bindings that change the kind of control.
 - For component work, run `composer test`, `npm run build`, and `npm test`. Test changed contracts, invalid options, form values, and integration behavior. Reuse the existing accessibility, theme, and responsive checks; add focused cases when behavior changes.
 - Explain a new primitive's distinct purpose or a new pattern's two real uses in the change description. Describe supported options and slots, and update the policy catalog and component gallery when the public API changes.
+- Update `docs/component-catalog.json` for every public CSS family or Blade adapter. Each entry needs a gallery specimen, HTML and Blade usage, and actual example paths for extracted patterns. When adding an example, compare repeated arrangements with existing examples and extract common presentation once two real uses exist; explain any differences left local.
 
 Keep changes focused. Do not add speculative configuration, universal component dispatchers, or a new abstraction solely to reduce the component count.

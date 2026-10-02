@@ -146,10 +146,7 @@
 .admin-page-controls > .f-input { width: 100px; font-size: 10px; min-height: 28px; }
 .admin-page-controls > .f-button { min-height: 28px; min-width: 28px; padding: 5px; color: var(--f-secondary); }
 .admin-page-controls .f-icon { width: 12px; height: 12px; }
-.admin-empty { display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; padding: 45px 20px; min-height: 220px; }
-.admin-empty > .f-icon { color: var(--f-tertiary); width: 30px; height: 30px; }
-.admin-empty h4 { font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
-.admin-empty p { color: var(--f-secondary); font-size: 12px; }
+.admin-empty { --f-empty-padding: 45px 20px; --f-empty-min-height: 220px; }
 .admin-empty .f-button { margin-top: 5px; font-size: 11px; }
 .admin-activity, .admin-settings { padding: 24px; }
 .admin-activity-list { list-style: none; }

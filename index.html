@@ -85,19 +85,19 @@
         </nav>
         <section class="f-mail__list-pane" aria-label="Message list">
           <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
-          <div class="f-mail__list" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
+          <ul class="f-conversation-list f-mail__list" role="list" aria-label="Messages" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
             <template x-for="item in filtered" :key="item.id">
-              <button class="f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
-                <span class="f-avatar f-mail__list-avatar" x-text="item.initials" aria-hidden="true"></span>
-                <span class="f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
-                <span class="f-mail__message-top"><span class="f-mail__sender" x-text="item.sender"></span><span class="f-mail__time" x-text="item.time"></span><svg class="f-icon f-mail__message-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span>
-                <span class="f-mail__subject" x-text="item.subject"></span><span class="f-mail__preview" x-text="item.preview"></span>
-                <span class="f-mail__origin" x-show="accountId === 'all'" x-text="account(item.accountId).name"></span><span class="f-sr-only" x-show="item.flagged">Flagged</span>
-              </button>
+              <li><button class="f-conversation-row f-conversation-row--filled f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
+                <span class="f-conversation-row__leading f-avatar f-mail__list-avatar" x-text="item.initials" aria-hidden="true"></span>
+                <span class="f-conversation-row__unread f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
+                <span class="f-conversation-row__top f-mail__message-top"><span class="f-conversation-row__title f-mail__sender" x-text="item.sender"></span><span class="f-conversation-row__time f-mail__time" x-text="item.time"></span><svg class="f-icon f-mail__message-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span>
+                <span class="f-conversation-row__subtitle f-mail__subject" x-text="item.subject"></span><span class="f-conversation-row__preview f-mail__preview" x-text="item.preview"></span>
+                <span class="f-conversation-row__meta f-mail__origin" x-show="accountId === 'all'" x-text="account(item.accountId).name"></span><span class="f-sr-only" x-show="item.flagged">Flagged</span>
+              </button></li>
             </template>
-            <div class="f-mail__empty" x-show="filtered.length === 0" x-cloak><div><h2>No messages</h2><p x-text="query ? 'Try another search.' : 'You’re all caught up.'"></p></div></div>
-            <noscript><div class="f-mail__message" aria-current="true"><span class="f-mail__sender">Sophie Chen</span><span class="f-mail__subject">A fresh start for FruitUI</span><span class="f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></div><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></noscript>
-          </div>
+            <li x-show="filtered.length === 0" x-cloak><div class="f-empty-state f-mail__empty"><h2 class="f-empty-state__title">No messages</h2><p class="f-empty-state__description" x-text="query ? 'Try another search.' : 'You’re all caught up.'"></p></div></li>
+            <noscript><li><button class="f-conversation-row f-conversation-row--filled f-mail__message" type="button" disabled aria-current="true"><span class="f-conversation-row__title f-mail__sender">Sophie Chen</span><span class="f-conversation-row__subtitle f-mail__subject">A fresh start for FruitUI</span><span class="f-conversation-row__preview f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></li></noscript>
+          </ul>
         </section>
         <article class="f-mail__reader" aria-label="Reading pane" aria-live="polite">
           <div x-show="message">
@@ -110,11 +110,11 @@
               <p x-show="message?.body[3]" x-text="message?.body[3]">Let’s make something we’ll love using every day.</p>
               <p class="signature" x-show="message?.body[4]" x-text="message?.body[4]">Sophie</p>
               <template x-for="(paragraph, index) in message?.body.slice(5) ?? []" :key="index"><p x-text="paragraph"></p></template>
-              <a class="f-mail__attachment" x-show="message?.attachment" href="/attachments/fruitui-design-notes.txt" download><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg><span>FruitUI — design notes.txt<small>Text document · 1 KB</small></span><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg></a>
+              <a class="f-attachment f-mail__attachment" x-show="message?.attachment" href="/attachments/fruitui-design-notes.txt" download><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg><span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span><svg class="f-icon f-attachment__trailing" aria-hidden="true"><use href="#i-download"/></svg></a>
               <div class="f-mail__reply"><button class="f-button" type="button" @click="compose('reply')"><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg>Reply</button><button class="f-button f-button--ghost" type="button" @click="compose('forward')"><svg class="f-icon" aria-hidden="true"><use href="#i-forward"/></svg>Forward</button></div>
             </div>
           </div>
-          <div class="f-mail__empty" x-show="!message" x-cloak><div><h2>No message selected</h2><p>Choose a message to read it here.</p></div></div>
+          <div class="f-empty-state f-mail__empty" x-show="!message" x-cloak><h2 class="f-empty-state__title">No message selected</h2><p class="f-empty-state__description">Choose a message to read it here.</p></div>
         </article>
         <footer class="f-mail__mobile-footer" aria-label="Mail actions">
           <div class="f-mail__inbox-actions">
