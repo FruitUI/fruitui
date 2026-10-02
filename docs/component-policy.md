@@ -116,6 +116,8 @@ Mail, Support, Chat, and Admin are the current reference interfaces. Their sampl
 
 CSS handles appearance and layout, Blade emits the same native controls, Alpine adds local state, and Livewire adds server actions. Their semantic contracts remain the same. Do not add a second Alpine instance, automatic DOM role switching, or adapter-specific behavior flags. Test a control's changed behavior and integration; use the existing gallery checks for light/dark, focus, accessibility, and narrow layouts.
 
+Server-driven examples use Livewire 4 single-file components, keeping PHP state/actions and Blade markup together in the class-based format previously provided by Volt. Reusable native controls remain thin Blade adapters and work without Livewire. Laravel adapters target Laravel 13 and PHP 8.3+.
+
 ## Change acceptance
 
 Before adding a primitive or option, describe the requested use, the semantic purpose, existing composition considered, supported options, and attribute ownership. For a new pattern, name its two actual uses. Update the contract catalog and relevant gallery examples, retain adapter parity, verify every affected state in light and dark appearances, and add focused regression coverage for new behavior or validation. `composer test`, `npm run build`, and `npm test` must pass for component changes.

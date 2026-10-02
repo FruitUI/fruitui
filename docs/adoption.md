@@ -32,9 +32,13 @@ This fits FreeScout's existing Blade/Bootstrap/jQuery setup without changing its
 ## JavaScript and optional editing
 
 ```js
+import Alpine from 'alpinejs';
 import fruitUI from 'fruitui/alpine';
-fruitUI(Alpine); // Existing instance, before Alpine/Livewire starts.
+fruitUI(Alpine);
+Alpine.start();
 ```
+
+This setup is for an application that owns a standalone Alpine instance. With Livewire, use its existing Alpine instance: import `{ Livewire, Alpine }` from the host's `vendor/livewire/livewire/dist/livewire.esm`, register `fruitUI(Alpine)`, and call `Livewire.start()`. Follow [Livewire's manual bundling setup](https://livewire.laravel.com/docs/4.x/alpine#manually-bundling-alpine-in-your-javascript-build), including `@livewireScriptConfig` in the layout.
 
 The compiled `fruitui/dist/alpine.js` provides the same exports without a bundler. `alpine.global.js` exposes `FruitUI.default(Alpine)` and `FruitUI.fruitToast`; load it before your existing instance starts. The helpers never include or start Alpine. With automatically loaded Livewire scripts, register in `alpine:init` before Livewire initializes. With Livewire's manual bundle, register on its exported Alpine, then call `Livewire.start()`.
 
@@ -42,14 +46,24 @@ Core installs no editor packages. To import the source `fruitui/editor` module, 
 
 All form names, IDs, validation and models belong to the canonical select/textarea. Only generated presentation containers use `wire:ignore`; never ignore the whole control wrapper. Editor sends `input` during editing and one `change` when focus leaves the widget, including its toolbar; it forwards native `focus`/`blur`. Discrete option/token commits send `input` and `change`. An unchanged value sends no duplicate events. Resets and external value updates do not emit user edit events.
 
-Respect the host Livewire version's modifiers: Livewire 3 uses `.change`/`.blur` for network timing; Livewire 4 uses `.live.change`/`.live.blur` for that behavior. FruitUI forwards events without changing those semantics. Server HTML sanitization, recipient validation, permission checks and upload transport stay with the application.
+Livewire 4 uses `.live.change`/`.live.blur` to send network updates on change/blur. FruitUI forwards events without changing those semantics. Server HTML sanitization, recipient validation, permission checks and upload transport stay with the application.
+
+## Laravel and single-file Livewire components
+
+The Composer service provider auto-registers the `x-fruit::` Blade adapters. Use them inside a `.fruit-ui` scope and import `fruitui/css` through the application's asset build. Blade controls retain their native attributes, including `name`, `required`, `wire:model`, and action bindings; plain Blade usage does not require Livewire.
+
+Install optional server behavior with `composer require "livewire/livewire:^4.0"`. The included `<livewire:fruit-mail-preferences />` example stores two boolean settings in the current session. Its PHP state/actions and Blade template live together in `resources/views/livewire/mail-preferences.blade.php`.
+
+FruitUI uses Livewire 4's native single-file format for server-driven examples. This is the class-based syntax previously supplied by Volt (`new class extends Livewire\Component`); [Livewire's migration guide](https://livewire.laravel.com/docs/4.x/upgrading#upgrading-volt) explains the transition. The separate `livewire/volt` package is not required. Application components can compose the same thin Blade adapters in this format.
+
+The existing `fruit-mail-preferences` tag and session key are preserved. PHP callers that used `FruitUI\Livewire\MailPreferences::class` must use the registered name instead, including `Livewire::test('fruit-mail-preferences')`. Clear compiled views with `php artisan view:clear` when updating.
 
 ## Fields and presentation ownership
 
 ```blade
 <x-fruit::field control-id="email" label="Email"
     description="Use your work address" :error="$errors->first('email')">
-    <x-fruit::input type="email" name="email" wire:model.blur="email"
+    <x-fruit::input type="email" name="email" wire:model.live.blur="email"
         aria-describedby="additional-help" />
 </x-fruit::field>
 ```
@@ -84,9 +98,7 @@ The Blade Toast adapter renders a native status container with a content slot. I
 
 ## Compatibility and upgrades
 
-Declared adapters support PHP 8.2+, Laravel 11–13 and optional Livewire 3–4. CI selects Testbench 9/10/11 with those Laravel generations and runs PHP contracts, packaged installation checks and actual browser/server interaction. The [workflow](../.github/workflows/test.yml) specifies the tested combinations; check its [latest results](https://github.com/nielspeen/fruitui/actions/workflows/test.yml) when choosing an integration version. The local verified environment is PHP 8.5, Laravel 13 and Livewire 4.
-
-Use Laravel 12/13 for new integrations. [Laravel 11's upstream security support ended](https://laravel.com/framework/docs/13.x/releases#support-policy), and Composer blocks its unpatched advisories. Its isolated CI job allows only `laravel/framework:^11.0` through advisory blocking and reports the advisories separately, so historical compatibility can still be checked. This exception exists only in that test runner; the distributed package and application setup do not disable Composer security policy.
+Adapters require PHP 8.3+ and Laravel 13; optional Livewire integrations require Livewire 4. Laravel 11/12 and Livewire 3 are no longer supported. CI uses Testbench 11 with Laravel 13, checks PHP 8.3 and 8.5, and runs PHP contracts, packaged installation checks and actual browser/server interaction. The [workflow](../.github/workflows/test.yml) specifies the combinations; check its [latest results](https://github.com/nielspeen/fruitui/actions/workflows/test.yml) for current verification. The local environment is PHP 8.5, Laravel 13 and Livewire 4.
 
 Browser CI targets Chromium, Firefox and WebKit. Locally choose `FRUITUI_BROWSERS=chromium,firefox,webkit npm test` after installing Playwright browsers. These browser engines do not establish native macOS/iOS Safari or operating-system picker verification. Unsupported custom-select styling falls back to a native picker; lack of Popover support retains the CSS-positioned disclosure/list fallback.
 

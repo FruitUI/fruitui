@@ -1,6 +1,7 @@
 <?php
 Livewire\Livewire::component('fruit-adoption', FruitUI\BrowserHost\AdoptionFixture::class);
 Illuminate\Support\Facades\Route::get('/', fn () => view('host'));
+Illuminate\Support\Facades\Route::get('/preferences', fn () => view('host', ['component' => 'fruit-mail-preferences']));
 
 // Test-only native form endpoint verifies real received bytes, not a browser protocol approximation.
 Illuminate\Support\Facades\Route::post('/native-submit', function (Illuminate\Http\Request $request) {

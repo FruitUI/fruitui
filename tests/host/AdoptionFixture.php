@@ -14,5 +14,5 @@ class AdoptionFixture extends \Livewire\Component
     public function updatedSignature(): void { $this->commits++; }
     public function updatedBlurSignature(): void { $this->blurCommits++; }
     public function mutate(): void { $this->changed = true; $this->owner = 'morgan'; $this->recipients = 'mia@example.com'; $this->readonly = true; }
-    public function render() { return view('fixture', ['livewire4' => str_starts_with(\Composer\InstalledVersions::getVersion('livewire/livewire'), '4.')]); }
+    public function render() { return view('fixture'); }
 }

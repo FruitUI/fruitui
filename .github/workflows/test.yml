@@ -9,30 +9,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '8.2'
-            testbench: '^9.0'
-            livewire: '^3.7'
-            phpunit: '^11.0'
-            browsers: chromium
           - php: '8.3'
-            testbench: '^10.0'
-            livewire: '^3.7'
-            phpunit: '^11.0'
             browsers: chromium
           - php: '8.5'
-            testbench: '^11.0'
-            livewire: '^4.0'
-            phpunit: '^12.0'
             browsers: chromium
           - php: '8.5'
-            testbench: '^11.0'
-            livewire: '^4.0'
-            phpunit: '^12.0'
             browsers: firefox
           - php: '8.5'
-            testbench: '^11.0'
-            livewire: '^4.0'
-            phpunit: '^12.0'
             browsers: webkit
     steps:
       - uses: actions/checkout@v7
@@ -46,17 +29,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench }}" "livewire/livewire:${{ matrix.livewire }}" "phpunit/phpunit:${{ matrix.phpunit }}"
-      - name: Allow Laravel 11 only for historical compatibility tests
-        if: matrix.testbench == '^9.0'
-        run: >-
-          composer config --json policy.advisories.ignore
-          '{"laravel/framework":{"constraint":"^11.0","on-audit":false,"reason":"Historical Laravel 11 compatibility tests in isolated CI only; advisories remain reported."}}'
       - run: composer update --no-interaction --prefer-dist
-      - name: Report Laravel 11 advisories
-        if: matrix.testbench == '^9.0'
-        continue-on-error: true
-        run: composer audit --format=plain
       - run: composer test
       - run: npm ci
       - run: npx playwright install --with-deps ${{ matrix.browsers }}

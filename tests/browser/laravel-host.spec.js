@@ -1,5 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+test('single-file Mail preferences save and reload through the real Livewire host', async ({ page }) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('http://127.0.0.1:5180/preferences');
+  const previews = page.getByRole('switch', { name: 'Show message previews' });
+  const sounds = page.getByRole('switch', { name: 'Play a sound for new messages' });
+  await expect(previews).toBeChecked();
+  await expect(sounds).not.toBeChecked();
+  await previews.uncheck();
+  await sounds.check();
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await expect(page.getByRole('status')).toHaveText('Changes saved.');
+  await page.reload();
+  await expect(previews).not.toBeChecked();
+  await expect(sounds).toBeChecked();
+  await expect(page.getByRole('status')).toBeEmpty();
+  expect(errors).toEqual([]);
+});
+
 test('real Laravel/Livewire host commits change and blur bindings and morphs enhanced controls', async ({ page }) => {
   const errors = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:5180');

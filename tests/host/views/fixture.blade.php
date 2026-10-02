@@ -10,19 +10,11 @@
         <x-fruit::token-field name="recipients" wire:model="recipients" :readonly="$readonly">{{ $recipients }}</x-fruit::token-field>
     </x-fruit::field>
     <x-fruit::field control-id="signature" label="Signature">
-        @if($livewire4)
-            <x-fruit::editor name="signature" wire:model.live.change="signature">{{ $signature }}</x-fruit::editor>
-        @else
-            <x-fruit::editor name="signature" wire:model.change="signature">{{ $signature }}</x-fruit::editor>
-        @endif
+        <x-fruit::editor name="signature" wire:model.live.change="signature">{{ $signature }}</x-fruit::editor>
     </x-fruit::field>
     <p id="commits">{{ $commits }} commits</p><output id="saved-signature">{{ $signature }}</output>
     <x-fruit::field control-id="blur-signature" label="Blur signature">
-        @if($livewire4)
-            <x-fruit::editor name="blurSignature" wire:model.live.blur="blurSignature">{{ $blurSignature }}</x-fruit::editor>
-        @else
-            <x-fruit::editor name="blurSignature" wire:model.blur="blurSignature">{{ $blurSignature }}</x-fruit::editor>
-        @endif
+        <x-fruit::editor name="blurSignature" wire:model.live.blur="blurSignature">{{ $blurSignature }}</x-fruit::editor>
     </x-fruit::field>
     <p id="blur-commits">{{ $blurCommits }} blur commits</p><output id="saved-blur-signature">{{ $blurSignature }}</output>
     <x-fruit::button wire:click="mutate">Update from server</x-fruit::button>
