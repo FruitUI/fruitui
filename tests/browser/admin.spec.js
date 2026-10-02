@@ -42,7 +42,9 @@ test('create and edit forms keep native values and update current stats, plans, 
   await page.getByRole('button', { name: 'Edit Taylor Reed Jr.', exact: true }).click();
   await expect(dialog.getByLabel('Plan', { exact: true })).toHaveValue('business');
   await expect(dialog.getByLabel('Send product updates', { exact: true })).not.toBeChecked();
+  await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
   await adminNav(page).getByRole('link', { name: /^Activity/ }).click();
   await expect(page.locator('.admin-activity-list li')).toHaveCount(2);
   await expect(page.locator('.admin-activity-list li').first()).toContainText('Updated Taylor Reed Jr.');
@@ -222,6 +224,8 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
   await adminNav(page).getByRole('link', { name: /^Directory/ }).click();
   await expect(page.getByRole('heading', { name: 'Customers', exact: true, level: 2 })).toBeFocused();
+  // x-show reveals the panel on the next frame; focus() doesn't await visibility.
+  await expect(page.locator('[x-ref="tableRegion"]')).toBeVisible();
   await page.locator('[x-ref="tableRegion"]').focus();
   await expect(page.locator('[x-ref="tableRegion"]')).toBeFocused();
   await page.keyboard.press('ArrowRight');

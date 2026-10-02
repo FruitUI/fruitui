@@ -3,5 +3,7 @@
 @import './css/base.css';
 @import './css/components.css';
 @import './css/layout.css';
+@import './css/workspace.css';
+@import './css/table.css';
 @import './css/patterns.css';
 @import './css/mail.css';

@@ -51,6 +51,37 @@ final class ComponentContract
         }
     }
 
+    public static function floatingDisclosure(mixed $placement, ComponentAttributeBag $attributes): void
+    {
+        self::option('floating-disclosure', 'placement', $placement, ['below', 'above']);
+        self::semantics('floating-disclosure', $attributes, 'group');
+    }
+
+    public static function splitter(mixed $pane, mixed $flexible, mixed $variable, mixed $min, mixed $max, mixed $reserve, mixed $edge, ComponentAttributeBag $attributes): void
+    {
+        self::semantics('splitter', $attributes, 'separator');
+        self::option('splitter', 'edge', $edge, ['start', 'end']);
+        if (! is_string($pane) || trim($pane) === '' || ! is_string($flexible) || trim($flexible) === '' || $pane === $flexible
+            || ! is_string($variable) || ! preg_match('/^--f-[\w-]+$/', $variable)
+            || ! is_numeric($min) || ! is_numeric($max) || ! is_numeric($reserve)
+            || ! is_finite((float) $min) || ! is_finite((float) $max) || ! is_finite((float) $reserve)
+            || $min <= 0 || $max < $min || $reserve <= 0) {
+            throw new InvalidArgumentException('FruitUI splitter requires distinct pane/flexible IDs, a --f- variable and positive width bounds.');
+        }
+        foreach ($attributes->all() as $name => $value) {
+            $name = strtolower($name);
+            $ownedBinding = false;
+            foreach (['x-data', ':tabindex', 'x-bind:tabindex', ':aria-orientation', 'x-bind:aria-orientation', ':aria-controls', 'x-bind:aria-controls'] as $binding) {
+                if ($name === $binding || str_starts_with($name, $binding.'.')) $ownedBinding = true;
+            }
+            if ($ownedBinding
+                || ($name === 'tabindex' && (string) $value !== '0') || ($name === 'aria-orientation' && $value !== 'vertical')
+                || ($name === 'aria-controls' && $value !== $pane)) {
+                throw new InvalidArgumentException('FruitUI splitter owns its orientation, focus, controlled pane and Alpine helper.');
+            }
+        }
+    }
+
     /** Native roles are fixed; structural containers allow documented grouping roles. */
     public static function semantics(string $component, ComponentAttributeBag $attributes, string|array|null $role = null, ?string $fixedType = null): void
     {

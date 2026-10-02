@@ -30,7 +30,9 @@
         <div class="preview-controls"><span class="example-tag">Interactive example · 01</span><fieldset class="f-segmented" style="margin: 0" aria-label="Mail preview size"><legend class="f-sr-only">Mail preview size</legend><label><input type="radio" name="mail-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="mail-preview" value="phone" x-model="preview"><span>iPhone</span></label></fieldset></div>
       </div>
       <div class="f-mail-container" :data-preview="preview">
-      <section id="mail" class="f-mail" aria-label="Mail example" data-view="list" :data-view="view" :data-sidebar="sidebarVisible ? 'visible' : 'hidden'">
+      <section id="mail" class="f-workspace f-mail" aria-label="Mail example" data-view="list" :data-view="view" :data-sidebar="sidebarVisible ? 'visible' : 'hidden'">
+          <div class="f-splitter f-mail__sidebar-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Mailboxes" aria-controls="mailboxes" data-edge="end" x-data="fruitSplitter({pane: 'mailboxes', flexible: 'mail-reader', variable: '--f-sidebar-width', min: 160, max: 300, reserve: 280, edge: 'end'})"></div>
+          <div class="f-splitter f-mail__list-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Messages" aria-controls="mail-list-pane" data-edge="end" x-data="fruitSplitter({pane: 'mail-list-pane', flexible: 'mail-reader', variable: '--f-list-width', min: 240, max: 480, reserve: 280, edge: 'end'})"></div>
         <div class="f-toolbar f-mail__sidebar-toolbar">
           <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
@@ -58,16 +60,16 @@
             <button class="f-button f-button--ghost f-mail__open-mailboxes" type="button" @click="showMailboxes" aria-controls="mailboxes" aria-label="Show mailboxes"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg>Mailboxes</button>
             <button class="f-button f-button--ghost f-mail__back-to-list" type="button" x-ref="mobileBack" @click="backToList" aria-label="Back to messages"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="mailboxTitle">All Inboxes</span></button>
             <button class="f-button f-button--ghost f-mail__close-mailboxes" type="button" @click="backToList">Done</button>
-            <details class="f-mail__options" @click.outside="$el.removeAttribute('open')" @keydown.escape.stop="$el.removeAttribute('open'); $el.querySelector('summary').focus()">
+            <details class="f-floating-disclosure f-mail__options" x-data="fruitFloatingDisclosure">
               <summary class="f-button f-button--ghost f-button--icon" aria-label="Mailbox options"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></summary>
-              <div class="f-mail__options-menu"><button class="f-button f-button--ghost" type="button" @click="markAllRead(); $el.closest('details').removeAttribute('open')"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg>Mark all as read</button><button class="f-button f-button--ghost" type="button" @click="toggleFilter(); $el.closest('details').removeAttribute('open')" :aria-pressed="unreadOnly"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg>Unread only</button></div>
+              <div class="f-floating-disclosure__content f-mail__options-menu"><button class="f-button f-button--ghost" type="button" @click="markAllRead(); $el.closest('details').removeAttribute('open')"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg>Mark all as read</button><button class="f-button f-button--ghost" type="button" @click="toggleFilter(); $el.closest('details').removeAttribute('open')" :aria-pressed="unreadOnly"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg>Unread only</button></div>
             </details>
             <div class="f-mail__message-navigation"><button class="f-button f-button--ghost f-button--icon" type="button" @click="moveSelection(-1)" :disabled="messageIndex <= 0" aria-label="Previous message"><svg class="f-icon" aria-hidden="true"><use href="#i-up"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" @click="moveSelection(1)" :disabled="messageIndex < 0 || messageIndex >= filtered.length - 1" aria-label="Next message"><svg class="f-icon" aria-hidden="true"><use href="#i-down"/></svg></button></div>
           </div>
           <h1 class="f-mail__large-title" tabindex="-1" x-ref="mobileTitle" x-text="view === 'mailboxes' ? 'Mailboxes' : mailboxTitle">All Inboxes</h1>
           <div class="f-search f-mail__mobile-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="phone-mail-search">Search messages</label><input id="phone-mail-search" class="f-input" type="search" placeholder="Search" x-model="query" @input="syncSelection"></div>
         </header>
-        <nav id="mailboxes" class="f-sidebar f-mail__sidebar" aria-label="Mailboxes" x-ref="mailboxes">
+        <nav id="mailboxes" class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar f-mail__sidebar" aria-label="Mailboxes" x-ref="mailboxes">
           <p class="f-sidebar__heading">All Accounts</p>
           <template x-for="folder in folders" :key="folder.id">
             <button class="f-sidebar__item" type="button" @click="setMailbox(folder.id)" :aria-label="folder.id === 'inbox' ? 'All Inboxes' : folder.label" :aria-current="accountId === 'all' && mailbox === folder.id ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + folder.icon"/></svg><span x-text="folder.id === 'inbox' ? 'All Inboxes' : folder.label"></span><span class="f-badge" x-show="folder.id === 'inbox' || count(folder.id) > 0" x-text="folder.id === 'inbox' ? unreadFor() : count(folder.id)"></span></button>
@@ -83,7 +85,7 @@
           <noscript><details class="f-sidebar__group"><summary class="f-sidebar__item">Work · alex@studio.example</summary><div class="f-sidebar__item f-sidebar__item--nested">Inbox · 4 messages</div></details><details class="f-sidebar__group"><summary class="f-sidebar__item">Personal · alex@example.com</summary><div class="f-sidebar__item f-sidebar__item--nested">Inbox · 4 messages</div></details></noscript>
           <div class="f-mail__account"><span class="f-avatar">AM</span><div>Alex Morgan<small>2 accounts connected</small></div></div>
         </nav>
-        <section class="f-mail__list-pane" aria-label="Message list">
+        <section id="mail-list-pane" class="f-pane f-pane--column f-pane--border-end f-mail__list-pane" aria-label="Message list">
           <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
           <ul class="f-conversation-list f-mail__list" role="list" aria-label="Messages" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
             <template x-for="item in filtered" :key="item.id">
@@ -99,7 +101,7 @@
             <noscript><li><button class="f-conversation-row f-conversation-row--filled f-mail__message" type="button" disabled aria-current="true"><span class="f-conversation-row__title f-mail__sender">Sophie Chen</span><span class="f-conversation-row__subtitle f-mail__subject">A fresh start for FruitUI</span><span class="f-conversation-row__preview f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></li></noscript>
           </ul>
         </section>
-        <article class="f-mail__reader" aria-label="Reading pane" aria-live="polite">
+        <article id="mail-reader" class="f-pane f-pane--scroll f-mail__reader" aria-label="Reading pane" aria-live="polite">
           <div x-show="message">
             <header class="f-mail__message-header"><h2 x-text="message?.subject">A fresh start for FruitUI</h2><div class="f-mail__sender-detail"><span class="f-avatar" x-text="message?.initials">SC</span><div><strong x-text="message?.sender">Sophie Chen</strong><p>To: <span x-text="message?.mailbox === 'sent' ? message.email : account(message?.accountId)?.email">alex@studio.example</span></p></div><time class="f-mail__date" x-text="message?.date">Today at 10:42 AM</time></div><p class="f-mail__account-detail" x-text="message ? account(message.accountId).name + ' · ' + account(message.accountId).email : ''">Work · alex@studio.example</p></header>
             <div class="f-mail__body">

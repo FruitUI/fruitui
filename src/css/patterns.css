@@ -1,4 +1,26 @@
 @layer fruit.patterns {
+  /* Native forms compose their own labels, textarea, help/error text and actions. */
+  .f-composer { --f-composer-background: var(--f-surface); flex-shrink: 0; padding: var(--f-composer-padding, 14px 24px 18px); border-top: 1px solid var(--f-border); background: var(--f-composer-background); }
+  .f-composer__input { display: block; min-height: var(--f-composer-input-min-height, 82px); max-height: var(--f-composer-input-max-height, 160px); font-size: var(--f-composer-input-size, 12px); line-height: 1.6; }
+  .f-composer__header, .f-composer__footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--f-composer-action-gap, 12px); }
+  .f-composer__header { margin-bottom: 10px; }
+  .f-composer__footer { margin-top: var(--f-composer-footer-margin, 9px); }
+
+  /* Native name/value facts, with one or more presentation columns. */
+  .f-description-list { display: grid; grid-template-columns: var(--f-description-columns, minmax(0, 1fr)); gap: var(--f-description-gap, 13px); margin: var(--f-description-margin, 0); }
+  .f-description-list > div { min-width: 0; }
+  .f-description-list dt { color: var(--f-secondary); font-size: var(--f-description-term-size, 11px); }
+  .f-description-list dd { margin: var(--f-description-value-margin, 3px 0 0); font-size: var(--f-description-value-size, 13px); line-height: var(--f-description-value-line-height, 1.6); overflow-wrap: anywhere; }
+
+  /* A native disclosure containing independent controls; no menu role implied. */
+  .f-floating-disclosure { --f-floating-background: var(--f-surface); --f-floating-shadow: var(--f-shadow); position: relative; }
+  .f-floating-disclosure > summary { list-style: none; cursor: pointer; }
+  .f-floating-disclosure > summary::-webkit-details-marker { display: none; }
+  .f-floating-disclosure__content { position: absolute; inset-inline-end: 0; top: calc(100% + var(--f-floating-gap, 4px)); z-index: 6; width: var(--f-floating-width, max-content); max-width: calc(100vw - 32px); padding: var(--f-floating-padding, 5px); border: 1px solid var(--f-border); border-radius: var(--f-floating-radius, 10px); background: var(--f-floating-background); backdrop-filter: var(--f-floating-backdrop, none); box-shadow: var(--f-floating-shadow); }
+  .f-floating-disclosure--above > .f-floating-disclosure__content { top: auto; bottom: calc(100% + var(--f-floating-gap, 4px)); }
+  @media (prefers-reduced-transparency: reduce) {
+    .f-floating-disclosure__content { background: var(--f-surface-secondary); backdrop-filter: none; }
+  }
   /* Native lists of independent conversation-opening buttons. Application data
      and optional arrow-key navigation belong to the caller. */
   .f-conversation-list { min-height: 0; margin: 0; padding: var(--f-conversation-list-padding, 0 8px 8px); overflow: auto; list-style: none; }

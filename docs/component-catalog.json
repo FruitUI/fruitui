@@ -137,7 +137,9 @@
     "blade": [],
     "uses": [
       "index.html",
-      "support.html"
+      "support.html",
+      "chat.html",
+      "admin.html"
     ]
   },
   {
@@ -290,6 +292,109 @@
       "index.html",
       "support.html",
       "chat.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "workspace",
+    "kind": "pattern",
+    "classes": [
+      "f-workspace"
+    ],
+    "blade": [
+      "workspace"
+    ],
+    "uses": [
+      "index.html",
+      "support.html",
+      "chat.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "pane",
+    "kind": "pattern",
+    "classes": [
+      "f-pane"
+    ],
+    "blade": [
+      "pane"
+    ],
+    "uses": [
+      "index.html",
+      "support.html",
+      "chat.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "splitter",
+    "kind": "primitive",
+    "classes": [
+      "f-splitter"
+    ],
+    "blade": [
+      "splitter"
+    ],
+    "uses": [
+      "index.html",
+      "support.html",
+      "chat.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "composer",
+    "kind": "pattern",
+    "classes": [
+      "f-composer"
+    ],
+    "blade": [
+      "composer"
+    ],
+    "uses": [
+      "support.html",
+      "chat.html"
+    ]
+  },
+  {
+    "id": "description-list",
+    "kind": "pattern",
+    "classes": [
+      "f-description-list"
+    ],
+    "blade": [
+      "description-list"
+    ],
+    "uses": [
+      "support.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "floating-disclosure",
+    "kind": "pattern",
+    "classes": [
+      "f-floating-disclosure"
+    ],
+    "blade": [
+      "floating-disclosure"
+    ],
+    "uses": [
+      "index.html",
+      "chat.html"
+    ]
+  },
+  {
+    "id": "table",
+    "kind": "primitive",
+    "classes": [
+      "f-table"
+    ],
+    "blade": [
+      "table"
+    ],
+    "uses": [
       "admin.html"
     ]
   },

@@ -82,3 +82,5 @@
   .preview-controls { display: none; }
   .showcase .f-mail { --f-mail-mobile-height: clamp(520px, calc(100svh - 240px), 740px); }
 }
+
+.workspace-mark { --f-avatar-radius: 10px; --f-avatar-border: 1px solid var(--f-border); --f-avatar-background: var(--f-surface); --f-avatar-color: var(--f-text); --f-avatar-font-size: 18px; --f-avatar-font-weight: 700; }

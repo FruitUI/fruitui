@@ -1,7 +1,7 @@
 /* Admin-specific compositions. Controls and appearance come from FruitUI. */
 .admin-container { container: admin / inline-size; }
-.admin-workspace { display: grid; grid-template-columns: 205px minmax(0, 1fr); grid-template-rows: 66px minmax(0, 1fr); min-height: 900px; border: 1px solid var(--f-border); border-radius: var(--f-radius-lg); overflow: hidden; background: var(--f-surface-secondary); box-shadow: var(--f-shadow); }
-.admin-workspace > .f-toolbar { min-width: 0; border-bottom: 1px solid var(--f-border); }
+.admin-workspace { --f-workspace-columns: var(--f-sidebar-width, 205px) minmax(0, 1fr); --f-workspace-rows: 66px minmax(0, 1fr); --f-workspace-min-height: 900px; --f-workspace-background: var(--f-surface-secondary); }
+
 .admin-sidebar-toolbar { grid-column: 1; grid-row: 1; border-right: 1px solid var(--f-border); }
 .admin-toolbar-label { color: var(--f-secondary); font-size: 10px; }
 .admin-toolbar { grid-column: 2; grid-row: 1; gap: 12px; }
@@ -11,9 +11,9 @@
 .admin-toolbar-heading strong { min-width: 0; font-weight: 600; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .admin-local-label { margin-left: auto; color: var(--f-secondary); display: flex; align-items: center; gap: 6px; font-size: 10px; white-space: nowrap; }
 .admin-local-label > span { width: 5px; height: 5px; border-radius: 50%; background: var(--f-success); }
-.admin-sidebar { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; border-right: 1px solid var(--f-border); min-width: 0; padding: 22px 12px 20px; }
+.admin-sidebar { grid-column: 1; grid-row: 2; padding: 22px 12px 20px; }
 .admin-team { display: flex; gap: 10px; align-items: center; padding: 0 8px 12px; min-width: 0; }
-.admin-team-mark { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; background: var(--f-surface); border: 1px solid var(--f-border); border-radius: 10px; font-size: 18px; font-weight: 700; }
+
 .admin-team > div { min-width: 0; }
 .admin-team strong { display: block; font-size: 14px; font-weight: 650; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .admin-team small { display: block; color: var(--f-secondary); font-size: 9px; margin-top: 3px; }
@@ -105,17 +105,10 @@
 .admin-bulk-actions > span { margin-right: auto; }
 .admin-bulk-actions > .f-button { font-size: 10px; }
 .admin-bulk-actions > .f-button--ghost { color: var(--f-selection-text); }
-.admin-table-scroll { position: relative; overflow-x: auto; overscroll-behavior-inline: contain; }
-.admin-table-scroll:focus-visible { outline-offset: -3px; }
-.admin-table { width: 100%; min-width: 730px; border-collapse: collapse; font-size: 11px; }
-.admin-table th, .admin-table td { padding: 13px 10px; text-align: left; border-top: 1px solid var(--f-border); white-space: nowrap; font-weight: 400; }
-.admin-table thead { background: var(--f-surface-secondary); color: var(--f-secondary); font-size: 10px; }
-.admin-table thead th { padding-block: 10px; }
-.admin-table thead th > button { display: inline-flex; align-items: center; gap: 5px; background: transparent; color: inherit; padding: 0; border: 0; cursor: pointer; font-size: inherit; }
-.admin-table thead .f-icon { width: 10px; height: 10px; opacity: 0; }
-.admin-table th[aria-sort='ascending'] .f-icon, .admin-table th[aria-sort='descending'] .f-icon, .admin-table thead th > button:hover .f-icon { opacity: 1; }
-.admin-table tbody tr:hover { background: var(--f-hover); }
-.admin-table tbody tr[data-selected='true'] { background: var(--f-selection); }
+
+.admin-table { --f-table-min-width: 730px; --f-table-font-size: 11px; --f-table-heading-size: 10px; }
+.admin-table th, .admin-table td { white-space: nowrap; }
+
 .admin-table .admin-selection-cell { width: 38px; padding-inline: 17px 3px; }
 .admin-checkbox { width: 14px; height: 14px; margin: 0; display: block; accent-color: var(--f-accent); cursor: pointer; }
 .admin-customer { display: flex; align-items: center; gap: 10px; }
@@ -201,16 +194,15 @@
 .admin-detail-panel { padding: 26px 24px; }
 .admin-detail-panel:focus-visible { outline: 3px solid var(--f-accent); outline-offset: -3px; }
 .admin-detail-panel h3 { font-size: 14px; font-weight: 600; }
-.admin-detail-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 24px; margin: 24px 0; }
-.admin-detail-fields dt { color: var(--f-secondary); font-size: 11px; }
-.admin-detail-fields dd { margin: 5px 0 0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.admin-detail-fields { --f-description-columns: repeat(2, minmax(0, 1fr)); --f-description-gap: 26px 24px; --f-description-margin: 24px 0; --f-description-value-margin: 5px 0 0; }
+
 .admin-detail-notes { border-top: 1px solid var(--f-border); padding-top: 22px; }
 .admin-detail-notes h4 { margin: 0 0 9px; font-size: 12px; font-weight: 600; }
 .admin-detail-notes p { font-size: 13px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
 .admin-detail-plan-link { margin-top: 24px; color: var(--f-text); text-decoration: none; font-size: 11px; }
 .admin-joined-note { margin-top: 20px; font-size: 11px; color: var(--f-secondary); }
 @container admin (max-width: 1100px) {
-  .admin-workspace { grid-template-columns: 180px minmax(0, 1fr); }
+  .admin-workspace { grid-template-columns: var(--f-sidebar-width, 180px) minmax(0, 1fr); }
   .admin-content { padding: 24px 20px; }
   .admin-stat { padding: 15px 12px; }
   .admin-stat dt > .f-icon { display: none; }
@@ -305,7 +297,7 @@
   .admin-detail-tabs { padding-inline: 6px; gap: 0; }
   .admin-detail-tabs > button { flex: 1; min-height: 44px; padding: 10px 5px; font-size: 12px; }
   .admin-detail-panel { padding: 24px 16px; }
-  .admin-detail-fields { grid-template-columns: 1fr; gap: 22px; }
+  .admin-detail-fields { --f-description-columns: minmax(0, 1fr); --f-description-gap: 22px; }
   .admin-subscription-link { display: inline-flex; align-items: center; min-height: 44px; }
 }
 @media (max-width: 400px) {
@@ -318,3 +310,6 @@
   .admin-bar-track > span { background: Highlight; }
   .admin-table tbody tr[data-selected='true'] { outline: 2px solid Highlight; outline-offset: -2px; }
 }
+
+.admin-sidebar-splitter { --f-splitter-column: 1; }
+@container admin (max-width: 700px) { .admin-workspace > .f-splitter { display: none; } }

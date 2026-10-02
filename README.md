@@ -12,6 +12,8 @@ The [component gallery](components.html) covers every public CSS family with liv
 
 Mail and Support share the same Conversation List and Conversation Row, including separators, hover/current states, text truncation, and previews. Mail uses the filled current-row appearance; Support uses the quiet appearance. Each example supplies its own responsive geometry and application actions. Mail and Chat share Attachment; all four examples share Empty State. These patterns ship in the CSS package and have Blade wrappers. A bulk-selection checkbox sits beside a conversation-opening button and keeps its own value.
 
+All four examples share Workspace and Pane, with optional draggable/keyboard Splitter controls for column widths. Support and Chat share Composer; Support and Admin share Description List; Mail and Chat share Floating Disclosure. Admin customer/subscription tables use the native Table primitive. Workspace identity marks use scoped Avatar tokens. The [guide](docs/components.md#workspace-frames-panes-and-resizing) covers layout, resize bounds, compact behavior, and Blade usage.
+
 ## Run the examples
 
 Requires Node 20.19+ or 22.12+.
@@ -40,7 +42,7 @@ Support combines the shared-inbox workflow of Help Scout and FreeScout with Appl
 
 The workspace responds to its container: over 1100px it shows navigation, ticket list, conversation, and customer details; from 701–1100px it keeps list/conversation panes and lets you open customer details in place; up to 700px it presents views, list, conversation, and customer details as separate screens. Navigation and search preserve per-ticket drafts across these layouts. Light/dark appearance follows CSS automatically, with the same optional override used by Mail. Without JavaScript, a read-only sample still demonstrates the styled layout.
 
-Support composes `f-toolbar`, `f-sidebar`, Button, Input, Select, Textarea, segmented radios, badges, Avatar, and Dialog. Its ticket layout, thread presentation, sample data, and workflow stay in `examples/support/`. The existing Avatar class now lives with shared controls because Mail and Support both use it; this example adds no Blade components or behavior modes to existing controls. In a Laravel application, render these same native controls with Blade, then let Alpine or Livewire own your ticket data and actions.
+Support composes `f-toolbar`, `f-sidebar`, Button, Input, Select, Textarea, segmented radios, badges, Avatar, and Dialog. Its column placement, thread presentation, sample data, and workflow stay in `examples/support/`; its frame, panes, composer and facts use shared components. The existing Avatar class now lives with shared controls because Mail and Support both use it; shared layout patterns have equivalent Blade adapters without adding behavior modes to existing controls. In a Laravel application, render these same native controls with Blade, then let Alpine or Livewire own your ticket data and actions.
 
 ## Chat, reimagined
 
@@ -60,7 +62,7 @@ Chat brings a Slack-style team workspace to the same Apple-inspired visual syste
 
 The same data, drafts, reactions, and selected conversation survive resizing. Navigation restores focus to the current conversation or thread trigger. Light/dark appearance follows CSS automatically; the shared appearance control offers an optional override. Without JavaScript, native channel disclosures and a read-only conversation demonstrate the layout.
 
-Chat composes the existing Toolbar, Sidebar groups, Avatar, Button, Input, Textarea, Select, Badge, and Dialog styles. Its message flow, reaction picker, thread layout, and application state stay in `examples/chat/`; no new Blade primitives or behavior modes are added. `roomId` owns conversation scope, `threadId` identifies a parent message, and drafts are keyed independently by conversation and thread. For Laravel, render the same HTML and let Alpine or Livewire own actions and data. Messages, membership, unread state, and reactions should be stored and authorized by the application.
+Chat composes the existing Toolbar, Sidebar groups, Avatar, Button, Input, Textarea, Select, Badge, and Dialog styles. Its message flow, full thread arrangement, and application state stay in `examples/chat/`; frames, panes, composers and floating disclosures use shared CSS/Blade patterns. `roomId` owns conversation scope, `threadId` identifies a parent message, and drafts are keyed independently by conversation and thread. For Laravel, render the same HTML and let Alpine or Livewire own actions and data. Messages, membership, unread state, and reactions should be stored and authorized by the application.
 
 This is a frontend example with sample people and messages. Sending, reacting, and creating conversations only changes the current page; nothing is delivered, and reloading resets it. It does not connect to Slack or provide a realtime backend.
 
@@ -89,7 +91,7 @@ Destinations and customer tabs have native hash links such as `admin.html#/plans
 
 Layout follows the Admin container: above 700px, navigation sits beside the content; narrower containers use a toolbar disclosure for navigation, stacked charts, and touch controls. Table columns remain in a native table with a labeled, keyboard-focusable horizontal scroll area. Data, filters, selection, and forms survive resizing. CSS automatically follows light/dark system changes, and the shared appearance control offers an override. Without JavaScript, the read-only Overview, sample rows, charts, and native chart-data disclosure remain available.
 
-Admin composes Toolbar, Sidebar groups, Card, Avatar, Button, Input, Select, Textarea, Checkbox, Switch, and Dialog. Its table arrangement, chart presentation, customer tablist, breadcrumbs, and hash navigation stay in `examples/admin/`; these examples do not introduce a universal Table/CRUD component or new Blade contracts. The native table owns tabular semantics, independent checkboxes own record selection, and native buttons own sort/edit/delete actions. Customer tabs have their own fixed roles, selection, panel relationships, and keyboard behavior in the example. For Laravel, render the same markup with Blade and let Alpine or Livewire own records and actions; use application routes for navigation. Persistence, authorization, billing, and notifications belong to the host application.
+Admin composes Toolbar, Sidebar groups, Card, Avatar, Button, Input, Select, Textarea, Checkbox, Switch, and Dialog. Its records, chart presentation, customer tablist, breadcrumbs, and hash navigation stay in `examples/admin/`; frames, panes, facts and native table presentation use shared components. The native table owns tabular semantics, independent checkboxes own record selection, and native buttons own sort/edit/delete actions. Customer tabs have their own fixed roles, selection, panel relationships, and keyboard behavior in the example. For Laravel, render the same markup with Blade and let Alpine or Livewire own records and actions; use application routes for navigation. Persistence, authorization, billing, and notifications belong to the host application.
 
 ## One Mail interface, three layouts
 
@@ -109,7 +111,7 @@ Wrap Mail markup in the named container to enable its responsive styles:
 
 ```html
 <div class="f-mail-container">
-  <section class="f-mail" data-view="list">
+  <section class="f-workspace f-mail" data-view="list">
     <!-- Shared toolbar, navigation, message list, and reader -->
   </section>
 </div>
@@ -185,7 +187,7 @@ Import `fruitui/css` in your app’s Vite entry and wrap the layout in `fruit-ui
 </x-fruit::card>
 ```
 
-Available components: `button` (`default`, `primary`, `ghost`, `danger`), `input`, `checkbox`, `radio`, `switch`, `select`, `textarea`, `card`, `disclosure` (with a `title` prop), `dialog`, `conversation-list`, `conversation-row` (`quiet`, `filled`), `attachment`, and `empty-state`. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`. Conversation Row always uses `type="button"`; its slots contain noninteractive identity/preview content, while action bindings reach the button. Conversation List accepts native `li` children. Attachment requires a native URL; Empty State composes informational content and independent recovery actions. See the [pattern guide](docs/components.md) for HTML, Blade, and slot examples.
+Available components: `button` (`default`, `primary`, `ghost`, `danger`), `input`, `checkbox`, `radio`, `switch`, `select`, `textarea`, `card`, `disclosure` (with a `title` prop), `dialog`, `conversation-list`, `conversation-row` (`quiet`, `filled`), `attachment`, `empty-state`, `workspace`, `pane`, `splitter`, `composer`, `description-list`, `floating-disclosure` (`below`, `above`), and `table`. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`. Conversation Row always uses `type="button"`; its slots contain noninteractive identity/preview content, while action bindings reach the button. Conversation List accepts native `li` children. Attachment requires a native URL; Empty State composes informational content and independent recovery actions. See the [pattern guide](docs/components.md) for HTML, Blade, and slot examples.
 
 Input accepts only `text`, `email`, `password`, `search`, `tel`, and `url`; `text` is the default. Use the dedicated selection components for checkbox, radio, and switch semantics. Other native control families need their own primitive when a real use arises. Controls keep their native element and role; normal value/action bindings remain available, while `as`, incompatible type/role attributes, and client bindings that change type/role are rejected.
 
@@ -230,7 +232,7 @@ Alpine.start();
 </div>
 ```
 
-The add-on registers `fruitDialog`; it neither imports Alpine nor starts a second instance. The Mail state and theme persistence in `examples/` belong to the demonstration site, rather than the framework.
+The add-on registers `fruitDialog`, `fruitSplitter`, and `fruitFloatingDisclosure`; it neither imports Alpine nor starts a second instance. The Mail state and theme persistence in `examples/` belong to the demonstration site, rather than the framework.
 
 ## Livewire
 
