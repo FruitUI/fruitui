@@ -84,7 +84,9 @@ The Blade Toast adapter renders a native status container with a content slot. I
 
 ## Compatibility and upgrades
 
-Declared adapters support PHP 8.2+, Laravel 11–13 and optional Livewire 3–4. CI selects Testbench 9/10/11 with those Laravel generations and runs actual browser/server interaction. The local verified environment is PHP 8.5, Laravel 13 and Livewire 4; a committed workflow is not evidence that every remote matrix job has already passed.
+Declared adapters support PHP 8.2+, Laravel 11–13 and optional Livewire 3–4. CI selects Testbench 9/10/11 with those Laravel generations and runs PHP contracts, packaged installation checks and actual browser/server interaction. The [workflow](../.github/workflows/test.yml) specifies the tested combinations; check its [latest results](https://github.com/nielspeen/fruitui/actions/workflows/test.yml) when choosing an integration version. The local verified environment is PHP 8.5, Laravel 13 and Livewire 4.
+
+Use Laravel 12/13 for new integrations. [Laravel 11's upstream security support ended](https://laravel.com/framework/docs/13.x/releases#support-policy), and Composer blocks its unpatched advisories. Its isolated CI job allows only `laravel/framework:^11.0` through advisory blocking and reports the advisories separately, so historical compatibility can still be checked. This exception exists only in that test runner; the distributed package and application setup do not disable Composer security policy.
 
 Browser CI targets Chromium, Firefox and WebKit. Locally choose `FRUITUI_BROWSERS=chromium,firefox,webkit npm test` after installing Playwright browsers. These browser engines do not establish native macOS/iOS Safari or operating-system picker verification. Unsupported custom-select styling falls back to a native picker; lack of Popover support retains the CSS-positioned disclosure/list fallback.
 

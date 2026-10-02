@@ -31,12 +31,22 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: dom, mbstring, sqlite3, pdo_sqlite
           coverage: none
+          tools: composer:2.10
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
       - run: composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench }}" "livewire/livewire:${{ matrix.livewire }}" "phpunit/phpunit:${{ matrix.phpunit }}"
+      - name: Allow Laravel 11 only for historical compatibility tests
+        if: matrix.testbench == '^9.0'
+        run: >-
+          composer config --json policy.advisories.ignore
+          '{"laravel/framework":{"constraint":"^11.0","on-audit":false,"reason":"Historical Laravel 11 compatibility tests in isolated CI only; advisories remain reported."}}'
       - run: composer update --no-interaction --prefer-dist
+      - name: Report Laravel 11 advisories
+        if: matrix.testbench == '^9.0'
+        continue-on-error: true
+        run: composer audit --format=plain
       - run: composer test
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox webkit
