@@ -2,9 +2,11 @@
 
 An Apple-inspired, CSS-first interface framework for HTML and Laravel. Familiar controls, thoughtful spacing, and clear hierarchy, with optional Alpine.js and Livewire behavior.
 
-The reference interfaces are **Mail**, **Support**, **Chat**, and **Admin**: familiar workspaces implemented in HTML with FruitUI’s own CSS. This is an early local package; it has not been published to npm or Packagist.
+The reference interfaces are **Mail**, **Support**, **Chat**, and **Admin**: familiar workspaces implemented in HTML with FruitUI’s own CSS. The gallery and example pages are available in the repository checkout. This is an early local package; it has not been published to npm or Packagist.
 
 The [component policy](docs/component-policy.md) defines the boundary between tokens, variants, primitives, and composed patterns. Every Blade component has a documented semantic contract; contributors follow [AGENTS.md](AGENTS.md). Unsupported input types, button variants/types, and control type/role overrides raise clear render-time errors.
+
+The [adoption guide](docs/adoption.md) covers Bootstrap coexistence, compiled assets, optional editor installation, Field associations, localization, and compatibility/upgrade policy.
 
 Every component, pattern, example, and interaction state must support dark mode. FruitUI's CSS follows the system appearance automatically, including changes while the page is open, without JavaScript.
 
@@ -23,7 +25,7 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:5173 for Mail, http://127.0.0.1:5173/support.html for Support, http://127.0.0.1:5173/chat.html for Chat, http://127.0.0.1:5173/admin.html for Admin, or http://127.0.0.1:5173/components.html for the component gallery. The navigation links the examples side by side. `npm run build` creates a static example site in `dist/`; `npm run preview` serves that build.
+Open http://127.0.0.1:5173 for Mail, http://127.0.0.1:5173/support.html for Support, http://127.0.0.1:5173/chat.html for Chat, http://127.0.0.1:5173/admin.html for Admin, or http://127.0.0.1:5173/components.html for the component gallery. The navigation links the examples side by side. `npm run build` creates a static example site in `dist/` and installable assets in `build/`; `npm run preview` serves that build.
 
 Mail interactions include search, unread filtering, keyboard navigation with the arrow keys, mailbox selection, archive, trash, flag, reply, forward, and a native compose dialog. The inbox and composed messages live in memory for this demo; reloading resets them. No email is delivered. Choose **iPhone** above the example to preview the phone interface from a desktop browser, or resize the window with **Responsive** selected.
 
@@ -169,7 +171,7 @@ The framework includes visible focus states, system dark mode, reduced motion, r
 
 ## Laravel
 
-The Composer package contains anonymous Blade components and an auto-discovered service provider. In a Laravel application alongside this checkout:
+The Composer package contains Blade components and an auto-discovered service provider. In a Laravel application alongside this checkout:
 
 ```sh
 composer config repositories.fruitui path ../fruitui
@@ -191,7 +193,7 @@ Import `fruitui/css` in your app’s Vite entry and wrap the layout in `fruit-ui
 </x-fruit::card>
 ```
 
-Available components: `button` (`default`, `primary`, `ghost`, `danger`), `input`, `checkbox`, `radio`, `switch`, `select`, `fieldset`, `file`, `number`, `date`, `time`, `color`, `range`, `progress`, `meter`, `textarea`, `card`, `disclosure` (with a `title` prop), `dialog`, `conversation-list`, `conversation-row` (`quiet`, `filled`), `attachment`, `empty-state`, `workspace`, `pane`, `splitter`, `composer`, `description-list`, `floating-disclosure` (`below`, `above`), and `table`. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`. Conversation Row always uses `type="button"`; its slots contain noninteractive identity/preview content, while action bindings reach the button. Conversation List accepts native `li` children. Attachment requires a native URL; Empty State composes informational content and independent recovery actions. See the [pattern guide](docs/components.md) for HTML, Blade, and slot examples.
+The [checked catalog](docs/component-catalog.json) is the complete public CSS/Blade inventory, including Field, Toast, support controls and shared layouts. Supply an accessible label for inputs and dialogs. Checkbox, Radio, and Switch wrap their native control in a label; attributes are forwarded to the input, including `id`, `name`, `value`, `checked`, `disabled`, `x-model`, and `wire:model`. Group radios using the same `name` and a fieldset/legend. Blade buttons default to `type="button"`; supported types are `button`, `submit`, and `reset`. Conversation Row always uses `type="button"`; its slots contain noninteractive identity/preview content, while action bindings reach the button. Conversation List accepts native `li` children. Attachment requires a native URL; Empty State composes informational content and independent recovery actions. See the [pattern guide](docs/components.md) for HTML, Blade, and slot examples.
 
 Input accepts only `text`, `email`, `password`, `search`, `tel`, and `url`; `text` is the default. Use the dedicated selection components for checkbox, radio, and switch semantics. File, Number, Date, Time, Color, and Range have dedicated native adapters; Progress and Meter display task completion and bounded measurements. Date accepts `date`, `datetime-local`, `month`, and `week`. Controls keep their native element and role; normal value/action bindings remain available, while `as`, incompatible type/role attributes, and client bindings that change type/role are rejected.
 
@@ -236,7 +238,7 @@ Alpine.start();
 </div>
 ```
 
-The add-on registers `fruitDialog`, `fruitSplitter`, and `fruitFloatingDisclosure`; it neither imports Alpine nor starts a second instance. The Mail state and theme persistence in `examples/` belong to the demonstration site, rather than the framework.
+The add-on registers `fruitDialog`, `fruitSplitter`, `fruitFloatingDisclosure`, `fruitCombobox`, `fruitTokenField`, `fruitMenu`, `fruitTooltip`, `fruitTabs`, `fruitToast`, and a native `fruitEditor` fallback (replaced by the optional editor plugin); it neither imports Alpine nor starts a second instance. The Mail state and theme persistence in `examples/` belong to the demonstration site, rather than the framework.
 
 ## Livewire
 
@@ -293,6 +295,7 @@ Keep reusable styles in `src/`, sample-specific presentation and data in `exampl
 ```sh
 npm run build
 npm test
+npm run test:package
 composer install
 composer test
 ```

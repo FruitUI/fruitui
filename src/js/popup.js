@@ -15,7 +15,7 @@ export function fruitPopup(popup, anchor, { stretch = false, above = false } = {
     popup.style.overflowY = 'auto';
     if (stretch) popup.style.width = `${Math.min(rect.width, width - 16)}px`;
     const size = popup.getBoundingClientRect();
-    const x = stretch ? rect.left : rect.right - size.width;
+    const x = stretch || getComputedStyle(anchor).direction === 'rtl' ? rect.left : rect.right - size.width;
     const below = top + height - rect.bottom - 8, before = rect.top - top - 8;
     const placeAbove = (above && before >= size.height) || (below < size.height && before > below);
     const available = placeAbove ? before : below;

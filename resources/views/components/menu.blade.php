@@ -1,4 +1,4 @@
-@props(['title' => 'Actions'])
+@props(['title' => __('Actions')])
 @php(\FruitUI\Support\ComponentContract::menu($attributes))
 @php($triggerAttributes = isset($trigger) ? $trigger->attributes : new \Illuminate\View\ComponentAttributeBag())
 @php(\FruitUI\Support\ComponentContract::semantics('menu-trigger', $triggerAttributes, 'button'))

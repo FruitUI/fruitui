@@ -2,6 +2,7 @@
   "name": "fruitui/fruitui",
   "description": "CSS-first, Apple-inspired UI components for Laravel.",
   "type": "library",
+  "license": "proprietary",
   "require": {
     "php": "^8.2",
     "illuminate/support": "^11.0 || ^12.0 || ^13.0",

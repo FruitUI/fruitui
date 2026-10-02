@@ -1,10 +1,10 @@
 @layer fruit.components {
   /* A foundation surface must not replace a composed Card or Sidebar material. */
-  :where(.f-pane) { --f-pane-background: transparent; background: var(--f-pane-background); }
+  :where(.f-pane) { background: var(--f-pane-background, transparent); }
 }
 @layer fruit.layout {
   /* Geometry belongs to the application; the frame and pane treatment are shared. */
-  .f-workspace { --f-workspace-background: var(--f-surface); position: relative; display: grid; grid-template-columns: var(--f-workspace-columns, 220px minmax(0, 1fr)); grid-template-rows: var(--f-workspace-rows, minmax(0, 1fr)); height: var(--f-workspace-height, auto); min-height: var(--f-workspace-min-height, 0); overflow: hidden; border: 1px solid var(--f-border); border-radius: var(--f-workspace-radius, var(--f-radius-lg)); background: var(--f-workspace-background); box-shadow: var(--f-shadow); }
+  .f-workspace { position: relative; display: grid; grid-template-columns: var(--f-workspace-columns, 220px minmax(0, 1fr)); grid-template-rows: var(--f-workspace-rows, minmax(0, 1fr)); height: var(--f-workspace-height, auto); min-height: var(--f-workspace-min-height, 0); overflow: hidden; border: 1px solid var(--f-border); border-radius: var(--f-workspace-radius, var(--f-radius-lg)); background: var(--f-workspace-background, var(--f-surface)); box-shadow: var(--f-shadow); }
   .f-workspace > .f-toolbar { min-width: 0; border-bottom: 1px solid var(--f-border); }
   .f-pane { min-width: 0; min-height: 0; }
   .f-pane--column { display: flex; flex-direction: column; }

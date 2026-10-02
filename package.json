@@ -7,28 +7,57 @@
   "exports": {
     "./css": "./src/fruitui.css",
     "./alpine": "./src/js/alpine.js",
-    "./editor": "./src/js/editor.js"
+    "./editor": "./src/js/editor.js",
+    "./core.css": "./src/core.css",
+    "./mail.css": "./src/mail.css",
+    "./editor.css": "./src/editor.css",
+    "./dist/*": "./build/*",
+    "./layout.css": "./src/layout.css"
   },
   "files": [
     "src/css",
-    "src/fruitui.css",
-    "src/js"
+    "src/*.css",
+    "src/js",
+    "build",
+    "docs",
+    "CHANGELOG.md",
+    "AGENTS.md"
   ],
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "vite build && npm run build:package",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "playwright test"
+    "test": "playwright test",
+    "build:package": "node scripts/build-package.mjs",
+    "prepack": "npm run build:package",
+    "test:package": "node scripts/test-package.mjs",
+    "pretest": "npm run build:package"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
     "@playwright/test": "^1.63.0",
     "alpinejs": "^3.17.4",
-    "vite": "^8.3.2"
+    "vite": "^8.3.2",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "postcss": "^8.5.8"
   },
-  "optionalDependencies": {
+  "license": "UNLICENSED",
+  "peerDependencies": {
     "@tiptap/core": "^3.31.4",
     "@tiptap/pm": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    }
   }
 }

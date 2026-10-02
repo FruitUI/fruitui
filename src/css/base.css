@@ -8,6 +8,7 @@
   :where(.fruit-ui) :where(button:disabled, input:disabled, select:disabled, textarea:disabled) { opacity: .45; cursor: not-allowed; }
   :where(.fruit-ui) :where(a) { color: var(--f-accent); text-underline-offset: 3px; }
   :where(.fruit-ui) :where(h1, h2, h3, p) { margin: 0; }
+  :where(.fruit-ui) :where(label) { font-weight: inherit; }
   :where(.fruit-ui) :where(svg) { display: block; }
   :where(.fruit-ui) [hidden], :where(.fruit-ui) [x-cloak] { display: none !important; }
   :where(.fruit-ui) ::selection { background: var(--f-selection); }

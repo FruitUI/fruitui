@@ -88,6 +88,36 @@ final class ComponentContract
         }
     }
 
+    public static function wrapper(mixed $attributes): ComponentAttributeBag
+    {
+        if (! is_array($attributes) && ! $attributes instanceof ComponentAttributeBag) {
+            throw new InvalidArgumentException('FruitUI wrapper must be an attribute array or bag.');
+        }
+        $bag = $attributes instanceof ComponentAttributeBag ? $attributes : new ComponentAttributeBag($attributes);
+        foreach ($bag->all() as $name => $value) {
+            if (! in_array($name, ['id', 'class', 'style', 'dir', 'lang'], true) && ! preg_match('/^data-[a-z0-9-]+$/', $name)) {
+                throw new InvalidArgumentException('FruitUI wrapper accepts presentation and data attributes; control bindings belong on the native control.');
+            }
+        }
+        return $bag;
+    }
+
+    public static function fieldControl(ComponentAttributeBag $attributes, ?array $field): ComponentAttributeBag
+    {
+        if ($field === null) return $attributes;
+        ['id' => $controlId, 'description' => $description, 'error' => $error] = $field;
+        if ($attributes->has('id') && $attributes->get('id') !== $controlId) {
+            throw new InvalidArgumentException('FruitUI Field control-id must match its control id.');
+        }
+        $described = preg_split('/\\s+/', trim($attributes->get('aria-describedby', '')), -1, PREG_SPLIT_NO_EMPTY);
+        if ($description !== null && $description !== '') $described[] = "{$controlId}-description";
+        if ($error !== null && $error !== '') $described[] = "{$controlId}-error";
+        $defaults = ['id' => $controlId];
+        if ($described) $attributes = $attributes->except('aria-describedby')->merge(['aria-describedby' => implode(' ', array_unique($described))]);
+        if ($error !== null && $error !== '') $attributes = $attributes->except('aria-invalid')->merge(['aria-invalid' => 'true']);
+        return $attributes->merge($defaults);
+    }
+
     public static function menu(ComponentAttributeBag $attributes): void
     {
         self::semantics('menu', $attributes, 'group');

@@ -5,7 +5,7 @@ const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <meta name="viewport" content="width=device-width, initial-scale=1"><title>Native controls</title>
   <link rel="stylesheet" href="/src/fruitui.css">
   <style>main { padding: 20px; max-width: 600px; } form, .specimens { display: grid; gap: 16px; } h1 { margin-bottom: 20px; }</style>
-</head><body><main><h1>Native controls</h1><form action="/native-submit" method="post" enctype="multipart/form-data">
+</head><body><main><h1>Native controls</h1><form action="http://127.0.0.1:5180/native-submit" method="post" enctype="multipart/form-data">
   <fieldset class="f-fieldset"><legend>Notifications</legend><div class="f-row">
     <label class="f-check"><input type="checkbox" name="sounds" value="1" checked>Sound</label>
     <label class="f-check"><input type="checkbox" name="previews" value="1" aria-invalid="true">Preview</label>
@@ -117,15 +117,16 @@ test.describe('CSS-only native forms', () => {
     await page.getByLabel('Date', { exact: true }).fill('2026-10-12');
     await page.getByLabel('Time', { exact: true }).fill('09:45');
     await page.getByLabel('Color', { exact: true }).fill('#ff8800');
-    await page.route('**/native-submit', route => route.fulfill({ contentType: 'text/html', body: '<h1>Saved</h1>' }));
     const requestPromise = page.waitForRequest('**/native-submit');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     const request = await requestPromise;
     expect(request.headers()['content-type']).toContain('multipart/form-data; boundary=');
-    const body = request.postDataBuffer().toString();
-    for (const value of ['filename="first.txt"', 'first attachment', 'filename="second.txt"', 'second attachment', '2026-10-12', '2026-10-02T09:30', '2026-10', '2026-W40', '09:45', '#ff8800', 'forma']) expect(body).toContain(value);
-    expect(body).not.toContain('excluded');
     await expect(page.getByRole('heading', { name: 'Saved' })).toBeVisible();
+    // Read what PHP actually receives; WebKit's protocol omits file bytes from postDataBuffer.
+    const received = JSON.parse(await page.locator('#received').textContent());
+    expect(received.files).toEqual([{ name: 'first.txt', content: 'first attachment' }, { name: 'second.txt', content: 'second attachment' }]);
+    for (const value of ['2026-10-12', '2026-10-02T09:30', '2026-10', '2026-W40', '09:45', '#ff8800', 'forma']) expect(Object.values(received.values)).toContain(value);
+    expect(received.values).not.toHaveProperty('excluded');
   });
 
   for (const theme of ['light', 'dark']) {
@@ -212,7 +213,8 @@ for (const theme of ['light', 'dark']) {
   });
 }
 
-test('autofill keeps the shared palette and remains editable', async ({ page }) => {
+test('autofill keeps the shared palette and remains editable', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Autofill injection requires Chromium CDP; native editing is covered on all engines');
   await openFixture(page);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
@@ -234,6 +236,7 @@ test('autofill keeps the shared palette and remains editable', async ({ page }) 
 
 test('styled search cancellation updates the existing Alpine search', async ({ page }) => {
   await page.goto('/admin.html');
+  test.skip(!await page.evaluate(() => CSS.supports('selector(input::-webkit-search-cancel-button)')), 'This browser retains its own search editing controls');
   const search = page.getByRole('searchbox', { name: 'Search customers', exact: true });
   await search.fill('Sophie');
   await expect(page.locator('tr[data-customer]')).toHaveCount(1);

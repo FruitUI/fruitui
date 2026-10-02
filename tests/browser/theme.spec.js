@@ -23,12 +23,15 @@ test('every color/effect token has matching automatic and explicit dark palettes
 });
 
 test('core appearance declarations use shared tokens or native/system colors', () => {
-  const appearanceProperty = /^(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left))?(?:-color)?|outline(?:-color)?|(?:box|text)-shadow|fill|stroke|accent-color|caret-color|text-decoration-color)$/;
+  const appearanceProperty = /^(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left|inline-start|inline-end|block-start|block-end))?(?:-color)?|outline(?:-color)?|(?:box|text)-shadow|fill|stroke|accent-color|caret-color|text-decoration-color)$/;
   for (const file of readdirSync(cssDirectory).filter(name => name.endsWith('.css') && name !== 'tokens.css')) {
     const source = readFileSync(new URL(file, cssDirectory), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     for (const [, property, value] of source.matchAll(/(?:^|[;{])\s*([\w-]+)\s*:\s*([^;{}]+)(?=;|})/g)) {
       if (!appearanceProperty.test(property)) continue;
-      const literal = value.replace(/var\(--f-[\w-]+\)/g, '')
+      let resolved = value;
+      // Validate fallback literals too, resolving nested token references from the inside.
+      while (/var\(--f-[\w-]+(?:,[^()]*)?\)/.test(resolved)) resolved = resolved.replace(/var\(--f-[\w-]+(?:,([^()]*))?\)/g, (_, fallback) => fallback || '');
+      const literal = resolved
         .replace(/\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|HighlightText|GrayText|Canvas|CanvasText)\b/g, '')
         .replace(/-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em|%)?/g, '')
         .replace(/[\s,]/g, '');

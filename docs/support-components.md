@@ -23,7 +23,7 @@ import fruitUI from 'fruitui/alpine';
 fruitUI(Alpine);
 ```
 
-For raw HTML, put `x-data="fruitCombobox"` on a `div.f-combobox` containing `select.f-input[data-fruit-control]`. Token Field uses `div.f-token-field[x-data="fruitTokenField"]` with `textarea.f-input[data-fruit-control]`. Blade emits that markup. Give the native control a label, name, initial value, and validation/model attributes. The helper creates an unnamed query, copies accessible labels/descriptions, and publishes bubbling native input/change events. Without JavaScript, the select or textarea remains editable and submits the same value format.
+For raw HTML, put `x-data="fruitCombobox"` on a `div.f-combobox` containing `select.f-input[data-fruit-control]`. Token Field uses `div.f-token-field[x-data="fruitTokenField"]` with `textarea.f-input[data-fruit-control]`. Blade emits that markup. Give the native control a label, name, initial value, and validation/model attributes. The helper creates an unnamed query, copies accessible labels/descriptions, and publishes native events when values change. Editor publishes input while typing and committed change on widget blur. See [adoption contracts](adoption.md) for wrapper attributes, localization and Field associations. Without JavaScript, the select or textarea remains editable and submits the same value format.
 
 Blade includes stable `wire:ignore` containers for generated UI. The named native control remains outside them, so Livewire can update its model, options, labels, validation, disabled, and readonly attributes. For handwritten Livewire markup, include an empty `<div data-fruit-ui wire:ignore></div>` beside the native select/textarea. Rich Editor's toolbar and surface each use `wire:ignore`; its textarea remains outside those boundaries. Keep a widget's DOM identity stable, or key an outer container when replacing it.
 
@@ -55,7 +55,7 @@ Choice queries keep focus while `aria-activedescendant` identifies the highlight
 
 ## Optional rich editing
 
-The core Alpine module does not import Tiptap. Import the separate integration on pages that need editing. Its optional dependencies are `@tiptap/core`, `@tiptap/pm`, and `@tiptap/starter-kit`; [Tiptap's vanilla installation](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript) describes the underlying editor.
+The core Alpine module does not import Tiptap. Import the separate integration on pages that need editing. Its optional peers (installed only by source-editor consumers) are `@tiptap/core`, `@tiptap/pm`, and `@tiptap/starter-kit`; [Tiptap's vanilla installation](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript) describes the underlying editor.
 
 ```js
 import fruitEditor from 'fruitui/editor';

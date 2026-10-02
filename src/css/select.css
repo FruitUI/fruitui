@@ -36,6 +36,8 @@
         flex-shrink: 0;
       }
       select.f-input:open::picker-icon { rotate: 225deg; }
+      select.f-input:dir(rtl)::picker-icon { rotate: -45deg; }
+      select.f-input:dir(rtl):open::picker-icon { rotate: 135deg; }
       select.f-input optgroup { padding-block: var(--f-space-1); }
       select.f-input option {
         position: relative;

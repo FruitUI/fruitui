@@ -1,3 +1,5 @@
+import { fruitMessage } from './messages.js';
+
 /** A bounded, vertical window splitter. No application navigation or persistence. */
 export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 280, flexible, edge = 'end' }) {
   if (!pane || !flexible || pane === flexible || !/^--f-[\w-]+$/.test(variable) || !['start', 'end'].includes(edge)
@@ -49,7 +51,7 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       handle.setAttribute('aria-valuemin', Math.round(min));
       handle.setAttribute('aria-valuemax', Math.floor(upper));
       handle.setAttribute('aria-valuenow', Math.round(primary.getBoundingClientRect().width));
-      handle.setAttribute('aria-valuetext', `${Math.round(primary.getBoundingClientRect().width)} pixels`);
+      handle.setAttribute('aria-valuetext', fruitMessage(handle, 'value-text', '{count} pixels', { count: Math.round(primary.getBoundingClientRect().width) }));
     },
     set(width) {
       const { upper } = this.bounds();

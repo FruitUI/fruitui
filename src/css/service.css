@@ -1,9 +1,9 @@
 @layer fruit.components {
-  .f-alert { --f-alert-color: var(--f-accent); display: flex; align-items: start; gap: 12px; padding: 12px 14px; border: 1px solid var(--f-border); border-inline-start: 3px solid var(--f-alert-color); border-radius: var(--f-radius-sm); background: var(--f-surface-secondary); color: var(--f-text); font-size: 13px; line-height: 1.5; }
-  .f-alert--success { --f-alert-color: var(--f-success); }
-  .f-alert--warning { --f-alert-color: var(--f-warning); }
-  .f-alert--danger { --f-alert-color: var(--f-danger); }
-  .f-alert__icon { flex-shrink: 0; color: var(--f-alert-color); }
+  .f-alert { --f-internal-alert-color: var(--f-accent); display: flex; align-items: start; gap: 12px; padding: 12px 14px; border: 1px solid var(--f-border); border-inline-start: 3px solid var(--f-alert-color, var(--f-internal-alert-color)); border-radius: var(--f-radius-sm); background: var(--f-surface-secondary); color: var(--f-text); font-size: 13px; line-height: 1.5; }
+  .f-alert--success { --f-internal-alert-color: var(--f-success); }
+  .f-alert--warning { --f-internal-alert-color: var(--f-warning); }
+  .f-alert--danger { --f-internal-alert-color: var(--f-danger); }
+  .f-alert__icon { flex-shrink: 0; color: var(--f-alert-color, var(--f-internal-alert-color)); }
   .f-alert__body { min-width: 0; flex: 1; overflow-wrap: anywhere; }
   .f-alert__body > :first-child { margin-top: 0; }
   .f-alert__body > :last-child { margin-bottom: 0; }
@@ -27,6 +27,8 @@
   .f-combobox [data-fruit-ui] > input.f-input { padding-inline-end: 30px; }
   .f-combobox::after { content: ''; position: absolute; pointer-events: none; inset-inline-end: 13px; top: 12px; width: 7px; height: 7px; border-inline-end: 1.5px solid var(--f-secondary); border-block-end: 1.5px solid var(--f-secondary); transform: rotate(45deg); }
   .f-combobox:has(select:not([hidden]))::after { display: none; }
+  .f-combobox:dir(rtl)::after { transform: rotate(-45deg); }
+  .f-tooltip:dir(rtl) .f-tooltip__text { transform: translateX(50%); }
   .f-combobox__options { position: absolute; z-index: 20; top: calc(100% + 4px); inset-inline: 0; max-height: 240px; overflow: auto; padding: 4px; margin: 0; list-style: none; border: 1px solid var(--f-border); border-radius: 8px; background: var(--f-surface); box-shadow: var(--f-shadow); }
   .f-combobox__option { padding: 7px 10px; border-radius: 4px; font-size: 13px; cursor: pointer; overflow-wrap: anywhere; }
   .f-combobox__option[aria-selected='true'] { background: var(--f-selection); color: var(--f-selection-text); }
@@ -96,4 +98,12 @@
   .f-notifications__item > a:hover { color: var(--f-accent); }
   .f-notifications__item small { display: block; color: var(--f-secondary); }
   @media (pointer: coarse) { .f-tab { min-height: 44px; } }
+}
+
+@layer fruit.components {
+  @media (forced-colors: active) {
+    .f-tab[aria-selected='true']::after { background: Highlight; }
+    .f-chip, .f-alert { border: 1px solid ButtonText; }
+    .f-combobox__option[aria-selected='true'] { background: Highlight; color: HighlightText; }
+  }
 }

@@ -140,7 +140,7 @@
             <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.composer.close()">Cancel</button><button class="f-button f-button--primary" type="submit"><svg class="f-icon" aria-hidden="true"><use href="#i-send"/></svg>Send</button></footer>
           </form>
         </dialog>
-        <div class="f-toast" role="status" x-show="notice" x-text="notice" x-cloak></div>
+        <div class="f-toast" role="status" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" @focusin="pauseNotice()" @focusout="resumeNotice()" x-show="notice" x-text="notice" x-cloak></div>
       </section>
       </div>
       <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>HTML &amp; CSS at heart. A little Alpine for the interactions.</span><span>Try searching, switching mailboxes, or writing a message.</span></div>

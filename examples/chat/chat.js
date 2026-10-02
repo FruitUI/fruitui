@@ -1,10 +1,12 @@
+import { fruitToast } from '../../src/js/toast.js';
 import { rooms, people } from './conversations.js';
 
 export function chatDemo() {
   return {
+    ...fruitToast(),
     rooms: structuredClone(rooms), people,
     roomId: 'design', mode: 'room', view: 'conversation', threadId: 202, query: '',
-    drafts: {}, threadDrafts: {}, error: '', threadError: '', notice: '', noticeTimer: null,
+    drafts: {}, threadDrafts: {}, error: '', threadError: '',
     nextId: 1000, highlightedId: null,
     newChannelName: '', newChannelDescription: '', channelError: '', recipientId: 'oliver',
     person(id) { return this.people.find(person => person.id === id); },
@@ -63,10 +65,11 @@ export function chatDemo() {
       this.chooseRoom(result.room.id, false);
       this.highlightedId = result.parentId ?? result.message.id;
       if (inThread) this.openThread(result.parentId ?? result.message.id);
-      else this.$nextTick(() => {
+      else this.$nextTick(() => requestAnimationFrame(() => {
+        // x-show may reveal its pane in a frame after reactive DOM updates (WebKit).
         const message = refs.history.querySelector(`[data-message-id="${this.highlightedId}"]`);
         message?.scrollIntoView({ block: 'nearest' }); message?.focus();
-      });
+      }));
     },
     openThread(id) {
       if (!this.room.messages.some(message => message.id === id)) return;
@@ -131,7 +134,5 @@ export function chatDemo() {
       this.chooseRoom(room.id); this.$refs.newDirectMessage.close();
       this.$nextTick(() => this.$refs.composer.focus());
     },
-    notify(message) { clearTimeout(this.noticeTimer); this.notice = message; this.noticeTimer = setTimeout(() => { this.notice = ''; }, 3500); },
-    destroy() { clearTimeout(this.noticeTimer); },
   };
 }

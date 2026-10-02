@@ -1,8 +1,9 @@
 import { bridgeControl, fruitId, publishValue } from './control-bridge.js';
 import { fruitPopup } from './popup.js';
+import { fruitMessage } from './messages.js';
 
 export function fruitCombobox() {
-  let control, query, list, mount, ownedMount, dispose, outside, overlay, options = [], active = -1, open = false;
+  let root, control, query, list, mount, ownedMount, dispose, outside, overlay, options = [], active = -1, open = false;
   const label = () => control.selectedOptions[0]?.label || '';
   const hide = () => { open = false; overlay.hide(); list.hidden = true; query.setAttribute('aria-expanded', 'false'); query.removeAttribute('aria-activedescendant'); };
   const highlight = index => {
@@ -26,7 +27,7 @@ export function fruitCombobox() {
       list.append(item);
     });
     if (!options.length) {
-      const empty = document.createElement('li'); empty.className = 'f-combobox__empty'; empty.setAttribute('role', 'presentation'); empty.textContent = 'No matches'; list.append(empty);
+      const empty = document.createElement('li'); empty.className = 'f-combobox__empty'; empty.setAttribute('role', 'presentation'); empty.textContent = fruitMessage(root, 'no-matches', 'No matches'); list.append(empty);
     }
     open = true; list.hidden = false; query.setAttribute('aria-expanded', 'true');
     overlay.show();
@@ -39,7 +40,7 @@ export function fruitCombobox() {
   };
   return {
     init() {
-      control = this.$el.querySelector('select[data-fruit-control]');
+      root = this.$el; control = root.querySelector('select[data-fruit-control]');
       if (!control || control.multiple || control.size > 1) return;
       query = document.createElement('input'); query.type = 'text'; query.className = 'f-input'; query.autocomplete = 'off';
       query.setAttribute('role', 'combobox'); query.setAttribute('aria-autocomplete', 'list'); query.setAttribute('aria-expanded', 'false');
@@ -63,8 +64,10 @@ export function fruitCombobox() {
       });
       outside = event => { if (!this.$el.contains(event.target)) hide(); };
       document.addEventListener('pointerdown', outside);
-      dispose = bridgeControl(this, control, query, () => {
-        query.value = label();
+      dispose = bridgeControl(this, control, query, reason => {
+        if (open && ['value', 'reset'].includes(reason)) hide();
+        if (['initial', 'value', 'reset'].includes(reason) || !open) query.value = label();
+        if (open && reason === 'options') show(query.value);
         for (const name of ['aria-label', 'aria-labelledby']) {
           if (query.hasAttribute(name)) list.setAttribute(name, query.getAttribute(name)); else list.removeAttribute(name);
         }
@@ -77,7 +80,7 @@ export function fruitCombobox() {
 
 /** A newline-delimited native textarea value; applications validate each token. */
 export function fruitTokenField() {
-  let control, entry, query, status, mount, ownedMount, dispose, resetPending, tokens = [];
+  let root, control, entry, query, status, mount, ownedMount, dispose, resetPending, tokens = [];
   const parse = () => control.value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
   const announce = text => { status.textContent = text; };
   const render = () => {
@@ -87,13 +90,13 @@ export function fruitTokenField() {
       const chip = document.createElement('span'); chip.className = 'f-chip';
       const text = document.createElement('span'); text.textContent = token;
       const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'f-chip__remove'; remove.textContent = '×';
-      remove.setAttribute('aria-label', `Remove ${token}`); remove.disabled = query.disabled || query.readOnly;
+      remove.setAttribute('aria-label', fruitMessage(root, 'remove-label', 'Remove {value}', { value: token })); remove.disabled = query.disabled || query.readOnly;
       remove.addEventListener('click', () => {
-        publishValue(control, tokens.filter((_, i) => i !== index).join('\n')); announce(`Removed ${token}`); query.focus();
+        publishValue(control, tokens.filter((_, i) => i !== index).join('\n')); announce(fruitMessage(root, 'removed-message', 'Removed {value}', { value: token })); query.focus();
       });
       remove.addEventListener('keydown', event => {
         const buttons = [...entry.querySelectorAll('button')];
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); (buttons[index + (event.key === 'ArrowLeft' ? -1 : 1)] || query).focus(); }
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); (buttons[index + ((event.key === 'ArrowLeft') !== (getComputedStyle(entry).direction === 'rtl') ? -1 : 1)] || query).focus(); }
         if (event.key === 'Escape') { event.preventDefault(); query.focus(); }
       });
       chip.append(text, remove); entry.insertBefore(chip, query);
@@ -103,20 +106,24 @@ export function fruitTokenField() {
     if (query.disabled || query.readOnly) return false;
     const next = [...tokens];
     for (const value of text.split(/[,\n]/).map(value => value.trim()).filter(Boolean)) {
-      const detail = { value, error: 'Check this value before adding it.' };
+      const detail = { value, error: fruitMessage(root, 'invalid-message', 'Check this value before adding it.') };
       if (!control.dispatchEvent(new CustomEvent('fruit-token-add', { bubbles: true, cancelable: true, detail }))) {
         query.setCustomValidity(detail.error); query.setAttribute('aria-invalid', 'true'); announce(detail.error); return false;
       }
       const normalized = String(detail.value).trim();
       if (normalized && !next.includes(normalized)) next.push(normalized);
     }
-    publishValue(control, next.join('\n')); query.value = ''; query.setCustomValidity(''); query.removeAttribute('aria-invalid'); announce(`${next.length} items`); return true;
+    if (control.maxLength >= 0 && next.join('\n').length > control.maxLength) {
+      const error = fruitMessage(root, 'length-message', 'Use at most {count} characters.', { count: control.maxLength });
+      query.setCustomValidity(error); query.setAttribute('aria-invalid', 'true'); announce(error); return false;
+    }
+    publishValue(control, next.join('\n')); query.value = ''; query.setCustomValidity(''); query.removeAttribute('aria-invalid'); announce(fruitMessage(root, 'count-message', '{count} items', { count: next.length })); return true;
   };
   return {
     init() {
-      control = this.$el.querySelector('textarea[data-fruit-control]'); if (!control) return;
+      root = this.$el; control = root.querySelector('textarea[data-fruit-control]'); if (!control) return;
       entry = document.createElement('div'); entry.className = 'f-token-field__entry';
-      query = document.createElement('input'); query.type = 'text'; query.autocomplete = 'off'; query.placeholder = control.placeholder || 'Add an item';
+      query = document.createElement('input'); query.type = 'text'; query.autocomplete = 'off'; query.placeholder = fruitMessage(root, 'placeholder', 'Add an item');
       status = document.createElement('span'); status.className = 'f-sr-only'; status.setAttribute('role', 'status');
       mount = this.$el.querySelector('[data-fruit-ui]'); ownedMount = !mount;
       if (!mount) { mount = document.createElement('div'); mount.setAttribute('data-fruit-ui', ''); this.$el.append(mount); }
@@ -135,7 +142,9 @@ export function fruitTokenField() {
       query.addEventListener('paste', event => {
         const text = event.clipboardData?.getData('text'); if (text && /[,\n]/.test(text)) { event.preventDefault(); add(text); }
       });
-      dispose = bridgeControl(this, control, query, () => { render(); if (!control.value) query.value = ''; });
+      dispose = bridgeControl(this, control, query, reason => {
+        render(); if (['value', 'reset'].includes(reason)) { query.value = ''; status.textContent = ''; }
+      }, { presentation: entry, focusRoot: entry });
     },
     destroy() { dispose?.(); control?.removeEventListener('fruit-token-reset', resetPending); entry?.remove(); status?.remove(); if (ownedMount) mount?.remove(); if (control) control.hidden = false; },
   };

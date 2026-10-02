@@ -1,10 +1,12 @@
+import { fruitToast } from '../../src/js/toast.js';
 import { messages, accounts, folders } from './messages.js';
 
 export function mailDemo() {
   return {
+    ...fruitToast(),
     messages: structuredClone(messages), accounts, folders,
     accountId: 'all', mailbox: 'inbox', query: '', unreadOnly: false, selectedId: 1,
-    view: 'list', preview: 'responsive', sidebarVisible: true, notice: '', noticeTimer: null,
+    view: 'list', preview: 'responsive', sidebarVisible: true,
     composeAccountId: 'work', composeTo: '', composeCc: '', composeBcc: '', composeSubject: '', composeBody: '',
     account(id) { return this.accounts.find(account => account.id === id); },
     get mailboxTitle() {
@@ -95,8 +97,6 @@ export function mailDemo() {
       this.$refs.composer.close();
       this.notify('Demo message added to Sent');
     },
-    notify(message) { clearTimeout(this.noticeTimer); this.notice = message; this.noticeTimer = setTimeout(() => { this.notice = ''; }, 3500); },
-    destroy() { clearTimeout(this.noticeTimer); },
     moveSelection(direction) {
       const index = this.filtered.findIndex(message => message.id === this.selectedId);
       const next = this.filtered[index + direction];

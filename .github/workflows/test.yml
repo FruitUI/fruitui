@@ -1,0 +1,55 @@
+name: FruitUI contracts
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.2'
+            testbench: '^9.0'
+            livewire: '^3.7'
+            phpunit: '^11.0'
+            browsers: chromium
+          - php: '8.3'
+            testbench: '^10.0'
+            livewire: '^3.7'
+            phpunit: '^11.0'
+            browsers: chromium
+          - php: '8.5'
+            testbench: '^11.0'
+            livewire: '^4.0'
+            phpunit: '^12.0'
+            browsers: chromium,firefox,webkit
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, mbstring, sqlite3, pdo_sqlite
+          coverage: none
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: composer require --dev --no-update "orchestra/testbench:${{ matrix.testbench }}" "livewire/livewire:${{ matrix.livewire }}" "phpunit/phpunit:${{ matrix.phpunit }}"
+      - run: composer update --no-interaction --prefer-dist
+      - run: composer test
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build
+      - run: npm run test:package
+      - run: npm test
+        env:
+          FRUITUI_BROWSERS: ${{ matrix.browsers }}
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: browser-results-${{ matrix.php }}
+          include-hidden-files: true
+          path: |
+            test-results/
+            tests/host/.runtime/server.log

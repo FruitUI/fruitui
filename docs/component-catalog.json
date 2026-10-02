@@ -30,7 +30,9 @@
       "f-help",
       "f-error"
     ],
-    "blade": [],
+    "blade": [
+      "field"
+    ],
     "uses": []
   },
   {
@@ -300,7 +302,9 @@
     "classes": [
       "f-toast"
     ],
-    "blade": [],
+    "blade": [
+      "toast"
+    ],
     "uses": []
   },
   {

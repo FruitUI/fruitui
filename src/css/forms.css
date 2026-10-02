@@ -1,7 +1,7 @@
 @layer fruit.components {
   /* Native controls retain their value, focus, validation and form behavior. */
-  .f-input:is(input, textarea)[readonly] { --f-input-background: var(--f-surface-secondary); --f-input-color: var(--f-secondary); box-shadow: none; }
-  .f-input:is(:autofill, :-webkit-autofill) { --f-autofill-shadow: inset 0 0 0 1000px var(--f-input-background); box-shadow: var(--f-autofill-shadow); -webkit-text-fill-color: var(--f-input-color); caret-color: var(--f-input-color); }
+  .f-input:is(input, textarea)[readonly] { background: var(--f-input-background, var(--f-surface-secondary)); color: var(--f-input-color, var(--f-secondary)); box-shadow: none; }
+  .f-input:is(:autofill, :-webkit-autofill) { --f-autofill-shadow: inset 0 0 0 1000px var(--f-input-background, var(--f-control)); box-shadow: var(--f-autofill-shadow); -webkit-text-fill-color: var(--f-input-color, var(--f-text)); caret-color: var(--f-input-color, var(--f-text)); }
   .f-input[type='search']::-webkit-search-cancel-button { appearance: none; width: 16px; height: 16px; margin-inline-start: 6px; cursor: pointer; background: var(--f-secondary); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='black'/%3E%3Cpath d='m5 5 6 6m0-6-6 6' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E") center / contain; }
   .f-input[type='search']:disabled::-webkit-search-cancel-button { cursor: not-allowed; }
   .f-input:is([type='date'], [type='datetime-local'], [type='month'], [type='week'], [type='time'])::-webkit-calendar-picker-indicator { cursor: pointer; padding: 2px; border-radius: 3px; }

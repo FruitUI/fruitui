@@ -1,29 +1,33 @@
 let sequence = 0;
 export const fruitId = prefix => `${prefix}-${++sequence}`;
 
-/** Keep the native named control authoritative, including Alpine/Livewire events. */
-export function publishValue(control, value) {
+/** Discrete selections commit immediately; document editing commits on blur. */
+export function publishValue(control, value, { commit = true } = {}) {
+  if (control.value === value) return;
   control.value = value;
   control.dispatchEvent(new Event('input', { bubbles: true }));
-  control.dispatchEvent(new Event('change', { bubbles: true }));
+  if (commit) control.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-export function bridgeControl(component, control, query, sync) {
+/** The native named control remains the form/model owner. */
+export function bridgeControl(component, control, query, sync, { presentation = query, focusRoot = query } = {}) {
   const cleanups = [];
   const listen = (node, event, handler) => {
     node?.addEventListener(event, handler);
     cleanups.push(() => node?.removeEventListener(event, handler));
   };
   const labels = () => [...(control.labels || [])];
+  const originalClass = presentation.className, originalStyle = presentation.getAttribute('style'), originalPlaceholder = query.placeholder || '';
+  const wasFocused = control.ownerDocument.activeElement === control;
+  let value = control.value;
   listen(control.ownerDocument, 'click', event => {
     if (labels().some(label => label.contains(event.target)) && (event.target === control || !event.target.closest('button, a, input, select, textarea'))) { event.preventDefault(); query.focus(); }
   });
-  const attributes = () => {
-    // Server morphs may remove this owned attribute or replace a label.
+  const attributes = (reason = 'attributes') => {
     if (!control.hidden) control.hidden = true;
     const currentLabels = labels();
     for (const label of currentLabels) label.id ||= fruitId('fruit-label');
-    for (const name of ['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid']) {
+    for (const name of ['aria-label', 'aria-labelledby', 'aria-describedby', 'aria-invalid', 'aria-errormessage', 'dir', 'lang', 'title', 'spellcheck', 'inputmode', 'autocapitalize']) {
       if (control.hasAttribute(name)) query.setAttribute(name, control.getAttribute(name));
       else query.removeAttribute(name);
     }
@@ -32,27 +36,49 @@ export function bridgeControl(component, control, query, sync) {
     }
     query.setAttribute('aria-required', String(control.required));
     query.tabIndex = control.matches(':disabled') ? -1 : control.tabIndex;
-    if (control.hasAttribute('dir')) query.setAttribute('dir', control.getAttribute('dir'));
     if ('disabled' in query) query.disabled = control.matches(':disabled');
     if ('readOnly' in query) query.readOnly = control.readOnly || false;
-    sync();
+    // Presentation follows the fallback control; identity, name, models and actions stay native.
+    presentation.className = [...new Set(`${originalClass} ${control.className.split(/\s+/).filter(name => name !== 'f-input' || presentation === query).join(' ')}`.split(/\s+/).filter(Boolean))].join(' ');
+    const style = control.getAttribute('style') || originalStyle;
+    if (style === null) presentation.removeAttribute('style'); else presentation.setAttribute('style', style);
+    if ('placeholder' in query) query.placeholder = control.getAttribute('placeholder') ?? originalPlaceholder;
+    sync(reason);
+    value = control.value;
   };
-  const valueChanged = () => { if ('value' in query) query.value = ''; query.setCustomValidity?.(''); attributes(); };
+  const valueChanged = () => {
+    if (control.value === value) return;
+    query.setCustomValidity?.('');
+    attributes('value');
+  };
   listen(control, 'input', valueChanged);
   listen(control, 'change', valueChanged);
   listen(control, 'invalid', event => { event.preventDefault(); query.focus(); query.setAttribute('aria-invalid', 'true'); });
-  let resetTimer;
-  listen(control.form, 'reset', event => {
-    clearTimeout(resetTimer);
-    resetTimer = setTimeout(() => { if (!event.defaultPrevented) { if ('value' in query) query.value = ''; query.setCustomValidity?.(''); attributes(); } }, 0);
+  listen(focusRoot, 'focusin', event => {
+    if (!focusRoot.contains(event.relatedTarget)) control.dispatchEvent(new FocusEvent('focus', { relatedTarget: event.relatedTarget }));
   });
-  const observer = new MutationObserver(attributes);
-  observer.observe(control, { attributes: true, childList: true, subtree: true });
-  if (control.closest('fieldset')) observer.observe(control.closest('fieldset'), { attributes: true, attributeFilter: ['disabled'] });
+  listen(focusRoot, 'focusout', event => {
+    if (!focusRoot.contains(event.relatedTarget)) control.dispatchEvent(new FocusEvent('blur', { relatedTarget: event.relatedTarget }));
+  });
+  let resetTimer;
+  listen(control.ownerDocument, 'reset', event => {
+    if (event.target !== control.form) return;
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => { if (!event.defaultPrevented) { query.setCustomValidity?.(''); attributes('reset'); } }, 0);
+  });
+  const observer = new MutationObserver(records => {
+    const optionsChanged = records.some(record => record.type === 'childList' || record.type === 'characterData' || record.target !== control && control.contains(record.target));
+    attributes(control.value !== value ? 'value' : optionsChanged ? 'options' : 'attributes');
+  });
+  observer.observe(control, { attributes: true, childList: true, characterData: true, subtree: true });
+  for (let ancestor = control.parentElement; ancestor; ancestor = ancestor.parentElement) {
+    if (ancestor.tagName === 'FIELDSET') observer.observe(ancestor, { attributes: true, attributeFilter: ['disabled'] });
+  }
   component.$nextTick(() => {
     if (control._x_model) cleanups.push(component.$watch(() => control._x_model.get(), () => component.$nextTick(valueChanged)));
-    attributes();
+    attributes('initial');
+    if ((control.autofocus || wasFocused) && [control.ownerDocument.body, control].includes(control.ownerDocument.activeElement)) query.focus();
   });
-  attributes();
+  attributes('initial');
   return () => { observer.disconnect(); clearTimeout(resetTimer); cleanups.forEach(dispose => dispose?.()); };
 }

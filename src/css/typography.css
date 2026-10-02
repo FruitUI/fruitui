@@ -8,3 +8,19 @@
   :where(.fruit-ui) :where(blockquote) { margin: var(--f-space-4) 0; padding-inline-start: var(--f-space-4); border-inline-start: 3px solid var(--f-border); color: var(--f-secondary); }
   :where(.fruit-ui) :where(hr) { width: 100%; margin-block: var(--f-space-4); border: 0; border-block-start: 1px solid var(--f-border); }
 }
+
+@layer fruit.components {
+  .f-prose { line-height: 1.65; overflow-wrap: anywhere; }
+  .f-prose :is(p, ul, ol, blockquote, pre, figure, table) { margin-block: 0 1em; }
+  .f-prose :is(h1, h2, h3, h4) { margin-block: 1.3em .5em; line-height: 1.25; }
+  .f-prose > :first-child { margin-top: 0; }
+  .f-prose > :last-child { margin-bottom: 0; }
+  .f-prose :is(ul, ol) { padding-inline-start: 1.5em; }
+  .f-prose li + li { margin-top: .25em; }
+  .f-prose :is(img, video) { max-width: 100%; height: auto; }
+  .f-prose a { color: var(--f-selection-text); text-underline-offset: 2px; }
+  .f-prose table { width: 100%; border-collapse: collapse; }
+  .f-prose :is(th, td) { padding: 8px 10px; border: 1px solid var(--f-border); text-align: start; }
+  .f-prose th { background: var(--f-surface-secondary); }
+  .f-prose__scroll { max-width: 100%; overflow: auto; }
+}

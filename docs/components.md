@@ -297,3 +297,10 @@ Tokens: `--f-table-min-width`, `--f-table-font-size`, `--f-table-heading-size`, 
 ## Support interface controls
 
 See [support interface components](support-components.md) for the new selection, menu, feedback, navigation, upload, and rich editor contracts. Their working gallery specimens include both HTML and Blade usage. The optional `fruitui/editor` module is separate from `fruitui/alpine`; application workflows remain in the examples.
+
+
+## Field associations and shared notices
+
+`x-fruit::field` composes one native control with its label, description and error. Give it `control-id` and `label`, plus optional text `description`/`error`; supported child form adapters inherit matching IDs and merged ARIA descriptions. The association is scoped to Field, with no value/model ownership. Use Fieldset for independent choice groups. Plain HTML retains explicit label/ARIA associations.
+
+`x-fruit::toast` provides a native status container and content slot. The optional `fruitToast({duration:4000})` helper supplies `notify`, dismissal, pause/resume and cleanup; all four examples use it. Independent action and dismiss buttons stay in the slot. See the [adoption guide](adoption.md) and gallery for complete Field, Toast, wrapper, localization and Editor toolbar examples.

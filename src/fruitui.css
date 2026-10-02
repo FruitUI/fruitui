@@ -1,14 +1,4 @@
-@layer fruit.tokens, fruit.base, fruit.components, fruit.layout, fruit.patterns, fruit.mail;
-@import './css/tokens.css';
-@import './css/base.css';
-@import './css/components.css';
-@import './css/select.css';
-@import './css/forms.css';
-@import './css/typography.css';
-@import './css/service.css';
-@import './css/editor.css';
-@import './css/layout.css';
-@import './css/workspace.css';
-@import './css/table.css';
-@import './css/patterns.css';
-@import './css/mail.css';
+@import './core.css';
+@import './layout.css';
+@import './editor.css';
+@import './mail.css';

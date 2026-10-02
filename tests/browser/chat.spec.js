@@ -43,7 +43,8 @@ test('conversation drafts stay independent and Enter sends while Shift Enter pre
   await expect(composer).toHaveValue('A design draft.');
   await composer.fill('First line.');
   await composer.press('Shift+Enter');
-  await composer.press('End');
+  await expect(composer).toHaveValue('First line.\n');
+  await composer.evaluate(input => input.setSelectionRange(input.value.length, input.value.length));
   await composer.press('t');
   await expect(composer).toHaveValue('First line.\nt');
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(5);

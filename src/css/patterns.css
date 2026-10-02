@@ -1,6 +1,6 @@
 @layer fruit.patterns {
   /* Native forms compose their own labels, textarea, help/error text and actions. */
-  .f-composer { --f-composer-background: var(--f-surface); flex-shrink: 0; padding: var(--f-composer-padding, 14px 24px 18px); border-top: 1px solid var(--f-border); background: var(--f-composer-background); }
+  .f-composer { flex-shrink: 0; padding: var(--f-composer-padding, 14px 24px 18px); border-top: 1px solid var(--f-border); background: var(--f-composer-background, var(--f-surface)); }
   .f-composer__input { display: block; min-height: var(--f-composer-input-min-height, 82px); max-height: var(--f-composer-input-max-height, 160px); font-size: var(--f-composer-input-size, 12px); line-height: 1.6; }
   .f-composer__header, .f-composer__footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--f-composer-action-gap, 12px); }
   .f-composer__header { margin-bottom: 10px; }
@@ -13,10 +13,10 @@
   .f-description-list dd { margin: var(--f-description-value-margin, 3px 0 0); font-size: var(--f-description-value-size, 13px); line-height: var(--f-description-value-line-height, 1.6); overflow-wrap: anywhere; }
 
   /* A native disclosure containing independent controls; no menu role implied. */
-  .f-floating-disclosure { --f-floating-background: var(--f-surface); --f-floating-shadow: var(--f-shadow); position: relative; }
+  .f-floating-disclosure { position: relative; }
   .f-floating-disclosure > summary { list-style: none; cursor: pointer; }
   .f-floating-disclosure > summary::-webkit-details-marker { display: none; }
-  .f-floating-disclosure__content { position: absolute; inset-inline-end: 0; top: calc(100% + var(--f-floating-gap, 4px)); z-index: 6; width: var(--f-floating-width, max-content); max-width: calc(100vw - 32px); padding: var(--f-floating-padding, 5px); border: 1px solid var(--f-border); border-radius: var(--f-floating-radius, 10px); background: var(--f-floating-background); backdrop-filter: var(--f-floating-backdrop, none); box-shadow: var(--f-floating-shadow); }
+  .f-floating-disclosure__content { position: absolute; inset-inline-end: 0; top: calc(100% + var(--f-floating-gap, 4px)); z-index: 6; width: var(--f-floating-width, max-content); max-width: calc(100vw - 32px); padding: var(--f-floating-padding, 5px); border: 1px solid var(--f-border); border-radius: var(--f-floating-radius, 10px); background: var(--f-floating-background, var(--f-surface)); backdrop-filter: var(--f-floating-backdrop, none); box-shadow: var(--f-floating-shadow, var(--f-shadow)); }
   .f-floating-disclosure--above > .f-floating-disclosure__content { top: auto; bottom: calc(100% + var(--f-floating-gap, 4px)); }
   @media (prefers-reduced-transparency: reduce) {
     .f-floating-disclosure__content { background: var(--f-surface-secondary); backdrop-filter: none; }
@@ -25,17 +25,17 @@
      and optional arrow-key navigation belong to the caller. */
   .f-conversation-list { min-height: 0; margin: 0; padding: var(--f-conversation-list-padding, 0 8px 8px); overflow: auto; list-style: none; }
   .f-conversation-list > li { min-width: 0; }
-  .f-conversation-row { --f-conversation-current-background: var(--f-selection); --f-conversation-current-hover: var(--f-conversation-current-background); --f-conversation-current-color: var(--f-text); --f-conversation-current-secondary: var(--f-secondary); --f-conversation-current-unread: var(--f-accent); --f-conversation-current-border: transparent; position: relative; display: block; width: 100%; padding: var(--f-conversation-row-padding, 14px 12px); border: 0; border-radius: var(--f-conversation-row-radius, 9px); background: transparent; color: var(--f-text); text-align: start; }
+  .f-conversation-row { --f-internal-conversation-current-background: var(--f-selection); --f-internal-conversation-current-hover: var(--f-conversation-current-background, var(--f-internal-conversation-current-background)); --f-internal-conversation-current-color: var(--f-text); --f-internal-conversation-current-secondary: var(--f-secondary); --f-internal-conversation-current-unread: var(--f-accent); --f-internal-conversation-current-border: transparent; position: relative; display: block; width: 100%; padding: var(--f-conversation-row-padding, 14px 12px); border: 0; border-radius: var(--f-conversation-row-radius, 9px); background: transparent; color: var(--f-text); text-align: start; }
   .f-conversation-row:has(> .f-conversation-row__leading) { padding-inline-start: var(--f-conversation-row-leading-inset, 62px); }
   .f-conversation-row::after { content: ''; position: absolute; bottom: 0; inset-inline-start: var(--f-conversation-row-leading-inset, 12px); inset-inline-end: var(--f-conversation-separator-end, 12px); border-bottom: 1px solid var(--f-border); }
   .f-conversation-row:has(> .f-conversation-row__leading)::after { inset-inline-start: var(--f-conversation-row-leading-inset, 62px); }
   .f-conversation-row:hover { background: var(--f-hover); }
-  .f-conversation-row[aria-current='true'] { background: var(--f-conversation-current-background); color: var(--f-conversation-current-color); }
-  .f-conversation-row[aria-current='true']:hover { background: var(--f-conversation-current-hover); }
-  .f-conversation-row[aria-current='true']::after { border-color: var(--f-conversation-current-border); }
-  .f-conversation-row[aria-current='true'] :is(.f-conversation-row__time, .f-conversation-row__preview, .f-conversation-row__meta) { color: var(--f-conversation-current-secondary); }
-  .f-conversation-row[aria-current='true'] .f-conversation-row__unread { background: var(--f-conversation-current-unread); }
-  .f-conversation-row--filled { --f-conversation-current-background: var(--f-accent-fill); --f-conversation-current-color: var(--f-on-accent); --f-conversation-current-secondary: var(--f-on-accent); --f-conversation-current-unread: var(--f-on-accent); }
+  .f-conversation-row[aria-current='true'] { background: var(--f-conversation-current-background, var(--f-internal-conversation-current-background)); color: var(--f-conversation-current-color, var(--f-internal-conversation-current-color)); }
+  .f-conversation-row[aria-current='true']:hover { background: var(--f-conversation-current-hover, var(--f-internal-conversation-current-hover)); }
+  .f-conversation-row[aria-current='true']::after { border-color: var(--f-conversation-current-border, var(--f-internal-conversation-current-border)); }
+  .f-conversation-row[aria-current='true'] :is(.f-conversation-row__time, .f-conversation-row__preview, .f-conversation-row__meta) { color: var(--f-conversation-current-secondary, var(--f-internal-conversation-current-secondary)); }
+  .f-conversation-row[aria-current='true'] .f-conversation-row__unread { background: var(--f-conversation-current-unread, var(--f-internal-conversation-current-unread)); }
+  .f-conversation-row--filled { --f-internal-conversation-current-background: var(--f-accent-fill); --f-internal-conversation-current-color: var(--f-on-accent); --f-internal-conversation-current-secondary: var(--f-on-accent); --f-internal-conversation-current-unread: var(--f-on-accent); }
   .f-conversation-row:focus-visible { outline-offset: -3px; }
   .f-conversation-row:disabled:hover { background: transparent; }
   .f-conversation-row__leading { position: absolute; inset-inline-start: 14px; top: 17px; }

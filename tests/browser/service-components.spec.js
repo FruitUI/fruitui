@@ -73,7 +73,10 @@ test('token entry publishes a newline string, rejects invalid entries, and suppo
 test('pasted tokens deduplicate and external updates, readonly, and resets preserve native state', async ({ page }) => {
   await tokens(page).evaluate(input => {
     const clipboardData = new DataTransfer(); clipboardData.setData('text/plain', 'sophie@example.com,mia@example.com\nnoah@example.com');
-    input.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData }));
+    const event = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
+    // Firefox discards clipboardData in synthetic constructors. Supply the native event interface.
+    Object.defineProperty(event, 'clipboardData', { value: clipboardData });
+    input.dispatchEvent(event);
   });
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com\nmia@example.com\nnoah@example.com');
   await page.getByRole('button', { name: 'Set recipients externally' }).click();

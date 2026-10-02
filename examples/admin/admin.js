@@ -1,3 +1,4 @@
+import { fruitToast } from '../../src/js/toast.js';
 import { customers, plans, revenue } from './records.js';
 
 const blankCustomer = () => ({ name: '', email: '', company: '', plan: 'studio', status: 'trial', notes: '', updates: false });
@@ -7,6 +8,7 @@ const detailTabs = ['profile', 'subscription', 'activity'];
 
 export function adminDemo() {
   return {
+    ...fruitToast(),
     customers: structuredClone(customers), plans, revenue,
     view: 'overview', navigationOpen: false, customerId: null, customerTab: 'profile', pendingFocus: 'title',
     query: '', statusFilter: 'all', planFilter: 'all', sortKey: 'joined', sortDirection: 'desc', page: 1, pageSize: 5,
@@ -15,14 +17,14 @@ export function adminDemo() {
     editingId: null, form: blankCustomer(), formError: '', deletionIds: [],
     settings: { workspace: 'Forma', email: 'alex@forma.example', trialDays: 14, signature: '<p>Thanks,<br><strong>Alex Morgan</strong></p>', digest: true, security: true },
     savedSettings: { workspace: 'Forma', email: 'alex@forma.example', trialDays: 14, signature: '<p>Thanks,<br><strong>Alex Morgan</strong></p>', digest: true, security: true },
-    activity: [], notice: '', nextId: 1021,
+    activity: [], nextId: 1021,
 
     init() {
       this.hashListener = () => this.applyRoute(true);
       window.addEventListener('hashchange', this.hashListener);
       this.applyRoute(false);
     },
-    destroy() { window.removeEventListener('hashchange', this.hashListener); },
+    destroy() { this.destroyToast(); window.removeEventListener('hashchange', this.hashListener); },
     get title() { return this.view === 'customer' ? this.selectedCustomer?.name || 'Customer' : titles[this.view]; },
     get subtitle() {
       if (this.view === 'customer') return this.selectedCustomer?.company || '';
@@ -264,10 +266,6 @@ export function adminDemo() {
       this.activity.unshift({ id: this.activity.length + 1, title, detail, icon, customerId, time: new Date().toISOString() });
     },
     activityTime(value) { return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(value)); },
-    notify(message) {
-      this.notice = message;
-      setTimeout(() => { if (this.notice === message) this.notice = ''; }, 4500);
-    },
     exportCustomers() {
       // Quote fields and neutralize spreadsheet formulas in user-entered content.
       const escape = value => `"${String(value).replace(/^[=+@\-\t\r]/, "'$&").replaceAll('"', '""')}"`;

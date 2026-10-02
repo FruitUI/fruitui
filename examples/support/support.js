@@ -1,10 +1,12 @@
+import { fruitToast } from '../../src/js/toast.js';
 import { tickets, queues, agents, mailboxes } from './tickets.js';
 
 export function supportDemo() {
   return {
+    ...fruitToast(),
     tickets: structuredClone(tickets), queues, agents, mailboxes,
     mailboxId: 'all', queue: 'open', query: '', priorityOnly: false, selectedId: 1042,
-    page: 1, pageSize: 10, view: 'list', mode: 'reply', tagInput: '', error: '', notice: '', noticeTimer: null,
+    page: 1, pageSize: 10, view: 'list', mode: 'reply', tagInput: '', error: '',
     drafts: { 1042: { reply: 'Hi Sophie,\n\nAbsolutely — all your projects and comments will stay right where they are. You can upgrade from Settings → Billing and invite your teammates whenever you’re ready.\n\nAnnual billing is available, too. Happy to help you get the studio settled in!\n\nAlex', note: '' } },
     newMailboxId: 'support', newName: '', newEmail: '', newSubject: '', newMessage: '', newError: '',
     mailbox(id) { return this.mailboxes.find(mailbox => mailbox.id === id); },
@@ -145,7 +147,5 @@ export function supportDemo() {
       this.newName = ''; this.newEmail = ''; this.newSubject = ''; this.newMessage = '';
       this.$refs.newConversation.close(); this.notify(`Conversation #${id} created`);
     },
-    notify(message) { this.notice = message; clearTimeout(this.noticeTimer); this.noticeTimer = setTimeout(() => { this.notice = ''; }, 4000); },
-    destroy() { clearTimeout(this.noticeTimer); },
   };
 }
