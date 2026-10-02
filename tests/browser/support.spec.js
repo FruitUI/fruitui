@@ -182,6 +182,8 @@ test('small screens and a narrow container fit without losing actions', async ({
 
 for (const theme of ['light', 'dark']) {
   test(`support screens and dialogs are accessible in automatic ${theme} appearance`, async ({ page }) => {
+    // Full-page audits across seven states share this scenario's time budget.
+    test.slow();
     await page.emulateMedia({ colorScheme: theme });
     await assertAccessible(page);
     await page.getByRole('button', { name: 'New conversation', exact: true }).click();

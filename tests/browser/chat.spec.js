@@ -244,6 +244,8 @@ test('all screens, dialogs, and long messages fit a 320px container', async ({ p
 
 for (const appearance of ['light', 'dark']) {
   test(`conversation, reactions, activity, threads, and dialogs are accessible in automatic ${appearance} appearance`, async ({ page }) => {
+    // Full-page audits across nine states share this scenario's time budget.
+    test.slow();
     await page.emulateMedia({ colorScheme: appearance });
     await accessible(page);
     await page.locator('.chat-message[data-message-id="202"] summary').click();
