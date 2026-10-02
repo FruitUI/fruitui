@@ -2,6 +2,9 @@
 @import './css/tokens.css';
 @import './css/base.css';
 @import './css/components.css';
+@import './css/select.css';
+@import './css/forms.css';
+@import './css/typography.css';
 @import './css/layout.css';
 @import './css/workspace.css';
 @import './css/table.css';

@@ -29,7 +29,7 @@ test('core appearance declarations use shared tokens or native/system colors', (
     for (const [, property, value] of source.matchAll(/(?:^|[;{])\s*([\w-]+)\s*:\s*([^;{}]+)(?=;|})/g)) {
       if (!appearanceProperty.test(property)) continue;
       const literal = value.replace(/var\(--f-[\w-]+\)/g, '')
-        .replace(/\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|Canvas|CanvasText)\b/g, '')
+        .replace(/\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|HighlightText|GrayText|Canvas|CanvasText)\b/g, '')
         .replace(/-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em|%)?/g, '')
         .replace(/[\s,]/g, '');
       expect(literal, `${file}: ${property}: ${value.trim()} must use an appearance token`).toBe('');

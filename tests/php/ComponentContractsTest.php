@@ -163,6 +163,82 @@ class ComponentContractsTest extends TestCase
         $this->assertSame($components, $documented, 'Adding or removing a Blade component must update the contract catalog.');
     }
 
+    #[DataProvider('nativeInputFamilies')]
+    public function test_native_input_families_forward_attributes_to_the_actual_control(string $component, string $type): void
+    {
+        $html = Blade::render('<x-fruit::'.$component.' type="'.$type.'" id="field" name="field" min="1" max="10" step="1" required disabled aria-label="Field" x-model="field" wire:model.live="field" @change="changed" />');
+        $document = $this->document($html);
+        $this->assertSame(1, $document->getElementsByTagName('input')->length);
+        $input = $document->getElementsByTagName('input')->item(0);
+        foreach (['type' => $type, 'id' => 'field', 'name' => 'field', 'min' => '1', 'max' => '10', 'step' => '1', 'aria-label' => 'Field', 'x-model' => 'field', 'wire:model.live' => 'field', '@change' => 'changed'] as $name => $value) {
+            $this->assertSame($value, $input->getAttribute($name));
+        }
+        $this->assertTrue($input->hasAttribute('required'));
+        $this->assertTrue($input->hasAttribute('disabled'));
+        $this->assertSame(1, preg_match_all('/\btype="/', $html));
+    }
+
+    public static function nativeInputFamilies(): array
+    {
+        return [['file', 'file'], ['number', 'number'], ['date', 'date'], ['date', 'datetime-local'], ['date', 'month'], ['date', 'week'], ['time', 'time'], ['color', 'color'], ['range', 'range']];
+    }
+
+    public function test_file_list_and_readonly_numeric_contracts_keep_native_attributes(): void
+    {
+        $file = $this->document(Blade::render('<x-fruit::file name="attachments[]" accept=".csv" multiple wire:model="attachments" />'))->getElementsByTagName('input')->item(0);
+        $this->assertSame('attachments[]', $file->getAttribute('name'));
+        $this->assertSame('.csv', $file->getAttribute('accept'));
+        $this->assertTrue($file->hasAttribute('multiple'));
+        $this->assertFalse($file->hasAttribute('value'));
+        $number = $this->document(Blade::render('<x-fruit::number name="seats" value="12" readonly />'))->getElementsByTagName('input')->item(0);
+        $this->assertSame('12', $number->getAttribute('value'));
+        $this->assertTrue($number->hasAttribute('readonly'));
+    }
+
+    #[DataProvider('newSemanticOverrides')]
+    public function test_new_controls_reject_changes_to_their_semantic_contract(string $template, string $message): void
+    {
+        $this->assertRejected($template, $message);
+    }
+
+    public static function newSemanticOverrides(): array
+    {
+        $cases = [];
+        foreach (['file', 'number', 'date', 'time', 'color', 'range', 'progress', 'meter', 'fieldset'] as $component) {
+            $cases[] = ['<x-fruit::'.$component.' role="checkbox" />', 'overriding role'];
+            $cases[] = ['<x-fruit::'.$component.' x-bind:type.camel="kind" />', 'type and role belong'];
+            $cases[] = ['<x-fruit::'.$component.' as="button" />', 'fixed native element'];
+        }
+        foreach (['file', 'number', 'time', 'color', 'range'] as $component) {
+            $cases[] = ['<x-fruit::'.$component.' type="text" />', 'fixed native type'];
+        }
+        foreach (['time', 'text', 'file', 'unknown'] as $type) {
+            $cases[] = ['<x-fruit::date type="'.$type.'" />', 'date type must be one of'];
+        }
+
+        return $cases;
+    }
+
+    public function test_fieldset_and_indicators_preserve_grouping_and_native_value_models(): void
+    {
+        $html = Blade::render('<x-fruit::fieldset disabled name="preferences"><legend>Preferences</legend><x-fruit::checkbox name="email" value="1">Email</x-fruit::checkbox></x-fruit::fieldset><x-fruit::progress aria-label="Importing" value="4" max="10">4 of 10</x-fruit::progress><x-fruit::progress aria-label="Connecting" /><x-fruit::meter aria-label="Storage" min="0" max="100" low="60" high="85" optimum="20" value="35" />');
+        $document = $this->document($html);
+        $group = $document->getElementsByTagName('fieldset')->item(0);
+        $this->assertTrue($group->hasAttribute('disabled'));
+        $this->assertSame('legend', $group->firstChild->nodeName);
+        $this->assertSame('Preferences', $group->firstChild->textContent);
+        $this->assertSame('checkbox', $group->getElementsByTagName('input')->item(0)->getAttribute('type'));
+        $progress = $document->getElementsByTagName('progress');
+        $this->assertSame('4', $progress->item(0)->getAttribute('value'));
+        $this->assertSame('10', $progress->item(0)->getAttribute('max'));
+        $this->assertFalse($progress->item(1)->hasAttribute('value'));
+        $this->assertFalse($progress->item(1)->hasAttribute('aria-valuenow'));
+        $meter = $document->getElementsByTagName('meter')->item(0);
+        foreach (['min' => '0', 'max' => '100', 'low' => '60', 'high' => '85', 'optimum' => '20', 'value' => '35'] as $name => $value) {
+            $this->assertSame($value, $meter->getAttribute($name));
+        }
+    }
+
     private function assertRejected(string $template, string $message, array $data = []): void
     {
         try {

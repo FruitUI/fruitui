@@ -9,6 +9,7 @@ use InvalidArgumentException;
 final class ComponentContract
 {
     public const INPUT_TYPES = ['text', 'email', 'password', 'search', 'tel', 'url'];
+    public const DATE_TYPES = ['date', 'datetime-local', 'month', 'week'];
     public const BUTTON_VARIANTS = ['default', 'primary', 'ghost', 'danger'];
     public const BUTTON_TYPES = ['button', 'submit', 'reset'];
     public const CONVERSATION_ROW_VARIANTS = ['quiet', 'filled'];
@@ -17,6 +18,12 @@ final class ComponentContract
     {
         self::option('input', 'type', $type, self::INPUT_TYPES);
         self::semantics('input', $attributes);
+    }
+
+    public static function date(mixed $type, ComponentAttributeBag $attributes): void
+    {
+        self::option('date', 'type', $type, self::DATE_TYPES);
+        self::semantics('date', $attributes, null, $type);
     }
 
     public static function button(mixed $variant, mixed $type, ComponentAttributeBag $attributes): void

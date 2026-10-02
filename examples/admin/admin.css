@@ -110,7 +110,7 @@
 .admin-table th, .admin-table td { white-space: nowrap; }
 
 .admin-table .admin-selection-cell { width: 38px; padding-inline: 17px 3px; }
-.admin-checkbox { width: 14px; height: 14px; margin: 0; display: block; accent-color: var(--f-accent); cursor: pointer; }
+.admin-checkbox { --f-check-size: 14px; }
 .admin-customer { display: flex; align-items: center; gap: 10px; }
 .admin-customer .f-avatar { width: 30px; height: 30px; font-size: 9px; flex-shrink: 0; }
 .admin-customer > div { min-width: 0; }
@@ -153,8 +153,8 @@
 .admin-activity-list time { font-size: 9px; color: var(--f-secondary); white-space: nowrap; margin-left: auto; align-self: flex-start; margin-top: 4px; }
 .admin-settings { max-width: 680px; }
 .admin-settings-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-block: 25px; }
-.admin-setting-group { border: 0; border-top: 1px solid var(--f-border); padding: 20px 0 0; margin: 0; }
-.admin-setting-group legend { font-size: 12px; font-weight: 600; padding: 0 10px 0 0; }
+.admin-setting-group { border-top: 1px solid var(--f-border); padding-top: 20px; }
+.admin-setting-group > legend { padding-inline-end: 10px; }
 .admin-setting-row { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 20px; }
 .admin-setting-row strong { font-size: 12px; font-weight: 500; }
 .admin-setting-row small { display: block; font-size: 10px; color: var(--f-secondary); margin-top: 4px; line-height: 1.5; }
@@ -275,7 +275,7 @@
   .admin-customer-name { min-height: 30px; font-size: 13px; }
   .admin-customer > div > span { font-size: 10px; }
   .admin-table .admin-selection-cell { padding-inline: 14px 5px; }
-  .admin-checkbox { width: 22px; height: 22px; }
+  .admin-checkbox { --f-check-size: 22px; }
   .admin-delete-row { min-height: 44px; min-width: 44px; }
   .admin-pagination { padding: 14px; font-size: 11px; }
   .admin-page-controls { width: 100%; justify-content: space-between; }

@@ -1,6 +1,6 @@
 # Public components and patterns
 
-The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#current-blade-contracts) defines the complete native contracts for the twenty-one Blade wrappers.
+The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#current-blade-contracts) defines the complete native contracts for the thirty Blade wrappers.
 
 ## CSS compositions and utilities
 
@@ -21,6 +21,81 @@ These use native markup and existing controls. A CSS composition does not requir
 | Screen-reader text | Preserve accessible content while visually hiding it with `f-sr-only`. | Native label/text semantics. | Use on labels and descriptions; not on focusable controls. |
 | Icon | Size and stroke caller-owned SVG artwork with `f-icon`. | No added state or keyboard behavior. | Decorative artwork uses `aria-hidden=true`; the enclosing control supplies its label. No Apple artwork is distributed. |
 | Mail shell | Arrange toolbars, navigation, list, and reader using `f-mail-container` and `f-mail f-workspace`, with shared `f-pane` classes on its pane elements. | Application owns `data-view=list/message/mailboxes` and navigation. | Named container queries choose desktop, medium, and phone layouts; `--f-sidebar-width`, `--f-list-width`, and `--f-mail-mobile-height` adjust geometry. |
+
+## Native forms and indicators
+
+Shared `forms.css` covers checkbox/radio marks (including indeterminate checkboxes), fieldset/legend, readonly and autofilled inputs, search cancellation, and the additional native controls below. Admin table selection uses the same `f-check` styling as labeled choices. Admin and Support use the same `f-fieldset` reset and legend presentation. Scope `--f-check-size` to adjust a checkbox/radio's dimensions without changing its meaning.
+
+| Purpose | HTML classes and element | Blade adapter |
+| --- | --- | --- |
+| Group fields | `fieldset.f-fieldset` with a native legend | `x-fruit::fieldset` |
+| Choose files | `input.f-input.f-file type=file` | `x-fruit::file` |
+| Numeric quantity | `input.f-input type=number` | `x-fruit::number` |
+| Calendar value | `input.f-input type=date/datetime-local/month/week` | `x-fruit::date` with the corresponding type |
+| Time of day | `input.f-input type=time` | `x-fruit::time` |
+| Color value | `input.f-input.f-color type=color` | `x-fruit::color` |
+| Bounded quantity | `input.f-range type=range` | `x-fruit::range` |
+| Task completion/activity | `progress.f-progress` | `x-fruit::progress` |
+| Bounded measurement | `meter.f-meter` | `x-fruit::meter` |
+
+These adapters emit the native element directly. Put names, labels, validation attributes, `x-model`, and `wire:model` on the real input. Date's small subtype enum covers calendar values; it cannot become a time, file, or text control. Number, time, color, range, and file have fixed types. Keep Input for text-like entry. File uses its native `files` list: read `$event.target.files` in an Alpine `@change` action or use Livewire `wire:model` uploads; do not bind a filename with `x-model` or set a file input value. Application code owns uploads, data persistence, and announcements.
+
+```blade
+<x-fruit::fieldset>
+    <legend>Import settings</legend>
+    <label class="f-field">
+        <span class="f-label">Attachment</span>
+        <x-fruit::file name="attachment" accept=".csv" wire:model="attachment" />
+    </label>
+    <label class="f-field">
+        <span class="f-label">Seats</span>
+        <x-fruit::number name="seats" min="1" max="50" step="1" wire:model="seats" />
+    </label>
+</x-fruit::fieldset>
+```
+
+A readonly field has a secondary surface and text but remains focusable, selectable, and submitted. Disabled fields retain native exclusion from submission. Autofill follows the same palette through an inset surface and text styling where supported; browsers can reserve autofill properties for their own rendering. The native search clear affordance is styled in Blink/WebKit and keeps its input event. Other engines keep their own search rendering.
+
+File, date/time, and color dialogs are provided by the browser or operating system. CSS styles their exposed field parts and supplies the matching `color-scheme`; it cannot skin OS dialogs. MDN describes these [native styling limits](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Advanced_form_styling). Numeric steppers stay available. Range keeps native stepping; Firefox exposes a filled track segment, while Blink/WebKit use the shared neutral track. No script is needed for any of these controls.
+
+Progress represents a task: supply `value` and `max` for completion, omit `value` for indeterminate activity. Reduced motion holds the indeterminate cue still. Meter represents a measurement: native `min`, `max`, `low`, `high`, and `optimum` decide whether the fill uses success, warning, or danger. Include a visible numeric description so meaning does not depend on color. Both require a label or accessible name; progress fallback text alone is [not an accessible label](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress#labelling). `--f-indicator-height` adjusts indicator thickness; `--f-color-width` adjusts the color field. Forced colors preserve visible controls and indicator boundaries.
+
+## Native rich text
+
+Within `.fruit-ui`, `blockquote`, inline `code`, `kbd`, `hr`, and `pre` use shared typography and semantic appearance tokens. Code blocks scroll within their available width, nested code avoids a second backplate, and quoted content has a subtle leading rule. These are native HTML elements and work identically in Blade without extra wrappers. For code blocks that can scroll, use `tabindex="0"`, `role="region"`, and an accessible name on the `pre` so keyboard users can scroll it; focus receives the shared accent outline. Applications choose content hierarchy and keyboard shortcut wording.
+
+## Select
+
+Select always uses the real native control. Shared styles in `src/css/select.css` cover its options, groups, selected/hover/focus states, and disabled options using the existing appearance tokens. In desktop browsers supporting `appearance: base-select` and `::picker(select)`, the picker has rounded rows and selection checkmarks in the browser's top layer, so scrolling panes cannot clip it. Native keyboard navigation, validation, form submission/reset, and value/action bindings remain browser-owned.
+
+Touch devices keep their operating system's picker. Unsupported browsers retain a native select with theme-aware option colors where the platform permits them. This is progressive CSS enhancement; native popup borders, spacing, and highlights are platform-controlled in the fallback. Multiple/size listboxes keep native rendering, keyboard range selection, and row sizing; shared option styling applies where supported. They deliberately retain `appearance: auto`: accepting `base-select` does not guarantee complete listbox keyboard support. See MDN's [customizable selects](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Customizable_select).
+
+```html
+<label class="f-field">
+  <span class="f-label">Mailbox</span>
+  <select class="f-input" name="mailbox" required>
+    <option value="all">All Inboxes</option>
+    <optgroup label="Accounts">
+      <option value="work">Work</option>
+      <option value="personal">Personal</option>
+      <option value="offline" disabled>Offline account</option>
+    </optgroup>
+  </select>
+</label>
+```
+
+```blade
+<label class="f-field">
+    <span class="f-label">Included folders</span>
+    <x-fruit::select name="folders[]" multiple size="3" wire:model="folders">
+        <option value="inbox">Inbox</option>
+        <option value="sent">Sent</option>
+        <option value="archive">Archive</option>
+    </x-fruit::select>
+</label>
+```
+
+Use ordinary `option`/`optgroup` children and native attributes. Option content stays plain text for fallback compatibility; do not add a parallel hidden input, a synthetic listbox, or another Alpine instance. Light/dark, scoped theme overrides, and forced-colors selection states work through CSS.
 
 ## Conversation lists and rows
 

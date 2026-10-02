@@ -73,7 +73,6 @@
 .support-composer { --f-composer-padding: 15px 20px 18px; --f-composer-action-gap: 10px; --f-composer-footer-margin: 11px; --f-composer-input-min-height: 96px; --f-composer-input-max-height: 200px; }
 .support-composer[data-mode='note'] { --f-composer-background: var(--f-surface-secondary); }
 .support-composer-top { --f-composer-action-gap: 12px; }
-.support-composer-top fieldset { margin: 0; min-width: 0; }
 .support-composer-top .f-segmented > label > span { display: flex; align-items: center; gap: 5px; padding: 3px 9px; font-size: 11px; }
 .support-composer-top .f-icon { width: 13px; height: 13px; }
 .support-composer-audience { color: var(--f-secondary); font-size: 10px; }

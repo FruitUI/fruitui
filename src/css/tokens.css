@@ -21,6 +21,7 @@
     --f-on-accent: #fff;
     --f-danger: #c52f27;
     --f-success: #25733e;
+    --f-warning: #9a6700;
     --f-control: #fff;
     --f-shadow: 0 16px 56px rgb(29 28 38 / 10%), 0 2px 6px rgb(29 28 38 / 5%);
     --f-control-shadow: 0 1px 2px rgb(0 0 0 / 4%);
@@ -62,6 +63,7 @@
     --f-on-accent: #fff;
     --f-danger: #ff8179;
     --f-success: #83d697;
+    --f-warning: #eaba55;
     --f-control: #39393e;
     --f-shadow: 0 16px 56px rgb(0 0 0 / 25%), 0 2px 6px rgb(0 0 0 / 15%);
     --f-control-shadow: 0 1px 2px rgb(0 0 0 / 20%);
@@ -93,6 +95,7 @@
       --f-on-accent: #fff;
       --f-danger: #ff8179;
       --f-success: #83d697;
+      --f-warning: #eaba55;
       --f-control: #39393e;
       --f-shadow: 0 16px 56px rgb(0 0 0 / 25%), 0 2px 6px rgb(0 0 0 / 15%);
       --f-control-shadow: 0 1px 2px rgb(0 0 0 / 20%);

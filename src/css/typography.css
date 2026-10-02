@@ -1,0 +1,10 @@
+@layer fruit.base {
+  :where(.fruit-ui) :where(code, kbd, pre) { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+  :where(.fruit-ui) :where(code) { padding: 2px 5px; border-radius: 4px; background: var(--f-surface-secondary); font-size: .9em; overflow-wrap: anywhere; }
+  :where(.fruit-ui) :where(kbd) { padding: 2px 5px; border: 1px solid var(--f-border); border-radius: 4px; background: var(--f-control); box-shadow: var(--f-control-shadow); font-size: .85em; white-space: nowrap; }
+  :where(.fruit-ui) :where(pre) { max-width: 100%; margin: 0; padding: var(--f-space-4); overflow: auto; border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-surface-secondary); color: var(--f-text); font-size: 12px; line-height: 1.7; tab-size: 2; }
+  :where(.fruit-ui) :where(pre code) { padding: 0; border: 0; border-radius: 0; background: transparent; font-size: inherit; overflow-wrap: normal; }
+  :where(.fruit-ui) :where(pre[tabindex]):focus-visible { outline: 3px solid var(--f-accent); outline-offset: 3px; }
+  :where(.fruit-ui) :where(blockquote) { margin: var(--f-space-4) 0; padding-inline-start: var(--f-space-4); border-inline-start: 3px solid var(--f-border); color: var(--f-secondary); }
+  :where(.fruit-ui) :where(hr) { width: 100%; margin-block: var(--f-space-4); border: 0; border-block-start: 1px solid var(--f-border); }
+}

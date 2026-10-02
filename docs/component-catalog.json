@@ -78,6 +78,117 @@
     "uses": []
   },
   {
+    "id": "fieldset",
+    "kind": "primitive",
+    "classes": [
+      "f-fieldset"
+    ],
+    "blade": [
+      "fieldset"
+    ],
+    "uses": [
+      "admin.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "file",
+    "kind": "primitive",
+    "classes": [
+      "f-input",
+      "f-file"
+    ],
+    "blade": [
+      "file"
+    ],
+    "uses": []
+  },
+  {
+    "id": "number",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "number"
+    ],
+    "uses": []
+  },
+  {
+    "id": "date",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "date"
+    ],
+    "uses": []
+  },
+  {
+    "id": "time",
+    "kind": "primitive",
+    "classes": [
+      "f-input"
+    ],
+    "blade": [
+      "time"
+    ],
+    "uses": []
+  },
+  {
+    "id": "color",
+    "kind": "primitive",
+    "classes": [
+      "f-input",
+      "f-color"
+    ],
+    "blade": [
+      "color"
+    ],
+    "uses": []
+  },
+  {
+    "id": "range",
+    "kind": "primitive",
+    "classes": [
+      "f-range"
+    ],
+    "blade": [
+      "range"
+    ],
+    "uses": []
+  },
+  {
+    "id": "progress",
+    "kind": "primitive",
+    "classes": [
+      "f-progress"
+    ],
+    "blade": [
+      "progress"
+    ],
+    "uses": []
+  },
+  {
+    "id": "meter",
+    "kind": "primitive",
+    "classes": [
+      "f-meter"
+    ],
+    "blade": [
+      "meter"
+    ],
+    "uses": []
+  },
+  {
+    "id": "typography",
+    "kind": "composition",
+    "classes": [],
+    "blade": [],
+    "uses": []
+  },
+  {
     "id": "textarea",
     "kind": "primitive",
     "classes": [

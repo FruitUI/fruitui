@@ -103,7 +103,7 @@
                 <table class="f-table admin-table">
                   <caption class="f-sr-only">Customer records. Use column buttons to sort. Checkboxes select records for deletion.</caption>
                   <thead><tr>
-                    <th scope="col" class="admin-selection-cell"><input class="admin-checkbox" type="checkbox" aria-label="Select all customers on this page" :checked="pageSelected" x-effect="$el.indeterminate = pagePartlySelected" @change="selectPage($event.target.checked)" disabled :disabled="!pageCustomers.length"></th>
+                    <th scope="col" class="admin-selection-cell"><input class="f-check admin-checkbox" type="checkbox" aria-label="Select all customers on this page" :checked="pageSelected" x-effect="$el.indeterminate = pagePartlySelected" @change="selectPage($event.target.checked)" disabled :disabled="!pageCustomers.length"></th>
                     <th scope="col" :aria-sort="sortAria('name')"><button type="button" @click="sortBy('name')" disabled :disabled="false">Customer<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'name' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
                     <th scope="col" :aria-sort="sortAria('plan')"><button type="button" @click="sortBy('plan')" disabled :disabled="false">Plan<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'plan' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
                     <th scope="col" :aria-sort="sortAria('status')"><button type="button" @click="sortBy('status')" disabled :disabled="false">Status<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'status' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
@@ -113,7 +113,7 @@
                   </tr></thead>
                   <tbody>
                     <template x-for="customer in pageCustomers" :key="customer.id"><tr :data-selected="selectedIds.includes(customer.id)" :data-customer="customer.id">
-                      <td class="admin-selection-cell"><input class="admin-checkbox" type="checkbox" :value="customer.id" x-model="selectedIds" :aria-label="'Select ' + customer.name"></td>
+                      <td class="admin-selection-cell"><input class="f-check admin-checkbox" type="checkbox" :value="customer.id" x-model="selectedIds" :aria-label="'Select ' + customer.name"></td>
                       <th scope="row"><div class="admin-customer"><span class="f-avatar" aria-hidden="true" x-text="initials(customer.name)"></span><div><a class="admin-customer-name" :href="'#' + customerPath(customer.id)" :aria-label="'View ' + customer.name" x-text="customer.name"></a><span x-text="customer.company"></span><small x-text="customer.email"></small></div></div></th>
                       <td x-text="plan(customer.plan).name"></td>
                       <td><span class="admin-status" :data-status="customer.status"><span aria-hidden="true"></span><span x-text="statusName(customer.status)"></span></span></td>
@@ -175,7 +175,7 @@
             <form class="f-card admin-settings" @submit.prevent="saveSettings" x-show="view === 'settings'" x-cloak>
               <header class="admin-card-heading"><div><h3>Workspace settings</h3><p>A few details to make things feel like home.</p></div><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg></header>
               <div class="admin-settings-fields"><div class="f-field"><label class="f-label" for="admin-workspace-name">Workspace name</label><input class="f-input" id="admin-workspace-name" x-ref="workspaceName" x-model="settings.workspace" required maxlength="60" @input="$el.setCustomValidity('')"></div><div class="f-field"><label class="f-label" for="admin-workspace-email">Contact email</label><input class="f-input" id="admin-workspace-email" type="email" x-model="settings.email" required maxlength="160"></div></div>
-              <fieldset class="admin-setting-group"><legend>Notifications</legend><label class="f-switch admin-setting-row"><span><strong>Weekly digest</strong><small>A summary of customers and revenue.</small></span><input type="checkbox" role="switch" x-model="settings.digest"></label><label class="f-switch admin-setting-row"><span><strong>Security updates</strong><small>Keep up with changes to your workspace.</small></span><input type="checkbox" role="switch" x-model="settings.security"></label></fieldset>
+              <fieldset class="f-fieldset admin-setting-group"><legend>Notifications</legend><label class="f-switch admin-setting-row"><span><strong>Weekly digest</strong><small>A summary of customers and revenue.</small></span><input type="checkbox" role="switch" x-model="settings.digest"></label><label class="f-switch admin-setting-row"><span><strong>Security updates</strong><small>Keep up with changes to your workspace.</small></span><input type="checkbox" role="switch" x-model="settings.security"></label></fieldset>
               <footer class="admin-settings-footer"><p class="f-help">Saved for this visit.</p><button class="f-button" type="button" @click="resetSettings">Reset changes</button><button class="f-button f-button--primary" type="submit">Save settings</button></footer>
             </form>
           </div>
