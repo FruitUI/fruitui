@@ -1,0 +1,11 @@
+Interaction notes
+Forma / Design / October 2
+
+Keep the conversation in focus.
+Use a separate thread for the details around a message.
+Give every conversation and thread its own draft.
+Make the way back clear, especially on a phone.
+Let Enter send and Shift + Enter add a new line.
+Follow the system appearance with equal care for light and dark.
+
+Small, familiar details make room for the work.

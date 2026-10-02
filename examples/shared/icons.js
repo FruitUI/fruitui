@@ -33,6 +33,12 @@ const paths = {
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
   lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/>',
   plus: '<path d="M12 4v16M4 12h16"/>',
+  hash: '<path d="M9 3 7 21M17 3l-2 18M4 9h17M3 15h17"/>',
+  people: '<circle cx="9" cy="7" r="3"/><path d="M2 21v-3a7 7 0 0 1 14 0v3M16 4a3 3 0 0 1 0 6M19 14a6 6 0 0 1 3 4v3"/>',
+  smile: '<circle cx="12" cy="12" r="9"/><path d="M8 9h.01M16 9h.01M8 14a4 4 0 0 0 8 0"/>',
+  dashboard: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  chart: '<path d="M3 3v18h18M7 16v-5M12 16V7M17 16V4"/>',
+  settings: '<path d="m10 3-.5 3-2 .8L5 5.5 2.5 10l2.3 1.8v2.4L2.5 16 5 20.5l2.5-1.3 2 .8.5 3h5l.5-3 2-.8 2.5 1.3 2.5-4.5-2.3-1.8v-2.4L22.5 10 20 5.5l-2.5 1.3-2-.8L15 3h-5Z" transform="translate(0 -1) scale(1 .92)"/><circle cx="12.5" cy="11" r="3"/>',
 };
 
 export function installIcons() {

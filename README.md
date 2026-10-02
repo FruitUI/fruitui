@@ -2,7 +2,7 @@
 
 An Apple-inspired, CSS-first interface framework for HTML and Laravel. Familiar controls, thoughtful spacing, and clear hierarchy, with optional Alpine.js and Livewire behavior.
 
-The reference interfaces are **Mail** and **Support**: familiar inboxes implemented in HTML with FruitUI’s own CSS. This is an early local package; it has not been published to npm or Packagist.
+The reference interfaces are **Mail**, **Support**, **Chat**, and **Admin**: familiar workspaces implemented in HTML with FruitUI’s own CSS. This is an early local package; it has not been published to npm or Packagist.
 
 The [component policy](docs/component-policy.md) defines the boundary between tokens, variants, primitives, and composed patterns. Every Blade component has a documented semantic contract; contributors follow [AGENTS.md](AGENTS.md). Unsupported input types, button variants/types, and control type/role overrides raise clear render-time errors.
 
@@ -17,11 +17,11 @@ npm install
 npm run dev
 ```
 
-Open http://127.0.0.1:5173 for Mail, http://127.0.0.1:5173/support.html for Support, or http://127.0.0.1:5173/components.html for the component gallery. The navigation links the examples side by side. `npm run build` creates a static example site in `dist/`; `npm run preview` serves that build.
+Open http://127.0.0.1:5173 for Mail, http://127.0.0.1:5173/support.html for Support, http://127.0.0.1:5173/chat.html for Chat, http://127.0.0.1:5173/admin.html for Admin, or http://127.0.0.1:5173/components.html for the component gallery. The navigation links the examples side by side. `npm run build` creates a static example site in `dist/`; `npm run preview` serves that build.
 
 Mail interactions include search, unread filtering, keyboard navigation with the arrow keys, mailbox selection, archive, trash, flag, reply, forward, and a native compose dialog. The inbox and composed messages live in memory for this demo; reloading resets them. No email is delivered. Choose **iPhone** above the example to preview the phone interface from a desktop browser, or resize the window with **Responsive** selected.
 
-Both examples start in **All Inboxes**, a virtual view across multiple accounts or team mailboxes. Combined folders appear at the top of navigation; expand an account or mailbox below to open its own folders. Mail includes Work and Personal accounts, with combined Inbox, Flagged, Drafts, Sent, Archive, Junk, and Trash views. Support includes Support, Billing, and Feedback mailboxes, with combined Open, Assigned to me, Unassigned, Waiting, and Closed views. Search and filters apply to the selected scope; global and individual counts stay synchronized after actions. Mail inbox badges count unread messages; other Mail folder badges and Support badges count items.
+Mail and Support start in **All Inboxes**, a virtual view across multiple accounts or team mailboxes. Combined folders appear at the top of navigation; expand an account or mailbox below to open its own folders. Mail includes Work and Personal accounts, with combined Inbox, Flagged, Drafts, Sent, Archive, Junk, and Trash views. Support includes Support, Billing, and Feedback mailboxes, with combined Open, Assigned to me, Unassigned, Waiting, and Closed views. Search and filters apply to the selected scope; global and individual counts stay synchronized after actions. Mail inbox badges count unread messages; other Mail folder badges and Support badges count items.
 
 Combined lists identify each item's source, and the reading/conversation pane keeps its account address visible. Mail replies and forwards start from the message's account; new messages start from the selected account, with a native **From** selector. Support replies use the conversation's mailbox, and new conversations choose a real destination mailbox. Each record has a stable `accountId` (Mail) or `mailboxId` (Support), separate from its folder/status. The virtual `all` scope is only a filter: moving a message or changing a ticket's status preserves its original owner. In Laravel, apply both scope and folder/status constraints to the query and calculate navigation counts within the authenticated user's accessible accounts or mailboxes.
 
@@ -37,6 +37,55 @@ Support combines the shared-inbox workflow of Help Scout and FreeScout with Appl
 The workspace responds to its container: over 1100px it shows navigation, ticket list, conversation, and customer details; from 701–1100px it keeps list/conversation panes and lets you open customer details in place; up to 700px it presents views, list, conversation, and customer details as separate screens. Navigation and search preserve per-ticket drafts across these layouts. Light/dark appearance follows CSS automatically, with the same optional override used by Mail. Without JavaScript, a read-only sample still demonstrates the styled layout.
 
 Support composes `f-toolbar`, `f-sidebar`, Button, Input, Select, Textarea, segmented radios, badges, Avatar, and Dialog. Its ticket layout, thread presentation, sample data, and workflow stay in `examples/support/`. The existing Avatar class now lives with shared controls because Mail and Support both use it; this example adds no Blade components or behavior modes to existing controls. In a Laravel application, render these same native controls with Blade, then let Alpine or Livewire own your ticket data and actions.
+
+## Chat, reimagined
+
+Chat brings a Slack-style team workspace to the same Apple-inspired visual system: a material sidebar, clear conversation hierarchy, and a thread inspector. It uses one local Forma workspace with channels and direct messages.
+
+- Open channels or direct messages, create a channel with native name validation, and start a direct message with a teammate. Selecting an existing recipient reopens the same conversation.
+- Send messages with Enter; use Shift + Enter for a new line. Each conversation and each thread retains its own draft across navigation and layout changes. Thread replies stay attached to the original message rather than appearing as new channel messages.
+- Toggle reactions with per-person counts, download the sample interaction notes, and inspect a conversation's description and members.
+- Search messages and thread replies across the workspace. Results keep their conversation context; opening a thread result takes you to its parent discussion.
+- Use **All unread** for new messages across channels and direct messages, or **Threads** to return to discussions with replies. Opening a conversation marks its messages read; **Mark all read** clears the combined unread view.
+
+| Chat container width | Layout |
+| --- | --- |
+| Over 1100px | Workspace sidebar, conversation, and thread inspector when open |
+| 701–1100px | Workspace sidebar alongside the conversation or thread |
+| Up to 700px | Workspace navigation, conversation, and thread as separate screens |
+
+The same data, drafts, reactions, and selected conversation survive resizing. Navigation restores focus to the current conversation or thread trigger. Light/dark appearance follows CSS automatically; the shared appearance control offers an optional override. Without JavaScript, native channel disclosures and a read-only conversation demonstrate the layout.
+
+Chat composes the existing Toolbar, Sidebar groups, Avatar, Button, Input, Textarea, Select, Badge, and Dialog styles. Its message flow, reaction picker, thread layout, and application state stay in `examples/chat/`; no new Blade primitives or behavior modes are added. `roomId` owns conversation scope, `threadId` identifies a parent message, and drafts are keyed independently by conversation and thread. For Laravel, render the same HTML and let Alpine or Livewire own actions and data. Messages, membership, unread state, and reactions should be stored and authorized by the application.
+
+This is a frontend example with sample people and messages. Sending, reacting, and creating conversations only changes the current page; nothing is delivered, and reloading resets it. It does not connect to Slack or provide a realtime backend.
+
+## Admin, with a clearer view
+
+Admin brings customer and subscription management to the same visual system. Its Overview combines current record statistics, a revenue history chart, a plan distribution chart, and a customer table. A two-level sidebar groups working destinations under Customers, Billing, Reports, and Settings. Group headings use native disclosures; independent links choose destinations. Navigating to a destination opens its group and highlights the corresponding link without closing unrelated groups.
+
+| Sidebar group | Working destinations |
+| --- | --- |
+| Customers | Directory, Segments |
+| Billing | Subscriptions, Plans |
+| Reports | Revenue, Activity |
+| Settings | Workspace |
+
+Open a customer's name in the directory to see a detail screen with **Profile**, **Subscription**, and **Activity** tabs. The tablist uses native buttons with fixed tab roles, linked panels, and one tab stop; Left/Right wrap between tabs, Home/End choose the first/last tab, and Tab moves into the selected panel. Breadcrumb links return to the customer profile, directory, or Overview. Customer records stay out of the sidebar so the navigation hierarchy remains shallow.
+
+Destinations and customer tabs have native hash links such as `admin.html#/plans` and `admin.html#/customers/cus_1001/subscription`. They support bookmarks, reloads, and browser Back/Forward. Opening a deep destination reveals its sidebar group. Invalid or deleted customer routes return to the directory; reloading always restores the original sample data.
+
+- Create and edit customers in a native dialog with required fields, email validation, and duplicate email checks. Plan and status choices update monthly recurring revenue, active/trial counts, and the plan chart. Internal notes and the product updates checkbox retain their own values.
+- Search names, companies, and email addresses; filter by plan and subscription status; sort with native table header buttons and `aria-sort`; and paginate with five or ten records per page.
+- Open a lifecycle segment or plan to see its real customer records with the matching status/plan filter. The subscription table has its own search and status filter, and each subscription links to the matching customer's Subscription tab. Revenue presents the existing charts as a dedicated report.
+- Select individual records with native checkboxes, or select the current page. Selection persists across pages, while changing filters or page size clears it. Delete one record or a selection through a confirmation dialog that names the customer or gives the selection count. Cancel and Escape leave records intact.
+- Export all records matching the current search, plan, and status to CSV, across pages. Fields are quoted and leading spreadsheet formula characters are neutralized.
+- Inspect historical revenue by month, change between three and six months, or expand the native disclosure for the equivalent data table. The historical sample stays independent of editable current subscriptions; the plan chart and summary statistics follow current records.
+- Review customer/settings changes in Reports → Activity, or inspect only the selected customer's changes in their Activity tab. Save or reset workspace settings using native text fields and switches. Saved settings and records stay in this page; refreshing restores the fixtures. No subscription is billed or notification sent.
+
+Layout follows the Admin container: above 700px, navigation sits beside the content; narrower containers use a toolbar disclosure for navigation, stacked charts, and touch controls. Table columns remain in a native table with a labeled, keyboard-focusable horizontal scroll area. Data, filters, selection, and forms survive resizing. CSS automatically follows light/dark system changes, and the shared appearance control offers an override. Without JavaScript, the read-only Overview, sample rows, charts, and native chart-data disclosure remain available.
+
+Admin composes Toolbar, Sidebar groups, Card, Avatar, Button, Input, Select, Textarea, Checkbox, Switch, and Dialog. Its table arrangement, chart presentation, customer tablist, breadcrumbs, and hash navigation stay in `examples/admin/`; these examples do not introduce a universal Table/CRUD component or new Blade contracts. The native table owns tabular semantics, independent checkboxes own record selection, and native buttons own sort/edit/delete actions. Customer tabs have their own fixed roles, selection, panel relationships, and keyboard behavior in the example. For Laravel, render the same markup with Blade and let Alpine or Livewire own records and actions; use application routes for navigation. Persistence, authorization, billing, and notifications belong to the host application.
 
 ## One Mail interface, three layouts
 
@@ -214,9 +263,11 @@ src/js/alpine.js              Optional Alpine helpers
 src/Laravel/                  Service provider and optional Livewire component
 resources/views/components/  Thin Blade wrappers for native elements
 resources/views/livewire/    Livewire preferences view
-examples/                     Mail/Support data, local behavior, showcase styling
+examples/                     Mail/Support/Chat/Admin data, local behavior, showcase styling
 index.html                    Mail reference interface
 support.html                  Support ticketing reference interface
+chat.html                     Team chat reference interface
+admin.html                    Administration reference interface
 components.html               Component gallery and integration examples
 tests/                        Browser, component-contract, and Laravel integration checks
 docs/component-policy.md      Component contracts and change acceptance rules
@@ -234,7 +285,7 @@ composer install
 composer test
 ```
 
-Browser checks use a local Chrome installation when available, or Playwright’s Chromium (`npx playwright install chromium`). `CHROME_BIN` can select another Chrome executable. Checks cover combined and individual account/mailbox scopes, synchronized counts, sending identity, Mail actions and responsive layouts; Support queues, drafts, replies/notes, assignment, statuses, tags, customer history, and new conversations; appearance persistence; CSS-only operation; and automated WCAG AA checks in light and dark appearances. Theme checks require paired color/effect tokens, prevent fixed colors in core styles, and verify live system switching and explicit overrides on page/container scopes with JavaScript disabled. PHP checks cover contract catalog completeness, invalid options and semantic overrides, native attribute ownership, choice controls with Livewire bindings, and the Livewire session save/reload flow. Native iPhone/Safari verification has not yet been run.
+Browser checks use a local Chrome installation when available, or Playwright’s Chromium (`npx playwright install chromium`). `CHROME_BIN` can select another Chrome executable. Checks cover combined and individual account/mailbox scopes, synchronized counts, sending identity, Mail actions and responsive layouts; Support queues, drafts, replies/notes, assignment, statuses, tags, customer history, and new conversations; Chat conversations, threads, workspace search, unread activity, drafts, reactions, and creation dialogs; Admin record CRUD, sorting/filtering, pagination, bulk selection, CSV export, charts, workspace settings, grouped navigation, customer tabs, breadcrumbs, and browser history; appearance persistence; CSS-only operation; and automated WCAG AA checks in light and dark appearances. Theme checks require paired color/effect tokens, prevent fixed colors in core styles, and verify live system switching and explicit overrides on page/container scopes with JavaScript disabled. PHP checks cover contract catalog completeness, invalid options and semantic overrides, native attribute ownership, choice controls with Livewire bindings, and the Livewire session save/reload flow. Native iPhone/Safari verification has not yet been run.
 
 ## Design references
 
@@ -253,5 +304,7 @@ FruitUI translates the intent of Apple’s guidance into web-native HTML and CSS
 - [Help Scout shared inbox](https://www.helpscout.com/inbox/)
 - [Help Scout folder views](https://docs.helpscout.com/article/1429-about-default-folder-views-in-help-scout)
 - [FreeScout shared mailbox](https://www.freescout.net/)
+- [Slack conversations](https://slack.com/intl/en-gb/help/articles/1500000019301-Find-and-start-conversations)
+- [Slack threads](https://slack.com/help/articles/115000769927-Use-threads-to-organize-discussions)
 
 References reviewed on October 2, 2026. Start with readable content, consistent hierarchy, native control semantics, and useful keyboard behavior; keep material effects in the navigation and control layer.

@@ -6,10 +6,14 @@ import { installIcons } from './shared/icons.js';
 import { appearance } from './shared/appearance.js';
 import { mailDemo } from './mail/mail.js';
 import { supportDemo } from './support/support.js';
+import { chatDemo } from './chat/chat.js';
+import { adminDemo } from './admin/admin.js';
 
 installIcons();
 fruitUI(Alpine);
 Alpine.data('appearance', appearance);
 Alpine.data('mailDemo', mailDemo);
 Alpine.data('supportDemo', supportDemo);
+Alpine.data('chatDemo', chatDemo);
+Alpine.data('adminDemo', adminDemo);
 Alpine.start();

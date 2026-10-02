@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" class="fruit-ui" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An Apple-inspired admin workspace with customer records, forms, and charts, built with FruitUI.">
+  <title>Admin · FruitUI</title>
+  <link rel="stylesheet" href="/src/fruitui.css">
+  <link rel="stylesheet" href="/examples/shared/showcase.css">
+  <link rel="stylesheet" href="/examples/admin/admin.css">
+  <script type="module" src="/examples/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#admin">Skip to Admin</a>
+  <div class="showcase">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html">Support</a><a href="/chat.html">Chat</a><a href="/admin.html" aria-current="page">Admin</a><a href="/components.html">Components</a></nav>
+      <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+    </header>
+    <main x-data="adminDemo">
+      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>A clearer view of your business.</h1><p>The big picture. And every little detail.</p></div><span class="example-tag">Interactive example · 04</span></div>
+      <div class="admin-container">
+        <section id="admin" class="admin-workspace" aria-label="Admin example" data-navigation="closed" :data-navigation="navigationOpen ? 'open' : 'closed'" @click="followLink($event)" @keydown.escape="if (navigationOpen && !$event.target.closest('dialog')) toggleNavigation()">
+          <header class="f-toolbar admin-sidebar-toolbar"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><span class="admin-toolbar-label">Workspace</span></header>
+          <header class="f-toolbar admin-toolbar">
+            <button class="f-button f-button--ghost f-button--icon admin-navigation-toggle" type="button" x-ref="navigationToggle" @click="toggleNavigation" aria-label="Toggle admin navigation" aria-controls="admin-navigation" :aria-expanded="navigationOpen" aria-expanded="false" disabled :disabled="false"><svg class="f-icon" aria-hidden="true"><use href="#i-sidebar"/></svg></button>
+            <div class="admin-toolbar-heading"><span x-text="savedSettings.workspace">Forma</span><svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg><strong x-text="title">Overview</strong></div>
+            <span class="admin-local-label"><span></span>Local workspace</span>
+          </header>
+
+          <aside class="f-sidebar admin-sidebar">
+            <div class="admin-team"><span class="admin-team-mark" aria-hidden="true">F</span><div><strong x-text="savedSettings.workspace">Forma</strong><small>Business workspace</small></div></div>
+            <nav id="admin-navigation" x-ref="navigation" aria-label="Admin navigation">
+              <a class="f-sidebar__item" href="#/overview" :aria-current="view === 'overview' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-dashboard"/></svg>Overview</a>
+              <details class="f-sidebar__group admin-navigation-group" data-admin-group="customers" open>
+                <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-people"/></svg><span class="f-sidebar__identity"><strong>Customers</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/customers" :aria-current="['customers', 'customer'].includes(view) ? 'page' : null">Directory<span class="f-badge" x-text="customers.length">20</span></a>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/segments" :aria-current="view === 'segments' ? 'page' : null">Segments</a>
+              </details>
+              <details class="f-sidebar__group admin-navigation-group" data-admin-group="billing">
+                <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg><span class="f-sidebar__identity"><strong>Billing</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/subscriptions" :aria-current="view === 'subscriptions' ? 'page' : null">Subscriptions</a>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/plans" :aria-current="view === 'plans' ? 'page' : null">Plans</a>
+              </details>
+              <details class="f-sidebar__group admin-navigation-group" data-admin-group="reports" open>
+                <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-chart"/></svg><span class="f-sidebar__identity"><strong>Reports</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/revenue" :aria-current="view === 'revenue' ? 'page' : null">Revenue</a>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/activity" :aria-current="view === 'activity' ? 'page' : null">Activity<span class="f-badge" x-show="activity.length" x-text="activity.length" x-cloak></span></a>
+              </details>
+              <details class="f-sidebar__group admin-navigation-group" data-admin-group="settings" open>
+                <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg><span class="f-sidebar__identity"><strong>Settings</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+                <a class="f-sidebar__item f-sidebar__item--nested" href="#/settings" :aria-current="view === 'settings' ? 'page' : null">Workspace</a>
+              </details>
+            </nav>
+            <div class="admin-sidebar-bottom"><span class="f-avatar" aria-hidden="true">AM</span><div><strong>Alex Morgan</strong><small>Administrator</small></div><svg class="f-icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
+          </aside>
+
+          <div class="admin-content" x-ref="content">
+            <nav class="admin-breadcrumbs" aria-label="Breadcrumb" x-show="view !== 'overview'" x-cloak><ol><template x-for="(crumb, index) in breadcrumbs" :key="index"><li><svg class="f-icon" x-show="index > 0" aria-hidden="true"><use href="#i-chevron"/></svg><template x-if="crumb.path && index < breadcrumbs.length - 1"><a :href="'#' + crumb.path" x-text="crumb.label"></a></template><template x-if="!crumb.path || index === breadcrumbs.length - 1"><span :aria-current="index === breadcrumbs.length - 1 ? 'page' : null" x-text="crumb.label"></span></template></li></template></ol></nav>
+            <div class="admin-page-heading"><div><p class="admin-overline" x-text="view === 'overview' ? 'YOUR BUSINESS, AT A GLANCE' : 'YOUR WORKSPACE'">YOUR BUSINESS, AT A GLANCE</p><h2 x-ref="title" tabindex="-1" x-text="title">Overview</h2><p x-text="subtitle">Small details. A bigger picture.</p></div><button class="f-button f-button--primary" type="button" x-ref="addCustomer" @click="openCustomer()" x-show="view === 'overview' || view === 'customers'" disabled :disabled="false"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg>Add customer</button><a class="f-button f-button--ghost admin-back-link" href="#/customers" x-show="view === 'customer'" x-cloak><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg>Back to customers</a></div>
+
+            <div x-show="view === 'overview' || view === 'revenue'">
+              <dl class="admin-stats" x-show="view === 'overview'">
+                <div class="f-card admin-stat"><dt>Monthly recurring revenue<svg class="f-icon" aria-hidden="true"><use href="#i-chart"/></svg></dt><dd><strong x-text="money(monthlyRevenue)">$1,256</strong><p>From active subscriptions</p></dd></div>
+                <div class="f-card admin-stat"><dt>Active customers<svg class="f-icon" aria-hidden="true"><use href="#i-people"/></svg></dt><dd><strong x-text="activeCustomers.length">14</strong><p><span class="admin-positive" x-text="customers.length ? Math.round(activeCustomers.length / customers.length * 100) + '%' : '0%'">70%</span> of all customers</p></dd></div>
+                <div class="f-card admin-stat"><dt>On a trial<svg class="f-icon" aria-hidden="true"><use href="#i-clock"/></svg></dt><dd><strong x-text="trialCount">4</strong><p>A little room to explore</p></dd></div>
+                <div class="f-card admin-stat"><dt>Total customers<svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg></dt><dd><strong x-text="customers.length">20</strong><p>Across every plan and status</p></dd></div>
+              </dl>
+              <div class="admin-charts">
+                <section class="f-card admin-revenue" aria-labelledby="admin-revenue-title">
+                  <header class="admin-card-heading"><div><h3 id="admin-revenue-title">Revenue over time</h3><p>Monthly recurring revenue · historical sample</p></div><label class="f-sr-only" for="admin-period">Revenue period</label><select class="f-input" id="admin-period" x-model="period" @change="selectedMonth = 'Sep'" disabled :disabled="false"><option value="6">6 months</option><option value="3">3 months</option></select></header>
+                  <div class="admin-chart-value"><strong x-text="money(chartSelection.value)">$1,717</strong><span x-text="chartSelection.label">September 2026</span></div>
+                  <svg class="admin-line-chart" viewBox="0 0 624 210" role="img" aria-label="Monthly recurring revenue, historical sample. April $980, May $1,118, June $1,208, July $1,327, August $1,498, September $1,717." :aria-label="chartSummary">
+                    <g class="admin-chart-grid"><path d="M48 20H600M48 105H600M48 190H600"/></g>
+                    <g class="admin-chart-axis"><text x="0" y="24">$2k</text><text x="0" y="109">$1k</text><text x="0" y="194">$0</text></g>
+                    <polygon class="admin-chart-area" points="48,190 48,106.7 158.4,94.97 268.8,87.32 379.2,77.205 489.6,62.67 600,44.055 600,190" :points="chartArea"/>
+                    <polyline class="admin-chart-line" points="48,106.7 158.4,94.97 268.8,87.32 379.2,77.205 489.6,62.67 600,44.055" :points="chartLine"/>
+                    <circle class="admin-chart-point" cx="600" cy="44.055" r="5" :cx="chartSelection.x" :cy="chartSelection.y"/>
+                  </svg>
+                  <div class="admin-chart-months" aria-label="Inspect revenue by month"><template x-for="point in chartPoints" :key="point.month"><button class="f-button f-button--ghost" type="button" :aria-label="point.label + ': ' + money(point.value)" :aria-pressed="selectedMonth === point.month" @click="selectedMonth = point.month" x-text="point.month"></button></template><noscript><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></noscript></div>
+                  <details class="admin-chart-data"><summary>View chart data</summary><table><caption class="f-sr-only">Historical monthly recurring revenue in USD</caption><thead><tr><th scope="col">Month</th><th scope="col">Revenue</th></tr></thead><tbody><template x-for="point in chartPoints" :key="point.month"><tr><th scope="row" x-text="point.label"></th><td x-text="money(point.value)"></td></tr></template><tr class="admin-chart-fallback" x-show="false"><th scope="row">April 2026</th><td>$980</td></tr><tr class="admin-chart-fallback" x-show="false"><th scope="row">May 2026</th><td>$1,118</td></tr><tr class="admin-chart-fallback" x-show="false"><th scope="row">June 2026</th><td>$1,208</td></tr><tr class="admin-chart-fallback" x-show="false"><th scope="row">July 2026</th><td>$1,327</td></tr><tr class="admin-chart-fallback" x-show="false"><th scope="row">August 2026</th><td>$1,498</td></tr><tr class="admin-chart-fallback" x-show="false"><th scope="row">September 2026</th><td>$1,717</td></tr></tbody></table></details>
+                </section>
+                <section class="f-card admin-plans" aria-labelledby="admin-plans-title">
+                  <header class="admin-card-heading"><div><h3 id="admin-plans-title">A plan for everyone</h3><p>Active customers by subscription</p></div><svg class="f-icon" aria-hidden="true"><use href="#i-chart"/></svg></header>
+                  <div class="admin-plan-total"><strong x-text="activeCustomers.length">14</strong><span>active subscriptions</span></div>
+                  <ul class="admin-plan-bars"><template x-for="plan in planDistribution" :key="plan.id"><li><div><span x-text="plan.name"></span><strong><span x-text="plan.count"></span><small x-text="activeCustomers.length ? Math.round(plan.count / activeCustomers.length * 100) + '%' : '0%'"></small></strong></div><div class="admin-bar-track" aria-hidden="true"><span :style="{ width: (activeCustomers.length ? plan.count / activeCustomers.length * 100 : 0) + '%' }"></span></div></li></template><noscript><li><div><span>Starter</span><strong>4 <small>29%</small></strong></div><div class="admin-bar-track" aria-hidden="true"><span style="width: 28.57%"></span></div></li><li><div><span>Studio</span><strong>5 <small>36%</small></strong></div><div class="admin-bar-track" aria-hidden="true"><span style="width: 35.71%"></span></div></li><li><div><span>Business</span><strong>5 <small>36%</small></strong></div><div class="admin-bar-track" aria-hidden="true"><span style="width: 35.71%"></span></div></li></noscript></ul>
+                  <p class="admin-chart-footnote">Updates as you manage customer records.</p>
+                </section>
+              </div>
+            </div>
+
+            <section class="f-card admin-records" aria-labelledby="admin-customers-title" x-show="view === 'overview' || view === 'customers'">
+              <header class="admin-records-heading"><div><h3 id="admin-customers-title">Customers</h3><p>People behind the numbers.</p></div><button class="f-button" type="button" @click="exportCustomers" :disabled="!filteredCustomers.length" disabled><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg>Export CSV</button></header>
+              <div class="admin-table-filters">
+                <div class="f-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="admin-search">Search customers</label><input class="f-input" id="admin-search" type="search" placeholder="Search name, email, or company" x-model="query" @input="resetList" disabled :disabled="false"></div>
+                <div class="admin-filter"><label for="admin-plan-filter">Plan filter</label><select class="f-input" id="admin-plan-filter" x-model="planFilter" @change="resetList" disabled :disabled="false"><option value="all">All plans</option><option value="starter">Starter</option><option value="studio">Studio</option><option value="business">Business</option></select></div>
+                <div class="admin-filter"><label for="admin-status">Status</label><select class="f-input" id="admin-status" x-model="statusFilter" @change="resetList" disabled :disabled="false"><option value="all">All statuses</option><option value="active">Active</option><option value="trial">Trial</option><option value="paused">Paused</option></select></div>
+              </div>
+              <div class="admin-bulk-actions" x-show="selectedIds.length" x-cloak><span><strong x-text="selectedIds.length"></strong> selected across pages</span><button class="f-button f-button--ghost" type="button" @click="selectedIds = []">Clear selection</button><button class="f-button f-button--danger" type="button" @click="confirmDelete(selectedIds)">Delete selected</button></div>
+              <div class="admin-table-scroll" tabindex="0" role="region" aria-label="Customer records, scroll horizontally for all columns" x-ref="tableRegion">
+                <table class="admin-table">
+                  <caption class="f-sr-only">Customer records. Use column buttons to sort. Checkboxes select records for deletion.</caption>
+                  <thead><tr>
+                    <th scope="col" class="admin-selection-cell"><input class="admin-checkbox" type="checkbox" aria-label="Select all customers on this page" :checked="pageSelected" x-effect="$el.indeterminate = pagePartlySelected" @change="selectPage($event.target.checked)" disabled :disabled="!pageCustomers.length"></th>
+                    <th scope="col" :aria-sort="sortAria('name')"><button type="button" @click="sortBy('name')" disabled :disabled="false">Customer<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'name' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
+                    <th scope="col" :aria-sort="sortAria('plan')"><button type="button" @click="sortBy('plan')" disabled :disabled="false">Plan<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'plan' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
+                    <th scope="col" :aria-sort="sortAria('status')"><button type="button" @click="sortBy('status')" disabled :disabled="false">Status<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'status' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-up"/></svg></button></th>
+                    <th scope="col" class="admin-numeric">Monthly</th>
+                    <th scope="col" :aria-sort="sortAria('joined')" aria-sort="descending"><button type="button" @click="sortBy('joined')" disabled :disabled="false">Joined<svg class="f-icon" aria-hidden="true"><use :href="sortKey === 'joined' && sortDirection === 'desc' ? '#i-down' : '#i-up'" href="#i-down"/></svg></button></th>
+                    <th scope="col"><span class="f-sr-only">Actions</span></th>
+                  </tr></thead>
+                  <tbody>
+                    <template x-for="customer in pageCustomers" :key="customer.id"><tr :data-selected="selectedIds.includes(customer.id)" :data-customer="customer.id">
+                      <td class="admin-selection-cell"><input class="admin-checkbox" type="checkbox" :value="customer.id" x-model="selectedIds" :aria-label="'Select ' + customer.name"></td>
+                      <th scope="row"><div class="admin-customer"><span class="f-avatar" aria-hidden="true" x-text="initials(customer.name)"></span><div><a class="admin-customer-name" :href="'#' + customerPath(customer.id)" :aria-label="'View ' + customer.name" x-text="customer.name"></a><span x-text="customer.company"></span><small x-text="customer.email"></small></div></div></th>
+                      <td x-text="plan(customer.plan).name"></td>
+                      <td><span class="admin-status" :data-status="customer.status"><span aria-hidden="true"></span><span x-text="statusName(customer.status)"></span></span></td>
+                      <td class="admin-numeric" x-text="money(customer.status === 'active' ? plan(customer.plan).price : 0)"></td>
+                      <td><time :datetime="customer.joined" x-text="date(customer.joined)"></time></td>
+                      <td><div class="admin-record-actions"><button class="f-button f-button--ghost f-button--icon admin-delete-row" type="button" :aria-label="'Edit ' + customer.name" @click="openCustomer(customer.id)"><svg class="f-icon" aria-hidden="true"><use href="#i-compose"/></svg></button><button class="f-button f-button--ghost f-button--icon admin-delete-row" type="button" :aria-label="'Delete ' + customer.name" @click="confirmDelete([customer.id])"><svg class="f-icon" aria-hidden="true"><use href="#i-trash"/></svg></button></div></td>
+                    </tr></template>
+                    <noscript>
+                      <tr><td></td><th scope="row"><div class="admin-customer"><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><span>Studio North</span><small>sophie@studionorth.example</small></div></div></th><td>Business</td><td><span class="admin-status" data-status="active"><span aria-hidden="true"></span>Active</span></td><td class="admin-numeric">$149</td><td><time datetime="2026-09-29">Sep 29</time></td><td></td></tr>
+                      <tr><td></td><th scope="row"><div class="admin-customer"><span class="f-avatar" aria-hidden="true">OP</span><div><strong>Oliver Park</strong><span>Fieldwork</span><small>oliver@fieldwork.example</small></div></div></th><td>Studio</td><td><span class="admin-status" data-status="trial"><span aria-hidden="true"></span>Trial</span></td><td class="admin-numeric">$0</td><td><time datetime="2026-09-27">Sep 27</time></td><td></td></tr>
+                      <tr><td></td><th scope="row"><div class="admin-customer"><span class="f-avatar" aria-hidden="true">MP</span><div><strong>Mia Patel</strong><span>Daybreak</span><small>mia@daybreak.example</small></div></div></th><td>Studio</td><td><span class="admin-status" data-status="active"><span aria-hidden="true"></span>Active</span></td><td class="admin-numeric">$79</td><td><time datetime="2026-09-24">Sep 24</time></td><td></td></tr>
+                    </noscript>
+                  </tbody>
+                </table>
+                <div class="admin-empty" x-show="!filteredCustomers.length" x-cloak><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><h4>No customers found</h4><p>Try another search, plan, or status.</p><button class="f-button" type="button" @click="query = ''; statusFilter = 'all'; planFilter = 'all'; resetList()">Reset filters</button></div>
+              </div>
+              <footer class="admin-pagination"><span role="status" x-text="rangeLabel">Showing 3 sample customers</span><div class="admin-page-controls"><label class="f-sr-only" for="admin-page-size">Customers per page</label><select class="f-input" id="admin-page-size" x-model.number="pageSize" @change="resetList" disabled :disabled="false"><option value="5">5 per page</option><option value="10">10 per page</option></select><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Previous page" @click="changePage(page - 1)" disabled :disabled="page === 1"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg></button><span x-text="page + ' / ' + pageCount">1 / 1</span><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Next page" @click="changePage(page + 1)" disabled :disabled="page === pageCount"><svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></div></footer>
+            </section>
+
+            <section class="admin-segments admin-summary-grid" aria-label="Customer segments" x-show="view === 'segments'" x-cloak>
+              <template x-for="segment in segments" :key="segment.status"><section class="f-card admin-summary-card"><span class="admin-status" :data-status="segment.status"><span aria-hidden="true"></span><span x-text="segment.name"></span></span><h3><strong x-text="segment.count"></strong> customers</h3><p x-text="segment.description"></p><button class="f-button" type="button" @click="openSegment(segment.status)" :aria-label="'View ' + segment.name.toLowerCase() + ' customers'">View customers<svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></section></template>
+            </section>
+
+            <section class="f-card admin-records" aria-labelledby="admin-subscriptions-title" x-show="view === 'subscriptions'" x-cloak>
+              <header class="admin-records-heading"><div><h3 id="admin-subscriptions-title">Customer subscriptions</h3><p>One subscription per customer in this workspace.</p></div><span class="f-badge" x-text="subscriptions.length + ' subscriptions'"></span></header>
+              <div class="admin-table-filters"><div class="f-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="admin-subscription-search">Search subscriptions</label><input class="f-input" id="admin-subscription-search" type="search" x-model="subscriptionQuery" placeholder="Search customer, company, or ID"></div><div class="admin-filter"><label for="admin-subscription-filter">Subscription filter</label><select class="f-input" id="admin-subscription-filter" x-model="subscriptionStatus"><option value="all">All statuses</option><option value="active">Active</option><option value="trial">Trial</option><option value="paused">Paused</option></select></div></div>
+              <div class="admin-table-scroll" tabindex="0" role="region" aria-label="Subscriptions, scroll horizontally for all columns"><table class="admin-table admin-subscription-table"><caption class="f-sr-only">Current subscriptions and monthly revenue in USD</caption><thead><tr><th scope="col">Subscription</th><th scope="col">Customer</th><th scope="col">Plan</th><th scope="col">Status</th><th scope="col" class="admin-numeric">Monthly</th></tr></thead><tbody><template x-for="customer in subscriptions" :key="customer.id"><tr><th scope="row"><a class="admin-subscription-link" :href="'#' + customerPath(customer.id, 'subscription')" :aria-label="'View subscription for ' + customer.name" x-text="subscriptionId(customer.id)"></a></th><td><strong x-text="customer.name"></strong><small x-text="customer.company"></small></td><td x-text="plan(customer.plan).name"></td><td><span class="admin-status" :data-status="customer.status"><span aria-hidden="true"></span><span x-text="statusName(customer.status)"></span></span></td><td class="admin-numeric" x-text="money(customer.status === 'active' ? plan(customer.plan).price : 0)"></td></tr></template></tbody></table></div>
+              <div class="admin-empty" x-show="!subscriptions.length"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><h4>No subscriptions found</h4><p>Try another search or status.</p><button class="f-button" type="button" @click="subscriptionQuery = ''; subscriptionStatus = 'all'">Reset subscription filters</button></div>
+            </section>
+
+            <section class="admin-plan-catalog admin-summary-grid" aria-label="Subscription plans" x-show="view === 'plans'" x-cloak>
+              <template x-for="plan in plans" :key="plan.id"><section class="f-card admin-summary-card"><span class="admin-summary-icon"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg></span><h3 x-text="plan.name"></h3><p class="admin-plan-price"><strong x-text="money(plan.price)"></strong> / month</p><p x-text="({starter: 'A place to begin, with room for the essentials.', studio: 'For growing teams and their everyday work.', business: 'For teams ready for their next chapter.'})[plan.id]"></p><p><strong x-text="customers.filter(customer => customer.plan === plan.id).length"></strong> customers on this plan</p><button class="f-button" type="button" @click="openPlan(plan.id)" :aria-label="'View customers on ' + plan.name">View customers<svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></section></template>
+            </section>
+
+            <template x-if="selectedCustomer"><section class="f-card admin-customer-detail" aria-label="Customer detail">
+              <header class="admin-detail-heading"><span class="f-avatar" aria-hidden="true" x-text="initials(selectedCustomer.name)"></span><div><strong x-text="selectedCustomer.company"></strong><p x-text="selectedCustomer.email"></p></div><button class="f-button" type="button" data-customer-edit @click="openCustomer(selectedCustomer.id)"><svg class="f-icon" aria-hidden="true"><use href="#i-compose"/></svg>Edit customer</button><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Delete customer" @click="confirmDelete([selectedCustomer.id])"><svg class="f-icon" aria-hidden="true"><use href="#i-trash"/></svg></button></header>
+              <div class="admin-detail-tabs" role="tablist" aria-label="Customer details" @keydown="tabKeydown($event)">
+                <button id="admin-profile-tab" type="button" role="tab" aria-controls="admin-profile-panel" :aria-selected="customerTab === 'profile'" :tabindex="customerTab === 'profile' ? 0 : -1" @click="selectCustomerTab('profile')">Profile</button>
+                <button id="admin-subscription-tab" type="button" role="tab" aria-controls="admin-subscription-panel" :aria-selected="customerTab === 'subscription'" :tabindex="customerTab === 'subscription' ? 0 : -1" @click="selectCustomerTab('subscription')">Subscription</button>
+                <button id="admin-customer-activity-tab" type="button" role="tab" aria-controls="admin-customer-activity-panel" :aria-selected="customerTab === 'activity'" :tabindex="customerTab === 'activity' ? 0 : -1" @click="selectCustomerTab('activity')">Activity</button>
+              </div>
+              <section id="admin-profile-panel" class="admin-detail-panel" role="tabpanel" aria-labelledby="admin-profile-tab" tabindex="0" x-show="customerTab === 'profile'">
+                <h3>Customer profile</h3><dl class="admin-detail-fields"><div><dt>Full name</dt><dd x-text="selectedCustomer.name"></dd></div><div><dt>Email address</dt><dd x-text="selectedCustomer.email"></dd></div><div><dt>Company</dt><dd x-text="selectedCustomer.company"></dd></div><div><dt>Customer since</dt><dd><time :datetime="selectedCustomer.joined" x-text="selectedCustomer.joined"></time></dd></div><div><dt>Product updates</dt><dd x-text="selectedCustomer.updates ? 'Enabled' : 'Off'"></dd></div><div><dt>Customer ID</dt><dd x-text="selectedCustomer.id"></dd></div></dl><div class="admin-detail-notes"><h4>Internal notes</h4><p x-text="selectedCustomer.notes || 'No notes yet.'"></p></div>
+              </section>
+              <section id="admin-subscription-panel" class="admin-detail-panel" role="tabpanel" aria-labelledby="admin-subscription-tab" tabindex="0" x-show="customerTab === 'subscription'">
+                <header class="admin-card-heading"><div><h3>Subscription details</h3><p>The current subscription for this customer.</p></div><span class="admin-status" :data-status="selectedCustomer.status"><span aria-hidden="true"></span><span x-text="statusName(selectedCustomer.status)"></span></span></header><dl class="admin-detail-fields"><div><dt>Subscription ID</dt><dd x-text="subscriptionId(selectedCustomer.id)"></dd></div><div><dt>Plan</dt><dd x-text="plan(selectedCustomer.plan).name"></dd></div><div><dt>Plan price</dt><dd><span x-text="money(plan(selectedCustomer.plan).price)"></span> / month</dd></div><div><dt>Current monthly revenue</dt><dd x-text="money(selectedCustomer.status === 'active' ? plan(selectedCustomer.plan).price : 0)"></dd></div></dl><p class="f-help">Trial and paused subscriptions contribute no monthly revenue.</p><a class="f-button admin-detail-plan-link" href="#/plans">Explore plans<svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg></a>
+              </section>
+              <section id="admin-customer-activity-panel" class="admin-detail-panel" role="tabpanel" aria-labelledby="admin-customer-activity-tab" tabindex="0" x-show="customerTab === 'activity'">
+                <header class="admin-card-heading"><div><h3>Customer activity</h3><p>Changes to this customer made during this visit.</p></div><span class="f-badge" x-text="customerActivity.length + ' events'"></span></header><p class="admin-joined-note">Joined the workspace on <time :datetime="selectedCustomer.joined" x-text="selectedCustomer.joined"></time>.</p><div class="admin-empty" x-show="!customerActivity.length"><svg class="f-icon" aria-hidden="true"><use href="#i-clock"/></svg><h4>No changes yet</h4><p>Customer updates will appear here.</p></div><ol class="admin-activity-list"><template x-for="event in customerActivity" :key="event.id"><li><span class="admin-event-icon"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + event.icon"/></svg></span><div><strong x-text="event.title"></strong><p x-text="event.detail"></p></div><time :datetime="event.time" x-text="activityTime(event.time)"></time></li></template></ol>
+              </section>
+            </section></template>
+
+            <section class="f-card admin-activity" aria-labelledby="admin-activity-title" x-show="view === 'activity'" x-cloak>
+              <header class="admin-card-heading"><div><h3 id="admin-activity-title">Workspace activity</h3><p>Customer and settings changes made during this visit.</p></div><span class="f-badge" x-text="activity.length + ' events'"></span></header>
+              <div class="admin-empty" x-show="!activity.length"><svg class="f-icon" aria-hidden="true"><use href="#i-clock"/></svg><h4>A fresh start</h4><p>Add or update a customer to see your activity here.</p><button class="f-button" type="button" @click="navigate('customers')">View customers</button></div>
+              <ol class="admin-activity-list"><template x-for="event in activity" :key="event.id"><li><span class="admin-event-icon"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + event.icon"/></svg></span><div><strong x-text="event.title"></strong><p x-text="event.detail"></p></div><time :datetime="event.time" x-text="activityTime(event.time)"></time></li></template></ol>
+            </section>
+
+            <form class="f-card admin-settings" @submit.prevent="saveSettings" x-show="view === 'settings'" x-cloak>
+              <header class="admin-card-heading"><div><h3>Workspace settings</h3><p>A few details to make things feel like home.</p></div><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg></header>
+              <div class="admin-settings-fields"><div class="f-field"><label class="f-label" for="admin-workspace-name">Workspace name</label><input class="f-input" id="admin-workspace-name" x-ref="workspaceName" x-model="settings.workspace" required maxlength="60" @input="$el.setCustomValidity('')"></div><div class="f-field"><label class="f-label" for="admin-workspace-email">Contact email</label><input class="f-input" id="admin-workspace-email" type="email" x-model="settings.email" required maxlength="160"></div></div>
+              <fieldset class="admin-setting-group"><legend>Notifications</legend><label class="f-switch admin-setting-row"><span><strong>Weekly digest</strong><small>A summary of customers and revenue.</small></span><input type="checkbox" role="switch" x-model="settings.digest"></label><label class="f-switch admin-setting-row"><span><strong>Security updates</strong><small>Keep up with changes to your workspace.</small></span><input type="checkbox" role="switch" x-model="settings.security"></label></fieldset>
+              <footer class="admin-settings-footer"><p class="f-help">Saved for this visit.</p><button class="f-button" type="button" @click="resetSettings">Reset changes</button><button class="f-button f-button--primary" type="submit">Save settings</button></footer>
+            </form>
+          </div>
+
+          <dialog class="f-dialog admin-dialog" x-ref="customerDialog" aria-labelledby="admin-customer-dialog-title">
+            <form @submit.prevent="saveCustomer">
+              <header class="f-dialog__header"><div><h2 id="admin-customer-dialog-title" x-text="editingId ? 'Edit customer' : 'Add customer'">Add customer</h2><p x-text="editingId ? 'A little context goes a long way.' : 'Start a new customer relationship.'"></p></div><button class="f-button f-button--ghost f-button--icon" type="button" @click="$refs.customerDialog.close()" aria-label="Close customer form"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header>
+              <div class="f-dialog__body">
+                <div class="f-field"><label class="f-label" for="admin-customer-name">Full name</label><input class="f-input" id="admin-customer-name" x-ref="customerName" x-model="form.name" autocomplete="name" required maxlength="80" autofocus aria-describedby="admin-form-error" @input="formError = ''"></div>
+                <div class="f-field"><label class="f-label" for="admin-customer-email">Email address</label><input class="f-input" id="admin-customer-email" x-ref="customerEmail" type="email" x-model="form.email" autocomplete="email" required maxlength="160" :aria-invalid="formError.includes('email') ? 'true' : 'false'" aria-describedby="admin-form-error" @input="formError = ''"></div>
+                <div class="f-field"><label class="f-label" for="admin-customer-company">Company</label><input class="f-input" id="admin-customer-company" x-ref="customerCompany" x-model="form.company" autocomplete="organization" required maxlength="100" @input="formError = ''"></div>
+                <div class="admin-form-grid"><div class="f-field"><label class="f-label" for="admin-customer-plan">Plan</label><select class="f-input" id="admin-customer-plan" x-model="form.plan" required><option value="starter">Starter · $29 / month</option><option value="studio">Studio · $79 / month</option><option value="business">Business · $149 / month</option></select></div><div class="f-field"><label class="f-label" for="admin-customer-status">Subscription status</label><select class="f-input" id="admin-customer-status" x-model="form.status" required><option value="trial">Trial</option><option value="active">Active</option><option value="paused">Paused</option></select></div></div>
+                <div class="f-field"><label class="f-label" for="admin-customer-notes">Internal notes</label><textarea class="f-input" id="admin-customer-notes" x-model="form.notes" rows="3" maxlength="2000" placeholder="A useful detail for your team"></textarea></div>
+                <label class="f-check"><input type="checkbox" x-model="form.updates">Send product updates</label>
+                <p id="admin-form-error" class="f-error" role="alert" x-show="formError" x-text="formError" x-cloak></p>
+              </div>
+              <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.customerDialog.close()">Cancel</button><button class="f-button f-button--primary" type="submit" x-text="editingId ? 'Save changes' : 'Create customer'">Create customer</button></footer>
+            </form>
+          </dialog>
+          <dialog class="f-dialog admin-delete-dialog" x-ref="deleteDialog" aria-labelledby="admin-delete-title" aria-describedby="admin-delete-description">
+            <header class="f-dialog__header"><h2 id="admin-delete-title" x-text="deletionIds.length === 1 ? 'Delete customer?' : 'Delete customers?'">Delete customer?</h2></header>
+            <div class="f-dialog__body"><p id="admin-delete-description">Delete <strong x-text="deleteDescription"></strong> from this workspace? Their record and subscription will be removed.</p><p class="f-help">This action cannot be undone during this visit.</p></div>
+            <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.deleteDialog.close()" autofocus>Cancel</button><button class="f-button f-button--danger" type="button" @click="deleteCustomers">Delete</button></footer>
+          </dialog>
+          <div class="f-toast" role="status" x-show="notice" x-text="notice" x-cloak></div>
+        </section>
+      </div>
+      <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>Shared controls. Native tables. A little clarity.</span><span>Local demo · records and settings reset when you refresh.</span></div>
+    </main>
+    <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/components.html">Explore the shared components <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</body>
+</html>
