@@ -520,5 +520,225 @@
     "uses": [
       "index.html"
     ]
+  },
+  {
+    "id": "alert",
+    "kind": "primitive",
+    "classes": [
+      "f-alert"
+    ],
+    "blade": [
+      "alert"
+    ],
+    "uses": []
+  },
+  {
+    "id": "menu",
+    "kind": "primitive",
+    "classes": [
+      "f-menu"
+    ],
+    "blade": [
+      "menu"
+    ],
+    "uses": []
+  },
+  {
+    "id": "menu-item",
+    "kind": "primitive",
+    "classes": [
+      "f-menu-item"
+    ],
+    "blade": [
+      "menu-item"
+    ],
+    "uses": []
+  },
+  {
+    "id": "tooltip",
+    "kind": "primitive",
+    "classes": [
+      "f-tooltip"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "combobox",
+    "kind": "primitive",
+    "classes": [
+      "f-combobox"
+    ],
+    "blade": [
+      "combobox"
+    ],
+    "uses": [
+      "support.html"
+    ]
+  },
+  {
+    "id": "token-field",
+    "kind": "primitive",
+    "classes": [
+      "f-token-field"
+    ],
+    "blade": [
+      "token-field"
+    ],
+    "uses": [
+      "index.html"
+    ]
+  },
+  {
+    "id": "chip",
+    "kind": "pattern",
+    "classes": [
+      "f-chip"
+    ],
+    "blade": [],
+    "uses": [
+      "support.html",
+      "chat.html"
+    ]
+  },
+  {
+    "id": "button-group",
+    "kind": "composition",
+    "classes": [
+      "f-button-group"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "input-group",
+    "kind": "pattern",
+    "classes": [
+      "f-input-group"
+    ],
+    "blade": [],
+    "uses": [
+      "support.html",
+      "admin.html"
+    ]
+  },
+  {
+    "id": "tabs",
+    "kind": "primitive",
+    "classes": [
+      "f-tabs",
+      "f-tab"
+    ],
+    "blade": [
+      "tabs",
+      "tab"
+    ],
+    "uses": [
+      "admin.html"
+    ]
+  },
+  {
+    "id": "section-nav",
+    "kind": "primitive",
+    "classes": [
+      "f-section-nav"
+    ],
+    "blade": [
+      "section-nav"
+    ],
+    "uses": []
+  },
+  {
+    "id": "pagination",
+    "kind": "primitive",
+    "classes": [
+      "f-pagination"
+    ],
+    "blade": [
+      "pagination"
+    ],
+    "uses": [
+      "admin.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "spinner",
+    "kind": "composition",
+    "classes": [
+      "f-spinner"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "upload",
+    "kind": "pattern",
+    "classes": [
+      "f-upload"
+    ],
+    "blade": [],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "avatar-group",
+    "kind": "composition",
+    "classes": [
+      "f-avatar-group"
+    ],
+    "blade": [],
+    "uses": []
+  },
+  {
+    "id": "presence",
+    "kind": "pattern",
+    "classes": [
+      "f-presence"
+    ],
+    "blade": [],
+    "uses": [
+      "chat.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "notifications",
+    "kind": "pattern",
+    "classes": [
+      "f-notifications"
+    ],
+    "blade": [],
+    "uses": [
+      "admin.html",
+      "chat.html"
+    ]
+  },
+  {
+    "id": "prose",
+    "kind": "pattern",
+    "classes": [
+      "f-prose"
+    ],
+    "blade": [],
+    "uses": [
+      "index.html",
+      "support.html"
+    ]
+  },
+  {
+    "id": "editor",
+    "kind": "primitive",
+    "classes": [
+      "f-editor"
+    ],
+    "blade": [
+      "editor"
+    ],
+    "uses": [
+      "admin.html"
+    ]
   }
 ]

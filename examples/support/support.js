@@ -4,7 +4,7 @@ export function supportDemo() {
   return {
     tickets: structuredClone(tickets), queues, agents, mailboxes,
     mailboxId: 'all', queue: 'open', query: '', priorityOnly: false, selectedId: 1042,
-    view: 'list', mode: 'reply', tagInput: '', error: '', notice: '', noticeTimer: null,
+    page: 1, pageSize: 10, view: 'list', mode: 'reply', tagInput: '', error: '', notice: '', noticeTimer: null,
     drafts: { 1042: { reply: 'Hi Sophie,\n\nAbsolutely — all your projects and comments will stay right where they are. You can upgrade from Settings → Billing and invite your teammates whenever you’re ready.\n\nAnnual billing is available, too. Happy to help you get the studio settled in!\n\nAlex', note: '' } },
     newMailboxId: 'support', newName: '', newEmail: '', newSubject: '', newMessage: '', newError: '',
     mailbox(id) { return this.mailboxes.find(mailbox => mailbox.id === id); },
@@ -27,6 +27,12 @@ export function supportDemo() {
         && (!query || [ticket.id, ticket.customer.name, ticket.customer.email, ticket.subject, ...ticket.tags, ...ticket.threads.map(thread => thread.body)].join(' ').toLowerCase().includes(query)))
         .sort((a, b) => b.id - a.id);
     },
+    get pageCount() { return Math.max(1, Math.ceil(this.filtered.length / this.pageSize)); },
+    get paged() { return this.filtered.slice((this.page - 1) * this.pageSize, this.page * this.pageSize); },
+    changePage(page) { this.page = Math.max(1, Math.min(page, this.pageCount)); if (this.paged[0]) this.select(this.paged[0].id, false); },
+    get assigneeValue() { return this.ticket?.assignee ?? ''; },
+    set assigneeValue(value) { if (this.ticket && value !== this.ticket.assignee) this.assign(value); },
+    sendAndClose() { if (this.mode !== 'reply' || !this.draft.trim()) return; this.send(); this.updateStatus('closed'); },
     get ticket() { return this.tickets.find(ticket => ticket.id === this.selectedId) ?? null; },
     get related() { return this.ticket ? this.tickets.filter(ticket => ticket.customer.email === this.ticket.customer.email && ticket.id !== this.ticket.id) : []; },
     get customerConversationCount() { return this.ticket ? this.related.length + 1 : 0; },
@@ -39,6 +45,7 @@ export function supportDemo() {
     },
     syncSelection() {
       if (!this.filtered.some(ticket => ticket.id === this.selectedId)) this.selectedId = this.filtered[0]?.id ?? null;
+      this.page = Math.max(1, Math.floor(this.filtered.findIndex(ticket => ticket.id === this.selectedId) / this.pageSize) + 1);
       this.tagInput = ''; this.error = '';
     },
     setQueue(queue, mailboxId = 'all') {
@@ -53,6 +60,7 @@ export function supportDemo() {
     },
     select(id, open = true) {
       const refs = this.$refs;
+      this.page = Math.max(1, Math.floor(this.filtered.findIndex(ticket => ticket.id === id) / this.pageSize) + 1);
       this.selectedId = id; this.ticket.unread = false; this.tagInput = ''; this.error = '';
       if (open) {
         this.view = 'ticket';

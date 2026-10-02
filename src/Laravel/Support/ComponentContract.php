@@ -64,6 +64,40 @@ final class ComponentContract
         self::semantics('floating-disclosure', $attributes, 'group');
     }
 
+    public static function alert(mixed $tone, ComponentAttributeBag $attributes): void
+    {
+        self::option('alert', 'tone', $tone, ['info', 'success', 'warning', 'danger']);
+        self::semantics('alert', $attributes, ['status', 'alert', 'group']);
+    }
+
+    public static function menuItem(mixed $variant, ComponentAttributeBag $attributes): void
+    {
+        self::option('menu-item', 'variant', $variant, ['default', 'danger']);
+        self::semantics('menu-item', $attributes, 'menuitem', 'button');
+    }
+
+    public static function enhancedControl(string $component, ComponentAttributeBag $attributes): void
+    {
+        self::semantics($component, $attributes);
+        foreach ($attributes->all() as $name => $value) {
+            $name = strtolower($name);
+            if ($name === 'data-fruit-control' || $name === 'hidden' || preg_match('/^(?::|x-bind:)(hidden|data-fruit-control)(\.|$)/', $name) || ($component === 'combobox' && ($name === 'multiple' || $name === 'size'
+                || preg_match('/^(?::|x-bind:)(multiple|size)(\.|$)/', $name)))) {
+                throw new InvalidArgumentException("FruitUI {$component} owns enhancement visibility and its single value contract.");
+            }
+        }
+    }
+
+    public static function menu(ComponentAttributeBag $attributes): void
+    {
+        self::semantics('menu', $attributes, 'group');
+        foreach ($attributes->all() as $name => $value) {
+            if (preg_match('/^(x-data|:x-data|x-bind:x-data)(\.|$)/i', $name)) {
+                throw new InvalidArgumentException('FruitUI menu owns its Alpine keyboard helper. Put application state on a parent.');
+            }
+        }
+    }
+
     public static function splitter(mixed $pane, mixed $flexible, mixed $variable, mixed $min, mixed $max, mixed $reserve, mixed $edge, ComponentAttributeBag $attributes): void
     {
         self::semantics('splitter', $attributes, 'separator');

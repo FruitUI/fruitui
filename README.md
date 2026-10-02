@@ -320,3 +320,5 @@ FruitUI translates the intent of Apple’s guidance into web-native HTML and CSS
 - [Slack threads](https://slack.com/help/articles/115000769927-Use-threads-to-organize-discussions)
 
 References reviewed on October 2, 2026. Start with readable content, consistent hierarchy, native control semantics, and useful keyboard behavior; keep material effects in the navigation and control layer.
+
+The [support interface components](docs/support-components.md) cover searchable choices, recipient tokens, action menus, persistent alerts, tabs, pagination, joined controls, upload rows, message content, and the optional rich editor. Working specimens and HTML/Blade usage are in the [component gallery](components.html).

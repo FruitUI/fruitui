@@ -293,3 +293,7 @@ Admin customers and subscriptions share `.f-table` presentation. The primitive o
 ```
 
 Tokens: `--f-table-min-width`, `--f-table-font-size`, `--f-table-heading-size`, `--f-table-cell-padding`, and `--f-table-heading-padding`. Text wraps by default; examples may scope nowrap on suitable columns. There is no record fetching, sorting, pagination or CRUD dispatcher in the primitive. Native reading semantics are unchanged in HTML, Blade and Livewire.
+
+## Support interface controls
+
+See [support interface components](support-components.md) for the new selection, menu, feedback, navigation, upload, and rich editor contracts. Their working gallery specimens include both HTML and Blade usage. The optional `fruitui/editor` module is separate from `fruitui/alpine`; application workflows remain in the examples.

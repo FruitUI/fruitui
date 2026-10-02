@@ -92,11 +92,7 @@
 .support-customer-facts { --f-description-term-size: 9px; --f-description-value-size: 11px; --f-description-value-line-height: normal; }
 
 .support-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.support-tags .f-badge { gap: 4px; border: 1px solid var(--f-border); background: var(--f-surface); font-size: 10px; }
-.support-tags button { display: grid; place-items: center; padding: 2px; border: 0; background: transparent; color: var(--f-secondary); border-radius: 3px; }
-.support-tags button:hover { color: var(--f-text); background: var(--f-hover); }
-.support-tags .f-icon { width: 11px; height: 11px; }
-.support-tag-form { display: flex; align-items: center; gap: 4px; margin-top: 10px; }
+.support-tag-form { margin-top: 10px; }
 .support-tag-form .f-input { min-width: 0; min-height: 29px; padding: 5px 8px; box-shadow: none; }
 .support-tag-form .f-button { min-width: 28px; min-height: 28px; padding: 5px; }
 .support-tag-form .f-icon { width: 14px; height: 14px; }
@@ -191,7 +187,7 @@
   .support-inspector-section .f-input { min-height: 42px; font-size: 16px; }
   .support-customer-facts dt { font-size: 12px; }
   .support-customer-facts dd, .support-related { font-size: 14px; }
-  .support-tags .f-badge { font-size: 12px; padding: 1px 7px; }
+  .support-tags .f-chip { font-size: 12px; padding: 1px 7px; }
   .support-tags button { min-height: 36px; min-width: 32px; }
   .support-tag-form .f-button { min-width: 44px; }
   .support-related { min-height: 44px; }
@@ -211,3 +207,6 @@
 @container support (max-width: 700px) { .support-workspace > .f-splitter { display: none; } }
 
 .support-static-help { padding: 15px 20px 18px; border-top: 1px solid var(--f-border); }
+
+.support-pagination { --f-pagination-padding: 8px 12px; border-top: 1px solid var(--f-border); flex-shrink: 0; }
+.support-pagination .f-input { width: 100px; font-size: 11px; }

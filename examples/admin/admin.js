@@ -13,8 +13,8 @@ export function adminDemo() {
     subscriptionQuery: '', subscriptionStatus: 'all',
     selectedIds: [], period: '6', selectedMonth: 'Sep',
     editingId: null, form: blankCustomer(), formError: '', deletionIds: [],
-    settings: { workspace: 'Forma', email: 'alex@forma.example', digest: true, security: true },
-    savedSettings: { workspace: 'Forma', email: 'alex@forma.example', digest: true, security: true },
+    settings: { workspace: 'Forma', email: 'alex@forma.example', trialDays: 14, signature: '<p>Thanks,<br><strong>Alex Morgan</strong></p>', digest: true, security: true },
+    savedSettings: { workspace: 'Forma', email: 'alex@forma.example', trialDays: 14, signature: '<p>Thanks,<br><strong>Alex Morgan</strong></p>', digest: true, security: true },
     activity: [], notice: '', nextId: 1021,
 
     init() {

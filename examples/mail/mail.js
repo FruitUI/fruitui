@@ -5,7 +5,7 @@ export function mailDemo() {
     messages: structuredClone(messages), accounts, folders,
     accountId: 'all', mailbox: 'inbox', query: '', unreadOnly: false, selectedId: 1,
     view: 'list', preview: 'responsive', sidebarVisible: true, notice: '', noticeTimer: null,
-    composeAccountId: 'work', composeTo: '', composeSubject: '', composeBody: '',
+    composeAccountId: 'work', composeTo: '', composeCc: '', composeBcc: '', composeSubject: '', composeBody: '',
     account(id) { return this.accounts.find(account => account.id === id); },
     get mailboxTitle() {
       const folder = this.folders.find(folder => folder.id === this.mailbox)?.label;
@@ -76,17 +76,22 @@ export function mailDemo() {
       this.notify(destination === 'trash' ? 'Message moved to Trash' : 'Message archived');
     },
     toggleFlag() { if (this.message) { this.message.flagged = !this.message.flagged; if (this.mailbox === 'flagged') this.syncSelection(); } },
+    validateRecipient(event) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(event.detail.value)) { event.detail.error = 'Enter an email address.'; event.preventDefault(); }
+    },
     compose(mode = 'new') {
+      this.composeCc = ''; this.composeBcc = '';
       this.composeAccountId = mode !== 'new' && this.message ? this.message.accountId : this.accountId === 'all' ? this.accounts[0].id : this.accountId;
       this.composeTo = mode === 'reply' ? this.message?.email ?? '' : '';
       this.composeSubject = mode === 'reply' ? `Re: ${this.message?.subject ?? ''}` : mode === 'forward' ? `Fwd: ${this.message?.subject ?? ''}` : '';
       this.composeBody = mode === 'forward' ? this.message?.body.join('\n\n') ?? '' : '';
+      this.$nextTick(() => this.$refs.composer.querySelectorAll('.f-token-field textarea').forEach(control => control.dispatchEvent(new Event('fruit-token-reset'))));
       this.$refs.composer.showModal();
     },
     send() {
       if (!this.account(this.composeAccountId)) return;
       if (!this.composeBody.trim()) { this.notify('Please write a message.'); return; }
-      this.messages.unshift({ id: Math.max(...this.messages.map(message => message.id)) + 1, accountId: this.composeAccountId, sender: 'Alex Morgan', email: this.composeTo, initials: 'AM', subject: this.composeSubject.trim(), time: 'Just now', date: 'Just now', mailbox: 'sent', unread: false, flagged: false, preview: this.composeBody.trim(), body: this.composeBody.trim().split(/\n\s*\n/) });
+      this.messages.unshift({ id: Math.max(...this.messages.map(message => message.id)) + 1, accountId: this.composeAccountId, sender: 'Alex Morgan', email: this.composeTo, cc: this.composeCc, bcc: this.composeBcc, initials: 'AM', subject: this.composeSubject.trim(), time: 'Just now', date: 'Just now', mailbox: 'sent', unread: false, flagged: false, preview: this.composeBody.trim(), body: this.composeBody.trim().split(/\n\s*\n/) });
       this.$refs.composer.close();
       this.notify('Demo message added to Sent');
     },

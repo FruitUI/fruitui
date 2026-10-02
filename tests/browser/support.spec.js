@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test('support sits beside Mail and queue search and priority filters work', async ({ page }) => {
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Mail', exact: true })).toHaveAttribute('href', '/');
-  await expect(page.getByLabel('Assigned to', { exact: true })).toHaveValue('alex');
+  await expect(page.locator('#support-assignee')).toHaveValue('alex');
   const search = page.getByRole('searchbox', { name: 'Search conversations' });
   await search.fill('sso');
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
@@ -44,7 +44,7 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText('Private handoff: Mia will handle annual billing.');
   await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText('Only your team');
   await expect(page.getByLabel('Conversation status')).toHaveValue('open');
-  await expect(page.getByLabel('Assigned to', { exact: true })).toHaveValue('alex');
+  await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
@@ -58,12 +58,13 @@ test('reply and note drafts stay independent across tickets and notes remain int
 test('assignment, closing, waiting, and reopening update the actual queues', async ({ page }) => {
   await queue(page, 'Unassigned').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  await page.getByLabel('Assigned to', { exact: true }).selectOption('alex');
+  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).fill('Alex');
+  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).press('Enter');
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
   await expect(queue(page, 'Assigned to me')).toContainText('4');
   await queue(page, 'Assigned to me').click();
   await ticket(page, 1041).click();
-  await expect(page.getByLabel('Assigned to', { exact: true })).toHaveValue('alex');
+  await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('button', { name: 'Close conversation', exact: true }).click();
   await expect(queue(page, 'Closed')).toContainText('2');
   await queue(page, 'Closed').click();
@@ -87,9 +88,9 @@ test('tags and customer history belong to the selected customer', async ({ page 
   await expect(tags).toContainText('Priority account');
   await page.getByRole('textbox', { name: 'Add a tag', exact: true }).fill('priority ACCOUNT');
   await page.getByRole('textbox', { name: 'Add a tag', exact: true }).press('Enter');
-  await expect(tags.locator('.f-badge')).toHaveCount(3);
+  await expect(tags.locator('.f-chip')).toHaveCount(3);
   await page.getByRole('button', { name: 'Remove tag Billing', exact: true }).click();
-  await expect(tags.locator('.f-badge')).toHaveCount(2);
+  await expect(tags.locator('.f-chip')).toHaveCount(2);
   await page.getByRole('button', { name: /A copy of last month’s invoice/ }).click();
   await expect(page.locator('#ticket-title')).toHaveText('A copy of last month’s invoice');
   await expect(page.getByLabel('Conversation status')).toHaveValue('closed');
@@ -120,7 +121,7 @@ test('new conversations retain native validation and create an unassigned ticket
   await expect(page.locator('button.support-ticket')).toHaveCount(7);
   await expect(ticket(page, 1043)).toHaveAttribute('aria-current', 'true');
   await expect(page.locator('#ticket-title')).toHaveText('A question about guest access');
-  await expect(page.getByLabel('Assigned to', { exact: true })).toHaveValue('');
+  await expect(page.locator('#support-assignee')).toHaveValue('');
 });
 
 test('keyboard selection and empty search keep focus and recover the inbox', async ({ page }) => {
@@ -144,7 +145,8 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await page.getByRole('textbox', { name: 'Reply message', exact: true }).fill('Draft across all layouts.');
   await page.getByRole('button', { name: 'Show customer details', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Back to conversation', exact: true })).toBeFocused();
-  await page.getByLabel('Assigned to', { exact: true }).selectOption('mia');
+  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).fill('Mia');
+  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Back to conversation', exact: true }).click();
   await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue('Draft across all layouts.');
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
@@ -159,7 +161,7 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await expect(page.locator('.support-customer')).not.toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.support-customer')).toBeVisible();
-  await expect(page.getByLabel('Assigned to', { exact: true })).toHaveValue('mia');
+  await expect(page.locator('#support-assignee')).toHaveValue('mia');
   await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue('Draft across all layouts.');
 });
 

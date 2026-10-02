@@ -134,8 +134,7 @@
 .admin-delete-row { color: var(--f-secondary); min-height: 28px; min-width: 28px; padding: 6px; }
 .admin-delete-row .f-icon { width: 13px; height: 13px; }
 .admin-delete-row:hover { color: var(--f-danger); }
-.admin-pagination { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--f-border); padding: 12px 20px; color: var(--f-secondary); font-size: 10px; }
-.admin-page-controls { display: flex; align-items: center; gap: 8px; }
+.admin-pagination { --f-pagination-padding: 12px 20px; border-top: 1px solid var(--f-border); font-size: 10px; }
 .admin-page-controls > .f-input { width: 100px; font-size: 10px; min-height: 28px; }
 .admin-page-controls > .f-button { min-height: 28px; min-width: 28px; padding: 5px; color: var(--f-secondary); }
 .admin-page-controls .f-icon { width: 12px; height: 12px; }
@@ -185,12 +184,8 @@
 .admin-detail-heading strong { font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .admin-detail-heading p { font-size: 11px; color: var(--f-secondary); overflow-wrap: anywhere; margin-top: 5px; }
 .admin-detail-heading > .f-button { font-size: 11px; }
-.admin-detail-tabs { display: flex; align-items: stretch; gap: 4px; padding: 0 20px; border-bottom: 1px solid var(--f-border); background: var(--f-surface); }
-.admin-detail-tabs > button { position: relative; border: 0; border-radius: 6px 6px 0 0; background: transparent; color: var(--f-secondary); min-height: 42px; padding: 10px 14px; font-size: 12px; }
-.admin-detail-tabs > button:hover { background: var(--f-hover); }
-.admin-detail-tabs > button[aria-selected='true'] { color: var(--f-selection-text); font-weight: 600; }
-.admin-detail-tabs > button[aria-selected='true']::after { content: ''; position: absolute; height: 2px; inset: auto 10px 0; background: var(--f-accent); }
-.admin-detail-tabs > button:focus-visible { outline-offset: -4px; }
+.admin-detail-tabs { padding: 0 20px; }
+.admin-settings > .f-floating-disclosure { justify-self: start; }
 .admin-detail-panel { padding: 26px 24px; }
 .admin-detail-panel:focus-visible { outline: 3px solid var(--f-accent); outline-offset: -3px; }
 .admin-detail-panel h3 { font-size: 14px; font-weight: 600; }

@@ -1,0 +1,84 @@
+import { fruitId } from './control-bridge.js';
+import { fruitPopup } from './popup.js';
+
+export function fruitMenu() {
+  let details, trigger, popup, overlay, outside, keydown, click, toggle, timer, search = '', searchTimer;
+  const items = () => [...popup.querySelectorAll('[role="menuitem"]')].filter(item => !item.matches(':disabled') && item.getAttribute('aria-disabled') !== 'true' && !item.hidden);
+  const close = restore => { details.open = false; overlay.hide(); trigger.setAttribute('aria-expanded', 'false'); if (restore) trigger.focus(); };
+  const focus = index => { const enabled = items(); if (enabled.length) enabled[(index + enabled.length) % enabled.length].focus(); };
+  return {
+    init() {
+      details = this.$el; trigger = details.querySelector('summary'); popup = details.querySelector('[role="menu"]');
+      if (!trigger || !popup) return;
+      overlay = fruitPopup(popup, trigger, { above: details.dataset.placement === 'above' });
+      popup.id ||= fruitId('fruit-menu'); trigger.setAttribute('aria-haspopup', 'menu'); trigger.setAttribute('aria-controls', popup.id);
+      popup.querySelectorAll('[role="menuitem"]').forEach(item => item.tabIndex = -1);
+      toggle = event => { if (event.target !== details) return; trigger.setAttribute('aria-expanded', String(details.open)); if (details.open) { overlay.show(); if (document.activeElement === trigger) focus(0); } else overlay.hide(); };
+      trigger.setAttribute('aria-expanded', String(details.open)); details.addEventListener('toggle', toggle);
+      outside = event => { if (!details.contains(event.target)) close(false); };
+      keydown = event => {
+        const enabled = items(), index = enabled.indexOf(document.activeElement);
+        if (event.target === trigger && ['ArrowDown', 'ArrowUp'].includes(event.key)) { event.preventDefault(); details.open = true; overlay.show(); focus(event.key === 'ArrowDown' ? 0 : enabled.length - 1); }
+        else if (details.open && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+          event.preventDefault(); focus(event.key === 'Home' ? 0 : event.key === 'End' ? enabled.length - 1 : index + (event.key === 'ArrowDown' ? 1 : -1));
+        } else if (details.open && event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(true); }
+        else if (details.open && event.key === 'Tab') { timer = setTimeout(() => close(false), 0); }
+        else if (details.open && event.key.length === 1 && event.key !== ' ' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          event.preventDefault(); clearTimeout(searchTimer); search += event.key.toLocaleLowerCase();
+          const ordered = [...enabled.slice(index + 1), ...enabled.slice(0, index + 1)];
+          ordered.find(item => item.textContent.trim().toLocaleLowerCase().startsWith(search))?.focus();
+          searchTimer = setTimeout(() => { search = ''; }, 600);
+        }
+      };
+      click = event => { const item = event.target.closest('[role="menuitem"]'); if (item && !item.matches(':disabled') && item.getAttribute('aria-disabled') !== 'true') close(true); };
+      document.addEventListener('pointerdown', outside); details.addEventListener('keydown', keydown); popup.addEventListener('click', click);
+      if (details.open) overlay.show();
+    },
+    destroy() { clearTimeout(timer); clearTimeout(searchTimer); overlay?.destroy(); document.removeEventListener('pointerdown', outside); details?.removeEventListener('keydown', keydown); details?.removeEventListener('toggle', toggle); popup?.removeEventListener('click', click); },
+  };
+}
+
+export function fruitTooltip() {
+  let root, keydown, leave, enter, overlay;
+  return {
+    init() {
+      root = this.$el;
+      const text = root.querySelector('[role="tooltip"]');
+      if (text) overlay = fruitPopup(text, root.firstElementChild);
+      enter = () => { if (!root.hasAttribute('data-dismissed')) overlay?.show(); };
+      keydown = event => { if (event.key === 'Escape' && (root.matches(':hover') || root.contains(document.activeElement))) { root.setAttribute('data-dismissed', ''); overlay?.hide(); event.stopPropagation(); } };
+      leave = event => {
+        if (!root.contains(event.relatedTarget)) { root.removeAttribute('data-dismissed'); if (!root.matches(':hover') && !root.contains(document.activeElement)) overlay?.hide(); }
+      };
+      document.addEventListener('keydown', keydown); root.addEventListener('mouseleave', leave); root.addEventListener('focusout', leave); root.addEventListener('mouseenter', enter); root.addEventListener('focusin', enter);
+    },
+    destroy() { overlay?.destroy(); document.removeEventListener('keydown', keydown); root.removeEventListener('mouseleave', leave); root.removeEventListener('focusout', leave); root.removeEventListener('mouseenter', enter); root.removeEventListener('focusin', enter); },
+  };
+}
+
+/** In-page tabs only; navigation links retain ordinary link semantics. */
+export function fruitTabs() {
+  let root, keydown, click;
+  const tabs = () => [...root.querySelectorAll('[role="tab"]')].filter(tab => !tab.matches(':disabled'));
+  const activate = tab => {
+    for (const item of tabs()) {
+      const selected = item === tab; item.setAttribute('aria-selected', String(selected)); item.tabIndex = selected ? 0 : -1;
+      const panel = [...root.querySelectorAll('[role="tabpanel"]')].find(panel => panel.id === item.getAttribute('aria-controls'));
+      if (panel) panel.hidden = !selected;
+    }
+  };
+  return {
+    init() {
+      root = this.$el; activate(tabs().find(tab => tab.getAttribute('aria-selected') === 'true') || tabs()[0]);
+      click = event => { const tab = event.target.closest('[role="tab"]'); if (tab && !tab.matches(':disabled')) activate(tab); };
+      keydown = event => {
+        const enabled = tabs(), index = enabled.indexOf(event.target);
+        if (index < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault(); const next = event.key === 'Home' ? 0 : event.key === 'End' ? enabled.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + enabled.length) % enabled.length;
+        activate(enabled[next]); enabled[next].focus();
+      };
+      root.addEventListener('click', click); root.addEventListener('keydown', keydown);
+    },
+    destroy() { root.removeEventListener('click', click); root.removeEventListener('keydown', keydown); },
+  };
+}

@@ -215,17 +215,15 @@ for (const appearance of ['light', 'dark']) {
   });
 }
 
-test('real picker selection updates the existing Alpine support form', async ({ page }) => {
+test('real native picker selection updates status through the existing Alpine support form', async ({ page }) => {
   await page.goto('/support.html');
   await requireStyledPicker(page);
-  await page.locator('#support-queues').getByRole('button', { name: /^Unassigned/ }).click();
-  await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  const select = page.getByLabel('Assigned to', { exact: true });
+  const select = page.getByRole('combobox', { name: 'Conversation status', exact: true });
   await select.click();
-  await select.locator('option[value="alex"]').click();
-  await expect(page.locator('button.support-ticket')).toHaveCount(1);
-  await expect(page.getByRole('status').last()).toHaveText('Assigned to Alex Morgan');
-  await page.locator('#support-queues').getByRole('button', { name: /^Assigned to me/ }).click();
-  await page.locator('button.support-ticket[data-ticket-id="1041"]').click();
-  await expect(select).toHaveValue('alex');
+  await select.locator('option[value="waiting"]').click();
+  await expect(page.locator('button.support-ticket')).toHaveCount(5);
+  await expect(page.locator('#support-queues').getByRole('button', { name: /^Waiting/ })).toContainText('3');
+  await page.locator('#support-queues').getByRole('button', { name: /^Waiting/ }).click();
+  await page.locator('button.support-ticket[data-ticket-id="1042"]').click();
+  await expect(select).toHaveValue('waiting');
 });

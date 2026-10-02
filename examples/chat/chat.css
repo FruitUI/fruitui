@@ -32,8 +32,7 @@
 .chat-create-link > .f-icon { color: var(--f-secondary); }
 .chat-person-avatar { position: relative; flex-shrink: 0; }
 .chat-dm-link .f-avatar { width: 23px; height: 23px; font-size: 8px; }
-.chat-presence { position: absolute; right: -1px; bottom: -1px; width: 8px; height: 8px; border: 2px solid var(--f-surface-secondary); border-radius: 50%; background: var(--f-tertiary); }
-.chat-presence[data-available='true'] { background: var(--f-success); }
+.chat-presence { position: absolute; right: -1px; bottom: -1px; }
 .chat-sidebar-bottom { display: flex; align-items: center; gap: 9px; margin-top: auto; padding: 30px 8px 0; }
 .chat-sidebar-bottom strong { font-size: 11px; font-weight: 600; }
 .chat-sidebar-bottom small { display: block; color: var(--f-secondary); font-size: 10px; margin-top: 2px; }

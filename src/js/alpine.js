@@ -1,7 +1,14 @@
 import { fruitSplitter } from './splitter.js';
+import { fruitCombobox, fruitTokenField } from './selection.js';
+import { fruitMenu, fruitTooltip, fruitTabs } from './navigation.js';
 
 /** Register on your existing Alpine instance before it starts (including Livewire's instance). */
 export default function fruitUI(Alpine) {
+  Alpine.data('fruitCombobox', fruitCombobox);
+  Alpine.data('fruitTokenField', fruitTokenField);
+  Alpine.data('fruitMenu', fruitMenu);
+  Alpine.data('fruitTooltip', fruitTooltip);
+  Alpine.data('fruitTabs', fruitTabs);
   Alpine.data('fruitSplitter', fruitSplitter);
   Alpine.data('fruitFloatingDisclosure', () => {
     let details, outside, escape;
