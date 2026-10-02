@@ -4,7 +4,7 @@ require dirname(__DIR__, 3).'/vendor/autoload.php';
 require dirname(__DIR__).'/AdoptionFixture.php';
 
 $base = dirname(__DIR__);
-foreach (['bootstrap/cache', 'storage/framework/views', 'storage/framework/sessions', 'storage/logs'] as $directory) {
+foreach (['bootstrap/cache', 'storage/framework/cache', 'storage/framework/views', 'storage/framework/sessions', 'storage/logs'] as $directory) {
     if (! is_dir("{$base}/.runtime/{$directory}")) mkdir("{$base}/.runtime/{$directory}", 0777, true);
 }
 $app = Illuminate\Foundation\Application::configure(basePath: $base)
