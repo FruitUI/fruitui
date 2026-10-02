@@ -170,9 +170,11 @@ class ComponentContractsTest extends TestCase
         $document = $this->document($html);
         $this->assertSame(1, $document->getElementsByTagName('input')->length);
         $input = $document->getElementsByTagName('input')->item(0);
-        foreach (['type' => $type, 'id' => 'field', 'name' => 'field', 'min' => '1', 'max' => '10', 'step' => '1', 'aria-label' => 'Field', 'x-model' => 'field', 'wire:model.live' => 'field', '@change' => 'changed'] as $name => $value) {
+        foreach (['type' => $type, 'id' => 'field', 'name' => 'field', 'min' => '1', 'max' => '10', 'step' => '1', 'aria-label' => 'Field', 'x-model' => 'field', 'wire:model.live' => 'field'] as $name => $value) {
             $this->assertSame($value, $input->getAttribute($name));
         }
+        // Older libxml HTML parsers discard Alpine's @ shorthand. Check the emitted control.
+        $this->assertMatchesRegularExpression('/<input\b[^>]*\s@change="changed"[^>]*>/s', $html);
         $this->assertTrue($input->hasAttribute('required'));
         $this->assertTrue($input->hasAttribute('disabled'));
         $this->assertSame(1, preg_match_all('/\btype="/', $html));
