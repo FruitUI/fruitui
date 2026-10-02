@@ -22,7 +22,8 @@
   .f-mail__time { flex-shrink: 0; font-size: 10px; color: var(--f-secondary); }
   .f-mail__subject { display: block; margin-top: 3px; font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .f-mail__preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 3px; color: var(--f-secondary); font-size: 12px; line-height: 1.5; }
-  .f-mail__message[aria-current='true'] :is(.f-mail__time, .f-mail__preview) { color: var(--f-on-accent); }
+  .f-mail__origin { display: inline-block; margin-top: 7px; padding: 1px 6px; border: 1px solid currentColor; border-radius: var(--f-radius-sm); color: var(--f-secondary); font-size: 10px; line-height: 1.5; }
+  .f-mail__message[aria-current='true'] :is(.f-mail__time, .f-mail__preview, .f-mail__origin) { color: var(--f-on-accent); }
   .f-mail__unread { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--f-accent); top: 20px; left: 9px; }
   .f-mail__message[aria-current='true'] .f-mail__unread { background: var(--f-on-accent); }
   .f-mail__reader { grid-column: 3; grid-row: 2; min-width: 0; overflow: auto; background: var(--f-surface); }
@@ -31,8 +32,8 @@
   .f-mail__sender-detail { display: flex; align-items: center; gap: 11px; }
   .f-mail__sender-detail strong { font-size: 12px; font-weight: 600; }
   .f-mail__sender-detail p { font-size: 11px; color: var(--f-secondary); }
+  .f-mail__account-detail { margin-top: 12px; color: var(--f-secondary); font-size: 11px; overflow-wrap: anywhere; }
   .f-mail__date { margin-left: auto; align-self: flex-start; padding-top: 3px; font-size: 10px; color: var(--f-secondary); white-space: nowrap; }
-  .f-avatar { display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; color: var(--f-selection-text); background: var(--f-selection); font-size: 12px; font-weight: 600; }
   .f-mail__body { padding: 30px; max-width: 740px; font-size: 13px; line-height: 1.8; }
   .f-mail__body > p + p { margin-top: 18px; }
   .f-mail__attachment { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding: 14px; border: 1px solid var(--f-border); border-radius: 10px; background: var(--f-surface-secondary); color: var(--f-text); text-decoration: none; font-size: 12px; }
@@ -90,7 +91,7 @@
     .f-mail__message[aria-current='true'] { color: var(--f-text); background: transparent; }
     .f-mail__message[aria-current='true']:hover { background: var(--f-hover); }
     .f-mail__message[aria-current='true']::after { border-color: var(--f-border); }
-    .f-mail__message[aria-current='true'] :is(.f-mail__time, .f-mail__preview) { color: var(--f-secondary); }
+    .f-mail__message[aria-current='true'] :is(.f-mail__time, .f-mail__preview, .f-mail__origin) { color: var(--f-secondary); }
     .f-mail__message:focus-visible { outline-offset: -3px; }
     .f-mail__list-avatar { display: grid; position: absolute; top: 17px; left: 18px; width: 40px; height: 40px; font-size: 14px; }
     .f-mail__unread, .f-mail__message[aria-current='true'] .f-mail__unread { width: 7px; height: 7px; top: 34px; left: 5px; background: var(--f-accent); }
@@ -129,7 +130,7 @@
     .f-mail[data-view='message'] .f-mail__reader-actions { display: flex; }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar { display: flex; grid-column: 1; grid-row: 2; min-height: 0; padding: 0 16px 16px; border: 0; background: var(--f-surface-secondary); backdrop-filter: none; }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__heading { padding: 22px 12px 8px; font-size: 13px; }
-    .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__item { min-height: 48px; padding: 12px; margin-bottom: 2px; border-radius: 10px; gap: 13px; background: var(--f-surface); font-size: 16px; }
+    .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__item { min-height: 48px; padding: 12px; padding-inline-start: var(--f-sidebar-item-indent, 12px); margin-bottom: 2px; border-radius: 10px; gap: 13px; background: var(--f-surface); font-size: 16px; }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__item[aria-current='page'] { background: var(--f-selection); }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-icon { width: 22px; height: 22px; }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-badge { font-size: 13px; background: transparent; }

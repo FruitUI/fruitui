@@ -6,7 +6,7 @@
   <div class="showcase">
     <header class="site-header">
       <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
-      <nav class="site-nav" aria-label="Main navigation"><a href="/">Examples</a><a href="/components.html" aria-current="page">Components</a></nav>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html">Support</a><a href="/components.html" aria-current="page">Components</a></nav>
       <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
     </header>
     <main id="components">
@@ -37,6 +37,13 @@
     …
   &lt;/dialog&gt;
 &lt;/div&gt;</pre></section>
+        <section class="f-card component-card"><h2>People and context</h2><p>A small identity cue, shared by Mail and Support.</p><div class="f-row"><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><p class="f-help">Studio North</p></div></div><pre class="code">&lt;span class="f-avatar" aria-hidden="true"&gt;SC&lt;/span&gt;
+&lt;span&gt;Sophie Chen&lt;/span&gt;</pre></section>
+        <section class="f-card component-card"><h2>Grouped navigation</h2><p>Native disclosure reveals independent links. Used for Mail accounts and Support mailboxes.</p><nav class="f-sidebar" aria-label="Reference interfaces"><details class="f-sidebar__group"><summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg><span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary><a class="f-sidebar__item f-sidebar__item--nested" href="/">Mail</a><a class="f-sidebar__item f-sidebar__item--nested" href="/support.html">Support</a></details></nav><pre class="code">&lt;details class="f-sidebar__group"&gt;
+  &lt;summary class="f-sidebar__item"&gt;Examples&lt;/summary&gt;
+  &lt;a class="f-sidebar__item f-sidebar__item--nested"
+     href="/"&gt;Mail&lt;/a&gt;
+&lt;/details&gt;</pre></section>
       </div>
       <section id="integration" class="integration"><h2>Fits the way you build.</h2><p>Use the CSS on its own, add Alpine for local behavior, or let Laravel and Livewire handle your data.</p><div class="integration-grid">
         <article class="f-card"><h3>HTML &amp; CSS</h3><pre class="code">import 'fruitui/css';

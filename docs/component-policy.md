@@ -46,6 +46,10 @@ Custom token overrides must supply suitable light and dark values and preserve a
 
 Native attributes and `x-*`/`wire:*` bindings belong on the underlying element, not the surrounding label. Checkbox, Radio, and Switch share `f-check`/`f-switch` styling rather than adding per-state components. Both checkbox and radio examples already exist in the component gallery; the Blade wrappers expose those native contracts to Laravel.
 
+The CSS-only `.f-avatar` presents initials as an identity cue. Use a native span with no interaction or selection state; mark it `aria-hidden="true"` when an adjacent name supplies the identity, or provide an accessible name when it stands alone. It has no options, added keyboard behavior, or value model. Mail sender/account identities and Support customer/agent identities are its two actual uses, so its unchanged styling belongs in shared `components.css`.
+
+The `.f-sidebar__group` navigation pattern composes a native `details`/`summary` disclosure with independent links or buttons using `.f-sidebar__item--nested`. Its two actual uses are Mail account folders and Support team mailbox views. The disclosure owns only its native `open` state and Enter/Space interaction; child controls own navigation actions and `aria-current`. `.f-sidebar__identity` arranges optional primary/secondary text; `.f-sidebar__chevron` is a decorative icon that follows native open state. There are no behavior modes or new Blade primitives. Counts, account/mailbox ownership, the virtual `all` scope, and folder filters belong to application data in `examples/`, not this CSS pattern.
+
 ## Runtime boundaries
 
 - Input rejects types outside its text-like allowlist, including checkbox/radio, number, date, range, file, and hidden.
@@ -71,7 +75,7 @@ Use `f-row`, `f-stack`, and slots to compose content before adding API options. 
 
 The layout owns arrangement; the checkbox owns selection. A real application with multiple repeated row arrangements may justify a Row pattern with leading/default/trailing slots. Until then, these layout classes are sufficient.
 
-The initial Mail pattern is the current reference interface. Its sample data and application behavior stay in `examples/`; additional interfaces should demonstrate actual shared needs before producing more reusable patterns. Core primitives can start from one real use when they represent a distinct native control.
+Mail and Support are the current reference interfaces. Their sample data and application behavior stay in `examples/`; Support's ticket layout, conversation threads, and customer inspector are example compositions. Additional interfaces should demonstrate actual shared needs before producing more reusable patterns. Core primitives can start from one real use when they represent a distinct native control.
 
 CSS handles appearance and layout, Blade emits the same native controls, Alpine adds local state, and Livewire adds server actions. Their semantic contracts remain the same. Do not add a second Alpine instance, automatic DOM role switching, or adapter-specific behavior flags. Test a control's changed behavior and integration; use the existing gallery checks for light/dark, focus, accessibility, and narrow layouts.
 

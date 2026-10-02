@@ -132,7 +132,7 @@ test('a medium container keeps the list and reader together', async ({ page }) =
   await expect(page.locator('#mailboxes')).not.toBeVisible();
   await expect(page.locator('.f-mail__mobile-header')).not.toBeVisible();
   await page.getByLabel('Mailbox', { exact: true }).selectOption('sent');
-  await expect(page.locator('.f-mail__message')).toHaveCount(1);
+  await expect(page.locator('.f-mail__message')).toHaveCount(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
@@ -161,7 +161,11 @@ for (const theme of ['light', 'dark']) {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.getByLabel('Appearance', { exact: true }).selectOption(theme);
     for (const action of [null, 'mailboxes', 'message']) {
-      if (action === 'mailboxes') await page.getByRole('button', { name: 'Show mailboxes' }).click();
+      if (action === 'mailboxes') {
+        await page.getByRole('button', { name: 'Show mailboxes' }).click();
+        await page.locator('#mailboxes [data-scope="work"] > summary').click();
+        await page.locator('#mailboxes [data-scope="personal"] > summary').click();
+      }
       if (action === 'message') {
         await page.getByRole('button', { name: 'Done', exact: true }).click();
         await page.getByRole('button', { name: /Sophie Chen/ }).click();
@@ -219,6 +223,6 @@ test('CSS-only controls work with JavaScript disabled', async ({ browser }) => {
   await control.uncheck();
   await expect(control).not.toBeChecked();
   await page.getByText('What makes FruitUI CSS first?', { exact: true }).click();
-  await expect(page.locator('details')).toHaveAttribute('open', '');
+  await expect(page.locator('details.f-disclosure')).toHaveAttribute('open', '');
   await context.close();
 });

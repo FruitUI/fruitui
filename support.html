@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" class="fruit-ui" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An Apple-inspired support inbox built with FruitUI. A shared inbox, thoughtful conversations, and customer context.">
+  <title>Support · FruitUI</title>
+  <link rel="stylesheet" href="/src/fruitui.css">
+  <link rel="stylesheet" href="/examples/shared/showcase.css">
+  <link rel="stylesheet" href="/examples/support/support.css">
+  <script type="module" src="/examples/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#support">Skip to Support</a>
+  <div class="showcase">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html" aria-current="page">Support</a><a href="/components.html">Components</a></nav>
+      <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+    </header>
+    <main x-data="supportDemo">
+      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Good support feels personal.</h1><p>A shared inbox. A little more care in every conversation.</p></div><span class="example-tag">Interactive example · 02</span></div>
+      <div class="support-container">
+        <section id="support" class="support-workspace" aria-label="Support example" data-view="list" :data-view="view">
+          <header class="f-toolbar support-sidebar-toolbar"><div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg></header>
+          <header class="f-toolbar support-list-toolbar">
+            <button class="f-button f-button--ghost f-button--icon support-queues-toggle" type="button" @click="view === 'queues' ? backToList() : showQueues()" :aria-label="view === 'queues' ? 'Back to conversations' : 'Show support views'" aria-label="Show support views" aria-controls="support-queues"><svg class="f-icon" aria-hidden="true"><use href="#i-sidebar"/></svg></button>
+            <div class="support-queue-title"><h2 x-text="view === 'queues' ? 'Mailboxes' : queueTitle">All Inboxes</h2><p><span x-text="filtered.length">6</span> conversations</p></div>
+            <button class="f-button f-button--ghost f-button--icon" type="button" x-ref="newTrigger" @click="openNew" aria-label="New conversation" title="New conversation" disabled :disabled="false"><svg class="f-icon" aria-hidden="true"><use href="#i-compose"/></svg></button>
+          </header>
+          <header class="f-toolbar support-thread-toolbar">
+            <button class="f-button f-button--ghost support-back" type="button" x-ref="back" @click="backToList" aria-label="Back to conversations"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="queueTitle">Open</span></button>
+            <span class="support-ticket-number" x-text="ticket ? '#' + ticket.id : 'Conversation'">#1042</span>
+            <div class="f-toolbar__spacer"></div>
+            <label class="f-sr-only" for="ticket-status">Conversation status</label>
+            <select id="ticket-status" class="f-input support-status-select" :value="ticket?.status ?? 'open'" @change="updateStatus($event.target.value)" disabled :disabled="!ticket"><option value="open">Open</option><option value="waiting">Waiting</option><option value="closed">Closed</option></select>
+            <button class="f-button f-button--ghost f-button--icon" type="button" @click="updateStatus('closed')" disabled :disabled="!ticket || ticket.status === 'closed'" aria-label="Close conversation" title="Close conversation"><svg class="f-icon" aria-hidden="true"><use href="#i-check-circle"/></svg></button>
+            <button class="f-button f-button--ghost f-button--icon support-customer-toggle" type="button" x-ref="customerToggle" @click="showCustomer" disabled :disabled="!ticket" aria-controls="support-customer" aria-label="Show customer details"><svg class="f-icon" aria-hidden="true"><use href="#i-info"/></svg></button>
+          </header>
+          <header class="f-toolbar support-customer-toolbar"><button class="f-button f-button--ghost support-customer-back" type="button" x-ref="customerBack" @click="backToTicket" aria-label="Back to conversation"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg></button><h2>Details</h2><svg class="f-icon support-customer-icon" aria-hidden="true"><use href="#i-person"/></svg></header>
+
+          <nav id="support-queues" class="f-sidebar support-sidebar" aria-label="Support views" x-ref="queues">
+            <div class="support-team"><span class="support-team-mark" aria-hidden="true"><svg class="f-icon"><use href="#i-chat"/></svg></span><div><strong>Forma</strong><small>Customer Support</small></div></div>
+            <p class="f-sidebar__heading">All Mailboxes</p>
+            <template x-for="item in queues" :key="item.id"><button class="f-sidebar__item" type="button" @click="setQueue(item.id)" :aria-current="mailboxId === 'all' && queue === item.id ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg><span x-text="item.id === 'open' ? 'All Inboxes' : item.label"></span><span class="f-badge" x-text="count(item.id)"></span></button></template>
+            <noscript><div class="f-sidebar__item" aria-current="page">All Inboxes<span class="f-badge">6</span></div><div class="f-sidebar__item">Assigned to me<span class="f-badge">3</span></div><div class="f-sidebar__item">Unassigned<span class="f-badge">2</span></div><div class="f-sidebar__item">Waiting<span class="f-badge">2</span></div><div class="f-sidebar__item">Closed<span class="f-badge">1</span></div></noscript>
+            <p class="f-sidebar__heading">Team Mailboxes</p>
+            <template x-for="owner in mailboxes" :key="owner.id"><details class="f-sidebar__group" :data-scope="owner.id">
+              <summary class="f-sidebar__item" :aria-label="owner.name + ' mailbox'"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg><span class="f-sidebar__identity"><strong x-text="owner.name"></strong><small x-text="owner.email"></small></span><span class="f-badge" x-text="count('open', owner.id)"></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
+              <template x-for="item in queues" :key="item.id"><button class="f-sidebar__item f-sidebar__item--nested" type="button" @click="setQueue(item.id, owner.id)" :aria-label="owner.name + ' ' + item.label" :aria-current="mailboxId === owner.id && queue === item.id ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + item.icon"/></svg><span x-text="item.label"></span><span class="f-badge" x-text="count(item.id, owner.id)"></span></button></template>
+            </details></template>
+            <noscript><details class="f-sidebar__group"><summary class="f-sidebar__item">Support</summary><div class="f-sidebar__item f-sidebar__item--nested">Open · 3</div></details><details class="f-sidebar__group"><summary class="f-sidebar__item">Billing</summary><div class="f-sidebar__item f-sidebar__item--nested">Open · 1</div></details><details class="f-sidebar__group"><summary class="f-sidebar__item">Feedback</summary><div class="f-sidebar__item f-sidebar__item--nested">Open · 2</div></details></noscript>
+            <div class="support-sidebar-bottom"><span class="f-avatar" aria-hidden="true">AM</span><div><strong>Alex Morgan</strong><small>Support team</small></div></div>
+          </nav>
+
+          <section class="support-list-pane" aria-label="Conversation list">
+            <div class="support-list-tools"><div class="f-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="support-search">Search conversations</label><input id="support-search" class="f-input" type="search" placeholder="Search conversations" x-ref="search" x-model="query" @input="syncSelection"></div><div class="support-list-order"><span x-text="query ? 'Search results' : 'Newest first'">Newest first</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="togglePriority" :aria-pressed="priorityOnly" aria-pressed="false" aria-label="Show priority conversations" title="Show priority conversations"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div></div>
+            <div class="support-ticket-list" x-ref="ticketList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
+              <template x-for="item in filtered" :key="item.id">
+                <button class="support-ticket" type="button" @click="select(item.id)" :data-ticket-id="item.id" :aria-current="selectedId === item.id ? 'true' : null">
+                  <span class="f-avatar support-ticket-avatar" aria-hidden="true" x-text="item.customer.initials"></span>
+                  <span class="support-ticket-top"><strong x-text="item.customer.name"></strong><span class="support-ticket-time" x-text="item.time"></span><span class="support-unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread</span></span>
+                  <span class="support-ticket-subject" x-text="item.subject"></span><span class="support-ticket-preview" x-text="item.preview"></span>
+                  <span class="support-ticket-meta"><span x-text="'#' + item.id"></span><span class="support-ticket-origin" x-show="mailboxId === 'all'" x-text="mailbox(item.mailboxId).name"></span><span class="support-priority" x-show="item.priority !== 'normal'"><svg class="f-icon" aria-hidden="true"><use href="#i-flag"/></svg><span x-text="item.priority === 'urgent' ? 'Urgent' : 'High priority'"></span></span><span class="f-badge" x-show="item.status !== 'open'" x-text="item.status === 'waiting' ? 'Waiting' : 'Closed'"></span></span>
+                </button>
+              </template>
+              <div class="support-empty" x-show="filtered.length === 0" x-cloak><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg><h3>No conversations</h3><p x-text="query ? 'Try another name, subject, or tag.' : priorityOnly ? 'No priority conversations in this view.' : 'You’re all caught up.'"></p><button class="f-button" type="button" x-show="query || priorityOnly" @click="clearFilters">Clear filters</button></div>
+              <noscript>
+                <div class="support-ticket" aria-current="true"><span class="support-ticket-top"><strong>Sophie Chen</strong><span class="support-ticket-time">12m</span></span><span class="support-ticket-subject">A little help with our team plan</span><span class="support-ticket-preview">We’re growing the studio. What’s the best way to bring everyone along?</span><span class="support-ticket-meta">#1042</span></div>
+                <div class="support-ticket"><strong>Jordan Lee</strong><span class="support-ticket-subject">Sign-in after changing our domain</span><span class="support-ticket-preview">Our new domain is live, but a few teammates can’t sign in with SSO.</span><span class="support-ticket-meta">#1041</span></div>
+                <div class="support-ticket"><strong>Emma Thompson</strong><span class="support-ticket-subject">A new home for our workspace</span><span class="support-ticket-preview">We’d like to transfer our projects to a new workspace.</span><span class="support-ticket-meta">#1040</span></div>
+                <div class="support-ticket"><strong>Maya Rodriguez</strong><span class="support-ticket-subject">Our project export is missing files</span><span class="support-ticket-meta">#1038 · Urgent</span></div>
+                <div class="support-ticket"><strong>Oliver Park</strong><span class="support-ticket-subject">Just wanted to say thank you</span><span class="support-ticket-meta">#1037</span></div>
+                <div class="support-ticket"><strong>Lena Wilson</strong><span class="support-ticket-subject">A small idea for project templates</span><span class="support-ticket-meta">#1034</span></div>
+              </noscript>
+            </div>
+            <footer class="support-list-footer"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg><span x-text="scopeDescription">3 mailboxes</span></footer>
+          </section>
+
+          <article class="support-conversation" aria-label="Selected conversation">
+            <template x-if="ticket">
+              <div class="support-conversation-content">
+                <header class="support-conversation-heading"><div class="support-conversation-overline"><span class="support-status" :data-status="ticket.status" x-text="ticket.status === 'open' ? 'Open conversation' : ticket.status === 'waiting' ? 'Waiting for a reply' : 'Closed conversation'"></span><span x-text="ticket.customer.company"></span></div><h2 id="ticket-title" x-ref="ticketTitle" tabindex="-1" x-text="ticket.subject"></h2><p><span x-text="ticket.customer.name"></span><span aria-hidden="true"> · </span><span x-text="ticket.customer.email"></span></p><p class="support-mailbox-detail"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg><span x-text="mailbox(ticket.mailboxId).name + ' · ' + mailbox(ticket.mailboxId).email"></span></p></header>
+                <div class="support-thread" x-ref="thread" role="region" tabindex="0" aria-label="Conversation history">
+                  <p class="support-thread-start">Beginning of this conversation</p>
+                  <template x-for="(entry, index) in ticket.threads" :key="ticket.id + '-' + index">
+                    <section class="support-message" :data-kind="entry.kind" :aria-label="entry.kind === 'note' ? 'Internal note' : entry.kind === 'reply' ? 'Agent reply' : 'Customer message'">
+                      <header><span class="f-avatar" aria-hidden="true" x-text="entry.kind === 'customer' ? ticket.customer.initials : entry.author.split(' ').map(word => word[0]).join('')"></span><div><strong x-text="entry.kind === 'customer' ? ticket.customer.name : entry.author"></strong><small x-text="entry.kind === 'note' ? 'Internal note · Only your team' : entry.kind === 'reply' ? 'Reply to customer' : 'Customer'"></small></div><time x-text="entry.time"></time><svg class="f-icon support-note-lock" x-show="entry.kind === 'note'" aria-hidden="true"><use href="#i-lock"/></svg></header>
+                      <p class="support-message-body" x-text="entry.body"></p>
+                    </section>
+                  </template>
+                </div>
+                <form class="support-composer" :data-mode="mode" @submit.prevent="send">
+                  <div class="support-composer-top"><fieldset class="f-segmented"><legend class="f-sr-only">Message type</legend><label><input type="radio" name="message-type" value="reply" x-model="mode" @change="error = ''" checked><span><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg>Reply</span></label><label><input type="radio" name="message-type" value="note" x-model="mode" @change="error = ''"><span><svg class="f-icon" aria-hidden="true"><use href="#i-lock"/></svg>Note</span></label></fieldset><span class="support-composer-audience" x-text="mode === 'note' ? 'Only your team' : 'To ' + ticket.customer.name"></span></div>
+                  <label class="f-sr-only" for="support-reply" x-text="mode === 'note' ? 'Internal note' : 'Reply message'">Reply message</label><textarea id="support-reply" class="f-input support-reply" rows="5" x-ref="replyBody" x-model="draft" :placeholder="mode === 'note' ? 'Leave a little context for your team…' : 'A thoughtful reply starts here…'" :aria-invalid="error ? 'true' : 'false'" aria-describedby="support-reply-help support-reply-error"></textarea>
+                  <p id="support-reply-error" class="f-error" x-show="error" x-text="error" x-cloak></p>
+                  <div class="support-composer-bottom"><span id="support-reply-help" class="f-help" x-text="mode === 'note' ? 'Internal notes stay with your team.' : 'From ' + mailbox(ticket.mailboxId).email"></span><button class="f-button f-button--primary" type="submit"><svg class="f-icon" aria-hidden="true"><use :href="mode === 'note' ? '#i-plus' : '#i-send'"/></svg><span x-text="mode === 'note' ? 'Add note' : ticket.status === 'closed' ? 'Reopen & reply' : 'Send reply'"></span></button></div>
+                </form>
+              </div>
+            </template>
+            <div class="support-empty" x-show="!ticket" x-cloak><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg><h2>A little room to focus.</h2><p>Choose a conversation to get started.</p></div>
+            <noscript><div class="support-conversation-content"><header class="support-conversation-heading"><div class="support-conversation-overline">Open conversation · Studio North</div><h2>A little help with our team plan</h2><p>Sophie Chen · sophie@example.com</p></header><div class="support-thread" role="region" tabindex="0" aria-label="Conversation history"><section class="support-message"><header><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><small>Customer</small></div></header><p class="support-message-body">Hi there,
+
+We’re growing the studio and would love to bring all 12 of us into Forma. Can we move to the Team plan without losing our projects?
+
+Also, is it possible to pay annually? Thanks for making a tool we love using.
+
+Sophie</p></section><section class="support-message" data-kind="note"><header><strong>Mia Patel</strong><small>Internal note · Only your team</small></header><p class="support-message-body">Existing projects stay in place when upgrading. Annual billing is available on the Team plan.</p></section></div><div class="support-composer"><p class="f-help">Enable JavaScript to try replies, notes, and ticket actions.</p></div></div></noscript>
+          </article>
+
+          <aside id="support-customer" class="support-customer" aria-label="Customer details">
+            <template x-if="ticket">
+              <div>
+                <div class="support-customer-profile"><span class="f-avatar" aria-hidden="true" x-text="ticket.customer.initials"></span><h3 x-text="ticket.customer.name"></h3><p x-text="ticket.customer.company"></p><span class="f-badge" x-text="ticket.customer.plan + ' plan'"></span></div>
+                <div class="support-inspector-section"><div class="f-field"><label class="f-label" for="support-assignee">Assigned to</label><select id="support-assignee" class="f-input" :value="ticket.assignee" @change="assign($event.target.value)"><option value="">Unassigned</option><option value="alex">Alex Morgan</option><option value="mia">Mia Patel</option><option value="noah">Noah Williams</option></select></div></div>
+                <div class="support-inspector-section"><h3>Customer</h3><dl class="support-customer-facts"><div><dt>Email</dt><dd x-text="ticket.customer.email"></dd></div><div><dt>Location</dt><dd x-text="ticket.customer.location"></dd></div><div><dt>Customer since</dt><dd x-text="ticket.customer.since"></dd></div><div><dt>Workspace</dt><dd><span x-text="ticket.customer.members"></span> <span x-text="ticket.customer.members === 1 ? 'member' : 'members'"></span></dd></div></dl></div>
+                <div class="support-inspector-section"><h3>Tags</h3><div class="support-tags"><template x-for="tag in ticket.tags" :key="tag"><span class="f-badge"><span x-text="tag"></span><button type="button" @click="removeTag(tag)" :aria-label="'Remove tag ' + tag"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></button></span></template><span class="f-help" x-show="ticket.tags.length === 0">No tags yet</span></div><form class="support-tag-form" @submit.prevent="addTag"><label class="f-sr-only" for="support-tag">Add a tag</label><input class="f-input" id="support-tag" x-model="tagInput" placeholder="Add a tag" maxlength="40"><button class="f-button f-button--ghost f-button--icon" type="submit" :disabled="!tagInput.trim()" aria-label="Add tag"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg></button></form></div>
+                <div class="support-inspector-section"><h3>Conversations <span class="f-badge" x-text="customerConversationCount"></span></h3><p class="f-help" x-show="related.length === 0">This is their first conversation.</p><template x-for="item in related" :key="item.id"><button class="support-related" type="button" @click="openRelated(item.id)"><span x-text="item.subject"></span><small><span x-text="'#' + item.id"></span> · <span x-text="item.status === 'closed' ? 'Closed' : item.status === 'waiting' ? 'Waiting' : 'Open'"></span><svg class="f-icon" aria-hidden="true"><use href="#i-chevron"/></svg></button></template></div>
+              </div>
+            </template>
+            <noscript><div class="support-customer-profile"><span class="f-avatar" aria-hidden="true">SC</span><h3>Sophie Chen</h3><p>Studio North</p><span class="f-badge">Team plan</span></div><div class="support-inspector-section"><h3>Customer</h3><dl class="support-customer-facts"><div><dt>Email</dt><dd>sophie@example.com</dd></div><div><dt>Location</dt><dd>Portland, Oregon</dd></div><div><dt>Customer since</dt><dd>March 2024</dd></div><div><dt>Workspace</dt><dd>12 members</dd></div></dl></div></noscript>
+          </aside>
+
+          <dialog class="f-dialog support-new-dialog" x-ref="newConversation" aria-labelledby="new-conversation-title">
+            <form @submit.prevent="create"><header class="f-dialog__header"><h2 id="new-conversation-title">New conversation</h2><button class="f-button f-button--ghost f-button--icon" type="button" @click="$refs.newConversation.close()" aria-label="Close new conversation"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></button></header><div class="f-dialog__body"><div class="f-field"><label class="f-label" for="new-mailbox">Mailbox</label><select id="new-mailbox" class="f-input" x-model="newMailboxId" required><option value="support">Support · support@forma.example</option><option value="billing">Billing · billing@forma.example</option><option value="feedback">Feedback · feedback@forma.example</option></select></div><label class="f-field"><span class="f-label">Customer name</span><input class="f-input" x-model="newName" required pattern=".*\S.*" autocomplete="name" autofocus></label><label class="f-field"><span class="f-label">Customer email</span><input class="f-input" type="email" x-model="newEmail" required autocomplete="email"></label><label class="f-field"><span class="f-label">Subject</span><input class="f-input" x-model="newSubject" required pattern=".*\S.*"></label><label class="f-field"><span class="f-label">Customer message</span><textarea class="f-input" rows="4" x-model="newMessage" required></textarea></label><p class="f-error" x-show="newError" x-text="newError" x-cloak></p></div><footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.newConversation.close()">Cancel</button><button class="f-button f-button--primary" type="submit">Create conversation</button></footer></form>
+          </dialog>
+          <div class="f-toast" role="status" x-show="notice" x-text="notice" x-cloak></div>
+        </section>
+      </div>
+      <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>Shared FruitUI controls. Conversations with a human touch.</span><span>Demo data stays in this page. No email is delivered; refreshing resets the workspace.</span></div>
+    </main>
+    <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/">Next door: the Mail example <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</body>
+</html>
