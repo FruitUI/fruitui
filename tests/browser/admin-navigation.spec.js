@@ -185,6 +185,8 @@ test('long customer details, breadcrumbs, groups, and tabs fit narrow layouts wi
 
 for (const appearance of ['light', 'dark']) {
   test(`grouped destinations, breadcrumbs, tabs, and detail states are accessible in ${appearance}`, async ({ page }) => {
+    // Full-page audits across twelve states share this scenario's time budget.
+    test.slow();
     await page.emulateMedia({ colorScheme: appearance });
     await nav(page).getByRole('link', { name: 'Segments', exact: true }).click();
     await expect(title(page)).toHaveText('Segments');

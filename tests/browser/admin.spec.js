@@ -235,6 +235,8 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
 
 for (const appearance of ['light', 'dark']) {
   test(`dashboard, selection, hover, error forms, deletion, settings, and phone views are accessible in ${appearance}`, async ({ page }) => {
+    // Full-page audits across eleven states share this scenario's time budget.
+    test.slow();
     await page.emulateMedia({ colorScheme: appearance });
     await accessible(page);
     await page.locator('.admin-chart-data summary').click();
