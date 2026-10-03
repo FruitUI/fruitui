@@ -203,6 +203,9 @@ class LaravelIntegrationTest extends TestCase
             ['<x-fruit::tooltip text="Help"><button>Go</button></x-fruit::tooltip>', 'text-id'],
             ['<x-fruit::tooltip text="Help" text-id="help" x-data="other"><button>Go</button></x-fruit::tooltip>', 'owns its fruitTooltip helper'],
             ['<x-fruit::sidebar role="list">Items</x-fruit::sidebar>', 'overriding role'],
+            ['<x-fruit::context-menu role="listbox">Items</x-fruit::context-menu>', 'overriding role'],
+            ['<x-fruit::context-menu x-data="other">Items</x-fruit::context-menu>', 'owns its fruitContextMenu helper'],
+            ['<x-fruit::context-menu x-bind:hidden="closed">Items</x-fruit::context-menu>', 'owns its fruitContextMenu helper'],
             ['<x-fruit::sidebar-item>Inbox</x-fruit::sidebar-item>', 'requires href'],
             ['<x-fruit::sidebar-item href="/" role="button">Inbox</x-fruit::sidebar-item>', 'overriding role'],
             ['<x-fruit::sidebar-item href="/" current="yes">Inbox</x-fruit::sidebar-item>', 'current must be a boolean'],
@@ -267,6 +270,19 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('See you soon.', session('fruit-toast'));
         $this->expectException(LogicException::class);
         Fruit::openDialog('confirm-archive');
+    }
+
+    public function test_a_context_menu_is_a_hidden_menu_that_keeps_its_open_state_through_morphs(): void
+    {
+        $xpath = $this->xpath(Blade::render('<li><button class="f-item-row">Sophie</button><x-fruit::context-menu class="extra"><x-fruit::menu-item wire:click="archive(4)">Archive</x-fruit::menu-item></x-fruit::context-menu></li>'));
+        $menu = $xpath->query('//li/div')->item(0);
+        $this->assertSame('menu', $menu->getAttribute('role'));
+        $this->assertSame('Actions', $menu->getAttribute('aria-label'));
+        $this->assertSame('fruitContextMenu', $menu->getAttribute('x-data'));
+        $this->assertTrue($menu->hasAttribute('hidden'));
+        $this->assertTrue($menu->hasAttribute('wire:ignore.self'));
+        $this->assertSame('f-menu__items f-context-menu extra', $menu->getAttribute('class'));
+        $this->assertSame('archive(4)', $xpath->query('.//button[@role="menuitem"]', $menu)->item(0)->getAttribute('wire:click'));
     }
 
     public function test_livewire_tests_assert_fruit_feedback_directly(): void

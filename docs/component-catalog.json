@@ -1211,5 +1211,21 @@
         "options": "`href` and link attributes such as wire:navigate. Slot: the parent screen’s title, truncated to `--f-back-max-width`. Buttons that switch views in place can use the `f-back` class."
       }
     }
+  },
+  {
+    "id": "context-menu",
+    "kind": "primitive",
+    "classes": ["f-context-menu"],
+    "blade": ["context-menu"],
+    "uses": ["examples/laravel/support-desk.blade.php"],
+    "contracts": {
+      "context-menu": {
+        "purpose": "Offer commands for the element it belongs to, on a secondary click or from the keyboard.",
+        "element": "`div` role=menu inside its target element; it floats in the top layer at the pointer.",
+        "state": "Hidden until opened. The target carries `data-fruit-context-open` while it shows; the helper owns focus and dismissal.",
+        "keyboard": "Secondary click, Shift+F10 or the context-menu key opens it on the first item; arrows, Home/End, typeahead; Enter/Space activates; Escape or Tab closes and returns focus.",
+        "options": "`title` (default Actions). Slot: Menu Items, Checkboxes, Radios, Links, Separators and Groups. Offer the same commands elsewhere, since context menus are hidden."
+      }
+    }
   }
 ]

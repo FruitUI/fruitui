@@ -2,7 +2,7 @@
 export const isRtl = element => getComputedStyle(element).direction === 'rtl';
 
 /** Use the browser top layer to avoid clipping by scrollable panes/dialogs. */
-export function fruitPopup(popup, anchor, { stretch = false, above = false } = {}) {
+export function fruitPopup(popup, anchor, { stretch = false, above = false, point = null } = {}) {
   const supported = typeof popup.showPopover === 'function';
   const originalStyle = popup.getAttribute('style');
   let showing = false;
@@ -24,7 +24,14 @@ export function fruitPopup(popup, anchor, { stretch = false, above = false } = {
     popup.style.overflowY = 'auto';
     if (stretch) popup.style.width = `${Math.min(rect.width, width - 16)}px`;
     const size = popup.getBoundingClientRect();
-    const x = stretch || isRtl(anchor) ? rect.left : rect.right - size.width;
+    // A point anchor (a context menu) opens toward the inline end from the pointer.
+    const x = point
+      ? isRtl(point)
+        ? rect.left - size.width
+        : rect.left
+      : stretch || isRtl(anchor)
+        ? rect.left
+        : rect.right - size.width;
     const below = top + height - rect.bottom - 8,
       before = rect.top - top - 8;
     const placeAbove = (above && before >= size.height) || (below < size.height && before > below);

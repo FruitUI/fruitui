@@ -352,3 +352,20 @@ test('the lazy history island loads behind a skeleton, follows the open ticket a
   await expect(history).toContainText('Exporting last year’s projects');
   expect(errors).toEqual([]);
 });
+
+test('a ticket row context menu runs Livewire actions for that ticket', async ({ page }) => {
+  const errors = await openDesk(page);
+  const row = list(page).getByRole('button', { name: /Jordan Lee/ });
+  await row.click({ button: 'right' });
+  const menu = page.getByRole('menu', { name: 'Conversation actions' }).filter({ visible: true });
+  await menu.getByRole('menuitem', { name: 'Close conversation' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '1 conversation closed.' })).toBeVisible();
+  await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
+
+  await list(page)
+    .getByRole('button', { name: /Emma Thompson/ })
+    .click({ button: 'right' });
+  await menu.getByRole('menuitem', { name: 'Open conversation' }).click();
+  await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A new home for our workspace');
+  expect(errors).toEqual([]);
+});

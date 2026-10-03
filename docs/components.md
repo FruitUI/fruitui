@@ -304,6 +304,7 @@ Menus, Combobox, Token Field, Editor, Alert, Tabs, Section Nav, Pagination, Uplo
 | --- | --- | --- |
 | A persistent message | `f-alert` / `x-fruit::alert` | Application chooses message, tone, actions, and any live announcement role. |
 | Action commands | `f-menu` + `f-menu-item` | `fruitMenu` owns command focus and dismissal; application owns commands. |
+| Commands for one item, on right-click | `f-context-menu` / `x-fruit::context-menu` | `fruitContextMenu` owns opening, focus and dismissal; the same commands must also be reachable elsewhere. |
 | Independent popup controls | Floating Disclosure | Ordinary controls retain their own keyboard contracts. |
 | One searchable existing option | `f-combobox` / `x-fruit::combobox` | The native single select owns its scalar value. |
 | Recipients or tags | `f-token-field` / `x-fruit::token-field` | The native textarea owns a newline-delimited string. |
@@ -317,6 +318,22 @@ Menus follow the [WAI menu button keyboard pattern](https://www.w3.org/WAI/ARIA/
 ```js
 import fruitUI from 'fruitui/alpine';
 fruitUI(Alpine);
+```
+
+### Context menus
+
+A context menu holds commands for the element it sits in: put it inside a list item, message or card, after the content. A secondary click opens it at the pointer; Shift+F10 or the context-menu key opens it below the focused control. It uses the same Menu Items, Checkboxes, Radios, Links, Separators and Groups as Menu, with the same arrows, Home/End and typeahead. Escape or Tab closes it and returns focus; activating a command closes it too. While it is open, its target carries `data-fruit-context-open` and an accent outline, as in macOS.
+
+Context menus are hidden by nature, so offer every command somewhere visible as well: a toolbar, a Menu, or the selection bar. Without JavaScript the browser's own context menu remains.
+
+```blade
+<li wire:key="ticket-{{ $ticket->id }}">
+    <x-fruit::item-row wire:click="open({{ $ticket->id }})">{{ $ticket->subject }}</x-fruit::item-row>
+    <x-fruit::context-menu title="Conversation actions">
+        <x-fruit::menu-item wire:click="open({{ $ticket->id }})">Open conversation</x-fruit::menu-item>
+        <x-fruit::menu-item wire:click="close({{ $ticket->id }})">Close conversation</x-fruit::menu-item>
+    </x-fruit::context-menu>
+</li>
 ```
 
 For raw HTML, put `x-data="fruitCombobox"` on a `div.f-combobox` containing `select.f-input[data-fruit-control]`. Token Field uses `div.f-token-field[x-data="fruitTokenField"]` with `textarea.f-input[data-fruit-control]`. Blade emits that markup. Give the native control a label, name, initial value, and validation/model attributes. The helper creates an unnamed query, copies accessible labels/descriptions, and publishes native events when values change. Editor publishes input while typing and committed change on widget blur. See [adoption contracts](adoption.md) for wrapper attributes, localization and Field associations. Without JavaScript, the select or textarea remains editable and submits the same value format.

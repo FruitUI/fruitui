@@ -66,6 +66,14 @@
     top: auto;
     bottom: calc(100% + 4px);
   }
+  /* A context menu floats at the pointer; an outline marks the item it acts on, as in macOS. */
+  .f-context-menu {
+    position: fixed;
+  }
+  [data-fruit-context-open] {
+    outline: 2px solid var(--f-accent);
+    outline-offset: -2px;
+  }
   .f-menu-item {
     display: flex;
     align-items: center;

@@ -396,3 +396,62 @@ test('the command palette keeps search focus, rounds its search ring and keeps s
   const menuShortcut = page.locator('.f-menu-item__shortcut').first();
   expect(await menuShortcut.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });
+
+test('a context menu opens at the pointer or from the keyboard and returns focus when it closes', async ({ page }) => {
+  const card = page.locator('#component-context-menu');
+  const row = card.getByRole('button', { name: /Sophie Chen/ });
+  const item = row.locator('xpath=..');
+  const menu = item.getByRole('menu', { name: 'Conversation actions' });
+  await expect(menu).toBeHidden();
+
+  // A secondary click opens at the pointer, marks its target and focuses the first command.
+  await row.scrollIntoViewIfNeeded();
+  const box = await row.boundingBox();
+  await page.mouse.click(box.x + 60, box.y + 10, { button: 'right' });
+  await expect(menu).toBeVisible();
+  await expect(item).toHaveAttribute('data-fruit-context-open', '');
+  await expect(menu.getByRole('menuitem', { name: /Mark as unread/ })).toBeFocused();
+  const position = await menu.boundingBox();
+  expect(Math.abs(position.x - (box.x + 60))).toBeLessThan(2);
+  expect(position.y).toBeGreaterThanOrEqual(box.y + 10);
+
+  // Typeahead ignores the shortcut text; Enter runs the command and closes the menu.
+  await page.keyboard.press('d');
+  await expect(menu.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(menu).toBeHidden();
+  await expect(item).not.toHaveAttribute('data-fruit-context-open');
+  await expect(page.getByRole('status').filter({ hasText: 'Deleted Sophie Chen.' })).toBeVisible();
+
+  // Shift+F10 opens below the focused row; arrows wrap; Escape returns focus to the row.
+  await row.focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(menu.getByRole('menuitem', { name: /Mark as unread/ })).toBeFocused();
+  await page.keyboard.press('ArrowUp');
+  await expect(menu.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(row).toBeFocused();
+
+  // Tab closes and returns focus; a press outside closes without moving focus.
+  await page.keyboard.press('ContextMenu');
+  await expect(menu).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(menu).toBeHidden();
+  await expect(row).toBeFocused();
+  await page.keyboard.press('Shift+F10');
+  await page.mouse.click(5, 5);
+  await expect(menu).toBeHidden();
+  await expect(page.getByRole('status').filter({ hasText: 'Opened Sophie Chen.' })).toHaveCount(0);
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`an open context menu is accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    const row = page.locator('#component-context-menu').getByRole('button', { name: /Jordan Lee/ });
+    await row.focus();
+    await page.keyboard.press('Shift+F10');
+    await page.keyboard.press('ArrowDown');
+    await expectAccessible(page, '#component-context-menu');
+  });
+}

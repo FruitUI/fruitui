@@ -6,7 +6,7 @@ import { fruitAutocomplete } from './autocomplete.js';
 import { fruitCommandPalette } from './command-palette.js';
 import { fruitDropzone } from './dropzone.js';
 import { fruitCombobox, fruitTokenField } from './selection.js';
-import { fruitMenu, fruitTooltip, fruitTabs, fruitFloatingDisclosure } from './navigation.js';
+import { fruitMenu, fruitContextMenu, fruitTooltip, fruitTabs, fruitFloatingDisclosure } from './navigation.js';
 
 let listening = false;
 
@@ -22,6 +22,7 @@ export default function fruitUI(Alpine) {
   Alpine.data('fruitCommandPalette', fruitCommandPalette);
   Alpine.data('fruitDropzone', fruitDropzone);
   Alpine.data('fruitMenu', fruitMenu);
+  Alpine.data('fruitContextMenu', fruitContextMenu);
   Alpine.data('fruitTooltip', fruitTooltip);
   Alpine.data('fruitTabs', fruitTabs);
   Alpine.data('fruitSplitter', fruitSplitter);

@@ -9,6 +9,7 @@
  * dialogs and sends toasts through FruitUI\Fruit. The customer's earlier
  * conversations are a lazy island: a Skeleton placeholder until the pane
  * scrolls into view, then re-rendered on its own when another ticket opens.
+ * Ticket rows have a context menu whose commands are also on the toolbar.
  * Sample tickets live in the session so each visitor can change them.
  */
 
@@ -112,9 +113,21 @@ new class extends Component
 
     public function closeSelected(): void
     {
+        $this->closeMany($this->selected);
+        $this->selected = [];
+    }
+
+    public function closeOne(int $id): void
+    {
+        $this->closeMany([$id]);
+        $this->selected = array_values(array_diff($this->selected, [(string) $id]));
+    }
+
+    private function closeMany(array $ids): void
+    {
         $tickets = $this->store();
         $closed = 0;
-        foreach ($this->selected as $id) {
+        foreach ($ids as $id) {
             if (($tickets[(int) $id]['status'] ?? null) === 'open') {
                 $tickets[(int) $id] = [...$tickets[(int) $id], 'status' => 'closed', 'reason' => 'resolved'];
                 $closed++;
@@ -122,7 +135,6 @@ new class extends Component
         }
         session(['fruit-support.tickets' => $tickets]);
         unset($this->ticket, $this->tickets, $this->counts);
-        $this->selected = [];
         Fruit::toast(trans_choice('{1} :count conversation closed.|[2,*] :count conversations closed.', $closed, ['count' => $closed]));
     }
 
@@ -241,6 +253,13 @@ new class extends Component
                                     <x-slot:subtitle>{{ $item['subject'] }}</x-slot:subtitle>
                                     <x-slot:meta>{{ $item['assignee'] === '' ? 'Unassigned' : $this::AGENTS[$item['assignee']] }}</x-slot:meta>
                                 </x-fruit::item-row>
+                                {{-- The same commands are on the toolbar and the selection bar. --}}
+                                <x-fruit::context-menu title="Conversation actions">
+                                    <x-fruit::menu-item wire:click="open({{ $item['id'] }})">Open conversation</x-fruit::menu-item>
+                                    @if ($item['status'] === 'open')
+                                        <x-fruit::menu-item wire:click="closeOne({{ $item['id'] }})">Close conversation</x-fruit::menu-item>
+                                    @endif
+                                </x-fruit::context-menu>
                             </li>
                         @endforeach
                     </x-fruit::item-list>

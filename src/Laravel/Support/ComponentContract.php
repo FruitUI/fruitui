@@ -62,6 +62,7 @@ final class ComponentContract
         'menu-separator' => ['roles' => ['separator']],
         'menu-group' => ['roles' => ['group']],
         'menu-trigger' => ['roles' => ['button']],
+        'context-menu' => ['roles' => ['menu'], 'owns' => ['x-data', 'hidden'], 'message' => 'owns its fruitContextMenu helper and visibility. Put application state on a parent'],
         'meter' => ['roles' => ['meter']],
         'number' => ['type' => 'number', 'emits' => ['type']],
         'pagination' => ['roles' => ['navigation']],
