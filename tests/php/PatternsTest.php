@@ -2,22 +2,12 @@
 
 namespace FruitUI\Tests;
 
-use DOMDocument;
 use DOMXPath;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\ViewException;
-use InvalidArgumentException;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class PatternsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     public function test_conversation_slots_and_action_attributes_reach_the_button_while_checkbox_is_independent(): void
     {
         $html = Blade::render(<<<'BLADE'
@@ -102,18 +92,7 @@ class PatternsTest extends TestCase
     #[DataProvider('invalidPatterns')]
     public function test_patterns_reject_semantic_overrides_and_unknown_variants(string $template): void
     {
-        try {
-            Blade::render($template);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-
-            return;
-        }
-        $this->fail('An invalid pattern rendered without an error.');
+        $this->assertRejected($template);
     }
 
     public static function invalidPatterns(): array
@@ -130,13 +109,5 @@ class PatternsTest extends TestCase
             '<x-fruit::attachment href="/notes" role="button">Notes</x-fruit::attachment>',
             '<x-fruit::empty-state role="checkbox">Empty</x-fruit::empty-state>',
         ]);
-    }
-
-    private function document(string $html): DOMDocument
-    {
-        $document = new DOMDocument;
-        @$document->loadHTML('<?xml encoding="utf-8" ?>'.$html);
-
-        return $document;
     }
 }

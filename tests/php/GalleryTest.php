@@ -2,17 +2,10 @@
 
 namespace FruitUI\Tests;
 
-use FruitUI\FruitUIServiceProvider;
 use FruitUI\Gallery\GalleryRenderer;
-use Orchestra\Testbench\TestCase;
 
 class GalleryTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     public function test_gallery_specimens_are_rendered_from_their_blade_sources(): void
     {
         $root = dirname(__DIR__, 2);

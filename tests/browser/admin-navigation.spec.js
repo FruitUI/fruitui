@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible, expectNoOverflow } from './helpers.js';
 
 const errors = new WeakMap();
 test.beforeEach(async ({ page }) => {
@@ -182,7 +182,7 @@ test('long customer details, breadcrumbs, groups, and tabs fit narrow layouts wi
   await page.getByRole('tab', { name: 'Subscription', exact: true }).click();
   for (const width of [320, 390, 820, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    await noOverflow(page);
+    await expectNoOverflow(page, '#admin');
     await expect(page.getByRole('tab', { name: 'Subscription', exact: true })).toHaveAttribute('aria-selected', 'true');
   }
   await page.setViewportSize({ width: 390, height: 844 });
@@ -190,7 +190,7 @@ test('long customer details, breadcrumbs, groups, and tabs fit narrow layouts wi
   await expect(nav(page).getByRole('link', { name: /^Directory/ })).toBeFocused();
   await destination(page, 'billing', 'Plans');
   await expect(page.locator('.admin-sidebar')).not.toBeVisible();
-  await noOverflow(page);
+  await expectNoOverflow(page, '#admin');
   await page.goBack();
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Edit customer', exact: true }).click();
@@ -210,36 +210,36 @@ for (const appearance of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: appearance });
     await nav(page).getByRole('link', { name: 'Segments', exact: true }).click();
     await expect(title(page)).toHaveText('Segments');
-    await accessible(page);
+    await expectAccessible(page);
     await destination(page, 'billing', 'Plans');
-    await accessible(page);
+    await expectAccessible(page);
     await nav(page).getByRole('link', { name: 'Subscriptions', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByLabel('Search subscriptions', { exact: true }).fill('no match');
-    await accessible(page);
+    await expectAccessible(page);
     await nav(page).getByRole('link', { name: 'Revenue', exact: true }).click();
     await expect(title(page)).toHaveText('Revenue');
-    await accessible(page);
+    await expectAccessible(page);
     await nav(page)
       .getByRole('link', { name: /^Directory/ })
       .click();
     await page.getByRole('link', { name: 'View Sophie Chen', exact: true }).click();
     await page.getByRole('link', { name: 'Back to customers', exact: true }).hover();
-    await accessible(page);
+    await expectAccessible(page);
     for (const tab of ['Profile', 'Subscription', 'Activity']) {
       await page.getByRole('tab', { name: tab, exact: true }).click();
       await selectedTab(page, tab);
       await page.getByRole('tab', { name: tab, exact: true }).hover();
-      await accessible(page);
+      await expectAccessible(page);
       if (tab === 'Subscription') {
         await page.getByRole('link', { name: 'Explore plans', exact: true }).hover();
-        await accessible(page);
+        await expectAccessible(page);
       }
     }
     await page.setViewportSize({ width: 390, height: 844 });
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
   });
 }
 
@@ -282,11 +282,4 @@ async function selectedTab(page, name) {
   await expect(tab).toBeFocused();
   await expect(page.getByRole('tabpanel', { name, exact: true })).toBeVisible();
   await expect(page.getByRole('tablist').locator('[tabindex="0"]')).toHaveCount(1);
-}
-async function accessible(page) {
-  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
-}
-async function noOverflow(page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await page.locator('#admin').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 }

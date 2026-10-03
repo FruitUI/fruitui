@@ -1,4 +1,4 @@
-@php(\FruitUI\Support\ComponentContract::attachment($attributes))
+@php(\FruitUI\Support\ComponentContract::validate('attachment', $attributes))
 {{-- A bare download attribute keeps the URL's filename; Blade would otherwise render download="download". --}}
 @php($attributes = $attributes->get('download') === true ? $attributes->except('download')->merge(['download' => '']) : $attributes)
 <a {{ $attributes->class(['f-attachment']) }}>

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/support.html');
@@ -206,25 +206,25 @@ for (const theme of ['light', 'dark']) {
     // Full-page audits across seven states share this scenario's time budget.
     test.slow();
     await page.emulateMedia({ colorScheme: theme });
-    await assertAccessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'New conversation', exact: true }).click();
-    await assertAccessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 390, height: 844 });
-    await assertAccessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Show support views', exact: true }).click();
     for (const mailbox of ['support', 'billing', 'feedback'])
       await page.locator(`#support-queues [data-scope="${mailbox}"] > summary`).click();
-    await assertAccessible(page);
+    await expectAccessible(page);
     await queue(page, 'Open').click();
     await ticket(page, 1042).click();
-    await assertAccessible(page);
+    await expectAccessible(page);
     await page.getByRole('radio', { name: 'Note', exact: true }).check();
     await page.getByRole('button', { name: 'Add note', exact: true }).click();
     await expect(page.locator('#support-reply-error')).toBeVisible();
-    await assertAccessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Show customer details', exact: true }).click();
-    await assertAccessible(page);
+    await expectAccessible(page);
   });
 }
 
@@ -250,8 +250,4 @@ function queue(page, name) {
   return page
     .getByRole('navigation', { name: 'Support views', exact: true })
     .getByRole('button', { name: new RegExp(`^${name === 'Open' ? 'All Inboxes' : name}`) });
-}
-async function assertAccessible(page) {
-  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-  expect(violations).toEqual([]);
 }

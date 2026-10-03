@@ -57,8 +57,7 @@
   font-size: var(--f-text-xs);
 }
 .chat-members-button > .f-icon {
-  width: 16px;
-  height: 16px;
+  --f-icon-size: 16px;
 }
 .chat-header-search {
   width: 160px;
@@ -77,8 +76,7 @@
   padding: 5px;
 }
 .chat-clear-search .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .chat-thread-toolbar {
   grid-column: 3;
@@ -101,8 +99,6 @@
   padding: 19px 12px 14px;
 }
 .chat-team {
-  display: flex;
-  align-items: center;
   gap: 10px;
   padding: 0 8px 24px;
 }
@@ -112,10 +108,8 @@
   font-weight: 650;
 }
 .chat-team small {
-  display: block;
   margin-top: 2px;
   font-size: calc(var(--f-text-root) * 0.5625);
-  color: var(--f-secondary);
 }
 .chat-sidebar .f-sidebar__item {
   margin-bottom: 3px;
@@ -151,9 +145,8 @@
   flex-shrink: 0;
 }
 .chat-dm-link .f-avatar {
-  width: 23px;
-  height: 23px;
-  font-size: calc(var(--f-text-root) * 0.5);
+  --f-avatar-size: 23px;
+  --f-avatar-font-size: calc(var(--f-text-root) * 0.5);
 }
 .chat-presence {
   position: absolute;
@@ -161,10 +154,6 @@
   bottom: -1px;
 }
 .chat-sidebar-bottom {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: auto;
   padding: 30px 8px 0;
 }
 .chat-sidebar-bottom strong {
@@ -172,15 +161,10 @@
   font-weight: 600;
 }
 .chat-sidebar-bottom small {
-  display: block;
-  color: var(--f-secondary);
-  font-size: var(--f-text-2xs);
   margin-top: 2px;
 }
 .chat-sidebar-bottom > .f-icon {
-  margin-left: auto;
-  width: 15px;
-  height: 15px;
+  --f-icon-size: 15px;
   color: var(--f-success);
 }
 .chat-conversation {
@@ -212,8 +196,7 @@
   flex-shrink: 0;
 }
 .chat-channel-mark .f-icon {
-  width: 21px;
-  height: 21px;
+  --f-icon-size: 21px;
 }
 .chat-channel-intro h3 {
   font-size: var(--f-text-xl);
@@ -260,9 +243,8 @@
   outline-offset: -2px;
 }
 .chat-message > .f-avatar {
-  width: 32px;
-  height: 32px;
-  font-size: var(--f-text-2xs);
+  --f-avatar-size: 32px;
+  --f-avatar-font-size: var(--f-text-2xs);
 }
 .chat-message-content {
   flex: 1;
@@ -311,8 +293,7 @@
   flex-shrink: 0;
 }
 .chat-file-mark .f-icon {
-  width: 18px;
-  height: 18px;
+  --f-icon-size: 18px;
 }
 .chat-attachment strong {
   font-size: var(--f-text-xs);
@@ -323,8 +304,7 @@
   margin-top: 3px;
 }
 .chat-attachment > .f-icon {
-  width: 15px;
-  height: 15px;
+  --f-icon-size: 15px;
 }
 .chat-message-footer {
   display: flex;
@@ -370,8 +350,7 @@
   color: var(--f-selection-text);
 }
 .chat-thread-link .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .chat-reaction-picker {
   margin-left: auto;
@@ -386,8 +365,7 @@
 }
 
 .chat-reaction-picker > summary .f-icon {
-  width: 15px;
-  height: 15px;
+  --f-icon-size: 15px;
 }
 .chat-reaction-menu {
   display: flex;
@@ -410,8 +388,7 @@
   padding: 5px 10px;
 }
 .chat-composer-bottom .f-icon {
-  width: 14px;
-  height: 14px;
+  --f-icon-size: 14px;
 }
 .chat-thread {
   grid-column: 3;
@@ -427,9 +404,8 @@
   gap: 9px;
 }
 .chat-thread-history .f-avatar {
-  width: 28px;
-  height: 28px;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  --f-avatar-size: 28px;
+  --f-avatar-font-size: calc(var(--f-text-root) * 0.5625);
 }
 .chat-thread-history strong {
   display: block;
@@ -517,8 +493,7 @@
 }
 .chat-result > .f-icon {
   align-self: center;
-  width: 12px;
-  height: 12px;
+  --f-icon-size: 12px;
   color: var(--f-secondary);
   flex-shrink: 0;
 }
@@ -715,9 +690,8 @@
     font-size: var(--f-text-base);
   }
   .chat-dm-link .f-avatar {
-    width: 28px;
-    height: 28px;
-    font-size: var(--f-text-2xs);
+    --f-avatar-size: 28px;
+    --f-avatar-font-size: var(--f-text-2xs);
   }
   .chat-workspace[data-view='thread'][data-thread='open'] .chat-thread,
   .chat-workspace[data-view='thread'][data-thread='open'] .chat-thread-toolbar {

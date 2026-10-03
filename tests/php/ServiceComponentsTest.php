@@ -3,29 +3,13 @@
 namespace FruitUI\Tests;
 
 use DOMDocument;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\ViewException;
-use InvalidArgumentException;
 use Livewire\Component;
 use Livewire\Livewire;
-use Livewire\LivewireServiceProvider;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class ServiceComponentsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [LivewireServiceProvider::class, FruitUIServiceProvider::class];
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', str_repeat('a', 32));
-        $app['config']->set('session.driver', 'array');
-    }
-
     #[DataProvider('controls')]
     public function test_enhanced_controls_keep_names_values_and_bindings_on_the_native_element(string $component, string $element, string $content): void
     {
@@ -83,15 +67,7 @@ class ServiceComponentsTest extends TestCase
     #[DataProvider('invalidContracts')]
     public function test_semantic_changes_and_unknown_options_are_rejected(string $source): void
     {
-        try {
-            Blade::render($source);
-            $this->fail('Expected contract rejection.');
-        } catch (ViewException $error) {
-            $cause = $error;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            } $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-        }
+        $this->assertRejected($source);
     }
 
     public static function invalidContracts(): array

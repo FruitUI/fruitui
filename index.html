@@ -80,11 +80,11 @@
           <template x-for="owner in accounts" :key="owner.id">
             <details class="f-sidebar__group" :data-scope="owner.id">
               <summary class="f-sidebar__item" :aria-label="owner.name + ' account'"><svg class="f-icon" aria-hidden="true"><use href="#i-envelope"/></svg><span class="f-sidebar__identity"><strong x-text="owner.name"></strong><small x-text="owner.email"></small></span><span class="f-badge" x-text="unreadFor(owner.id)"></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-              <template x-for="folder in folders" :key="folder.id"><button class="f-sidebar__item f-sidebar__item--nested" type="button" @click="setMailbox(folder.id, owner.id)" :aria-label="owner.name + ' ' + folder.label" :aria-current="accountId === owner.id && mailbox === folder.id ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + folder.icon"/></svg><span x-text="folder.label"></span><span class="f-badge" x-show="folder.id === 'inbox' || count(folder.id, owner.id) > 0" x-text="folder.id === 'inbox' ? unreadFor(owner.id) : count(folder.id, owner.id)"></span></button></template>
+              <template x-for="folder in folders" :key="folder.id"><button class="f-sidebar__item" type="button" @click="setMailbox(folder.id, owner.id)" :aria-label="owner.name + ' ' + folder.label" :aria-current="accountId === owner.id && mailbox === folder.id ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use :href="'#i-' + folder.icon"/></svg><span x-text="folder.label"></span><span class="f-badge" x-show="folder.id === 'inbox' || count(folder.id, owner.id) > 0" x-text="folder.id === 'inbox' ? unreadFor(owner.id) : count(folder.id, owner.id)"></span></button></template>
             </details>
           </template>
-          <noscript><details class="f-sidebar__group"><summary class="f-sidebar__item">Work · alex@studio.example</summary><div class="f-sidebar__item f-sidebar__item--nested">Inbox · 4 messages</div></details><details class="f-sidebar__group"><summary class="f-sidebar__item">Personal · alex@example.com</summary><div class="f-sidebar__item f-sidebar__item--nested">Inbox · 4 messages</div></details></noscript>
-          <div class="f-mail__account"><span class="f-avatar">AM</span><div>Alex Morgan<small>2 accounts connected</small></div></div>
+          <noscript><details class="f-sidebar__group"><summary class="f-sidebar__item">Work · alex@studio.example</summary><div class="f-sidebar__item">Inbox · 4 messages</div></details><details class="f-sidebar__group"><summary class="f-sidebar__item">Personal · alex@example.com</summary><div class="f-sidebar__item">Inbox · 4 messages</div></details></noscript>
+          <div class="f-mail__account f-sidebar__footer"><span class="f-avatar">AM</span><div>Alex Morgan<small>2 accounts connected</small></div></div>
         </nav>
         <section id="mail-list-pane" class="f-pane f-pane--column f-pane--border-end f-mail__list-pane" aria-label="Message list">
           <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
@@ -141,7 +141,7 @@
             <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.composer.close()">Cancel</button><button class="f-button f-button--primary" type="submit"><svg class="f-icon" aria-hidden="true"><use href="#i-send"/></svg>Send</button></footer>
           </form>
         </dialog>
-        <div class="f-toast" role="status" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" @focusin="pauseNotice()" @focusout="resumeNotice()" x-show="notice" x-text="notice" x-cloak></div>
+        <div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice" x-cloak></div>
       </section>
       </div>
       <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>HTML &amp; CSS at heart. A little Alpine for the interactions.</span><span>Try searching, switching mailboxes, or writing a message.</span></div>

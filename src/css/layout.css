@@ -49,8 +49,7 @@
   }
   .f-sidebar__item > .f-icon {
     color: var(--f-accent);
-    width: 17px;
-    height: 17px;
+    --f-icon-size: 17px;
   }
   .f-sidebar__item > .f-badge {
     margin-inline-start: auto;
@@ -69,11 +68,30 @@
     margin-bottom: 4px;
   }
   .f-sidebar__group > summary {
-    list-style: none;
     cursor: pointer;
   }
-  .f-sidebar__group > summary::-webkit-details-marker {
-    display: none;
+  /* Identity lockups: the workspace at the top of a sidebar, the account at its bottom. */
+  .f-sidebar__header,
+  .f-sidebar__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--f-sidebar-identity-gap, 9px);
+    min-width: 0;
+  }
+  .f-sidebar__header {
+    padding: var(--f-sidebar-header-padding, 0 8px 14px);
+  }
+  .f-sidebar__footer {
+    margin-top: auto;
+    padding: var(--f-sidebar-footer-padding, 22px 8px 0);
+  }
+  :is(.f-sidebar__header, .f-sidebar__footer) small {
+    display: block;
+    color: var(--f-secondary);
+    font-size: var(--f-text-2xs);
+  }
+  :is(.f-sidebar__header, .f-sidebar__footer) > .f-icon:last-child {
+    margin-inline-start: auto;
   }
   .f-sidebar__identity {
     flex: 1;
@@ -95,8 +113,7 @@
   }
   .f-sidebar__item > .f-sidebar__chevron {
     flex-shrink: 0;
-    width: 12px;
-    height: 12px;
+    --f-icon-size: 12px;
     color: var(--f-secondary);
   }
   .f-sidebar__group[open] > summary > .f-sidebar__chevron {

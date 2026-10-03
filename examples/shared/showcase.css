@@ -136,8 +136,7 @@
   gap: 6px;
 }
 .mail-note .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .site-footer {
   margin-top: 42px;

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 // The Support reference interface as a real Livewire 4 component (examples/laravel/support-desk.blade.php).
 const host = 'http://127.0.0.1:5180';
@@ -170,10 +170,10 @@ for (const colorScheme of ['light', 'dark']) {
   }) => {
     await page.emulateMedia({ colorScheme });
     await openDesk(page);
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Close conversation' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
-    expect((await new AxeBuilder({ page }).include('dialog').analyze()).violations).toEqual([]);
+    await expectAccessible(page, 'dialog');
   });
 }
 

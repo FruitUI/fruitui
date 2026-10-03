@@ -1,17 +1,18 @@
-import { fruitToast } from './toast.js';
-export { fruitToast } from './toast.js';
-import { fruitDialog, fruitDialogModel, listenForNamedDialogs } from './dialog.js';
+import { fruitToast, toast } from './toast.js';
+export { fruitToast, toast } from './toast.js';
+import { fruitDialogModel, listenForNamedDialogs } from './dialog.js';
 import { fruitSplitter } from './splitter.js';
 import { fruitCombobox, fruitTokenField } from './selection.js';
 import { fruitMenu, fruitTooltip, fruitTabs, fruitFloatingDisclosure } from './navigation.js';
 
-let stopListening;
+let listening = false;
 
 /** Register on your existing Alpine instance before it starts (including Livewire's instance). */
 export default function fruitUI(Alpine) {
   // The separate editor plugin replaces this native fallback before Alpine starts.
   Alpine.data('fruitEditor', () => ({}));
   Alpine.data('fruitToast', fruitToast);
+  Alpine.magic('toast', () => toast);
   Alpine.data('fruitCombobox', fruitCombobox);
   Alpine.data('fruitTokenField', fruitTokenField);
   Alpine.data('fruitMenu', fruitMenu);
@@ -19,7 +20,9 @@ export default function fruitUI(Alpine) {
   Alpine.data('fruitTabs', fruitTabs);
   Alpine.data('fruitSplitter', fruitSplitter);
   Alpine.data('fruitFloatingDisclosure', fruitFloatingDisclosure);
-  Alpine.data('fruitDialog', fruitDialog);
   Alpine.data('fruitDialogModel', fruitDialogModel);
-  if (typeof window !== 'undefined') stopListening ??= listenForNamedDialogs(window);
+  if (typeof window !== 'undefined' && !listening) {
+    listenForNamedDialogs(window);
+    listening = true;
+  }
 }

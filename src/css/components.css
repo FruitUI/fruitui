@@ -95,8 +95,7 @@
     inset-block: 0;
     margin-block: auto;
     inset-inline-start: 10px;
-    width: 16px;
-    height: 16px;
+    --f-icon-size: 16px;
     color: var(--f-secondary);
     pointer-events: none;
   }
@@ -184,7 +183,7 @@
     justify-content: center;
     min-width: 20px;
     padding: 1px 6px;
-    border-radius: 6px;
+    border-radius: var(--f-radius-sm);
     background: var(--f-hover);
     color: var(--f-secondary);
     font-size: var(--f-text-xs);
@@ -259,9 +258,12 @@
     border-top: 1px solid var(--f-border);
   }
   .f-toast {
+    /* Also a manual popover in the top layer; these override the browser's popover defaults. */
     position: fixed;
-    bottom: 24px;
-    left: 50%;
+    inset: auto auto 24px 50%;
+    margin: 0;
+    overflow: visible;
+    color: var(--f-text);
     transform: translateX(-50%);
     width: max-content;
     max-width: calc(100% - 32px);

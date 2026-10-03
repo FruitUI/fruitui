@@ -1,7 +1,6 @@
 @aware(['fruitField' => null])
-@php($attributes = \FruitUI\Support\ComponentContract::fieldControl($attributes, $fruitField))
-@php(\FruitUI\Support\ComponentContract::validate('radio', $attributes))
+@php($attributes = \FruitUI\Support\ComponentContract::control('radio', $attributes, $fruitField))
 <label class="f-check">
-    <input type="radio" role="radio" {{ $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), ['type', 'role'], true)) }}>
+    <input type="radio" role="radio" {{ $attributes }}>
     <span>{{ $slot }}</span>
 </label>

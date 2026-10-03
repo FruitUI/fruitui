@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -184,8 +184,7 @@ for (const theme of ['light', 'dark']) {
         await page.getByRole('button', { name: 'Done', exact: true }).click();
         await page.getByRole('button', { name: /Sophie Chen/ }).click();
       }
-      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-      expect(violations).toEqual([]);
+      await expectAccessible(page);
     }
   });
 }
@@ -196,9 +195,13 @@ test('appearance persists and system dark mode works without an explicit overrid
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByLabel('Appearance', { exact: true }).selectOption('system');
   await page.emulateMedia({ colorScheme: 'dark' });
-  expect(
-    await page.locator('html').evaluate(element => getComputedStyle(element).getPropertyValue('--f-surface').trim()),
-  ).toBe('#252528');
+  // --f-surface resolves to its dark value where it is used.
+  const surface = await page.evaluate(() => {
+    const probe = document.body.appendChild(document.createElement('div'));
+    probe.style.backgroundColor = 'var(--f-surface)';
+    return getComputedStyle(probe).backgroundColor;
+  });
+  expect(surface).toBe('rgb(37, 37, 40)');
 });
 
 for (const theme of ['light', 'dark']) {
@@ -206,8 +209,7 @@ for (const theme of ['light', 'dark']) {
     test(`${path} has no serious accessibility issues in ${theme} appearance`, async ({ page }) => {
       await page.goto(path);
       await page.getByLabel('Appearance', { exact: true }).selectOption(theme);
-      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-      expect(violations).toEqual([]);
+      await expectAccessible(page);
     });
   }
 }

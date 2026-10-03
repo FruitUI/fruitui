@@ -1,9 +1,9 @@
-<div x-data="fruitDialog">
-    <x-fruit::button @click="open">Open dialog</x-fruit::button>
+<div x-data>
+    <x-fruit::button @click="$refs.dialog.showModal()">Open dialog</x-fruit::button>
     <x-fruit::dialog x-ref="dialog" aria-labelledby="dialog-title">
         <header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header>
         <div class="f-dialog__body"><p>Good dialogs ask for one thing at a time.</p></div>
-        <footer class="f-dialog__footer"><x-fruit::button variant="primary" @click="close" autofocus>Got it</x-fruit::button></footer>
+        <form class="f-dialog__footer" method="dialog"><x-fruit::button type="submit" variant="primary" autofocus>Got it</x-fruit::button></form>
     </x-fruit::dialog>
 </div>
 {{-- A named dialog also opens from the server: Fruit::openDialog('archive-confirmation') --}}

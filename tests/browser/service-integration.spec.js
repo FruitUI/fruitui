@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 test('Mail recipient tokens validate, survive sending, and reset when starting another draft', async ({ page }) => {
   await page.goto('/');
@@ -100,6 +100,5 @@ for (const scheme of ['light', 'dark'])
         return el.contains(document.elementFromPoint(rect.x + 8, rect.y + 8));
       }),
     ).toBe(true);
-    const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(result.violations).toEqual([]);
+    await expectAccessible(page);
   });

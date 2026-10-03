@@ -40,30 +40,30 @@
           </header>
 
           <aside id="admin-sidebar" class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar admin-sidebar">
-            <div class="admin-team"><span class="f-avatar workspace-mark admin-team-mark" aria-hidden="true">F</span><div><strong x-text="savedSettings.workspace">Forma</strong><small>Business workspace</small></div></div>
+            <div class="admin-team f-sidebar__header"><span class="f-avatar workspace-mark admin-team-mark" aria-hidden="true">F</span><div><strong x-text="savedSettings.workspace">Forma</strong><small>Business workspace</small></div></div>
             <nav id="admin-navigation" x-ref="navigation" aria-label="Admin navigation">
               <a class="f-sidebar__item" href="#/overview" :aria-current="view === 'overview' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-dashboard"/></svg>Overview</a>
               <details class="f-sidebar__group admin-navigation-group" data-admin-group="customers" open>
                 <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-people"/></svg><span class="f-sidebar__identity"><strong>Customers</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/customers" :aria-current="['customers', 'customer'].includes(view) ? 'page' : null">Directory<span class="f-badge" x-text="customers.length">20</span></a>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/segments" :aria-current="view === 'segments' ? 'page' : null">Segments</a>
+                <a class="f-sidebar__item" href="#/customers" :aria-current="['customers', 'customer'].includes(view) ? 'page' : null">Directory<span class="f-badge" x-text="customers.length">20</span></a>
+                <a class="f-sidebar__item" href="#/segments" :aria-current="view === 'segments' ? 'page' : null">Segments</a>
               </details>
               <details class="f-sidebar__group admin-navigation-group" data-admin-group="billing">
                 <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg><span class="f-sidebar__identity"><strong>Billing</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/subscriptions" :aria-current="view === 'subscriptions' ? 'page' : null">Subscriptions</a>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/plans" :aria-current="view === 'plans' ? 'page' : null">Plans</a>
+                <a class="f-sidebar__item" href="#/subscriptions" :aria-current="view === 'subscriptions' ? 'page' : null">Subscriptions</a>
+                <a class="f-sidebar__item" href="#/plans" :aria-current="view === 'plans' ? 'page' : null">Plans</a>
               </details>
               <details class="f-sidebar__group admin-navigation-group" data-admin-group="reports" open>
                 <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-chart"/></svg><span class="f-sidebar__identity"><strong>Reports</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/revenue" :aria-current="view === 'revenue' ? 'page' : null">Revenue</a>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/activity" :aria-current="view === 'activity' ? 'page' : null">Activity<span class="f-badge" x-show="activity.length" x-text="activity.length" x-cloak></span></a>
+                <a class="f-sidebar__item" href="#/revenue" :aria-current="view === 'revenue' ? 'page' : null">Revenue</a>
+                <a class="f-sidebar__item" href="#/activity" :aria-current="view === 'activity' ? 'page' : null">Activity<span class="f-badge" x-show="activity.length" x-text="activity.length" x-cloak></span></a>
               </details>
               <details class="f-sidebar__group admin-navigation-group" data-admin-group="settings" open>
                 <summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg><span class="f-sidebar__identity"><strong>Settings</strong></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary>
-                <a class="f-sidebar__item f-sidebar__item--nested" href="#/settings" :aria-current="view === 'settings' ? 'page' : null">Workspace</a>
+                <a class="f-sidebar__item" href="#/settings" :aria-current="view === 'settings' ? 'page' : null">Workspace</a>
               </details>
             </nav>
-            <div class="admin-sidebar-bottom"><span class="f-avatar" aria-hidden="true">AM</span><div><strong>Alex Morgan</strong><small>Administrator</small></div><svg class="f-icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
+            <div class="admin-sidebar-bottom f-sidebar__footer"><span class="f-avatar" aria-hidden="true">AM</span><div><strong>Alex Morgan</strong><small>Administrator</small></div><svg class="f-icon" aria-hidden="true"><use href="#i-lock"/></svg></div>
           </aside>
 
           <div id="admin-content" class="f-pane admin-content" x-ref="content">
@@ -210,7 +210,7 @@
             <div class="f-dialog__body"><p id="admin-delete-description">Delete <strong x-text="deleteDescription"></strong> from this workspace? Their record and subscription will be removed.</p><p class="f-help">This action cannot be undone during this visit.</p></div>
             <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.deleteDialog.close()" autofocus>Cancel</button><button class="f-button f-button--danger" type="button" @click="deleteCustomers">Delete</button></footer>
           </dialog>
-          <div class="f-toast" role="status" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" @focusin="pauseNotice()" @focusout="resumeNotice()" x-show="notice" x-text="notice" x-cloak></div>
+          <div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice" x-cloak></div>
         </section>
       </div>
       <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>Shared controls. Native tables. A little clarity.</span><span>Local demo · records and settings reset when you refresh.</span></div>

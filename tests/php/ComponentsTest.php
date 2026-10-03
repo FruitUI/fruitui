@@ -2,17 +2,10 @@
 
 namespace FruitUI\Tests;
 
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Orchestra\Testbench\TestCase;
 
 class ComponentsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     public function test_attributes_reach_the_real_control_without_booting_livewire(): void
     {
         $button = Blade::render('<x-fruit::button variant="primary" class="custom" wire:click="save" wire:loading.attr="disabled" x-on:click="open">Save</x-fruit::button>');

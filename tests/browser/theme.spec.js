@@ -1,32 +1,41 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 import { readFileSync, readdirSync } from 'node:fs';
 
 const cssDirectory = new URL('../../src/css/', import.meta.url);
 
-test('every color/effect token has matching automatic and explicit dark palettes', async ({ page }) => {
+test('color and effect tokens are declared once and resolve per appearance', async ({ page }) => {
   const source = readFileSync(new URL('tokens.css', cssDirectory), 'utf8');
-  const palettes = [...source.matchAll(/:where\([^{]+\)\s*\{([^}]+)\}/g)].map(([, block]) =>
-    Object.fromEntries([...block.matchAll(/(--f-[\w-]+):\s*([^;]+);/g)].map(([, name, value]) => [name, value.trim()])),
+  const declarations = source.replace(/\/\*[\s\S]*?\*\//g, '');
+  const names = [...declarations.matchAll(/(--f-[\w-]+):/g)].map(([, name]) => name);
+  expect(names.length).toBeGreaterThan(0);
+  expect(new Set(names).size, 'each token has one declaration; use light-dark() for appearance pairs').toBe(
+    names.length,
   );
-  expect(palettes).toHaveLength(3);
-  const [light, explicitDark, automaticDark] = palettes;
-  // Tokens derived from other tokens (var(--f-…)) follow their source in every appearance.
-  // CSS.supports accepts any value containing var(), so only literal values are classified.
-  const literal = Object.fromEntries(Object.entries(light).filter(([, value]) => !value.includes('var(--f-')));
-  const appearanceTokens = await page.evaluate(
-    palette =>
-      Object.entries(palette)
-        .filter(([, value]) => CSS.supports('color', value) || CSS.supports('box-shadow', value))
-        .map(([name]) => name),
-    literal,
+  const paired = [...declarations.matchAll(/(--f-[\w-]+):[^;]*light-dark\(/g)].map(([, name]) => name);
+  expect(paired.length).toBeGreaterThan(20);
+  await page.goto('/components.html');
+  const resolved = await page.evaluate(paired => {
+    const probe = scheme => {
+      const element = document.createElement('div');
+      element.className = 'fruit-ui';
+      element.dataset.theme = scheme;
+      document.body.append(element);
+      const values = paired.map(name => {
+        element.style.setProperty('--probe', `var(${name})`);
+        element.style.outlineColor = 'var(--probe)';
+        element.style.boxShadow = 'var(--probe)';
+        const style = getComputedStyle(element);
+        return name.includes('shadow') ? style.boxShadow : style.outlineColor;
+      });
+      element.remove();
+      return values;
+    };
+    return { light: probe('light'), dark: probe('dark') };
+  }, paired);
+  paired.forEach((name, index) =>
+    expect(resolved.dark[index], `${name} differs in dark`).not.toBe(resolved.light[index]),
   );
-  expect(appearanceTokens.length).toBeGreaterThan(0);
-  for (const name of appearanceTokens) {
-    expect(explicitDark, `${name} needs a dark value`).toHaveProperty(name);
-  }
-  expect(Object.keys(explicitDark).sort()).toEqual(appearanceTokens.sort());
-  expect(automaticDark).toEqual(explicitDark);
 });
 
 test('core appearance declarations use shared tokens or native/system colors', () => {
@@ -136,8 +145,7 @@ for (const theme of ['light', 'dark']) {
     await page.getByRole('button', { name: 'Open dialog' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCSS('color-scheme', theme);
-    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(violations).toEqual([]);
+    await expectAccessible(page);
   });
 }
 

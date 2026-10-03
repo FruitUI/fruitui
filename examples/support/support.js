@@ -1,9 +1,7 @@
-import { fruitToast } from '../../src/js/toast.js';
 import { tickets, queues, agents, mailboxes } from './tickets.js';
 
 export function supportDemo() {
   return {
-    ...fruitToast(),
     tickets: structuredClone(tickets),
     queues,
     agents,
@@ -210,14 +208,14 @@ export function supportDemo() {
       this.ticket.status = status;
       this.syncSelection();
       this.backToList();
-      this.notify(
+      this.$toast(
         `Conversation #${id} ${status === 'closed' ? 'closed' : status === 'waiting' ? 'moved to Waiting' : 'reopened'}`,
       );
     },
     assign(id) {
       if (!this.ticket || (id && !this.agents.some(agent => agent.id === id))) return;
       this.ticket.assignee = id;
-      this.notify(id ? `Assigned to ${this.agents.find(agent => agent.id === id).name}` : 'Conversation unassigned');
+      this.$toast(id ? `Assigned to ${this.agents.find(agent => agent.id === id).name}` : 'Conversation unassigned');
       this.syncSelection();
       if (!this.ticket) this.backToList();
     },
@@ -265,7 +263,7 @@ export function supportDemo() {
         this.priorityOnly = false;
       }
       this.draft = '';
-      this.notify(
+      this.$toast(
         this.mode === 'note' ? 'Internal note added · visible to your team' : 'Reply added to the demo conversation',
       );
       this.$nextTick(() => {
@@ -327,7 +325,7 @@ export function supportDemo() {
       this.newSubject = '';
       this.newMessage = '';
       this.$refs.newConversation.close();
-      this.notify(`Conversation #${id} created`);
+      this.$toast(`Conversation #${id} created`);
     },
   };
 }

@@ -41,8 +41,7 @@
   max-width: 180px;
 }
 .admin-toolbar-heading .f-icon {
-  width: 10px;
-  height: 10px;
+  --f-icon-size: 10px;
   color: var(--f-tertiary);
   flex-shrink: 0;
 }
@@ -76,11 +75,8 @@
   padding: 22px 12px 20px;
 }
 .admin-team {
-  display: flex;
   gap: 10px;
-  align-items: center;
   padding: 0 8px 12px;
-  min-width: 0;
 }
 
 .admin-team > div {
@@ -95,8 +91,6 @@
   text-overflow: ellipsis;
 }
 .admin-team small {
-  display: block;
-  color: var(--f-secondary);
   font-size: calc(var(--f-text-root) * 0.5625);
   margin-top: 3px;
 }
@@ -117,37 +111,28 @@
 .admin-navigation-group > summary {
   cursor: pointer;
 }
-.admin-navigation-group .f-sidebar__item--nested {
+.admin-navigation-group > .f-sidebar__item:not(summary) {
   --f-sidebar-item-indent: 37px;
   font-size: var(--f-text-xs);
 }
 .admin-sidebar-bottom {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  margin-top: auto;
   padding: 35px 8px 0;
 }
 .admin-sidebar-bottom .f-avatar {
-  width: 29px;
-  height: 29px;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  --f-avatar-size: 29px;
+  --f-avatar-font-size: calc(var(--f-text-root) * 0.5625);
 }
 .admin-sidebar-bottom strong {
   font-size: var(--f-text-2xs);
   font-weight: 600;
 }
 .admin-sidebar-bottom small {
-  display: block;
-  color: var(--f-secondary);
   font-size: calc(var(--f-text-root) * 0.5625);
   margin-top: 3px;
 }
 .admin-sidebar-bottom > .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
   color: var(--f-secondary);
-  margin-left: auto;
 }
 .admin-content {
   grid-column: 2;
@@ -177,8 +162,7 @@
   max-width: 100%;
 }
 .admin-breadcrumbs .f-icon {
-  width: 9px;
-  height: 9px;
+  --f-icon-size: 9px;
 }
 .admin-breadcrumbs a {
   min-width: 0;
@@ -235,8 +219,7 @@
   min-height: 32px;
 }
 .admin-page-heading > .f-button .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .admin-stats {
   display: grid;
@@ -257,8 +240,7 @@
   line-height: 1.5;
 }
 .admin-stat dt .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
   flex-shrink: 0;
   margin-top: 1px;
   color: var(--f-tertiary);
@@ -313,8 +295,7 @@
   margin-top: 4px;
 }
 .admin-card-heading > .f-icon {
-  width: 16px;
-  height: 16px;
+  --f-icon-size: 16px;
   color: var(--f-secondary);
   flex-shrink: 0;
 }
@@ -503,8 +484,7 @@
   padding: 5px 10px;
 }
 .admin-records-heading .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .admin-table-filters {
   display: flex;
@@ -524,8 +504,7 @@
   min-height: 32px;
 }
 .admin-table-filters .f-search .f-icon {
-  width: 14px;
-  height: 14px;
+  --f-icon-size: 14px;
 }
 .admin-filter {
   display: flex;
@@ -583,9 +562,8 @@
   gap: 10px;
 }
 .admin-customer .f-avatar {
-  width: 30px;
-  height: 30px;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  --f-avatar-size: 30px;
+  --f-avatar-font-size: calc(var(--f-text-root) * 0.5625);
   flex-shrink: 0;
 }
 .admin-customer > div {
@@ -691,8 +669,7 @@
   padding: 6px;
 }
 .admin-delete-row .f-icon {
-  width: 13px;
-  height: 13px;
+  --f-icon-size: 13px;
 }
 .admin-delete-row:hover {
   color: var(--f-danger);
@@ -714,8 +691,7 @@
   color: var(--f-secondary);
 }
 .admin-page-controls .f-icon {
-  width: 12px;
-  height: 12px;
+  --f-icon-size: 12px;
 }
 .admin-empty {
   --f-empty-padding: 45px 20px;
@@ -754,8 +730,7 @@
   flex-shrink: 0;
 }
 .admin-event-icon .f-icon {
-  width: 16px;
-  height: 16px;
+  --f-icon-size: 16px;
 }
 .admin-activity-list > li > div {
   min-width: 0;
@@ -891,8 +866,7 @@
   font-size: var(--f-text-xs);
 }
 .admin-summary-card .f-icon {
-  width: 14px;
-  height: 14px;
+  --f-icon-size: 14px;
 }
 .admin-summary-card .admin-plan-price > strong {
   font-size: calc(var(--f-text-root) * 1.75);
@@ -909,8 +883,7 @@
   color: var(--f-selection-text);
 }
 .admin-summary-icon .f-icon {
-  width: 18px;
-  height: 18px;
+  --f-icon-size: 18px;
 }
 .admin-customer-detail {
   padding: 0;
@@ -924,9 +897,8 @@
   padding: 24px;
 }
 .admin-detail-heading > .f-avatar {
-  width: 44px;
-  height: 44px;
-  font-size: var(--f-text-md);
+  --f-avatar-size: 44px;
+  --f-avatar-font-size: var(--f-text-md);
 }
 .admin-detail-heading > div {
   flex: 1;
@@ -1113,7 +1085,7 @@
     min-height: 44px;
     font-size: var(--f-text-md);
   }
-  .admin-navigation-group .f-sidebar__item--nested {
+  .admin-navigation-group > .f-sidebar__item:not(summary) {
     font-size: var(--f-text-base);
   }
   .admin-sidebar-bottom {

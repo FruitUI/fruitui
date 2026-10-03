@@ -1,15 +1,13 @@
 import { fruitId } from './control-bridge.js';
-import { fruitPopup } from './popup.js';
+import { fruitDetailsPopup, fruitPopup, isRtl } from './popup.js';
 
 export function fruitMenu() {
   let details,
     trigger,
     popup,
-    overlay,
-    outside,
+    floating,
     keydown,
     click,
-    toggle,
     timer,
     search = '',
     searchTimer;
@@ -22,12 +20,6 @@ export function fruitMenu() {
         item.getAttribute('aria-disabled') !== 'true' &&
         item.getClientRects().length,
     );
-  const close = restore => {
-    details.open = false;
-    overlay.hide();
-    trigger.setAttribute('aria-expanded', 'false');
-    if (restore) trigger.focus();
-  };
   const focus = index => {
     const enabled = items();
     if (enabled.length) enabled[(index + enabled.length) % enabled.length].focus();
@@ -39,26 +31,21 @@ export function fruitMenu() {
       trigger = details.querySelector('summary');
       popup = details.querySelector('[role="menu"]');
       if (!trigger || !popup) return;
-      overlay = fruitPopup(popup, trigger, { above: details.dataset.placement === 'above' });
+      floating = fruitDetailsPopup(details, popup, {
+        above: details.classList.contains('f-menu--above'),
+        owns,
+        onToggle: open => {
+          trigger.setAttribute('aria-expanded', String(open));
+          if (open && document.activeElement === trigger) focus(0);
+        },
+      });
       popup.id ||= fruitId('fruit-menu');
       trigger.setAttribute('aria-haspopup', 'menu');
       trigger.setAttribute('aria-controls', popup.id);
+      trigger.setAttribute('aria-expanded', String(details.open));
       popup.querySelectorAll('[role="menuitem"]').forEach(item => {
         if (owns(item)) item.tabIndex = -1;
       });
-      toggle = event => {
-        if (event.target !== details) return;
-        trigger.setAttribute('aria-expanded', String(details.open));
-        if (details.open) {
-          overlay.show();
-          if (document.activeElement === trigger) focus(0);
-        } else overlay.hide();
-      };
-      trigger.setAttribute('aria-expanded', String(details.open));
-      details.addEventListener('toggle', toggle);
-      outside = event => {
-        if (!details.contains(event.target)) close(false);
-      };
       keydown = event => {
         if (!owns(event.target)) return;
         const enabled = items(),
@@ -66,7 +53,7 @@ export function fruitMenu() {
         if (event.target === trigger && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
           event.preventDefault();
           details.open = true;
-          overlay.show();
+          floating.show();
           focus(event.key === 'ArrowDown' ? 0 : enabled.length - 1);
         } else if (details.open && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
           event.preventDefault();
@@ -77,12 +64,8 @@ export function fruitMenu() {
                 ? enabled.length - 1
                 : index + (event.key === 'ArrowDown' ? 1 : -1),
           );
-        } else if (details.open && event.key === 'Escape') {
-          event.preventDefault();
-          event.stopPropagation();
-          close(true);
         } else if (details.open && event.key === 'Tab') {
-          timer = setTimeout(() => close(false), 0);
+          timer = setTimeout(() => floating.close(false), 0);
         } else if (
           details.open &&
           event.key.length === 1 &&
@@ -103,20 +86,17 @@ export function fruitMenu() {
       };
       click = event => {
         const item = event.target.closest('[role="menuitem"]');
-        if (owns(item) && !item.matches(':disabled') && item.getAttribute('aria-disabled') !== 'true') close(true);
+        if (owns(item) && !item.matches(':disabled') && item.getAttribute('aria-disabled') !== 'true')
+          floating.close(true);
       };
-      document.addEventListener('pointerdown', outside);
       details.addEventListener('keydown', keydown);
       popup.addEventListener('click', click);
-      if (details.open) overlay.show();
     },
     destroy() {
       clearTimeout(timer);
       clearTimeout(searchTimer);
-      overlay?.destroy();
-      document.removeEventListener('pointerdown', outside);
+      floating?.destroy();
       details?.removeEventListener('keydown', keydown);
-      details?.removeEventListener('toggle', toggle);
       popup?.removeEventListener('click', click);
     },
   };
@@ -195,7 +175,7 @@ export function fruitTabs() {
         if (index < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
         event.preventDefault();
         event.stopPropagation();
-        const rtl = getComputedStyle(root).direction === 'rtl';
+        const rtl = isRtl(root);
         const next =
           event.key === 'Home'
             ? 0
@@ -225,45 +205,22 @@ export function fruitTabs() {
 
 /** Native disclosure controls keep their own semantics; reuse popup placement only. */
 export function fruitFloatingDisclosure() {
-  let details, trigger, overlay, outside, escape, toggle;
+  let floating;
   return {
     init() {
-      details = this.$el;
-      trigger = details.querySelector('summary');
+      const details = this.$el;
       const content = details.querySelector('.f-floating-disclosure__content');
-      if (trigger && content)
-        overlay = fruitPopup(content, trigger, { above: details.classList.contains('f-floating-disclosure--above') });
-      outside = event => {
-        if (details.open && !details.contains(event.target)) this.close();
-      };
-      escape = event => {
-        if (event.key === 'Escape' && details.open && event.target.closest('.f-floating-disclosure') === details) {
-          event.preventDefault();
-          event.stopPropagation();
-          this.close(true);
-        }
-      };
-      toggle = event => {
-        if (event.target === details) {
-          if (details.open) overlay?.show();
-          else overlay?.hide();
-        }
-      };
-      document.addEventListener('pointerdown', outside);
-      details.addEventListener('keydown', escape);
-      details.addEventListener('toggle', toggle);
-      if (details.open) overlay?.show();
+      if (!details.querySelector('summary') || !content) return;
+      floating = fruitDetailsPopup(details, content, {
+        above: details.classList.contains('f-floating-disclosure--above'),
+        owns: node => node?.closest('.f-floating-disclosure') === details,
+      });
     },
     close(restoreFocus = false) {
-      overlay?.hide();
-      details.open = false;
-      if (restoreFocus) trigger?.focus();
+      floating?.close(restoreFocus);
     },
     destroy() {
-      overlay?.destroy();
-      document.removeEventListener('pointerdown', outside);
-      details.removeEventListener('keydown', escape);
-      details.removeEventListener('toggle', toggle);
+      floating?.destroy();
     },
   };
 }

@@ -1,4 +1,3 @@
-import { fruitToast } from '../../src/js/toast.js';
 import { customers, plans, revenue } from './records.js';
 
 const blankCustomer = () => ({
@@ -34,7 +33,6 @@ const detailTabs = ['profile', 'subscription', 'activity'];
 
 export function adminDemo() {
   return {
-    ...fruitToast(),
     customers: structuredClone(customers),
     plans,
     revenue,
@@ -84,7 +82,6 @@ export function adminDemo() {
       this.applyRoute(false);
     },
     destroy() {
-      this.destroyToast();
       window.removeEventListener('hashchange', this.hashListener);
     },
     get title() {
@@ -295,7 +292,7 @@ export function adminDemo() {
           view = 'customers';
           id = null;
           history.replaceState(null, '', '#/customers');
-          this.notify('That customer view is no longer available.');
+          this.$toast('That customer view is no longer available.');
         } else view = 'customer';
       } else if (!Object.hasOwn(titles, view) || parts.length > 1) {
         view = 'overview';
@@ -412,7 +409,7 @@ export function adminDemo() {
         id,
       );
       refs.customerDialog.close();
-      this.notify(`${name} ${editing ? 'updated' : 'created'}.`);
+      this.$toast(`${name} ${editing ? 'updated' : 'created'}.`);
       this.$nextTick(() => {
         if (this.view === 'customer') refs.content.querySelector('[data-customer-edit]')?.focus();
         else refs.addCustomer.focus();
@@ -437,7 +434,7 @@ export function adminDemo() {
       );
       refs.deleteDialog.close();
       this.deletionIds = [];
-      this.notify(`${count} ${count === 1 ? 'customer' : 'customers'} deleted.`);
+      this.$toast(`${count} ${count === 1 ? 'customer' : 'customers'} deleted.`);
       if (this.view === 'customer' && !this.selectedCustomer) this.navigate('customers');
       else this.$nextTick(() => refs.addCustomer.focus());
     },
@@ -452,7 +449,7 @@ export function adminDemo() {
       this.settings.email = this.settings.email.trim().toLowerCase();
       this.savedSettings = { ...this.settings };
       this.log('Updated workspace settings', `${workspace} · ${this.settings.email}`, 'settings');
-      this.notify('Workspace settings saved.');
+      this.$toast('Workspace settings saved.');
     },
     resetSettings() {
       this.settings = { ...this.savedSettings };
@@ -497,7 +494,7 @@ export function adminDemo() {
       link.download = 'fruitui-customers.csv';
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      this.notify(`Exported ${this.filteredCustomers.length} customers.`);
+      this.$toast(`Exported ${this.filteredCustomers.length} customers.`);
     },
   };
 }

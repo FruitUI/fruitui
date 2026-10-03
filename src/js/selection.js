@@ -1,5 +1,5 @@
 import { bridgeControl, fruitId, publishValue } from './control-bridge.js';
-import { fruitPopup } from './popup.js';
+import { fruitPopup, isRtl } from './popup.js';
 import { fruitMessage } from './messages.js';
 
 export function fruitCombobox() {
@@ -196,10 +196,7 @@ export function fruitTokenField() {
         const buttons = [...entry.querySelectorAll('button')];
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault();
-          (
-            buttons[index + ((event.key === 'ArrowLeft') !== (getComputedStyle(entry).direction === 'rtl') ? -1 : 1)] ||
-            query
-          ).focus();
+          (buttons[index + ((event.key === 'ArrowLeft') !== isRtl(entry) ? -1 : 1)] || query).focus();
         }
         if (event.key === 'Escape') {
           event.preventDefault();

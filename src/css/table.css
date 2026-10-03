@@ -41,8 +41,7 @@
     font: inherit;
   }
   .f-table thead .f-icon {
-    width: 10px;
-    height: 10px;
+    --f-icon-size: 10px;
     opacity: 0;
   }
   .f-table th[aria-sort='ascending'] .f-icon,

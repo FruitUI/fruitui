@@ -43,6 +43,12 @@
   :where(.fruit-ui) :where(label) {
     font-weight: inherit;
   }
+  :where(.f-menu, .f-floating-disclosure, .f-sidebar__group) > summary {
+    list-style: none;
+  }
+  :where(.f-menu, .f-floating-disclosure, .f-sidebar__group) > summary::-webkit-details-marker {
+    display: none;
+  }
   :where(.fruit-ui) :where(svg) {
     display: block;
   }
@@ -67,8 +73,8 @@
     color: var(--f-secondary);
   }
   .f-icon {
-    width: 19px;
-    height: 19px;
+    width: var(--f-icon-size, 19px);
+    height: var(--f-icon-size, 19px);
     flex-shrink: 0;
     fill: none;
     stroke: currentColor;

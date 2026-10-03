@@ -36,7 +36,7 @@ try {
   assert(!manifest.packages['node_modules/@tiptap/core'], 'Core consumers must not install an editor automatically');
   await writeFile(
     join(temp, 'smoke.mjs'),
-    `import fruitUI, {fruitToast} from 'fruitui/alpine'; import bundled from 'fruitui/dist/alpine.js'; const registrations=[]; fruitUI({data:name=>registrations.push(name)}); if(!registrations.includes('fruitToast') || typeof bundled !== 'function' || typeof fruitToast !== 'function') throw Error('Missing helpers'); console.log('Packaged imports, docs, compiled assets and optional peers verified');`,
+    `import fruitUI, {fruitToast, toast} from 'fruitui/alpine'; import bundled from 'fruitui/dist/alpine.js'; const registrations=[]; fruitUI({data:name=>registrations.push(name), magic:name=>registrations.push('$'+name)}); if(!registrations.includes('fruitToast') || typeof bundled !== 'function' || typeof fruitToast !== 'function' || typeof toast !== 'function' || !registrations.includes('$toast')) throw Error('Missing helpers'); console.log('Packaged imports, docs, compiled assets and optional peers verified');`,
   );
   execFileSync(process.execPath, ['smoke.mjs'], { cwd: temp, stdio: 'inherit' });
 } finally {

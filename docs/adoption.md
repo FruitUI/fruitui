@@ -46,7 +46,7 @@ fruitUI(Alpine);
 Alpine.start();
 ```
 
-Without a bundler, `build/livewire.global.js` self-registers like the Livewire entry, and `alpine.global.js` exposes `FruitUI.default(Alpine)` and `FruitUI.fruitToast`; load either before Alpine starts. The helpers never include or start Alpine.
+Without a bundler, `build/livewire.global.js` self-registers like the Livewire entry, and `alpine.global.js` exposes `FruitUI.default(Alpine)` and `FruitUI.toast`; load either before Alpine starts. The helpers never include or start Alpine.
 
 Core installs no editor packages. To import the source `fruitui/editor` module, install its optional peers (`@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit`, compatible 3.x) in the host. Alternatively, `fruitui/dist/editor.js` bundles those dependencies; `editor.global.js` exposes `FruitEditor(Alpine)`. Register fruitUI first, then fruitEditor on that same instance (in `alpine:init` with injected Livewire scripts), and load Editor CSS. Core registers a quiet native Editor fallback; the optional plugin replaces it before Alpine starts. Without it, Editor remains a native textarea; Token Field and Combobox also preserve editable native fallbacks without Alpine.
 
@@ -88,11 +88,7 @@ Text is rendered as text, with no HTML interpolation. For pluralization, set the
 
 ## Shared notices
 
-`fruitToast({duration:4000})` can be registered as its own Alpine scope or spread into application state using the exported factory. `notify(message)` replaces the current message and cancels the old timer; `dismissNotice()`, `pauseNotice()` and `resumeNotice()` control its lifetime. Duration zero keeps it until explicitly dismissed. Call `destroyToast()` if the application's own destroy lifecycle overrides the factory's destroy method. Mail, Support, Chat and Admin use this same implementation.
-
-The Blade Toast adapter renders a native status container with a content slot. It does not start timers. Add independent action/dismiss buttons as needed and pause the helper on pointer hover and focus within. For messages requiring a response, use persistent Alert or Dialog.
-
-For messages sent by the server, use `<x-fruit::toaster />` and `FruitUI\Fruit`; see [server feedback](components.md#server-feedback-dialogs-and-toasts).
+A page has one toast outlet: `<x-fruit::toaster />`, or in HTML `<div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice" x-cloak></div>`. Send messages with `Fruit::toast()`, `$toast('…')` in Alpine expressions and component methods, or `toast()` from `fruitui/alpine`. `fruitToast({ duration: 4000 })` replaces the current message and cancels its timer; duration zero keeps it until replaced. For messages requiring a response, use a persistent Alert or a Dialog. See [server feedback](components.md#server-feedback-dialogs-and-toasts).
 
 ## Compatibility and upgrades
 

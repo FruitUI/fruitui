@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -238,8 +238,7 @@ for (const appearance of ['light', 'dark']) {
     await openFixture(page);
     await requireStyledPicker(page);
     await page.getByRole('combobox', { name: 'Mailbox', exact: true }).click();
-    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(violations).toEqual([]);
+    await expectAccessible(page);
   });
 }
 

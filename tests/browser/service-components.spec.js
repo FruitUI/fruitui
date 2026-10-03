@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 const combo = page => page.getByRole('combobox', { name: 'Assign conversation' });
 const tokens = page => page.getByRole('textbox', { name: 'Recipients', exact: true });
@@ -212,17 +212,16 @@ for (const scheme of ['light', 'dark']) {
     await combo(page).click();
     await expect(page.locator('#component-combobox').getByRole('listbox')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-    const result = await new AxeBuilder({ page })
-      .include('#component-combobox')
-      .include('#component-token-field')
-      .include('#component-editor')
-      .include('#component-tabs')
-      .include('#component-alert')
-      .include('#component-pagination')
-      .include('#component-prose')
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-      .analyze();
-    expect(result.violations).toEqual([]);
+    await expectAccessible(
+      page,
+      '#component-combobox',
+      '#component-token-field',
+      '#component-editor',
+      '#component-tabs',
+      '#component-alert',
+      '#component-pagination',
+      '#component-prose',
+    );
   });
 }
 

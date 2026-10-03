@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible, expectNoOverflow } from './helpers.js';
 
 const errors = new WeakMap();
 test.beforeEach(async ({ page }) => {
@@ -239,22 +239,22 @@ test('all screens, dialogs, and long messages fit a 320px container', async ({ p
   const composer = page.getByRole('textbox', { name: 'Message #design', exact: true });
   await composer.fill('A long message: ' + 'x'.repeat(300));
   await composer.press('Enter');
-  await noOverflow(page);
+  await expectNoOverflow(page, '#chat');
   await threadButton(page, 1000).click();
-  await noOverflow(page);
+  await expectNoOverflow(page, '#chat');
   await page.getByRole('button', { name: 'Close thread', exact: true }).click();
   await page.getByRole('button', { name: 'Show workspace', exact: true }).click();
-  await noOverflow(page);
+  await expectNoOverflow(page, '#chat');
   await page.getByRole('button', { name: 'Create channel', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'Create channel' })).toBeVisible();
-  await noOverflow(page);
+  await expectNoOverflow(page, '#chat');
   await page.keyboard.press('Escape');
   for (const width of [320, 390, 720, 820, 1100, 1440]) {
     await page.locator('.chat-container').evaluate(element => {
       element.style.maxWidth = '';
     });
     await page.setViewportSize({ width, height: 1000 });
-    await noOverflow(page);
+    await expectNoOverflow(page, '#chat');
   }
 });
 
@@ -265,12 +265,12 @@ for (const appearance of ['light', 'dark']) {
     // Full-page audits across nine states share this scenario's time budget.
     test.slow();
     await page.emulateMedia({ colorScheme: appearance });
-    await accessible(page);
+    await expectAccessible(page);
     await page.locator('.chat-message[data-message-id="202"] summary').click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Conversation details', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Create channel', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Create channel' });
@@ -278,26 +278,26 @@ for (const appearance of ['light', 'dark']) {
     await dialog.getByLabel('Description', { exact: true }).fill('An existing channel.');
     await dialog.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(dialog).toContainText('That channel already exists.');
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'New direct message', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await navigation(page)
       .getByRole('button', { name: /^All unread/ })
       .click();
-    await accessible(page);
+    await expectAccessible(page);
     await room(page, 'design').click();
     await page.setViewportSize({ width: 390, height: 844 });
-    await accessible(page);
+    await expectAccessible(page);
     await threadButton(page, 202).click();
     await expect(page.locator('#chat-thread-title')).toBeFocused();
     await page.getByRole('textbox', { name: 'Reply to thread', exact: true }).press('Enter');
     await expect(page.locator('#chat-thread-error')).toBeVisible();
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Close thread', exact: true }).click();
     await page.getByRole('button', { name: 'Show workspace', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
   });
 }
 
@@ -338,11 +338,4 @@ function room(page, id) {
 }
 function threadButton(page, id) {
   return page.locator(`.chat-history button[data-thread-trigger="${id}"]`);
-}
-async function accessible(page) {
-  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
-}
-async function noOverflow(page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await page.locator('#chat').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 }

@@ -1,4 +1,3 @@
 @aware(['fruitField' => null])
-@php($attributes = \FruitUI\Support\ComponentContract::fieldControl($attributes, $fruitField))
-@php(\FruitUI\Support\ComponentContract::validate('file', $attributes))
-<input type="file" {{ $attributes->except('type')->class(['f-input f-file']) }}>
+@php($attributes = \FruitUI\Support\ComponentContract::control('file', $attributes, $fruitField))
+<input type="file" {{ $attributes->class(['f-input f-file']) }}>

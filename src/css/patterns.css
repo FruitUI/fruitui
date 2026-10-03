@@ -54,11 +54,7 @@
     position: relative;
   }
   .f-floating-disclosure > summary {
-    list-style: none;
     cursor: pointer;
-  }
-  .f-floating-disclosure > summary::-webkit-details-marker {
-    display: none;
   }
   .f-floating-disclosure__content {
     position: absolute;
@@ -227,7 +223,7 @@
     gap: var(--f-attachment-gap, 12px);
     padding: var(--f-attachment-padding, 14px);
     border: 1px solid var(--f-border);
-    border-radius: 10px;
+    border-radius: var(--f-radius);
     background: var(--f-surface-secondary);
     color: var(--f-text);
     text-decoration: none;

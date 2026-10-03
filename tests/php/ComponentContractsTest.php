@@ -2,23 +2,13 @@
 
 namespace FruitUI\Tests;
 
-use DOMDocument;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\ViewException;
-use InvalidArgumentException;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class ComponentContractsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     #[DataProvider('textTypes')]
     public function test_text_input_accepts_only_documented_subtypes(string $type): void
     {
@@ -239,37 +229,5 @@ class ComponentContractsTest extends TestCase
         foreach (['min' => '0', 'max' => '100', 'low' => '60', 'high' => '85', 'optimum' => '20', 'value' => '35'] as $name => $value) {
             $this->assertSame($value, $meter->getAttribute($name));
         }
-    }
-
-    private function assertRejected(string $template, string $message, array $data = []): void
-    {
-        try {
-            Blade::render($template, $data);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-            $this->assertStringContainsString($message, $cause->getMessage());
-
-            return;
-        }
-
-        $this->fail('An unsupported component contract rendered without an error.');
-    }
-
-    private function document(string $html): DOMDocument
-    {
-        $document = new DOMDocument;
-        $previous = libxml_use_internal_errors(true);
-        try {
-            $document->loadHTML($html);
-        } finally {
-            libxml_clear_errors();
-            libxml_use_internal_errors($previous);
-        }
-
-        return $document;
     }
 }

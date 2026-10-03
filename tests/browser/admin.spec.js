@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible, expectNoOverflow } from './helpers.js';
 import { readFile } from 'node:fs/promises';
 
 const errors = new WeakMap();
@@ -248,13 +248,13 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
     await expect(customerDialog(page).getByLabel('Internal notes', { exact: true })).toHaveValue(
       'An unsaved draft across sizes.',
     );
-    await noOverflow(page);
+    await expectNoOverflow(page, '#admin');
   }
   await page.keyboard.press('Escape');
   await page.locator('.admin-container').evaluate(element => {
     element.style.maxWidth = '320px';
   });
-  await noOverflow(page);
+  await expectNoOverflow(page, '#admin');
   await expect(page.getByLabel('Status', { exact: true })).toHaveValue('trial');
   await expect(page.getByRole('checkbox', { name: 'Select Oliver Park', exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
@@ -262,7 +262,7 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await adminNav(page).getByRole('link', { name: 'Workspace', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Workspace settings', exact: true, level: 2 })).toBeFocused();
   await expect(page.locator('.admin-sidebar')).not.toBeVisible();
-  await noOverflow(page);
+  await expectNoOverflow(page, '#admin');
   await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByRole('button', { name: 'Toggle admin navigation', exact: true })).toBeFocused();
@@ -279,7 +279,7 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await expect
     .poll(() => page.locator('[x-ref="tableRegion"]').evaluate(element => element.scrollLeft))
     .toBeGreaterThan(0);
-  await noOverflow(page);
+  await expectNoOverflow(page, '#admin');
 });
 
 for (const appearance of ['light', 'dark']) {
@@ -289,40 +289,40 @@ for (const appearance of ['light', 'dark']) {
     // Full-page audits across eleven states share this scenario's time budget.
     test.slow();
     await page.emulateMedia({ colorScheme: appearance });
-    await accessible(page);
+    await expectAccessible(page);
     await page.locator('.admin-chart-data summary').click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('checkbox', { name: 'Select Sophie Chen', exact: true }).check();
     await rows(page).first().hover();
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Edit Sophie Chen', exact: true }).click();
     const dialog = customerDialog(page);
     await dialog.getByLabel('Email address', { exact: true }).fill('mia@daybreak.example');
     await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
     await expect(dialog.getByRole('alert')).toBeVisible();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Delete Sophie Chen', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await adminNav(page).getByRole('link', { name: 'Workspace', exact: true }).click();
     await page.getByRole('switch', { name: /^Weekly digest/ }).uncheck();
-    await accessible(page);
+    await expectAccessible(page);
     await adminNav(page)
       .getByRole('link', { name: /^Activity/ })
       .click();
-    await accessible(page);
+    await expectAccessible(page);
     await adminNav(page).getByRole('link', { name: 'Overview', exact: true }).click();
     await page.getByLabel('Search customers', { exact: true }).fill('missing');
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Reset filters', exact: true }).click();
     await page.setViewportSize({ width: 390, height: 844 });
-    await accessible(page);
+    await expectAccessible(page);
     await page.getByRole('button', { name: 'Add customer', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
-    await accessible(page);
+    await expectAccessible(page);
   });
 }
 
@@ -346,7 +346,7 @@ test('CSS-only Overview keeps native chart disclosure, sample records, and live 
         'background-color',
         scheme === 'light' ? 'rgb(243, 243, 245)' : 'rgb(45, 45, 49)',
       );
-      await noOverflow(page);
+      await expectNoOverflow(page, '#admin');
     }
   } finally {
     await context.close();
@@ -387,11 +387,4 @@ async function downloadCsv(page) {
   const download = await pending;
   expect(download.suggestedFilename()).toBe('fruitui-customers.csv');
   return readFile(await download.path(), 'utf8');
-}
-async function accessible(page) {
-  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
-}
-async function noOverflow(page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await page.locator('#admin').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 }

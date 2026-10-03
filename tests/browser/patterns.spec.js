@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 test('Mail and Support consume the same conversation styles and preserve their variants', async ({ page }) => {
   for (const [path, listName, variant] of [
@@ -82,8 +82,7 @@ for (const appearance of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: appearance });
     await loadStandalone(page);
     await expect(page.locator('html')).toHaveCSS('color-scheme', appearance);
-    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(violations).toEqual([]);
+    await expectAccessible(page);
   });
 }
 
@@ -119,10 +118,26 @@ test('named dialogs and the toaster respond to browser events without Livewire',
   expect(await dialog.evaluate(element => element.matches(':modal'))).toBe(true);
   await dialog.getByRole('button', { name: 'Done' }).click();
   await expect(dialog).toBeHidden();
-  await page.getByRole('button', { name: 'Dispatch a toast event' }).click();
-  await expect(page.getByRole('status').filter({ hasText: 'Sent with a fruit-toast event.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Show toast' }).click();
+  const toaster = page.getByRole('status').filter({ hasText: 'Conversation archived.' });
+  await expect(toaster).toBeVisible();
+  expect(await toaster.evaluate(element => element.matches(':popover-open'))).toBe(true);
   await page.evaluate(() =>
     window.dispatchEvent(new CustomEvent('fruit-dialog-open', { detail: { name: 'missing' } })),
   );
   await expect(page.locator('dialog[open]')).toHaveCount(0);
+});
+
+test('a toast announced while a modal dialog is open appears above it', async ({ page }) => {
+  await page.goto('/components.html');
+  await page.getByRole('button', { name: 'Open named dialog' }).click();
+  await expect(page.getByRole('dialog', { name: 'Archive this conversation?' })).toBeVisible();
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('fruit-toast', { detail: { message: 'Above the dialog' } })),
+  );
+  const toast = page.getByRole('status').filter({ hasText: 'Above the dialog' });
+  await expect(toast).toBeVisible();
+  // Shown after the modal, the popover sits above it in the top layer. (Hit testing still targets the
+  // dialog, because a modal makes the rest of the document inert.)
+  expect(await toast.evaluate(element => element.matches(':popover-open'))).toBe(true);
 });

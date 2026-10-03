@@ -2,21 +2,11 @@
 
 namespace FruitUI\Tests;
 
-use DOMDocument;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\ViewException;
-use InvalidArgumentException;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class LayoutPatternsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     public function test_structural_adapters_preserve_native_elements_and_independent_controls(): void
     {
         $html = Blade::render(<<<'BLADE'
@@ -110,18 +100,7 @@ class LayoutPatternsTest extends TestCase
     #[DataProvider('invalidLayouts')]
     public function test_new_adapters_reject_semantic_overrides_and_invalid_width_options(string $template): void
     {
-        try {
-            Blade::render($template);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-
-            return;
-        }
-        $this->fail('Invalid layout options rendered.');
+        $this->assertRejected($template);
     }
 
     public static function invalidLayouts(): array
@@ -138,13 +117,5 @@ class LayoutPatternsTest extends TestCase
             $splitter.'tabindex="-1" />', $splitter.'x-bind:tabindex.camel="index" />', $splitter.'x-bind:aria-controls="pane" />', $splitter.'x-data="other" />', $splitter.'x-bind:role="role" />',
             '<x-fruit::splitter pane="nav" flexible="nav" variable="width" />',
         ]);
-    }
-
-    private function document(string $html): DOMDocument
-    {
-        $document = new DOMDocument;
-        @$document->loadHTML('<?xml encoding="utf-8" ?>'.$html);
-
-        return $document;
     }
 }

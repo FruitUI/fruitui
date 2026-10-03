@@ -1,9 +1,7 @@
-import { fruitToast } from '../../src/js/toast.js';
 import { messages, accounts, folders } from './messages.js';
 
 export function mailDemo() {
   return {
-    ...fruitToast(),
     messages: structuredClone(messages),
     accounts,
     folders,
@@ -131,7 +129,7 @@ export function mailDemo() {
         message.unread = false;
       });
       this.syncSelection();
-      this.notify('Messages marked as read');
+      this.$toast('Messages marked as read');
     },
     toggleFilter() {
       this.unreadOnly = !this.unreadOnly;
@@ -142,7 +140,7 @@ export function mailDemo() {
       this.message.mailbox = destination;
       this.syncSelection();
       this.backToList();
-      this.notify(destination === 'trash' ? 'Message moved to Trash' : 'Message archived');
+      this.$toast(destination === 'trash' ? 'Message moved to Trash' : 'Message archived');
     },
     toggleFlag() {
       if (this.message) {
@@ -183,7 +181,7 @@ export function mailDemo() {
     send() {
       if (!this.account(this.composeAccountId)) return;
       if (!this.composeBody.trim()) {
-        this.notify('Please write a message.');
+        this.$toast('Please write a message.');
         return;
       }
       this.messages.unshift({
@@ -204,7 +202,7 @@ export function mailDemo() {
         body: this.composeBody.trim().split(/\n\s*\n/),
       });
       this.$refs.composer.close();
-      this.notify('Demo message added to Sent');
+      this.$toast('Demo message added to Sent');
     },
     moveSelection(direction) {
       const index = this.filtered.findIndex(message => message.id === this.selectedId);

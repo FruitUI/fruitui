@@ -1,7 +1,6 @@
 @props(['wrapper' => []])
 @aware(['fruitField' => null])
-@php($attributes = \FruitUI\Support\ComponentContract::fieldControl($attributes, $fruitField))
-@php(\FruitUI\Support\ComponentContract::validate('editor', $attributes))
+@php($attributes = \FruitUI\Support\ComponentContract::control('editor', $attributes, $fruitField))
 <div {{ \FruitUI\Support\ComponentContract::wrapper($wrapper)->class(['f-editor']) }} x-data="fruitEditor">
     <div class="f-editor__toolbar" wire:ignore hidden aria-label="{{ __('Text formatting') }}">
         @isset($toolbar)

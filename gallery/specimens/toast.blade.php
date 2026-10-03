@@ -1,8 +1,5 @@
-{{-- Toast: a status container inside your own fruitToast scope. --}}
-<x-fruit::button @click="notify('Conversation archived.')">Show toast</x-fruit::button>
-<x-fruit::toast class="gallery-toast" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" x-text="notice || 'Conversation archived.'" />
-{{-- Toaster: one per layout; the server calls Fruit::toast('…') or Fruit::flashToast('…'). --}}
-<div x-data>
-    <x-fruit::button @click="$dispatch('fruit-toast', { message: 'Sent with a fruit-toast event.' })">Dispatch a toast event</x-fruit::button>
-</div>
+{{-- One toaster per layout. The server calls Fruit::toast('…'); Alpine code calls $toast('…'). --}}
+<x-fruit::button @click="$toast('Conversation archived.')">Show toast</x-fruit::button>
 <x-fruit::toaster />
+{{-- How the toast looks, for this page: --}}
+<div class="f-toast gallery-toast" aria-hidden="true">Conversation archived.</div>

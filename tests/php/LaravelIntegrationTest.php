@@ -2,40 +2,22 @@
 
 namespace FruitUI\Tests;
 
-use DOMDocument;
-use DOMXPath;
 use FruitUI\Fruit;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ViewException;
-use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Livewire;
-use Livewire\LivewireServiceProvider;
 use Livewire\WithPagination;
 use LogicException;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class LaravelIntegrationTest extends TestCase
 {
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', str_repeat('a', 32));
-        $app['config']->set('livewire.pagination_theme', 'fruit');
-        $app['config']->set('session.driver', 'array');
-    }
-
-    protected function getPackageProviders($app): array
-    {
-        return [LivewireServiceProvider::class, FruitUIServiceProvider::class];
-    }
-
     private function shareErrors(array $messages): void
     {
         view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag($messages)));
@@ -117,19 +99,7 @@ class LaravelIntegrationTest extends TestCase
     #[DataProvider('invalidFields')]
     public function test_field_rejects_ambiguous_associations(string $template, string $message): void
     {
-        try {
-            Blade::render($template);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-            $this->assertStringContainsString($message, $cause->getMessage());
-
-            return;
-        }
-        $this->fail('An ambiguous Field association rendered without an error.');
+        $this->assertRejected($template, $message);
     }
 
     public static function invalidFields(): array
@@ -172,6 +142,8 @@ class LaravelIntegrationTest extends TestCase
                 <x-fruit::button aria-describedby="archive-help">Archive</x-fruit::button>
             </x-fruit::tooltip>
             <x-fruit::sidebar aria-label="Mailboxes">
+                <x-slot:header><strong>Studio</strong></x-slot:header>
+                <x-slot:footer class="account"><strong>Alex Morgan</strong></x-slot:footer>
                 <x-fruit::sidebar-item href="/inbox" current wire:navigate>Inbox<x-slot:badge>12</x-slot:badge></x-fruit::sidebar-item>
                 <x-fruit::sidebar-group title="Work" subtitle="alex@example.com" open>
                     <x-fruit::sidebar-item href="/work/inbox">Inbox</x-fruit::sidebar-item>
@@ -185,6 +157,9 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('fruitTooltip', $tooltip->parentNode->getAttribute('x-data'));
         $this->assertSame('archive-help', $xpath->query('//button')->item(0)->getAttribute('aria-describedby'));
         $this->assertSame('Mailboxes', $xpath->query('//nav[@class="f-sidebar"]')->item(0)->getAttribute('aria-label'));
+        $this->assertSame('Studio', trim($xpath->query('//nav/div[@class="f-sidebar__header"]')->item(0)->textContent));
+        $footer = $xpath->query('//nav[@class="f-sidebar"]/*[last()]')->item(0);
+        $this->assertEqualsCanonicalizing(['f-sidebar__footer', 'account'], explode(' ', $footer->getAttribute('class')));
         $links = $xpath->query('//a[contains(@class, "f-sidebar__item")]');
         $this->assertSame('page', $links->item(0)->getAttribute('aria-current'));
         $this->assertMatchesRegularExpression('/<a\b[^>]*wire:navigate[^>]*>/', $html);
@@ -208,25 +183,13 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('f-toast', $toaster->getAttribute('class'));
         $this->assertStringContainsString('"duration":3000', $toaster->getAttribute('x-data'));
         $this->assertStringContainsString('Saved from the last request.', $toaster->getAttribute('x-data'));
-        $this->assertMatchesRegularExpression('/x-on:fruit-toast\.window="notify\(\$event\.detail\.message\)"/', $html);
+        $this->assertSame('notice', $toaster->getAttribute('x-show'));
     }
 
     #[DataProvider('invalidAdapters')]
     public function test_new_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
-        try {
-            Blade::render($template);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-            $this->assertStringContainsString($message, $cause->getMessage());
-
-            return;
-        }
-        $this->fail('An unsupported component contract rendered without an error.');
+        $this->assertRejected($template, $message);
     }
 
     public static function invalidAdapters(): array
@@ -313,20 +276,6 @@ class LaravelIntegrationTest extends TestCase
         $this->assertFalse($xpath->query('//dialog')->item(1)->hasAttribute('x-data'));
         $this->expectException(ViewException::class);
         Blade::render('<x-fruit::dialog wire:model="closing" x-data="{ other: true }">Sure?</x-fruit::dialog>');
-    }
-
-    private function xpath(string $html): DOMXPath
-    {
-        $document = new DOMDocument;
-        $previous = libxml_use_internal_errors(true);
-        try {
-            $document->loadHTML('<?xml encoding="utf-8"?>'.$html);
-        } finally {
-            libxml_clear_errors();
-            libxml_use_internal_errors($previous);
-        }
-
-        return new DOMXPath($document);
     }
 }
 

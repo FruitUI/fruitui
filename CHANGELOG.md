@@ -12,6 +12,9 @@ Breaking changes in this pass, with migration:
 - **The package no longer registers `<livewire:fruit-mail-preferences />`.** The example moved to `examples/laravel/mail-preferences.blade.php`; register it yourself with `Livewire::addComponent()` if you used it.
 - **Field `control-id` is optional and Field associates exactly one control.** Without it, the id comes from the child's id or its `wire:model`/`name` (`field-form-email`). A Field containing two controls now throws; use Fieldset for groups.
 - **Inputs no longer change their border color on focus;** the shared focus ring (`--f-focus-ring-*`) is the focus indicator everywhere.
+- **One toast path.** `x-fruit::toast` is removed; use `<x-fruit::toaster />` (or one `x-data="fruitToast"` outlet in HTML) and send messages with `Fruit::toast()`, the `$toast()` Alpine magic or `toast()` from `fruitui/alpine`. Spreading `...fruitToast()` into application state and `destroyToast()` are gone; `fruitToast` attaches its own pause/resume and `fruit-toast` listeners and uses the top layer.
+- **`fruitDialog` is removed.** Use native `showModal()`/`close()` with `<form method="dialog">`, a `name` with events, or `wire:model`.
+- **Menu placement** is `placement="above"` in Blade (`f-menu--above` in HTML), matching Floating Disclosure; `data-placement` is no longer read.
 - Dialogs rendered by `x-fruit::dialog` carry `wire:ignore.self`, so Livewire morphs no longer close an open dialog. Server-changed dialog attributes need a `wire:key` change to re-render.
 
 Added:
@@ -26,6 +29,9 @@ Added:
 - Field reads named error bags (`bag`) and accepts Checkbox, Radio and Switch.
 - `--f-focus-ring-*` tokens and one focus ring across controls, panes, tables and editors; pressed states; Increase Contrast (`prefers-contrast: more`) support; search icon and combobox chevron stay centered at any control height.
 - `php artisan vendor:publish --tag=fruit-views` publishes the views.
+- Color tokens are declared once with `light-dark()` instead of three palette copies; appearance still follows the system or `data-theme`.
+- Sidebar `header` and `footer` slots (`f-sidebar__header`, `f-sidebar__footer`) replace the account and workspace lockups each example reimplemented. `--f-icon-size` sizes icons; group children indent without `f-sidebar__item--nested`.
+- Shared internals: one Blade `ComponentContract::control()` call per control adapter, one details-popup helper for Menu and Floating Disclosure, one marker reset, shared PHP and browser test helpers, and one component guide (`support-components.md` merged into `components.md`).
 - The Support interface as a Livewire single-file component (`examples/laravel`) with browser tests for morphs, `wire:navigate`, validation, dialogs, toasts and pagination.
 - Blade contracts live in `docs/component-catalog.json`; `npm run build:docs` generates the policy table. Gallery specimens render from `gallery/specimens` (`composer gallery`); tests fail when either is stale.
 - Pint, Prettier and ESLint (`composer lint`, `npm run lint`, `composer format`, `npm run format`), checked in CI.

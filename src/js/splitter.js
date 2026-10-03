@@ -1,3 +1,4 @@
+import { isRtl } from './popup.js';
 import { fruitMessage } from './messages.js';
 
 /** A bounded, vertical window splitter. No application navigation or persistence. */
@@ -103,7 +104,7 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
     },
     move(event) {
       if (!drag || event.pointerId !== drag.id) return;
-      const direction = (getComputedStyle(frame).direction === 'rtl' ? -1 : 1) * (edge === 'start' ? -1 : 1);
+      const direction = (isRtl(frame) ? -1 : 1) * (edge === 'start' ? -1 : 1);
       this.set(drag.width + (event.clientX - drag.x) * direction);
     },
     end() {
@@ -129,7 +130,7 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
         return;
       }
       const { width, upper } = this.bounds();
-      const direction = (getComputedStyle(frame).direction === 'rtl' ? -1 : 1) * (edge === 'start' ? -1 : 1);
+      const direction = (isRtl(frame) ? -1 : 1) * (edge === 'start' ? -1 : 1);
       const step = event.shiftKey ? 32 : 8;
       const values = {
         ArrowLeft: width - step * direction,

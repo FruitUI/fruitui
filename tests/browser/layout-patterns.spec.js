@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 const examples = [
   ['Mail', '/', '#mail', 280],
@@ -187,6 +187,6 @@ for (const appearance of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: appearance });
     await loadStandalone(page);
     await page.locator('summary').click();
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    await expectAccessible(page);
   });
 }

@@ -2,19 +2,12 @@
 
 namespace FruitUI\Tests;
 
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Component;
 use Illuminate\View\ViewException;
-use Orchestra\Testbench\TestCase;
 
 class AdoptionContractsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     public function test_field_associates_label_description_error_and_preserves_native_models(): void
     {
         $html = Blade::render('<x-fruit::field control-id="email" label="Email" description="Work address" error="Invalid"><x-fruit::input type="email" name="email" aria-describedby="existing" wire:model.blur="email" /></x-fruit::field>');

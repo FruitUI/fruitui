@@ -25,16 +25,18 @@ final class ComponentContract
      * type: the fixed native type a caller may repeat; any other type is rejected.
      * options: allowed values for each documented prop.
      * owns: attributes the component manages; literal values and client bindings are rejected.
+     * emits: fixed attributes the template renders itself, removed from the caller's bag.
+     * requires: an attribute the native element needs, given literally or as a client binding.
      */
     private const CONTRACTS = [
         'alert' => ['roles' => ['status', 'alert', 'group'], 'options' => ['tone' => ['info', 'success', 'warning', 'danger']]],
-        'attachment' => ['roles' => ['link']],
+        'attachment' => ['roles' => ['link'], 'requires' => 'href'],
         'avatar' => [],
         'badge' => ['roles' => ['status']],
         'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES]],
         'card' => ['roles' => ['group', 'region']],
-        'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox'],
-        'color' => ['type' => 'color'],
+        'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
+        'color' => ['type' => 'color', 'emits' => ['type']],
         'combobox' => ['owns' => [...self::ENHANCED, 'multiple', 'size'], 'message' => 'owns enhancement visibility and its single value contract'],
         'composer' => ['roles' => ['form']],
         'date' => ['options' => ['type' => self::DATE_TYPES]],
@@ -45,34 +47,33 @@ final class ComponentContract
         'empty-state' => ['roles' => ['group', 'region']],
         'field' => ['roles' => ['group']],
         'fieldset' => ['roles' => ['group']],
-        'file' => ['type' => 'file'],
+        'file' => ['type' => 'file', 'emits' => ['type']],
         'floating-disclosure' => ['roles' => ['group'], 'options' => ['placement' => ['below', 'above']]],
         'input' => ['options' => ['type' => self::INPUT_TYPES]],
         'item-list' => ['roles' => ['list']],
         'item-row' => ['roles' => ['button'], 'type' => 'button', 'options' => ['variant' => self::ITEM_ROW_VARIANTS]],
-        'menu' => ['roles' => ['group'], 'owns' => ['x-data'], 'message' => 'owns its Alpine keyboard helper. Put application state on a parent'],
+        'menu' => ['roles' => ['group'], 'options' => ['placement' => ['below', 'above']], 'owns' => ['x-data'], 'message' => 'owns its Alpine keyboard helper. Put application state on a parent'],
         'menu-item' => ['roles' => ['menuitem'], 'type' => 'button', 'options' => ['variant' => ['default', 'danger']]],
         'menu-trigger' => ['roles' => ['button']],
         'meter' => ['roles' => ['meter']],
-        'number' => ['type' => 'number'],
+        'number' => ['type' => 'number', 'emits' => ['type']],
         'pagination' => ['roles' => ['navigation']],
         'pane' => ['roles' => ['group', 'region']],
         'progress' => ['roles' => ['progressbar']],
-        'radio' => ['roles' => ['radio'], 'type' => 'radio'],
-        'range' => ['type' => 'range'],
+        'radio' => ['roles' => ['radio'], 'type' => 'radio', 'emits' => ['type', 'role']],
+        'range' => ['type' => 'range', 'emits' => ['type']],
         'section-nav' => ['roles' => ['navigation']],
         'select' => [],
         'sidebar' => ['roles' => ['navigation']],
         'sidebar-group' => ['roles' => ['group']],
-        'sidebar-item' => ['roles' => ['link']],
+        'sidebar-item' => ['roles' => ['link'], 'requires' => 'href'],
         'splitter' => ['roles' => ['separator'], 'options' => ['edge' => ['start', 'end']], 'owns' => ['x-data'], 'message' => 'owns its orientation, focus, controlled pane and Alpine helper'],
-        'switch' => ['roles' => ['switch'], 'type' => 'checkbox'],
+        'switch' => ['roles' => ['switch'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
         'tab' => ['roles' => ['tab'], 'type' => 'button'],
         'table' => ['roles' => ['table']],
         'tabs' => ['roles' => ['tablist']],
         'textarea' => ['roles' => ['textbox']],
-        'time' => ['type' => 'time'],
-        'toast' => ['roles' => ['status']],
+        'time' => ['type' => 'time', 'emits' => ['type']],
         'toaster' => ['roles' => ['status'], 'owns' => ['x-data', 'x-show', 'x-text'], 'message' => 'owns its fruitToast helper and message. Dispatch fruit-toast events instead'],
         'token-field' => ['owns' => self::ENHANCED, 'message' => 'owns enhancement visibility and its single value contract'],
         'tooltip' => ['owns' => ['x-data'], 'message' => 'owns its fruitTooltip helper. Put application state on a parent'],
@@ -85,6 +86,12 @@ final class ComponentContract
         $contract = self::CONTRACTS[$component] ?? throw new InvalidArgumentException("Unknown FruitUI component: {$component}.");
         foreach ($options as $name => $value) {
             self::option($component, $name, $value, $contract['options'][$name]);
+        }
+        if (isset($contract['requires'])) {
+            $required = $contract['requires'];
+            if (! $attributes->has($required) && ! $attributes->has(":{$required}") && ! $attributes->has("x-bind:{$required}")) {
+                throw new InvalidArgumentException("FruitUI {$component} requires {$required} on its native element.");
+            }
         }
         $roles = $contract['roles'] ?? [];
         $owned = $contract['owns'] ?? [];
@@ -112,15 +119,15 @@ final class ComponentContract
         }
     }
 
-    public static function attachment(ComponentAttributeBag $attributes): void
+    /** Validate a form control and join its Field: one call for every control adapter. */
+    public static function control(string $component, ComponentAttributeBag $attributes, ?FieldContext $field, array $options = []): ComponentAttributeBag
     {
-        self::validate('attachment', $attributes);
-        if (! $attributes->has('href') && ! $attributes->has(':href') && ! $attributes->has('x-bind:href')) {
-            throw new InvalidArgumentException('FruitUI attachment requires href on its native link.');
-        }
+        self::validate($component, $attributes, $options);
+        $attributes = $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), self::CONTRACTS[$component]['emits'] ?? [], true));
+
+        return self::fieldControl($attributes, $field);
     }
 
-    /** Returns whether the dialog's open state is bound with wire:model or x-model. */
     public static function dialog(mixed $name, ComponentAttributeBag $attributes): bool
     {
         self::validate('dialog', $attributes);
@@ -141,9 +148,6 @@ final class ComponentContract
         self::validate('sidebar-item', $attributes);
         if (! is_bool($current)) {
             throw new InvalidArgumentException('FruitUI sidebar-item current must be a boolean.');
-        }
-        if (! $attributes->has('href') && ! $attributes->has(':href') && ! $attributes->has('x-bind:href')) {
-            throw new InvalidArgumentException('FruitUI sidebar-item requires href on its native link.');
         }
     }
 
@@ -208,7 +212,7 @@ final class ComponentContract
     }
 
     /** Merge a Field's label, description and error associations into its control. */
-    public static function fieldControl(ComponentAttributeBag $attributes, ?FieldContext $field): ComponentAttributeBag
+    private static function fieldControl(ComponentAttributeBag $attributes, ?FieldContext $field): ComponentAttributeBag
     {
         if ($field === null) {
             return $attributes;

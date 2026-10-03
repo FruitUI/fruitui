@@ -320,7 +320,7 @@
         "element": "`dialog`, dialog role; optional alertdialog role.",
         "state": "Native open/modal state; optional wire:model/x-model open state that Escape and form method=dialog update.",
         "keyboard": "showModal manages focus; Tab stays within a modal; Escape dismisses.",
-        "options": "Native dialog attributes and an accessible name. Slot: composed content/actions. Bind open state with wire:model or x-model, or give a `name` for `fruit-dialog-open`/`fruit-dialog-close` events (Fruit::openDialog/closeDialog). fruitDialog adds open/close helpers using x-ref=dialog. Livewire morphs keep it open."
+        "options": "Native dialog attributes and an accessible name. Slot: composed content/actions. Bind open state with wire:model or x-model, or give a `name` for `fruit-dialog-open`/`fruit-dialog-close` events (Fruit::openDialog/closeDialog). Otherwise use native showModal()/close() and `<form method=\"dialog\">`. Livewire morphs keep it open."
       }
     }
   },
@@ -345,14 +345,14 @@
     "kind": "pattern",
     "classes": ["f-sidebar"],
     "blade": ["sidebar", "sidebar-group", "sidebar-item"],
-    "uses": ["index.html", "support.html"],
+    "uses": ["index.html", "support.html", "chat.html", "admin.html"],
     "contracts": {
       "sidebar": {
         "purpose": "Contain application navigation links and groups.",
         "element": "`nav`, navigation role.",
         "state": "Links own `aria-current=page`; groups own native open state.",
         "keyboard": "Native Tab and link activation.",
-        "options": "Accessible label. Slot: headings (`p.f-sidebar__heading`), Sidebar Items and Sidebar Groups."
+        "options": "Accessible label. `header` slot: workspace identity; `footer` slot: account identity, pinned to the bottom. Default slot: headings (`p.f-sidebar__heading`), Sidebar Items and Sidebar Groups."
       },
       "sidebar-group": {
         "purpose": "Reveal related navigation links under a heading.",
@@ -413,16 +413,9 @@
     "id": "toast",
     "kind": "composition",
     "classes": ["f-toast"],
-    "blade": ["toast", "toaster"],
+    "blade": ["toaster"],
     "uses": [],
     "contracts": {
-      "toast": {
-        "purpose": "Announce the result of an action.",
-        "element": "Div role=status, independent optional child controls.",
-        "state": "Caller owns message; optional fruitToast owns dismissal timing.",
-        "keyboard": "Native action/dismiss buttons if supplied.",
-        "options": "Native status/presentation attributes and content slot; no delivery or routing."
-      },
       "toaster": {
         "purpose": "Announce short results sent by the application.",
         "element": "`div role=status`, `f-toast` presentation.",

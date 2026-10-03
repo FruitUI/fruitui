@@ -1,9 +1,7 @@
-import { fruitToast } from '../../src/js/toast.js';
 import { rooms, people } from './conversations.js';
 
 export function chatDemo() {
   return {
-    ...fruitToast(),
     rooms: structuredClone(rooms),
     people,
     roomId: 'design',
@@ -242,7 +240,7 @@ export function chatDemo() {
           message.unread = false;
         }),
       );
-      this.notify('All messages marked as read');
+      this.$toast('All messages marked as read');
     },
     openDetails() {
       this.$refs.details.showModal();
@@ -268,7 +266,7 @@ export function chatDemo() {
       this.newChannelName = '';
       this.newChannelDescription = '';
       this.$refs.newChannel.close();
-      this.notify(`Channel #${name} created`);
+      this.$toast(`Channel #${name} created`);
     },
     openDirectMessage() {
       this.$refs.newDirectMessage.showModal();

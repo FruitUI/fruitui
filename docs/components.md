@@ -12,10 +12,10 @@ These use native markup and existing controls. A CSS composition does not requir
 | Search | Arrange a decorative SVG and `input type=search` in `f-search`. | Native text value/editing; application owns results. | Optional `f-icon`, accessible label, existing Input attributes. |
 | Segmented choices | Present related native radios in `f-segmented` labels. | Native checked value; Tab enters, arrows select, Space checks. | Same radio name; each input is followed by its label span. Use fieldset/legend. No tablist or behavior modes. |
 | Avatar | Present initials in a native span with `f-avatar`; Blade `x-fruit::avatar`. | No interaction or keyboard behavior. | Decorative when a name is adjacent; otherwise supply an accessible identity (`label` in Blade). Scoped `--f-avatar-size`, `--f-avatar-radius`, `--f-avatar-border`, `--f-avatar-background`, `--f-avatar-color`, `--f-avatar-font-size`, and `--f-avatar-font-weight` customize presentation. |
-| Sidebar | Arrange navigation links/buttons and optional native disclosure groups with `f-sidebar`; Blade `x-fruit::sidebar`, `sidebar-group` and `sidebar-item` (links). | `details` owns open; links/buttons own actions and `aria-current=page`. Native Tab, Enter/Space. | Heading, item, nested item (automatic inside a group), identity text, count badge, decorative chevron. No navigation data model. |
+| Sidebar | Arrange navigation links/buttons and optional native disclosure groups with `f-sidebar`; Blade `x-fruit::sidebar`, `sidebar-group` and `sidebar-item` (links). | `details` owns open; links/buttons own actions and `aria-current=page`. Native Tab, Enter/Space. | Header (workspace) and footer (account) identity lockups, heading, item, nested item (automatic inside a group), identity text, count badge, decorative chevron. Tokens: `--f-sidebar-identity-gap`, `--f-sidebar-header-padding`, `--f-sidebar-footer-padding`, `--f-sidebar-item-indent`. No navigation data model. |
 | Toolbar | Arrange actions in a div/header with `f-toolbar`. | No added state or keyboard behavior. | Group independent controls with `f-toolbar__group`; flexible space with `f-toolbar__spacer`. |
 | Badge | Present a count or short label in `span.f-badge`; Blade `x-fruit::badge`. | No value, interaction, or added keyboard behavior. | Text content; scoped semantic tokens for appearance. |
-| Toast | Present a short status update in `div.f-toast`. | Application owns text and lifetime; use `role=status` for an appropriate announcement. No focus transfer. | Compose text or independent actions. `x-fruit::toaster` adds a managed outlet for server-sent messages; see [server feedback](#server-feedback-dialogs-and-toasts). |
+| Toast | Announce a short result on one `div.f-toast` outlet: `x-fruit::toaster` in Blade, or `x-data="fruitToast"` with `x-show`/`x-text="notice"` in HTML. | The outlet owns one message and its timing; hover and focus pause it. Announced through `role=status`; no focus transfer. | Send messages with `Fruit::toast()` on the server, `$toast()` in Alpine, or `toast()` from `fruitui/alpine`; see [server feedback](#server-feedback-dialogs-and-toasts). |
 | Row / Stack | Arrange independent children with `f-row` or `f-stack`. | No owned state or keyboard behavior. | Content and controls; shared spacing tokens. |
 | Muted text | Apply secondary text color with `f-muted`. | Native content semantics; no state or keyboard behavior. | Shared secondary token, automatically light/dark. |
 | Screen-reader text | Preserve accessible content while visually hiding it with `f-sr-only`. | Native label/text semantics. | Use on labels and descriptions; not on focusable controls. |
@@ -294,10 +294,98 @@ Admin customers and subscriptions share `.f-table` presentation. The primitive o
 
 Tokens: `--f-table-min-width`, `--f-table-font-size`, `--f-table-heading-size`, `--f-table-cell-padding`, and `--f-table-heading-padding`. Text wraps by default; examples may scope nowrap on suitable columns. There is no record fetching, sorting, pagination or CRUD dispatcher in the primitive. Native reading semantics are unchanged in HTML, Blade and Livewire.
 
-## Support interface controls
+## Menus, searchable choices, tokens and rich text
 
-See [support interface components](support-components.md) for the new selection, menu, feedback, navigation, upload, and rich editor contracts. Their working gallery specimens include both HTML and Blade usage. The optional `fruitui/editor` module is separate from `fruitui/alpine`; application workflows remain in the examples.
+Menus, Combobox, Token Field, Editor, Alert, Tabs, Section Nav, Pagination, Upload rows and related compositions. Every family has a gallery specimen with HTML and Blade usage; the [policy](component-policy.md#blade-contracts) lists the semantic contracts.
 
+### Choosing a control
+
+| Need | Use | Value and responsibility |
+| --- | --- | --- |
+| A persistent message | `f-alert` / `x-fruit::alert` | Application chooses message, tone, actions, and any live announcement role. |
+| Action commands | `f-menu` + `f-menu-item` | `fruitMenu` owns command focus and dismissal; application owns commands. |
+| Independent popup controls | Floating Disclosure | Ordinary controls retain their own keyboard contracts. |
+| One searchable existing option | `f-combobox` / `x-fruit::combobox` | The native single select owns its scalar value. |
+| Recipients or tags | `f-token-field` / `x-fruit::token-field` | The native textarea owns a newline-delimited string. |
+| Rich formatted text | `f-editor` / `x-fruit::editor` | The native textarea owns HTML; an optional Tiptap module supplies editing. |
+| Related panels in one page | `f-tabs`, `f-tab` | Linked tabs/panels; optional `fruitTabs`, or existing route-aware callbacks. |
+| Related pages | `f-section-nav` | Ordinary links and `aria-current="page"`. |
+| Page controls | `f-pagination` | Application pagination; independent links or native buttons. |
+
+Menus follow the [WAI menu button keyboard pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/); searchable selection follows the [combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/). Popups use the [browser top layer](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API/Using) where available so scrollable panes do not clip them; unsupported browsers retain positioned panels. Register the existing plugin before Alpine starts, including Livewire's Alpine instance. Helpers do not start another instance.
+
+```js
+import fruitUI from 'fruitui/alpine';
+fruitUI(Alpine);
+```
+
+For raw HTML, put `x-data="fruitCombobox"` on a `div.f-combobox` containing `select.f-input[data-fruit-control]`. Token Field uses `div.f-token-field[x-data="fruitTokenField"]` with `textarea.f-input[data-fruit-control]`. Blade emits that markup. Give the native control a label, name, initial value, and validation/model attributes. The helper creates an unnamed query, copies accessible labels/descriptions, and publishes native events when values change. Editor publishes input while typing and committed change on widget blur. See [adoption contracts](adoption.md) for wrapper attributes, localization and Field associations. Without JavaScript, the select or textarea remains editable and submits the same value format.
+
+Blade includes stable `wire:ignore` containers for generated UI. The named native control remains outside them, so Livewire can update its model, options, labels, validation, disabled, and readonly attributes. For handwritten Livewire markup, include an empty `<div data-fruit-ui wire:ignore></div>` beside the native select/textarea. Rich Editor's toolbar and surface each use `wire:ignore`; its textarea remains outside those boundaries. Keep a widget's DOM identity stable, or key an outer container when replacing it.
+
+```blade
+<label for="assignee">Assigned to</label>
+<x-fruit::combobox id="assignee" name="assignee" wire:model.live="assignee">
+    <option value="">Unassigned</option>
+    <option value="alex">Alex Morgan</option>
+</x-fruit::combobox>
+
+<label for="cc">Cc</label>
+<x-fruit::token-field id="cc" name="cc" wire:model="cc"
+    placeholder="Add a recipient">{{ $cc }}</x-fruit::token-field>
+```
+
+Token entry adds on Enter, comma, or a multiline/comma paste. Values are trimmed and exact duplicates are ignored. Empty Backspace/Left focuses the last remove button; arrows navigate remove buttons, Escape returns to entry. Adding is atomic for a paste: if application validation rejects any value, the native value is unchanged. Applications can cancel the bubbling `fruit-token-add` event and set `event.detail.error`, or normalize `event.detail.value`. Existing server-provided values are not validated by this event; validate the entire submitted string on the server. Arrays belong to the application: split/join the newline string in its binding or request handler.
+
+Dispatch `fruit-token-reset` on the native textarea to discard pending entry and validation feedback without changing committed tokens. Mail uses it when starting another draft, including when the serialized model was already empty. Ordinary form resets also clear pending entry.
+
+```html
+<textarea data-fruit-control name="cc"
+  @fruit-token-add="if (!isRecipient($event.detail.value)) {
+    $event.detail.error = 'Enter an email address.';
+    $event.preventDefault();
+  }"></textarea>
+```
+
+Choice queries keep focus while `aria-activedescendant` identifies the highlighted option. Up/Down navigate, Enter commits, Escape restores the selected label, and Tab leaves without changing the selection. Disabled options/optgroups are skipped. The enhanced controls preserve form resets, native required/disabled/readonly behavior, label focus, external Alpine model updates, and helper cleanup. Combobox does not support multiple/size modes; use Select for native multiple selection or Token Field for free text tokens.
+
+### Optional rich editing
+
+The core Alpine module does not import Tiptap. Import the separate integration on pages that need editing. Its optional peers (installed only by source-editor consumers) are `@tiptap/core`, `@tiptap/pm`, and `@tiptap/starter-kit`; [Tiptap's vanilla installation](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript) describes the underlying editor.
+
+```js
+import fruitEditor from 'fruitui/editor';
+fruitEditor(Alpine); // before this same Alpine instance starts
+```
+
+```blade
+<label for="signature">Reply signature</label>
+<x-fruit::editor id="signature" name="signature" wire:model="signature">
+    {{ $signature }}
+</x-fruit::editor>
+```
+
+The toolbar offers bold, italic, lists, quotes, undo, and redo. Tiptap handles document editing and shortcuts. The adapter escapes the initial HTML into a textarea; with JavaScript disabled it is an editable HTML source field. The editor mirrors an HTML string back to the same named textarea. Empty documents serialize as an empty string for native required validation. Readonly and disabled controls block editing; form resets and external model changes update the document. Sanitize and validate submitted HTML in the application before storing or rendering it. The editor schema is not a server sanitizer.
+
+Use `f-prose` around sanitized message content to scope paragraph, list, quote, image, and table presentation. Wrap wide tables in `f-prose__scroll` with `role="region"`, `tabindex="0"`, and an accessible name; this keeps keyboard scrolling within the message. Do not add `f-prose` to the entire application.
+
+### Composing the remaining pieces
+
+`f-button-group` joins independent Buttons and Menus for split actions. `f-input-group` joins native inputs, `f-input-group__addon` units, and action buttons; use `aria-describedby` for a meaningful unit. `f-chip` holds a value and an independent `f-chip__remove` button. None owns the surrounding form's value.
+
+`f-upload` rows combine File, Progress, text/links, and independent cancel/retry/remove buttons. The application owns FileList handling and transport. The Mail and Support examples simulate upload progress locally and provide downloadable browser blobs; they send no files to a server. `f-spinner` is decorative activity: keep a readable action name, set `aria-busy`, and use native disabled when repeated activation must be blocked. Reduced motion stops spinning.
+
+`f-avatar` also accepts an `img` with meaningful alt text, or empty alt when an adjacent name supplies identity. `<x-fruit::avatar>` is decorative by default; `label` gives it an accessible identity and `src` renders a photo. `f-avatar-group` overlaps independent avatars; `f-presence` must have adjacent readable status or equivalent accessible text. `f-notifications` arranges grouped native lists of destination links, badges, and independent actions; unread counts and read state stay in the application.
+
+Tooltips use `f-tooltip` with `x-data="fruitTooltip"`, a focusable control referencing a noninteractive `f-tooltip__text[role="tooltip"]` through `aria-describedby`. CSS reveals help on hover/focus; the helper dismisses on Escape, including hover-only disclosure. Keep essential labels and instructions visible. In Blade, `text-id` names the tooltip text and the trigger references it, so the association is rendered by the server and survives Livewire morphs:
+
+```blade
+<x-fruit::tooltip text="Move this conversation to the archive." text-id="archive-help">
+    <x-fruit::button aria-describedby="archive-help" wire:click="archive">Archive</x-fruit::button>
+</x-fruit::tooltip>
+``` Alerts do not automatically acquire a live role based on tone; add `role="status"` or `role="alert"` when new feedback should be announced.
+
+All new CSS uses existing semantic appearance tokens, follows system light/dark changes, and supports explicit theme overrides. The examples keep routing, recipient rules, upload state, and record data outside the framework.
 
 ## Field associations and validation errors
 
@@ -317,7 +405,7 @@ The error comes from Laravel's shared `$errors` bag, the same one `@error` reads
 
 ## Server feedback: dialogs and toasts
 
-Put one `<x-fruit::toaster />` in the layout. It announces `fruit-toast` window events and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it. It shows one message at a time and does not queue or route notifications.
+Put one `<x-fruit::toaster />` in the layout (in HTML, one element with `x-data="fruitToast"`). It announces `fruit-toast` window events, sent by `Fruit::toast()`, the `$toast()` Alpine magic or `toast()` from `fruitui/alpine`, and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it. It uses the top layer where supported, so an open modal dialog does not cover it; a modal makes the rest of the page inert, though, so report results of a dialog's task after it closes, or inside the dialog. It shows one message at a time and does not queue or route notifications.
 
 `FruitUI\Fruit` sends feedback from Livewire components, form objects, actions and controllers:
 
@@ -341,7 +429,7 @@ A dialog opens in one of two ways. Bind its open state when the server owns it; 
 
 Or give it a `name` and open or close it with events, from the server (`Fruit::openDialog`) or the browser (`$dispatch('fruit-dialog-open', { name: 'close-ticket' })`). Either way, Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
 
-In tests, assert the browser events: `->assertDispatched('fruit-toast', message: 'Conversation closed.')`. `x-fruit::toast` remains the plain status container for application-owned `fruitToast` scopes; the four HTML examples use that helper directly.
+In tests, assert the browser events: `->assertDispatched('fruit-toast', message: 'Conversation closed.')`.
 
 ## Pagination
 

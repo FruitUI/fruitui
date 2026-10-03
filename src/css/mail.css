@@ -37,17 +37,9 @@
     grid-row: 2;
   }
   .f-mail__account {
-    display: flex;
-    align-items: center;
     gap: 9px;
-    margin-top: auto;
     padding: 22px 9px 2px;
     font-size: var(--f-text-sm);
-  }
-  .f-mail__account small {
-    display: block;
-    color: var(--f-secondary);
-    font-size: var(--f-text-2xs);
   }
   .f-mail__list-pane {
     grid-column: 2;
@@ -265,8 +257,7 @@
       color: var(--f-accent);
     }
     .f-mail__mobile-nav .f-icon {
-      width: 24px;
-      height: 24px;
+      --f-icon-size: 24px;
       stroke-width: 1.8;
     }
     .f-mail__open-mailboxes,
@@ -296,8 +287,7 @@
     .f-mail__mobile-search > .f-icon {
       top: 12px;
       inset-inline-start: 12px;
-      width: 18px;
-      height: 18px;
+      --f-icon-size: 18px;
     }
     .f-mail__options {
       --f-floating-gap: 5px;
@@ -317,8 +307,7 @@
       color: var(--f-text);
     }
     .f-mail__options-menu > .f-button .f-icon {
-      width: 19px;
-      height: 19px;
+      --f-icon-size: 19px;
     }
     .f-mail__message-navigation {
       display: none;
@@ -413,9 +402,8 @@
       gap: 10px;
     }
     .f-mail__sender-detail .f-avatar {
-      width: 40px;
-      height: 40px;
-      font-size: var(--f-text-md);
+      --f-avatar-size: 40px;
+      --f-avatar-font-size: var(--f-text-md);
     }
     .f-mail__sender-detail strong {
       font-size: var(--f-text-lg);
@@ -463,8 +451,7 @@
       color: var(--f-accent);
     }
     .f-mail__mobile-footer .f-icon {
-      width: 24px;
-      height: 24px;
+      --f-icon-size: 24px;
     }
     .f-mail__inbox-actions,
     .f-mail__reader-actions,
@@ -540,7 +527,7 @@
       padding: 12px;
       padding-inline-start: var(--f-sidebar-item-indent, 12px);
       margin-bottom: 2px;
-      border-radius: 10px;
+      border-radius: var(--f-radius);
       gap: 13px;
       background: var(--f-surface);
       font-size: var(--f-text-xl);
@@ -549,8 +536,7 @@
       background: var(--f-selection);
     }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-icon {
-      width: 22px;
-      height: 22px;
+      --f-icon-size: 22px;
     }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-badge {
       font-size: var(--f-text-base);

@@ -2,26 +2,12 @@
 
 namespace FruitUI\Tests;
 
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Component;
 use Livewire\Livewire;
-use Livewire\LivewireServiceProvider;
-use Orchestra\Testbench\TestCase;
 
 class SelectionBindingsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [LivewireServiceProvider::class, FruitUIServiceProvider::class];
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', str_repeat('a', 32));
-        $app['config']->set('session.driver', 'array');
-    }
-
     public function test_checkbox_and_radio_bindings_save_boolean_and_group_values(): void
     {
         Livewire::test(SelectionBindingsFixture::class)

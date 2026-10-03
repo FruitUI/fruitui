@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 const pageErrors = new WeakMap();
 test.beforeEach(({ page }) => {
@@ -232,7 +232,7 @@ for (const appearance of ['light', 'dark']) {
       await page.goto(url);
       await expand(page, nav, scope);
       await page.locator(nav).getByRole('button', { name: label, exact: true }).click();
-      await assertAccessible(page);
+      await expectAccessible(page);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
   });
@@ -271,8 +271,4 @@ function mailRow(page, id) {
 }
 function supportRow(page, id) {
   return page.locator(`button.support-ticket[data-ticket-id="${id}"]`);
-}
-async function assertAccessible(page) {
-  const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-  expect(violations).toEqual([]);
 }

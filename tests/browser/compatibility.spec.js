@@ -59,7 +59,7 @@ test('browser globals register on an existing Alpine instance without starting i
   expect(
     await page.evaluate(() => {
       const names = [];
-      const host = { data: name => names.push(name) };
+      const host = { data: name => names.push(name), magic: name => names.push(`$${name}`) };
       window.FruitUI.default(host);
       window.FruitEditor(host);
       return names;

@@ -2,24 +2,10 @@
 
 namespace FruitUI\Tests;
 
-use FruitUI\FruitUIServiceProvider;
 use Livewire\Livewire;
-use Livewire\LivewireServiceProvider;
-use Orchestra\Testbench\TestCase;
 
 class MailPreferencesTest extends TestCase
 {
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('app.key', str_repeat('a', 32));
-        $app['config']->set('session.driver', 'array');
-    }
-
-    protected function getPackageProviders($app): array
-    {
-        return [LivewireServiceProvider::class, FruitUIServiceProvider::class];
-    }
-
     protected function setUp(): void
     {
         parent::setUp();

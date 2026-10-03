@@ -1,3 +1,6 @@
+/** Whether an element lays out right to left. */
+export const isRtl = element => getComputedStyle(element).direction === 'rtl';
+
 /** Use the browser top layer to avoid clipping by scrollable panes/dialogs. */
 export function fruitPopup(popup, anchor, { stretch = false, above = false } = {}) {
   const supported = typeof popup.showPopover === 'function';
@@ -21,7 +24,7 @@ export function fruitPopup(popup, anchor, { stretch = false, above = false } = {
     popup.style.overflowY = 'auto';
     if (stretch) popup.style.width = `${Math.min(rect.width, width - 16)}px`;
     const size = popup.getBoundingClientRect();
-    const x = stretch || getComputedStyle(anchor).direction === 'rtl' ? rect.left : rect.right - size.width;
+    const x = stretch || isRtl(anchor) ? rect.left : rect.right - size.width;
     const below = top + height - rect.bottom - 8,
       before = rect.top - top - 8;
     const placeAbove = (above && before >= size.height) || (below < size.height && before > below);
@@ -57,6 +60,64 @@ export function fruitPopup(popup, anchor, { stretch = false, above = false } = {
       if (supported) popup.removeAttribute('popover');
       if (originalStyle === null) popup.removeAttribute('style');
       else popup.setAttribute('style', originalStyle);
+    },
+  };
+}
+
+/**
+ * A details element whose panel floats in the top layer: it opens with the native summary and
+ * closes on an outside pointer (focus stays) or Escape (focus returns to the summary).
+ */
+export function fruitDetailsPopup(
+  details,
+  panel,
+  { above = false, owns = node => node?.closest('details') === details, onToggle } = {},
+) {
+  const trigger = details.querySelector('summary');
+  const overlay = fruitPopup(panel, trigger, { above });
+  const controller = new AbortController();
+  const options = { signal: controller.signal };
+  const close = restoreFocus => {
+    details.open = false;
+    overlay.hide();
+    if (restoreFocus) trigger.focus();
+  };
+  details.addEventListener(
+    'toggle',
+    event => {
+      if (event.target !== details) return;
+      if (details.open) overlay.show();
+      else overlay.hide();
+      onToggle?.(details.open);
+    },
+    options,
+  );
+  document.addEventListener(
+    'pointerdown',
+    event => {
+      if (details.open && !details.contains(event.target)) close(false);
+    },
+    options,
+  );
+  details.addEventListener(
+    'keydown',
+    event => {
+      if (event.key === 'Escape' && details.open && owns(event.target)) {
+        event.preventDefault();
+        event.stopPropagation();
+        close(true);
+      }
+    },
+    options,
+  );
+  if (details.open) overlay.show();
+  return {
+    trigger,
+    show: () => overlay.show(),
+    close,
+    destroy() {
+      controller.abort();
+      overlay.destroy();
     },
   };
 }

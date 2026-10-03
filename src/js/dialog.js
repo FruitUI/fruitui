@@ -1,15 +1,3 @@
-/** Optional helper for a dialog referenced by x-ref="dialog" inside the same scope. */
-export function fruitDialog() {
-  return {
-    open() {
-      this.$refs.dialog.showModal();
-    },
-    close() {
-      this.$refs.dialog.close();
-    },
-  };
-}
-
 /** Named dialogs open and close from browser events, including Livewire dispatches. */
 export function listenForNamedDialogs(target = window) {
   const find = name =>
