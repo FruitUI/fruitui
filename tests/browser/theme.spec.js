@@ -308,3 +308,21 @@ test('one brand tint recolors every accent shade in both appearances', async ({ 
     expect(green['--f-accent-fill'][1]).toBeGreaterThan(green['--f-accent-fill'][2]);
   }
 });
+
+test('the compat build honours data-theme and keeps headings in the text color against host rules', async ({
+  page,
+}) => {
+  const css = readFileSync(new URL('../../build/core.compat.css', import.meta.url), 'utf8');
+  // A legacy host colors every heading; an application class still restyles its own heading.
+  await page.setContent(`<!doctype html><html><head><style>${css}</style>
+    <style>h1, h2, h3, h4, h5, h6 { color: #2a3b47 } .app-title { color: rgb(200, 0, 0) }</style></head>
+    <body><main class="fruit-ui" data-theme="dark"><h2>Settings</h2><h3 class="app-title">Own</h3></main>
+    <div class="dark"><section class="fruit-ui" data-theme="class"><h2>Class mode</h2></section></div></body></html>`);
+  const main = page.locator('main');
+  await expect(main).toHaveCSS('color-scheme', 'dark');
+  await expect(page.locator('section')).toHaveCSS('color-scheme', 'dark');
+  const text = await main.evaluate(element => getComputedStyle(element).color);
+  await expect(page.locator('main h2')).toHaveCSS('color', text);
+  await expect(page.locator('main h2')).not.toHaveCSS('color', 'rgb(42, 59, 71)');
+  await expect(page.locator('.app-title')).toHaveCSS('color', 'rgb(200, 0, 0)');
+});

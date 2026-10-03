@@ -30,7 +30,8 @@ for (const [name, file] of Object.entries({
   });
   legacy.walkRules(rule => {
     rule.selector = rule.selector
-      .replace(/:where\((\.fruit-ui(?:\[[^\]]*\]|:not\([^)]*\))*)\)/g, '$1')
+      // An optional ancestor class, the scope, then its classes, attributes and :not() conditions.
+      .replace(/:where\(((?:\.[\w-]+ )?\.fruit-ui(?:\.[\w-]+|\[[^\]]*\]|:not\([^)]*\))*)\)/g, '$1')
       .replaceAll(':where(html.fruit-ui)', 'html.fruit-ui')
       .replaceAll(':where(.fruit-ui, .fruit-ui *)', '.fruit-ui, .fruit-ui *');
   });

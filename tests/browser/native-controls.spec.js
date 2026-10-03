@@ -534,3 +534,18 @@ for (const colorScheme of ['light', 'dark']) {
     await expectAccessible(page, '#component-color');
   });
 }
+
+test('a fieldset stacks its choices and a choice description describes its control', async ({ page }) => {
+  await page.goto('/components.html');
+  const group = page.getByRole('group', { name: 'Delivery preferences' });
+  const email = group.getByRole('checkbox', { name: 'Email updates', exact: true });
+  const push = group.getByRole('checkbox', { name: 'Push notifications', exact: true });
+  const photos = group.getByRole('switch', { name: 'Customer photos', exact: true });
+  await expect(email).toHaveAccessibleDescription('A summary of new conversations each morning.');
+  await expect(photos).toHaveAccessibleDescription('From Gravatar, for customers without a photo.');
+  // One choice per row, each below the previous one's description.
+  const [first, second, third] = await Promise.all([email, push, photos].map(control => control.boundingBox()));
+  expect(second.y).toBeGreaterThan(first.y + first.height);
+  expect(third.y).toBeGreaterThan(second.y + second.height);
+  expect(Math.abs(second.x - first.x)).toBeLessThan(1);
+});

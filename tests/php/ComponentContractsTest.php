@@ -138,6 +138,45 @@ class ComponentContractsTest extends TestCase
         $this->assertStringContainsString('for="field-password"', $html);
     }
 
+    public function test_choices_carry_a_description_linked_to_the_control_but_not_its_name(): void
+    {
+        foreach (['checkbox', 'radio', 'switch'] as $component) {
+            $xpath = $this->xpath(Blade::render('<x-fruit::'.$component.' name="photos" value="1" wire:model="photos" description="From Gravatar, for customers without a photo.">Customer photos</x-fruit::'.$component.'>'));
+            $input = $xpath->query('//input')->item(0);
+            $description = $xpath->query('//div[@class="f-choice"]/p[contains(@class, "f-choice__description")]')->item(0);
+            $this->assertNotNull($description, $component);
+            $this->assertSame('From Gravatar, for customers without a photo.', trim($description->textContent));
+            $this->assertSame($description->getAttribute('id'), $input->getAttribute('aria-describedby'));
+            // The label (the accessible name) holds only the title.
+            $this->assertSame('Customer photos', trim($xpath->query('//label')->item(0)->textContent));
+            $this->assertSame('photos', $input->getAttribute('wire:model'));
+        }
+
+        // Without a description the markup is unchanged.
+        $plain = $this->xpath(Blade::render('<x-fruit::checkbox name="tags">Manage tags</x-fruit::checkbox>'));
+        $this->assertSame(0, $plain->query('//div')->length);
+        $this->assertFalse($plain->query('//input')->item(0)->hasAttribute('aria-describedby'));
+
+        // Inside a Field the description joins the Field's own description; radios in one group stay distinct.
+        $field = $this->xpath(Blade::render('<x-fruit::field label="Photos" description="Shown in conversations."><x-fruit::switch name="photos" description="From Gravatar.">Customer photos</x-fruit::switch></x-fruit::field>'));
+        $described = explode(' ', $field->query('//input')->item(0)->getAttribute('aria-describedby'));
+        $this->assertCount(2, $described);
+        $this->assertSame('Shown in conversations.', trim($field->query('//*[@id="'.$described[0].'"]')->item(0)->textContent));
+        $this->assertSame('From Gravatar.', trim($field->query('//*[@id="'.$described[1].'"]')->item(0)->textContent));
+        $radios = $this->xpath(Blade::render('<x-fruit::radio name="plan" value="team" description="Up to 50 people.">Team</x-fruit::radio><x-fruit::radio name="plan" value="studio" description="Up to 50 people.">Studio</x-fruit::radio>'));
+        $ids = array_map(fn ($node) => $node->getAttribute('id'), iterator_to_array($radios->query('//p')));
+        $this->assertCount(2, array_unique($ids));
+
+        // A named slot can hold rich text, such as a link.
+        $slot = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::checkbox name="terms">
+                I agree
+                <x-slot:description>Read the <a href="/terms">terms</a>.</x-slot:description>
+            </x-fruit::checkbox>
+            BLADE));
+        $this->assertSame('/terms', $slot->query('//p/a')->item(0)->getAttribute('href'));
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');
