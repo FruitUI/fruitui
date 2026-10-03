@@ -45,6 +45,8 @@ for (const [name, entry] of Object.entries({
 })) {
   await build({
     configFile: false,
+    // The showcase's public files (sample attachments) are not package assets.
+    publicDir: false,
     logLevel: 'warn',
     build: {
       outDir,

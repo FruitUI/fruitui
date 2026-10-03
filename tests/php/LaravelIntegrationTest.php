@@ -3,12 +3,14 @@
 namespace FruitUI\Tests;
 
 use FruitUI\Fruit;
+use FruitUI\FruitUIServiceProvider;
 use FruitUI\Rules\Tokens;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ViewException;
 use Livewire\Attributes\Computed;
@@ -315,6 +317,18 @@ class LaravelIntegrationTest extends TestCase
             }
         }
         $this->assertSame(4, $failures);
+    }
+
+    public function test_compiled_assets_publish_for_hosts_without_a_bundler(): void
+    {
+        $paths = ServiceProvider::pathsToPublish(FruitUIServiceProvider::class, 'fruit-assets');
+        $this->assertCount(1, $paths);
+        $source = array_key_first($paths);
+        $this->assertSame(realpath(__DIR__.'/../../build'), realpath($source));
+        $this->assertSame(public_path('vendor/fruitui'), $paths[$source]);
+        foreach (['fruitui.css', 'core.compat.css', 'layout.compat.css', 'livewire.global.js', 'alpine.global.js', 'editor.global.js'] as $file) {
+            $this->assertFileExists("{$source}/{$file}");
+        }
     }
 
     public function test_token_values_split_the_way_the_token_field_shows_them(): void

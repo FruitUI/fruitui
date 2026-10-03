@@ -6,11 +6,11 @@ Requires **Laravel 13 and PHP 8.3+** for the Blade adapters. Livewire is optiona
 
 ## Use with Laravel
 
-From a Laravel application alongside this checkout:
+Until it is on Packagist, require it from GitHub:
 
 ```sh
-composer config repositories.fruitui path ../fruitui
-composer require fruitui/fruitui:@dev
+composer config repositories.fruitui vcs https://github.com/nielspeen/fruitui
+composer require fruitui/fruitui:dev-main
 ```
 
 The Composer package contains the CSS and JavaScript sources, so Vite can import them from `vendor/` without an npm package. In `resources/css/app.css`:
@@ -29,6 +29,19 @@ In `resources/js/app.js`, register the interactive helpers on the Alpine instanc
 ```js
 import '../../vendor/fruitui/fruitui/src/js/livewire.js';
 ```
+
+**Without a bundler** (Laravel Mix, plain asset hosting), publish the compiled files and link them. `*.compat.css` suits hosts whose own CSS is not in cascade layers; `livewire.global.js` registers on the Alpine instance Livewire injects:
+
+```sh
+php artisan vendor:publish --tag=fruit-assets
+```
+
+```blade
+<link rel="stylesheet" href="{{ asset('vendor/fruitui/fruitui.compat.css') }}">
+<script src="{{ asset('vendor/fruitui/livewire.global.js') }}" defer></script>
+```
+
+Re-run the publish command (with `--force`) after updating FruitUI, or add it to Composer's `post-update-cmd`.
 
 Wrap your layout in `fruit-ui` and use the Blade components:
 

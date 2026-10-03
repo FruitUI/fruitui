@@ -23,6 +23,9 @@ class FruitUIServiceProvider extends ServiceProvider
 
         $this->publishes([$views => resource_path('views/vendor/fruit')], 'fruit-views');
 
+        // Compiled CSS and scripts for hosts without a bundler: link them from public/vendor/fruitui.
+        $this->publishes([__DIR__.'/../../build' => public_path('vendor/fruitui')], 'fruit-assets');
+
         // English text is the key. Published copies override the shipped ones; the app's own lang/{locale}.json overrides both.
         $lang = __DIR__.'/../../lang';
         $this->loadJsonTranslationsFrom($lang);

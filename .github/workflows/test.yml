@@ -36,6 +36,8 @@ jobs:
       - run: npm run lint
       - run: npx playwright install --with-deps ${{ matrix.browsers }}
       - run: npm run build
+      # build/ is committed for hosts without a bundler; it must match the sources.
+      - run: git diff --exit-code -- build
       - run: npm run test:package
       - run: npm test -- --max-failures=1 --reporter=line
         env:
