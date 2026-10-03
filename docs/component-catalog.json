@@ -282,15 +282,40 @@
     "id": "search",
     "kind": "composition",
     "classes": ["f-search"],
-    "blade": [],
-    "uses": []
+    "blade": ["search"],
+    "uses": [],
+    "contracts": {
+      "search": {
+        "purpose": "Enter a search query.",
+        "element": "`input type=search` inside `div.f-search` with a decorative icon.",
+        "state": "Native string value; the application owns results.",
+        "keyboard": "Native text editing; Escape clears in supporting browsers.",
+        "options": "`label`: accessible name (or aria-label, aria-labelledby or a Field). `wrapper`: presentation attributes. Native input attributes and models go to the input."
+      }
+    }
   },
   {
     "id": "segmented",
     "kind": "composition",
     "classes": ["f-segmented"],
-    "blade": [],
-    "uses": []
+    "blade": ["segmented", "segment"],
+    "uses": [],
+    "contracts": {
+      "segmented": {
+        "purpose": "Choose one of a few related options shown side by side.",
+        "element": "`fieldset` with a legend containing native radios.",
+        "state": "Native checked value of the radio group.",
+        "keyboard": "Tab enters the group; arrows select; Space checks.",
+        "options": "`legend`: required group name. Slot: Segments."
+      },
+      "segment": {
+        "purpose": "One option of a segmented control.",
+        "element": "`input type=radio` inside its label.",
+        "state": "Native checked state and value.",
+        "keyboard": "Arrows move between segments.",
+        "options": "Fixed type and role. Native radio attributes and models (name, value, wire:model) go to the input. Slot: label."
+      }
+    }
   },
   {
     "id": "disclosure",
@@ -374,8 +399,17 @@
     "id": "toolbar",
     "kind": "composition",
     "classes": ["f-toolbar"],
-    "blade": [],
-    "uses": []
+    "blade": ["toolbar"],
+    "uses": [],
+    "contracts": {
+      "toolbar": {
+        "purpose": "Arrange a title and independent actions in a bar.",
+        "element": "`div`; optional group or region role. No toolbar role or arrow-key model.",
+        "state": "No state; children own theirs.",
+        "keyboard": "Children keep their own keyboard behavior.",
+        "options": "Default slot: title and leading content. `actions` slot: trailing independent controls in a group."
+      }
+    }
   },
   {
     "id": "card",
@@ -405,7 +439,7 @@
         "element": "`span`; optional status role for a live count.",
         "state": "No value or interaction.",
         "keyboard": "No added keyboard behavior.",
-        "options": "Native span attributes. Slot: text. Scoped semantic tokens customize appearance."
+        "options": "`tone`: neutral (default), accent, success, warning, danger. `variant`: filled (default), outline. `dot` slot: a leading status dot. Slot: text; meaning never depends on color alone."
       }
     }
   },
@@ -679,7 +713,7 @@
     "id": "menu-item",
     "kind": "primitive",
     "classes": ["f-menu-item"],
-    "blade": ["menu-item"],
+    "blade": ["menu-item", "menu-checkbox", "menu-radio", "menu-link", "menu-separator", "menu-group"],
     "uses": [],
     "contracts": {
       "menu-item": {
@@ -687,7 +721,42 @@
         "element": "Fixed button type=button, role=menuitem.",
         "state": "Native disabled state; caller action binding.",
         "keyboard": "Menu helper moves focus; Enter/Space invokes.",
-        "options": "Variant default/danger; content slot. No toggle-value modes."
+        "options": "Variant default/danger; content slot; `shortcut`: displayed key equivalent (set aria-keyshortcuts for assistive technology). No toggle-value modes; use Menu Checkbox or Menu Radio."
+      },
+      "menu-checkbox": {
+        "purpose": "Toggle an option from a menu.",
+        "element": "Fixed button type=button, role=menuitemcheckbox.",
+        "state": "`checked` renders aria-checked; or bind x-bind:aria-checked for client state. The caller toggles it.",
+        "keyboard": "Menu helper moves focus; Enter/Space invokes and closes the menu.",
+        "options": "`checked`: boolean. `shortcut`: displayed key equivalent. Label slot; action bindings on the button."
+      },
+      "menu-radio": {
+        "purpose": "Choose one option from a group in a menu.",
+        "element": "Fixed button type=button, role=menuitemradio.",
+        "state": "`checked` renders aria-checked; or bind x-bind:aria-checked. The caller owns the chosen value.",
+        "keyboard": "Menu helper moves focus; Enter/Space invokes and closes the menu.",
+        "options": "`checked`: boolean. `shortcut`: displayed key equivalent. Group radios in Menu Group."
+      },
+      "menu-link": {
+        "purpose": "Navigate to a page from a menu.",
+        "element": "`a` with role=menuitem and a required href.",
+        "state": "Native link; no owned state.",
+        "keyboard": "Menu helper moves focus; Enter follows the link.",
+        "options": "Native link attributes, including wire:navigate. `shortcut`: displayed key equivalent. Label slot."
+      },
+      "menu-separator": {
+        "purpose": "Separate groups of menu commands.",
+        "element": "`div` role=separator.",
+        "state": "No state.",
+        "keyboard": "Not focusable.",
+        "options": "No options or slot."
+      },
+      "menu-group": {
+        "purpose": "Label a related set of menu items.",
+        "element": "`div` role=group with an aria-label; the visible label is presentational.",
+        "state": "Items own their state.",
+        "keyboard": "Items keep the menu keyboard model.",
+        "options": "`label`: required group name. Slot: menu items."
       }
     }
   },
@@ -743,8 +812,17 @@
     "id": "chip",
     "kind": "pattern",
     "classes": ["f-chip"],
-    "blade": [],
-    "uses": ["support.html", "chat.html"]
+    "blade": ["chip"],
+    "uses": ["support.html", "chat.html"],
+    "contracts": {
+      "chip": {
+        "purpose": "Present a compact value with an optional remove action.",
+        "element": "`span` with an independent remove `button`.",
+        "state": "The application owns the value.",
+        "keyboard": "The remove button is a native button.",
+        "options": "Default slot: value text. `remove` slot: accessible label of the remove button; its attributes (actions) go to the button."
+      }
+    }
   },
   {
     "id": "button-group",
@@ -819,8 +897,17 @@
     "id": "spinner",
     "kind": "composition",
     "classes": ["f-spinner"],
-    "blade": [],
-    "uses": []
+    "blade": ["spinner"],
+    "uses": [],
+    "contracts": {
+      "spinner": {
+        "purpose": "Show that work is in progress.",
+        "element": "Decorative `span` (aria-hidden).",
+        "state": "No state; the busy element sets aria-busy.",
+        "keyboard": "Not focusable.",
+        "options": "No options or slot. Keep a readable action label beside it."
+      }
+    }
   },
   {
     "id": "upload",
@@ -840,8 +927,17 @@
     "id": "presence",
     "kind": "pattern",
     "classes": ["f-presence"],
-    "blade": [],
-    "uses": ["chat.html", "support.html"]
+    "blade": ["presence"],
+    "uses": ["chat.html", "support.html"],
+    "contracts": {
+      "presence": {
+        "purpose": "Show availability beside a person.",
+        "element": "Decorative `span` (aria-hidden) with an optional visually hidden label.",
+        "state": "`available` renders data-available.",
+        "keyboard": "Not focusable.",
+        "options": "`available`: boolean. `label`: hidden text when no visible status is adjacent."
+      }
+    }
   },
   {
     "id": "notifications",
@@ -870,6 +966,84 @@
         "state": "HTML string, native required/disabled/readonly; actual textarea owns names and models.",
         "keyboard": "Native editing without JS; Tiptap editing/shortcuts when registered; toolbar buttons use Tab.",
         "options": "Native textarea attributes, initial escaped HTML slot. Optional fruitui/editor module."
+      }
+    }
+  },
+  {
+    "id": "skeleton",
+    "kind": "composition",
+    "classes": ["f-skeleton"],
+    "blade": ["skeleton"],
+    "uses": [],
+    "contracts": {
+      "skeleton": {
+        "purpose": "Hold the place of content that is loading.",
+        "element": "Decorative `div` (aria-hidden) of placeholder lines.",
+        "state": "No state; the loading container sets aria-busy=\"true\".",
+        "keyboard": "Not focusable.",
+        "options": "`lines`: 1 to 20 (default 3). Compose `f-skeleton__block` in HTML for other shapes."
+      }
+    }
+  },
+  {
+    "id": "divider",
+    "kind": "pattern",
+    "classes": ["f-divider"],
+    "blade": ["divider"],
+    "uses": ["chat.html", "support.html"],
+    "contracts": {
+      "divider": {
+        "purpose": "Separate groups of content, optionally with a label.",
+        "element": "`div` role=separator; a label becomes its accessible name.",
+        "state": "No state.",
+        "keyboard": "Not focusable.",
+        "options": "`tone`: neutral (default), accent. Slot: optional label text."
+      }
+    }
+  },
+  {
+    "id": "timeline",
+    "kind": "composition",
+    "classes": ["f-timeline"],
+    "blade": ["timeline", "timeline-item"],
+    "uses": ["admin.html"],
+    "contracts": {
+      "timeline": {
+        "purpose": "List events in time order.",
+        "element": "`ol` with list semantics.",
+        "state": "No state; the application owns events.",
+        "keyboard": "No added keyboard behavior.",
+        "options": "Native list attributes and an accessible name. Slot: Timeline Items."
+      },
+      "timeline-item": {
+        "purpose": "Describe one event and when it happened.",
+        "element": "`li` with a native `time` element.",
+        "state": "No state.",
+        "keyboard": "Not focusable; child links keep their behavior.",
+        "options": "`datetime`: machine-readable time. Default slot: event; `icon`: decorative; `detail`: supporting text; `time`: displayed time."
+      }
+    }
+  },
+  {
+    "id": "breadcrumbs",
+    "kind": "primitive",
+    "classes": ["f-breadcrumbs"],
+    "blade": ["breadcrumbs", "crumb"],
+    "uses": ["admin.html"],
+    "contracts": {
+      "breadcrumbs": {
+        "purpose": "Show the path to the current page.",
+        "element": "`nav` (default label Breadcrumb) containing an `ol`.",
+        "state": "The current crumb carries aria-current=page.",
+        "keyboard": "Native link keyboard behavior.",
+        "options": "Accessible label (default `Breadcrumb`). Slot: Crumbs."
+      },
+      "crumb": {
+        "purpose": "Link to one ancestor page, or name the current page.",
+        "element": "`li` containing an `a`, or a `span` with aria-current=page.",
+        "state": "`current` marks the current page.",
+        "keyboard": "Links follow with Enter.",
+        "options": "`href` (or a client binding) for ancestors; `current` for the page itself, without href. Link attributes such as wire:navigate pass through."
       }
     }
   }

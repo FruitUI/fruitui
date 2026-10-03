@@ -182,8 +182,6 @@
   gap: 7px;
 }
 .message-feature .f-badge {
-  border: 1px solid var(--f-border);
-  background: var(--f-surface);
   padding: 3px 8px;
   font-size: var(--f-text-2xs);
 }

@@ -144,4 +144,22 @@
       outline: 1px solid Highlight;
     }
   }
+
+  /* Print the content: application chrome stays off paper and panes expand. */
+  @media print {
+    :is(.f-sidebar, .f-toolbar, .f-splitter) {
+      display: none !important;
+    }
+    .f-workspace {
+      display: block !important;
+      height: auto !important;
+      min-height: 0 !important;
+      border: 0;
+      box-shadow: none;
+    }
+    :is(.f-pane, .f-pane__scroll) {
+      height: auto !important;
+      overflow: visible !important;
+    }
+  }
 }

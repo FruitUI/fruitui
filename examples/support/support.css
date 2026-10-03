@@ -321,9 +321,7 @@
   color: var(--f-secondary);
 }
 .support-thread-start {
-  margin: 0 0 18px;
-  text-align: center;
-  color: var(--f-secondary);
+  --f-divider-margin: 0 0 18px;
   font-size: calc(var(--f-text-root) * 0.5625);
 }
 .support-composer {

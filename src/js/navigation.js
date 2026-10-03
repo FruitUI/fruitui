@@ -1,6 +1,8 @@
 import { fruitId } from './control-bridge.js';
 import { fruitDetailsPopup, fruitPopup, isRtl } from './popup.js';
 
+const menuItems = '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]';
+
 export function fruitMenu() {
   let details,
     trigger,
@@ -13,7 +15,7 @@ export function fruitMenu() {
     searchTimer;
   const owns = node => node?.closest('[data-fruit-menu], [x-data^="fruitMenu"]') === details;
   const items = () =>
-    [...popup.querySelectorAll('[role="menuitem"]')].filter(
+    [...popup.querySelectorAll(menuItems)].filter(
       item =>
         owns(item) &&
         !item.matches(':disabled') &&
@@ -43,7 +45,7 @@ export function fruitMenu() {
       trigger.setAttribute('aria-haspopup', 'menu');
       trigger.setAttribute('aria-controls', popup.id);
       trigger.setAttribute('aria-expanded', String(details.open));
-      popup.querySelectorAll('[role="menuitem"]').forEach(item => {
+      popup.querySelectorAll(menuItems).forEach(item => {
         if (owns(item)) item.tabIndex = -1;
       });
       keydown = event => {
@@ -78,14 +80,21 @@ export function fruitMenu() {
           clearTimeout(searchTimer);
           search += event.key.toLocaleLowerCase();
           const ordered = [...enabled.slice(index + 1), ...enabled.slice(0, index + 1)];
-          ordered.find(item => item.textContent.trim().toLocaleLowerCase().startsWith(search))?.focus();
+          const label = item =>
+            [...item.childNodes]
+              .filter(node => !node.classList?.contains('f-menu-item__shortcut'))
+              .map(node => node.textContent)
+              .join('')
+              .trim()
+              .toLocaleLowerCase();
+          ordered.find(item => label(item).startsWith(search))?.focus();
           searchTimer = setTimeout(() => {
             search = '';
           }, 600);
         }
       };
       click = event => {
-        const item = event.target.closest('[role="menuitem"]');
+        const item = event.target.closest(menuItems);
         if (owns(item) && !item.matches(':disabled') && item.getAttribute('aria-disabled') !== 'true')
           floating.close(true);
       };

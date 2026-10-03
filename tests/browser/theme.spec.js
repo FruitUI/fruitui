@@ -50,6 +50,11 @@ test('core appearance declarations use shared tokens or native/system colors', (
       while (/var\(--f-[\w-]+(?:,[^()]*)?\)/.test(resolved))
         resolved = resolved.replace(/var\(--f-[\w-]+(?:,([^()]*))?\)/g, (_, fallback) => fallback || '');
       const literal = resolved
+        // color-mix() derives a color from tokens and keywords, which are checked like any other value.
+        .replace(/color-mix\(in\s+[\w-]+/g, '')
+        .replace(/linear-gradient\(\d+deg/g, '')
+        .replace(/\//g, '')
+        .replace(/[()]/g, '')
         .replace(
           /\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|HighlightText|GrayText|Canvas|CanvasText)\b/g,
           '',

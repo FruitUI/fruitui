@@ -61,7 +61,7 @@
             <div class="f-pane f-pane--column chat-room-content" x-show="!activityVisible">
               <div id="chat-history" class="f-pane__scroll chat-history" role="region" tabindex="0" aria-label="Message history" x-ref="history">
                 <div class="chat-channel-intro"><span class="chat-channel-mark" aria-hidden="true"><svg class="f-icon"><use :href="room.kind === 'channel' ? '#i-hash' : '#i-chat'" href="#i-hash"/></svg></span><div><h3 x-text="room.kind === 'channel' ? 'A little room for ' + room.name + '.' : 'Just the two of you.'">A little room for design.</h3><p x-text="room.description">The details that make a difference.</p></div></div>
-                <div class="chat-date"><span>Today, October 2</span></div>
+                <div class="f-divider chat-date" role="separator" aria-label="Today, October 2"><span aria-hidden="true">Today, October 2</span></div>
                 <template x-for="item in room.messages" :key="item.id">
                   <article class="chat-message" tabindex="-1" :data-message-id="item.id" :data-highlighted="highlightedId === item.id" :aria-label="'Message from ' + person(item.authorId).name">
                     <span class="f-avatar" aria-hidden="true" x-text="person(item.authorId).initials"></span>

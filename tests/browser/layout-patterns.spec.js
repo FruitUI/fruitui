@@ -20,7 +20,7 @@ for (const appearance of ['light', 'dark']) {
       await page.goto(path);
       const frame = page.locator(frameSelector);
       await expect(frame).toHaveClass(/f-workspace/);
-      const splitters = frame.getByRole('separator');
+      const splitters = frame.locator('.f-splitter[role="separator"]');
       await expect.poll(() => splitters.count()).toBeGreaterThan(0);
       for (const handle of await splitters.all()) {
         await expect(handle).toHaveAttribute('aria-valuenow', /\d+/);
@@ -58,7 +58,7 @@ for (const appearance of ['light', 'dark']) {
       await expect.poll(async () => await width(flexible)).toBeGreaterThanOrEqual(reserve - 1);
       expect(await frame.evaluate(e => e.scrollWidth <= e.clientWidth)).toBe(true);
       await page.setViewportSize({ width: 390, height: 844 });
-      await expect(frame.getByRole('separator')).toHaveCount(0);
+      await expect(frame.locator('.f-splitter[role="separator"]:visible')).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.setViewportSize({ width: 1440, height: 1100 });
       await expect(frame.getByRole('separator').first()).toBeVisible();

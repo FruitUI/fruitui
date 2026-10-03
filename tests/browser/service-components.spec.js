@@ -271,3 +271,31 @@ test.describe('CSS-only fallbacks', () => {
     await context.close();
   });
 });
+
+test('menus include groups, separators, checked items, links and shortcut hints', async ({ page }) => {
+  const root = page.locator('#component-menu-item');
+  const trigger = root.getByText('View', { exact: true });
+  await trigger.focus();
+  await trigger.press('ArrowDown');
+  await expect(root.getByRole('menuitemradio', { name: 'Date' })).toBeFocused();
+  await expect(root.getByRole('menuitemradio', { name: 'Date' })).toHaveAttribute('aria-checked', 'true');
+  await expect(root.getByRole('group', { name: 'Sort by' })).toBeVisible();
+  await expect(root.getByRole('separator')).toHaveCount(2);
+  await page.keyboard.press('s');
+  await expect(root.getByRole('menuitemradio', { name: 'Sender' })).toBeFocused();
+  // Typeahead accumulates and ignores the shortcut hint.
+  await page.keyboard.press('h');
+  await expect(root.getByRole('menuitemcheckbox', { name: 'Show previews' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(trigger).toBeFocused();
+  await expect(root.getByText('Sorted by date, without previews')).toBeVisible();
+  await trigger.press('ArrowUp');
+  await expect(root.getByRole('menuitem', { name: 'Open Support' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await trigger.click();
+  await root.getByRole('menuitemradio', { name: 'Sender' }).click();
+  await expect(root.getByText('Sorted by sender, without previews')).toBeVisible();
+  await trigger.click();
+  await expect(root.getByRole('menuitemradio', { name: 'Sender' })).toHaveAttribute('aria-checked', 'true');
+  await expect(root.getByRole('menuitemcheckbox', { name: 'Show previews' })).toHaveAttribute('aria-checked', 'false');
+});

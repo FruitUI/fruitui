@@ -203,6 +203,36 @@
     font-size: var(--f-text-xs);
     font-variant-numeric: tabular-nums;
   }
+  /* Tones tint the badge with a semantic color; outline keeps it on the surface. */
+  .f-badge--accent {
+    --f-internal-badge-tone: var(--f-accent);
+  }
+  .f-badge--success {
+    --f-internal-badge-tone: var(--f-success);
+  }
+  .f-badge--warning {
+    --f-internal-badge-tone: var(--f-warning);
+  }
+  .f-badge--danger {
+    --f-internal-badge-tone: var(--f-danger);
+  }
+  .f-badge:is(.f-badge--accent, .f-badge--success, .f-badge--warning, .f-badge--danger) {
+    /* Mixing in the text color keeps small tinted text above 4.5:1 in both appearances. */
+    color: color-mix(in srgb, var(--f-internal-badge-tone) 65%, var(--f-text));
+    background: color-mix(in srgb, var(--f-internal-badge-tone) 14%, transparent);
+  }
+  .f-badge.f-badge--outline {
+    border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+    background: transparent;
+  }
+  .f-badge__dot {
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    margin-inline-end: 4px;
+    border-radius: 50%;
+    background: currentColor;
+  }
   .f-card {
     padding: var(--f-space-6);
     border: 1px solid var(--f-border);

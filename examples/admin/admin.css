@@ -142,40 +142,8 @@
 }
 .admin-breadcrumbs {
   margin-bottom: 18px;
-  font-size: var(--f-text-xs);
-  color: var(--f-secondary);
 }
-.admin-breadcrumbs ol {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.admin-breadcrumbs li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  max-width: 100%;
-}
-.admin-breadcrumbs .f-icon {
-  --f-icon-size: 9px;
-}
-.admin-breadcrumbs a {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  color: var(--f-selection-text);
-  text-decoration: none;
-}
-.admin-breadcrumbs a:hover {
-  text-decoration: underline;
-}
-.admin-breadcrumbs span {
-  overflow-wrap: anywhere;
-}
+
 .admin-breadcrumbs [aria-current='page'] {
   color: var(--f-text);
 }
@@ -631,28 +599,9 @@
   display: none;
 }
 .admin-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   min-height: 20px;
   padding: 2px 6px;
-  border-radius: 5px;
-  background: var(--f-surface-secondary);
-  color: var(--f-secondary);
   font-size: calc(var(--f-text-root) * 0.5625);
-}
-.admin-status > span:first-child {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
-.admin-status[data-status='active'] {
-  color: var(--f-success);
-}
-.admin-status[data-status='trial'] {
-  color: var(--f-selection-text);
-  background: var(--f-selection);
 }
 .admin-table .admin-numeric {
   text-align: right;
@@ -706,52 +655,22 @@
   padding: 24px;
 }
 .admin-activity-list {
-  list-style: none;
-}
-.admin-activity-list > li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--f-border);
+  --f-timeline-padding: 20px 0;
 }
 .admin-activity-list > li:last-child {
-  border-bottom: 0;
   padding-bottom: 0;
 }
-.admin-event-icon {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
+.admin-activity-list .f-timeline__icon {
   border-radius: 9px;
-  background: var(--f-surface-secondary);
   color: var(--f-selection-text);
-  flex-shrink: 0;
-}
-.admin-event-icon .f-icon {
-  --f-icon-size: 16px;
-}
-.admin-activity-list > li > div {
-  min-width: 0;
-}
-.admin-activity-list strong {
-  font-size: var(--f-text-sm);
-  font-weight: 600;
-  overflow-wrap: anywhere;
 }
 .admin-activity-list p {
-  color: var(--f-secondary);
   font-size: var(--f-text-2xs);
   line-height: 1.6;
   margin-top: 4px;
-  overflow-wrap: anywhere;
 }
 .admin-activity-list time {
   font-size: calc(var(--f-text-root) * 0.5625);
-  color: var(--f-secondary);
-  white-space: nowrap;
-  margin-left: auto;
   align-self: flex-start;
   margin-top: 4px;
 }

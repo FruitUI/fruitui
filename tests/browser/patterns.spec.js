@@ -141,3 +141,13 @@ test('a toast announced while a modal dialog is open appears above it', async ({
   // dialog, because a modal makes the rest of the document inert.)
   expect(await toast.evaluate(element => element.matches(':popover-open'))).toBe(true);
 });
+
+test('print keeps the conversation and leaves application chrome off paper', async ({ page }) => {
+  await page.goto('/support.html');
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.support-sidebar')).toBeHidden();
+  await expect(page.locator('.support-composer')).toBeHidden();
+  await expect(page.locator('.f-workspace').first()).toHaveCSS('display', 'block');
+  await expect(page.getByText('Beginning of this conversation')).toBeAttached();
+  await expect(page.locator('.support-thread')).toBeVisible();
+});

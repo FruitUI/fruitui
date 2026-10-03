@@ -249,6 +249,9 @@ export function adminDemo() {
     statusName(status) {
       return { active: 'Active', trial: 'Trial', paused: 'Paused' }[status];
     },
+    statusTone(status) {
+      return { active: 'f-badge--success', trial: 'f-badge--accent' }[status] ?? '';
+    },
     sortAria(key) {
       return this.sortKey === key ? (this.sortDirection === 'asc' ? 'ascending' : 'descending') : 'none';
     },

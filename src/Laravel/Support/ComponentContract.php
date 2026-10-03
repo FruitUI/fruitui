@@ -34,7 +34,7 @@ final class ComponentContract
         'alert' => ['roles' => ['status', 'alert', 'group'], 'options' => ['tone' => ['info', 'success', 'warning', 'danger']]],
         'attachment' => ['roles' => ['link'], 'requires' => 'href'],
         'avatar' => [],
-        'badge' => ['roles' => ['status']],
+        'badge' => ['roles' => ['status'], 'options' => ['tone' => ['neutral', 'accent', 'success', 'warning', 'danger'], 'variant' => ['filled', 'outline']]],
         'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES, 'size' => self::BUTTON_SIZES]],
         'card' => ['roles' => ['group', 'region']],
         'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
@@ -56,6 +56,11 @@ final class ComponentContract
         'item-row' => ['roles' => ['button'], 'type' => 'button', 'options' => ['variant' => self::ITEM_ROW_VARIANTS]],
         'menu' => ['roles' => ['group'], 'options' => ['placement' => ['below', 'above']], 'owns' => ['x-data'], 'message' => 'owns its Alpine keyboard helper. Put application state on a parent'],
         'menu-item' => ['roles' => ['menuitem'], 'type' => 'button', 'options' => ['variant' => ['default', 'danger']]],
+        'menu-checkbox' => ['roles' => ['menuitemcheckbox'], 'type' => 'button'],
+        'menu-radio' => ['roles' => ['menuitemradio'], 'type' => 'button'],
+        'menu-link' => ['roles' => ['menuitem'], 'requires' => 'href'],
+        'menu-separator' => ['roles' => ['separator']],
+        'menu-group' => ['roles' => ['group']],
         'menu-trigger' => ['roles' => ['button']],
         'meter' => ['roles' => ['meter']],
         'number' => ['type' => 'number', 'emits' => ['type']],
@@ -70,6 +75,19 @@ final class ComponentContract
         'sidebar-group' => ['roles' => ['group']],
         'sidebar-item' => ['roles' => ['link'], 'requires' => 'href'],
         'splitter' => ['roles' => ['separator'], 'options' => ['edge' => ['start', 'end']], 'owns' => ['x-data'], 'message' => 'owns its orientation, focus, controlled pane and Alpine helper'],
+        'search' => ['type' => 'search', 'emits' => ['type']],
+        'segment' => ['roles' => ['radio'], 'type' => 'radio', 'emits' => ['type', 'role']],
+        'segmented' => ['roles' => ['group', 'radiogroup']],
+        'spinner' => [],
+        'chip' => [],
+        'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
+        'toolbar' => ['roles' => ['group', 'region']],
+        'skeleton' => [],
+        'divider' => ['roles' => ['separator'], 'options' => ['tone' => ['neutral', 'accent']]],
+        'timeline' => ['roles' => ['list']],
+        'timeline-item' => [],
+        'breadcrumbs' => ['roles' => ['navigation']],
+        'crumb' => [],
         'switch' => ['roles' => ['switch'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
         'tab' => ['roles' => ['tab'], 'type' => 'button'],
         'table' => ['roles' => ['table']],
@@ -130,6 +148,63 @@ final class ComponentContract
         return self::fieldControl($attributes, $field);
     }
 
+    public static function skeleton(mixed $lines, ComponentAttributeBag $attributes): void
+    {
+        self::validate('skeleton', $attributes);
+        if (filter_var($lines, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 20]]) === false) {
+            throw new InvalidArgumentException('FruitUI skeleton lines must be a whole number from 1 to 20.');
+        }
+    }
+
+    /** A crumb links to an ancestor page with href, or names the current page. */
+    public static function crumb(mixed $current, ComponentAttributeBag $attributes): void
+    {
+        self::validate('crumb', $attributes);
+        if (! is_bool($current)) {
+            throw new InvalidArgumentException('FruitUI crumb current must be a boolean.');
+        }
+        $linked = $attributes->has('href') || $attributes->has(':href') || $attributes->has('x-bind:href');
+        if ($current === $linked) {
+            throw new InvalidArgumentException('FruitUI crumb needs an href, or current for the current page, but not both.');
+        }
+    }
+
+    /** A search field needs an accessible name: its label prop, its own ARIA name, or a Field. */
+    public static function search(mixed $label, ComponentAttributeBag $attributes, ?FieldContext $field): ComponentAttributeBag
+    {
+        if ($label !== null && (! is_string($label) || trim($label) === '')) {
+            throw new InvalidArgumentException('FruitUI search label must be text.');
+        }
+        if ($label === null && $field === null && ! $attributes->has('aria-label') && ! $attributes->has('aria-labelledby')) {
+            throw new InvalidArgumentException('FruitUI search needs an accessible name: a label, aria-label, aria-labelledby or a Field.');
+        }
+
+        return self::control('search', $attributes, $field);
+    }
+
+    public static function presence(mixed $available, ComponentAttributeBag $attributes): void
+    {
+        self::validate('presence', $attributes);
+        if (! is_bool($available)) {
+            throw new InvalidArgumentException('FruitUI presence available must be a boolean.');
+        }
+    }
+
+    /** Returns whether a checkbox or radio menu item's checked state is bound on the client. */
+    public static function menuChoice(string $component, mixed $checked, ComponentAttributeBag $attributes): bool
+    {
+        self::validate($component, $attributes);
+        if (! is_bool($checked)) {
+            throw new InvalidArgumentException("FruitUI {$component} checked must be a boolean.");
+        }
+        if ($attributes->has('aria-checked')) {
+            throw new InvalidArgumentException("FruitUI {$component} renders aria-checked from its checked prop; bind x-bind:aria-checked for client state.");
+        }
+
+        return $attributes->has('x-bind:aria-checked') || $attributes->has(':aria-checked');
+    }
+
+    /** Returns whether the dialog's open state is bound with wire:model or x-model. */
     public static function dialog(mixed $name, ComponentAttributeBag $attributes): bool
     {
         self::validate('dialog', $attributes);
