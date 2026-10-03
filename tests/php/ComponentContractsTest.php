@@ -202,6 +202,38 @@ class ComponentContractsTest extends TestCase
         return [['file', 'file'], ['number', 'number'], ['date', 'date'], ['date', 'datetime-local'], ['date', 'month'], ['date', 'week'], ['time', 'time'], ['color', 'color'], ['range', 'range']];
     }
 
+    public function test_date_and_color_inputs_carry_their_picker_popups_without_moving_the_value(): void
+    {
+        $date = $this->xpath(Blade::render('<x-fruit::date name="start" wire:model="start" />'));
+        $wrapper = $date->query('//div[contains(@class, "f-date-picker")]')->item(0);
+        $this->assertSame('fruitDatePicker', $wrapper->getAttribute('x-data'));
+        $this->assertSame('Choose date', $wrapper->getAttribute('data-fruit-label'));
+        $input = $date->query('.//input', $wrapper)->item(0);
+        $this->assertSame('dialog', $input->getAttribute('aria-haspopup'));
+        $this->assertSame('start', $input->getAttribute('wire:model'));
+        $this->assertTrue($date->query('.//div[@data-fruit-ui]', $wrapper)->item(0)->hasAttribute('wire:ignore'));
+
+        // Month and week keep the browser's own controls: the calendar picks days.
+        $month = $this->xpath(Blade::render('<x-fruit::date type="month" name="period" />'));
+        $this->assertSame(0, $month->query('//div')->length);
+        $this->assertFalse($month->query('//input')->item(0)->hasAttribute('aria-haspopup'));
+
+        $color = $this->xpath(Blade::render('<x-fruit::color id="accent" name="accent" value="#007aff" />'));
+        $input = $color->query('//input')->item(0);
+        $this->assertSame('accent-palette', $input->getAttribute('list'));
+        $palette = $color->query('//datalist[@id="accent-palette"]/option');
+        $this->assertSame(13, $palette->length);
+        $this->assertSame('#ff3b30', $palette->item(0)->getAttribute('value'));
+        $this->assertSame('Red', $palette->item(0)->getAttribute('label'));
+
+        $custom = $this->xpath(Blade::render('<x-fruit::color name="label" list="brand-colors" />'));
+        $this->assertSame('brand-colors', $custom->query('//input')->item(0)->getAttribute('list'));
+        $this->assertSame(0, $custom->query('//datalist')->length);
+
+        $this->assertRejected('<x-fruit::date aria-expanded="true" />', 'owns its picker popup association');
+        $this->assertRejected('<x-fruit::color aria-haspopup="listbox" />', 'owns its picker popup association');
+    }
+
     public function test_file_list_and_readonly_numeric_contracts_keep_native_attributes(): void
     {
         $file = $this->document(Blade::render('<x-fruit::file name="attachments[]" accept=".csv" multiple wire:model="attachments" />'))->getElementsByTagName('input')->item(0);

@@ -168,6 +168,220 @@
     cursor: not-allowed;
   }
 
+  /* Time stays typed and stepped with arrows, as on macOS; no browser popup. */
+  .f-input[type='time']::-webkit-calendar-picker-indicator {
+    display: none;
+  }
+
+  /* FruitUI pickers: the native input keeps the value; these popups replace the browser's. */
+  .f-date-picker {
+    position: relative;
+  }
+  .f-color-picker {
+    position: relative;
+    display: inline-block;
+  }
+  :is(.f-calendar, .f-color-palette) {
+    width: max-content;
+    padding: 8px;
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius);
+    background: var(--f-material-popup);
+    backdrop-filter: blur(24px) saturate(1.8);
+    box-shadow: var(--f-shadow);
+    color: var(--f-text);
+  }
+  .f-calendar__header {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 0 6px;
+  }
+  .f-calendar__title {
+    flex: 1;
+    padding-inline: 6px;
+    font-size: var(--f-text-base);
+    font-weight: 600;
+  }
+  .f-calendar__nav {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: var(--f-radius-sm);
+    background: transparent;
+    color: var(--f-accent);
+  }
+  .f-calendar__nav::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m7.5 3-3 3 3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m7.5 3-3 3 3 3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+  .f-calendar__nav[data-direction='next']::before,
+  .f-calendar__nav[data-direction='previous']:dir(rtl)::before {
+    transform: scaleX(-1);
+  }
+  .f-calendar__nav[data-direction='next']:dir(rtl)::before {
+    transform: none;
+  }
+  .f-calendar__nav:hover {
+    background: var(--f-hover);
+  }
+  .f-calendar__grid {
+    border-collapse: separate;
+    border-spacing: 2px;
+  }
+  .f-calendar__grid th {
+    padding: 2px 0 4px;
+    color: var(--f-secondary);
+    font-size: var(--f-text-xs);
+    font-weight: 600;
+    text-align: center;
+  }
+  .f-calendar__grid td {
+    padding: 0;
+  }
+  .f-calendar__day {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--f-text);
+    font: inherit;
+    font-size: var(--f-text-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .f-calendar__day:hover {
+    background: var(--f-hover);
+  }
+  .f-calendar__day[data-outside] {
+    color: var(--f-secondary);
+  }
+  .f-calendar__day[aria-current='date'] {
+    color: var(--f-accent);
+    font-weight: 600;
+  }
+  [aria-selected='true'] > .f-calendar__day {
+    background: var(--f-accent-fill);
+    color: var(--f-on-accent);
+    font-weight: 600;
+  }
+  .f-calendar__day[aria-disabled='true'] {
+    color: var(--f-tertiary);
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+  .f-color-palette__swatches {
+    display: grid;
+    grid-template-columns: repeat(var(--f-swatch-columns, 7), 24px);
+    gap: 8px;
+    padding: 4px;
+  }
+  .f-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--f-swatch-color);
+    box-shadow: inset 0 0 0 1px var(--f-border);
+  }
+  .f-swatch[aria-selected='true'] {
+    box-shadow:
+      inset 0 0 0 2px var(--f-surface-elevated),
+      0 0 0 2px var(--f-accent);
+  }
+  /* The custom editor sits under the swatches and takes the palette's width. */
+  .f-color-editor {
+    display: grid;
+    gap: 10px;
+    width: 0;
+    min-width: 100%;
+    margin-top: 6px;
+    padding: 4px;
+  }
+  .f-color-editor[hidden] {
+    display: none;
+  }
+  .f-color-editor__area {
+    position: relative;
+    height: 140px;
+    border-radius: var(--f-radius-sm);
+    /* The spectrum colors are data, set by the picker, not appearance tokens. */
+    background:
+      linear-gradient(0deg, var(--f-picker-black), transparent),
+      linear-gradient(90deg, var(--f-picker-white), var(--f-picker-hue));
+    box-shadow: inset 0 0 0 1px var(--f-border);
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .f-color-editor__thumb {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid var(--f-switch-thumb);
+    border-radius: 50%;
+    box-shadow: var(--f-switch-shadow);
+    pointer-events: none;
+  }
+  .f-range.f-color-editor__hue {
+    height: 20px;
+  }
+  .f-range.f-color-editor__hue::-webkit-slider-runnable-track {
+    height: 10px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--f-picker-spectrum);
+  }
+  .f-range.f-color-editor__hue::-webkit-slider-thumb {
+    margin-top: -5px;
+  }
+  .f-range.f-color-editor__hue::-moz-range-track {
+    height: 10px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--f-picker-spectrum);
+  }
+  .f-range.f-color-editor__hue::-moz-range-progress {
+    background: transparent;
+  }
+  .f-color-editor__hex {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+  .f-color-editor__hex > .f-input {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    text-transform: uppercase;
+  }
+  .f-color-palette__other {
+    width: 100%;
+    margin-top: 6px;
+    justify-content: flex-start;
+  }
+  @media (forced-colors: active) {
+    [aria-selected='true'] > .f-calendar__day {
+      background: Highlight;
+      color: HighlightText;
+    }
+    .f-swatch {
+      forced-color-adjust: none;
+      border: 1px solid CanvasText;
+    }
+    .f-swatch[aria-selected='true'] {
+      outline: 2px solid Highlight;
+    }
+  }
+
   .f-color {
     width: var(--f-color-width, 48px);
     height: var(--f-control-height, 36px);
@@ -198,6 +412,7 @@
     height: var(--f-control-height, 36px);
     margin: 0;
     padding: 0;
+    border-radius: var(--f-radius-sm);
     background: transparent;
     accent-color: var(--f-accent-fill);
     cursor: pointer;

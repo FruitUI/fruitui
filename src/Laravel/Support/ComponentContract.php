@@ -22,6 +22,9 @@ final class ComponentContract
 
     private const ENHANCED = ['data-fruit-control', 'hidden'];
 
+    /** Date and color pickers own their popup's ARIA association on the native input. */
+    private const PICKER = ['aria-haspopup', 'aria-controls', 'aria-expanded'];
+
     /**
      * roles: explicit roles a caller may repeat or choose; every other role is rejected.
      * type: the fixed native type a caller may repeat; any other type is rejected.
@@ -38,10 +41,10 @@ final class ComponentContract
         'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES, 'size' => self::BUTTON_SIZES]],
         'card' => ['roles' => ['group', 'region']],
         'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
-        'color' => ['type' => 'color', 'emits' => ['type']],
+        'color' => ['type' => 'color', 'emits' => ['type'], 'owns' => self::PICKER, 'message' => 'owns its picker popup association'],
         'combobox' => ['owns' => [...self::ENHANCED, 'multiple', 'size'], 'message' => 'owns enhancement visibility and its single value contract'],
         'composer' => ['roles' => ['form']],
-        'date' => ['options' => ['type' => self::DATE_TYPES]],
+        'date' => ['options' => ['type' => self::DATE_TYPES], 'owns' => self::PICKER, 'message' => 'owns its picker popup association'],
         'description-list' => [],
         'dialog' => ['roles' => ['dialog', 'alertdialog']],
         'disclosure' => ['roles' => ['group']],

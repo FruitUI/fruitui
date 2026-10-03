@@ -31,9 +31,9 @@ Shared `forms.css` covers checkbox/radio marks (including indeterminate checkbox
 | Group fields | `fieldset.f-fieldset` with a native legend | `x-fruit::fieldset` |
 | Choose files | `input.f-input.f-file type=file` | `x-fruit::file` |
 | Numeric quantity | `input.f-input type=number` | `x-fruit::number` |
-| Calendar value | `input.f-input type=date/datetime-local/month/week` | `x-fruit::date` with the corresponding type |
+| Calendar value | `input.f-input type=date/datetime-local/month/week`; date and date-time in `div.f-date-picker` | `x-fruit::date` with the corresponding type |
 | Time of day | `input.f-input type=time` | `x-fruit::time` |
-| Color value | `input.f-input.f-color type=color` | `x-fruit::color` |
+| Color value | `input.f-input.f-color type=color` in `div.f-color-picker` | `x-fruit::color` |
 | Bounded quantity | `input.f-range type=range` | `x-fruit::range` |
 | Task completion/activity | `progress.f-progress` | `x-fruit::progress` |
 | Bounded measurement | `meter.f-meter` | `x-fruit::meter` |
@@ -56,7 +56,13 @@ These adapters emit the native element directly. Put names, labels, validation a
 
 A readonly field has a secondary surface and text but remains focusable, selectable, and submitted. Disabled fields retain native exclusion from submission. Autofill follows the same palette through an inset surface and text styling where supported; browsers can reserve autofill properties for their own rendering. The native search clear affordance is styled in Blink/WebKit and keeps its input event. Other engines keep their own search rendering.
 
-File, date/time, and color dialogs are provided by the browser or operating system. CSS styles their exposed field parts and supplies the matching `color-scheme`; it cannot skin OS dialogs. MDN describes these [native styling limits](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Advanced_form_styling). Numeric steppers stay available. Range keeps native stepping; Firefox exposes a filled track segment, while Blink/WebKit use the shared neutral track. No script is needed for any of these controls.
+Browsers draw their own date, time and color popups, which CSS cannot style, so FruitUI replaces them while the native input keeps the value, typing, validation and `wire:model`:
+
+- **Date and date-time** open a FruitUI calendar on a click or Alt+Down, following the [WAI date picker pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/): arrows move by day and week, PageUp/PageDown by month (Shift for a year), Enter chooses, Escape closes. Typing in the field's segments still works and moves the open calendar. Days outside `min`/`max` cannot be chosen; choosing a day keeps a date-time's time. Month and week keep the browser's control.
+- **Time** stays typed and stepped with the arrow keys, as on macOS; Chromium's clock button is hidden. Firefox's cannot be hidden by CSS and still opens Firefox's picker.
+- **Color** opens a swatch palette from the input's `list` datalist, or Apple's system colors when Blade renders it without one. **Other…** expands a custom editor in the same popover: a saturation/brightness area (drag it, or use the arrow keys), a hue slider and a hex field. Values update the native input as they change and commit on release.
+
+Without JavaScript the browser's pickers remain. For raw HTML, wrap the input in `div.f-date-picker[x-data="fruitDatePicker"]` or `div.f-color-picker[x-data="fruitColorPicker"]` with an empty `<div data-fruit-ui wire:ignore></div>`; Blade emits that markup. File dialogs stay the operating system's. MDN describes these [native styling limits](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Advanced_form_styling). Numeric steppers stay available. Range keeps native stepping; Firefox exposes a filled track segment, while Blink/WebKit use the shared neutral track. No script is needed for any of these controls.
 
 Progress represents a task: supply `value` and `max` for completion, omit `value` for indeterminate activity. Reduced motion holds the indeterminate cue still. Meter represents a measurement: native `min`, `max`, `low`, `high`, and `optimum` decide whether the fill uses success, warning, or danger. Include a visible numeric description so meaning does not depend on color. Both require a label or accessible name; progress fallback text alone is [not an accessible label](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress#labelling). `--f-indicator-height` adjusts indicator thickness; `--f-color-width` adjusts the color field. Forced colors preserve visible controls and indicator boundaries.
 

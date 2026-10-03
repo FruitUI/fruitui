@@ -377,3 +377,160 @@ test('date, time and color fields share the text field frame in every engine', a
     expect(Math.abs(control.height - text.height), selector).toBeLessThanOrEqual(1);
   }
 });
+
+test('the date picker replaces the browser popup with a calendar that keeps native typing and value', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const date = page.locator('#component-date input[type=date]');
+  const changes = [];
+  await page.exposeFunction('recordChange', value => changes.push(value));
+  await date.evaluate(element => element.addEventListener('change', () => window.recordChange(element.value)));
+  const calendar = page.getByRole('dialog', { name: 'Choose date' }).first();
+
+  // A click opens FruitUI's calendar instead of the browser's picker; focus stays in the field.
+  await date.click();
+  await expect(calendar).toBeVisible();
+  expect(await date.evaluate(element => element.matches(':open'))).toBe(false);
+  await expect(date).toBeFocused();
+  const grid = calendar.getByRole('grid', { name: 'October 2026' });
+  await expect(grid.getByRole('gridcell', { selected: true })).toHaveText('2');
+
+  // Alt+Down moves into the grid; arrows, PageDown and Enter choose a day and return focus.
+  await date.press('Alt+ArrowDown');
+  await expect(grid.getByRole('button', { name: /October 2, 2026/ })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('PageDown');
+  await expect(calendar.getByRole('grid', { name: 'November 2026' })).toBeVisible();
+  await expect(calendar.getByRole('button', { name: /November 9, 2026/ })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(calendar).toBeHidden();
+  await expect(date).toHaveValue('2026-11-09');
+  await expect(date).toBeFocused();
+  expect(changes).toEqual(['2026-11-09']);
+
+  // Typed values move the open calendar; Escape closes it and keeps focus in the field.
+  await date.click();
+  await date.fill('2027-02-14');
+  await expect(calendar.getByRole('grid', { name: 'February 2027' })).toBeVisible();
+  await date.press('Escape');
+  await expect(calendar).toBeHidden();
+  await expect(date).toBeFocused();
+
+  // Days outside min/max cannot be chosen; a press outside closes without changing the value.
+  await date.evaluate(element => (element.max = '2027-02-20'));
+  await date.click();
+  const late = calendar.getByRole('button', { name: /February 21, 2027/ });
+  await expect(late).toHaveAttribute('aria-disabled', 'true');
+  await late.click({ force: true });
+  await expect(date).toHaveValue('2027-02-14');
+  await page.mouse.click(5, 5);
+  await expect(calendar).toBeHidden();
+});
+
+test('a date-time picker keeps the typed time when a day is chosen', async ({ page }) => {
+  await page.goto('/components.html');
+  const scheduled = page.locator('#component-date input[type=datetime-local]');
+  await scheduled.click();
+  const calendar = page.getByRole('dialog', { name: 'Choose date' });
+  await calendar.getByRole('button', { name: /October 15, 2026/ }).click();
+  await expect(scheduled).toHaveValue('2026-10-15T09:30');
+});
+
+test('the color picker offers swatches and a custom editor in one popover', async ({ page }) => {
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    window.pickerOpened = 0;
+    HTMLInputElement.prototype.showPicker = function () {
+      window.pickerOpened++;
+    };
+  });
+  const color = page.locator('#component-color input[type=color]');
+  const palette = page.getByRole('dialog', { name: 'Choose color' });
+  await color.click();
+  await expect(palette).toBeVisible();
+  expect(await color.evaluate(element => element.matches(':open'))).toBe(false);
+  const swatches = palette.getByRole('listbox', { name: 'Colors' });
+  await expect(swatches.getByRole('option')).toHaveCount(13);
+  await expect(swatches.getByRole('option', { name: 'Red' })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(swatches.getByRole('option', { name: 'Blue' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(palette).toBeHidden();
+  await expect(color).toHaveValue('#007aff');
+  await expect(color).toBeFocused();
+
+  // Other… expands the editor in the same popover, never the browser's chooser.
+  await color.press('Enter');
+  await expect(swatches.getByRole('option', { name: 'Blue', selected: true })).toBeFocused();
+  await palette.getByRole('button', { name: 'Other…' }).click();
+  const area = palette.getByRole('slider', { name: 'Saturation and brightness' });
+  await expect(area).toBeFocused();
+  await expect(area).toHaveAttribute('aria-valuetext', 'Saturation 100%, brightness 100%');
+  await page.keyboard.press('Shift+ArrowLeft');
+  await expect(area).toHaveAttribute('aria-valuetext', 'Saturation 90%, brightness 100%');
+  await expect(color).toHaveValue('#1987ff');
+  const hue = palette.getByRole('slider', { name: 'Hue' });
+  await hue.fill('0');
+  await expect(color).toHaveValue('#ff1919');
+  const hex = palette.getByRole('textbox', { name: 'Hex' });
+  await hex.fill('#34c759');
+  await expect(color).toHaveValue('#34c759');
+  await expect(hue).toHaveValue('135');
+
+  // Dragging in the area sets saturation and brightness under the pointer.
+  const box = await area.boundingBox();
+  await page.mouse.move(box.x + 2, box.y + 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+  await page.mouse.up();
+  await expect(area).toHaveAttribute('aria-valuetext', /^Saturation 5\d%, brightness 5\d%$/);
+  await hex.press('Enter');
+  await expect(palette).toBeHidden();
+  expect(await page.evaluate(() => window.pickerOpened)).toBe(0);
+
+  // Reopening starts from the swatches again.
+  await color.click();
+  await expect(palette.getByRole('button', { name: 'Other…' })).toBeVisible();
+  await expect(area).toBeHidden();
+});
+
+test('time fields stay typed without a browser popup button', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Only Chromium draws a time picker button that CSS can hide.');
+  await page.goto('/components.html');
+  // The field's end, where Chromium draws its clock button, holds no icon pixels.
+  const time = page.locator('#component-time input');
+  await time.scrollIntoViewIfNeeded();
+  const box = await time.boundingBox();
+  const image = await page.screenshot({
+    clip: { x: box.x + box.width - 36, y: box.y + 4, width: 32, height: box.height - 8 },
+  });
+  const iconPixels = await page.evaluate(async source => {
+    const picture = new Image();
+    picture.src = `data:image/png;base64,${source}`;
+    await picture.decode();
+    const canvas = Object.assign(document.createElement('canvas'), { width: picture.width, height: picture.height });
+    const context = canvas.getContext('2d');
+    context.drawImage(picture, 0, 0);
+    const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    let dark = 0;
+    for (let index = 0; index < data.length; index += 4)
+      if (data[index] + data[index + 1] + data[index + 2] < 300) dark++;
+    return dark;
+  }, image.toString('base64'));
+  expect(iconPixels).toBe(0);
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`open date and color pickers are accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/components.html');
+    await page.locator('#component-date input[type=date]').click();
+    await page.keyboard.press('Alt+ArrowDown');
+    await expectAccessible(page, '#component-date');
+    await page.keyboard.press('Escape');
+    await page.locator('#component-color input[type=color]').click();
+    await page.getByRole('button', { name: 'Other…' }).click();
+    await expectAccessible(page, '#component-color');
+  });
+}

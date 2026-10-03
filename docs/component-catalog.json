@@ -162,16 +162,16 @@
   {
     "id": "date",
     "kind": "primitive",
-    "classes": ["f-input"],
+    "classes": ["f-input", "f-calendar", "f-date-picker"],
     "blade": ["date"],
     "uses": [],
     "contracts": {
       "date": {
         "purpose": "Enter a calendar date or period.",
-        "element": "Native date, datetime-local, month, or week input; browser-defined calendar editing.",
-        "state": "Native serialized calendar value, min/max/step and validation; disabled/readonly.",
-        "keyboard": "Native calendar editing and picker interaction.",
-        "options": "`type`: date (default), datetime-local, month, week. Native input attributes and value bindings; no content slot."
+        "element": "Native `input` of the date type. Date and datetime-local sit in a `div.f-date-picker` with a generated calendar popover; month and week stay plain.",
+        "state": "Native serialized calendar value, min/max/step and validation; disabled/readonly. The calendar writes the native value (keeping a date-time's time) and disables days outside min/max.",
+        "keyboard": "Native segment typing. A click or Alt+Down opens the calendar (Alt+Down focuses it); arrows move by day and week, Home/End to the week's ends, PageUp/PageDown by month (Shift: year); Enter chooses; Escape closes and returns focus.",
+        "options": "`type`: date (default), datetime-local, month, week. `wrapper`: presentation and data attributes, including `data-fruit-label`, `data-fruit-previous-label` and `data-fruit-next-label`. Native input attributes and value bindings; no content slot."
       }
     }
   },
@@ -194,16 +194,16 @@
   {
     "id": "color",
     "kind": "primitive",
-    "classes": ["f-input", "f-color"],
+    "classes": ["f-color", "f-color-palette", "f-color-picker", "f-input", "f-swatch", "f-color-editor"],
     "blade": ["color"],
     "uses": [],
     "contracts": {
       "color": {
         "purpose": "Choose a color value.",
-        "element": "`input type=color`; native color-picker semantics.",
-        "state": "Native color value and disabled state.",
-        "keyboard": "Tab focuses; native activation opens the color picker.",
-        "options": "Fixed type. Native input attributes and value bindings; no content slot."
+        "element": "Native `input type=color` in a `div.f-color-picker` with a generated swatch palette.",
+        "state": "Native color value and disabled state. A swatch writes the native value; Other… expands a custom editor (saturation/brightness area, hue slider, hex field) in the same popover.",
+        "keyboard": "Tab focuses; activation opens the palette on the current swatch; arrows move; Enter or Space chooses; Escape closes and returns focus. In the editor, arrows change saturation and brightness (Shift for larger steps).",
+        "options": "Fixed type. Swatches come from the input's `list` datalist (option labels name them); without one, Blade renders Apple's system colors. `wrapper` for presentation. Native input attributes and value bindings; no content slot."
       }
     }
   },

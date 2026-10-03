@@ -2,7 +2,7 @@
 export const isRtl = element => getComputedStyle(element).direction === 'rtl';
 
 /** Use the browser top layer to avoid clipping by scrollable panes/dialogs. */
-export function fruitPopup(popup, anchor, { stretch = false, above = false, point = null } = {}) {
+export function fruitPopup(popup, anchor, { stretch = false, above = false, point = null, start = false } = {}) {
   const supported = typeof popup.showPopover === 'function';
   const originalStyle = popup.getAttribute('style');
   let showing = false;
@@ -29,7 +29,7 @@ export function fruitPopup(popup, anchor, { stretch = false, above = false, poin
       ? isRtl(point)
         ? rect.left - size.width
         : rect.left
-      : stretch || isRtl(anchor)
+      : stretch || isRtl(anchor) !== start
         ? rect.left
         : rect.right - size.width;
     const below = top + height - rect.bottom - 8,

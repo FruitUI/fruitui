@@ -209,15 +209,24 @@
 &lt;/x-fruit::field&gt;</pre></details></section>
         <section id="component-date" data-component="date" class="f-card component-card"><h2>Date and calendar</h2><p>Calendar values keep native date, date-time, month, and week editing.</p><!-- blade:date --><div class="f-field">
     <label class="f-label" for="gallery-start">Start date</label>
-    <input type="date" class="f-input" id="gallery-start" name="start" value="2026-10-02">
+    <div class="f-date-picker" data-fruit-label="Choose date" data-fruit-previous-label="Previous month" data-fruit-next-label="Next month" x-data="fruitDatePicker">
+    <input type="date" aria-haspopup="dialog" class="f-input" id="gallery-start" name="start" value="2026-10-02">
+    <div data-fruit-ui wire:ignore></div>
+</div>
         </div>
 <div class="f-field">
     <label class="f-label" for="gallery-scheduled">Scheduled at</label>
-    <input type="datetime-local" class="f-input" id="gallery-scheduled" name="scheduled" value="2026-10-02T09:30">
-        </div><!-- /blade:date --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Start date&lt;/span&gt;
-  &lt;input class=&quot;f-input&quot; type=&quot;date&quot; name=&quot;start&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="date">&lt;x-fruit::field control-id=&quot;gallery-start&quot; label=&quot;Start date&quot;&gt;
+    <div class="f-date-picker" data-fruit-label="Choose date" data-fruit-previous-label="Previous month" data-fruit-next-label="Next month" x-data="fruitDatePicker">
+    <input type="datetime-local" aria-haspopup="dialog" class="f-input" id="gallery-scheduled" name="scheduled" value="2026-10-02T09:30">
+    <div data-fruit-ui wire:ignore></div>
+</div>
+        </div><!-- /blade:date --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-field&quot;&gt;
+  &lt;label class=&quot;f-label&quot; for=&quot;start&quot;&gt;Start date&lt;/label&gt;
+  &lt;div class=&quot;f-date-picker&quot; x-data=&quot;fruitDatePicker&quot;&gt;
+    &lt;input class=&quot;f-input&quot; type=&quot;date&quot; id=&quot;start&quot; name=&quot;start&quot; aria-haspopup=&quot;dialog&quot;&gt;
+    &lt;div data-fruit-ui wire:ignore&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="date">&lt;x-fruit::field control-id=&quot;gallery-start&quot; label=&quot;Start date&quot;&gt;
     &lt;x-fruit::date name=&quot;start&quot; value=&quot;2026-10-02&quot; /&gt;
 &lt;/x-fruit::field&gt;
 &lt;x-fruit::field control-id=&quot;gallery-scheduled&quot; label=&quot;Scheduled at&quot;&gt;
@@ -234,11 +243,34 @@
 &lt;/x-fruit::field&gt;</pre></details></section>
         <section id="component-color" data-component="color" class="f-card component-card"><h2>Color picker</h2><p>A native color value, with a shared swatch and control frame.</p><!-- blade:color --><div class="f-field">
     <label class="f-label" for="gallery-color">Workspace color</label>
-    <input type="color" class="f-input f-color" id="gallery-color" name="color" value="#006cde">
-        </div><!-- /blade:color --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Workspace color&lt;/span&gt;
-  &lt;input class=&quot;f-input f-color&quot; type=&quot;color&quot; name=&quot;color&quot; value=&quot;#006cde&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="color">&lt;x-fruit::field control-id=&quot;gallery-color&quot; label=&quot;Workspace color&quot;&gt;
+    <div class="f-color-picker" data-fruit-label="Choose color" data-fruit-colors-label="Colors" data-fruit-other-label="Other…" data-fruit-area-label="Saturation and brightness" data-fruit-area-text="Saturation {saturation}%, brightness {brightness}%" data-fruit-hue-label="Hue" data-fruit-hex-label="Hex" x-data="fruitColorPicker">
+    <input type="color" aria-haspopup="dialog" class="f-input f-color" list="gallery-color-palette" id="gallery-color" name="color" value="#006cde">
+            
+        <datalist id="gallery-color-palette">
+            <option value="#ff3b30" label="Red"></option>
+            <option value="#ff9500" label="Orange"></option>
+            <option value="#ffcc00" label="Yellow"></option>
+            <option value="#34c759" label="Green"></option>
+            <option value="#00c7be" label="Mint"></option>
+            <option value="#30b0c7" label="Teal"></option>
+            <option value="#32ade6" label="Cyan"></option>
+            <option value="#007aff" label="Blue"></option>
+            <option value="#5856d6" label="Indigo"></option>
+            <option value="#af52de" label="Purple"></option>
+            <option value="#ff2d55" label="Pink"></option>
+            <option value="#a2845e" label="Brown"></option>
+            <option value="#8e8e93" label="Gray"></option>
+        </datalist>
+        <div data-fruit-ui wire:ignore></div>
+</div>
+        </div><!-- /blade:color --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-field&quot;&gt;
+  &lt;label class=&quot;f-label&quot; for=&quot;color&quot;&gt;Workspace color&lt;/label&gt;
+  &lt;div class=&quot;f-color-picker&quot; x-data=&quot;fruitColorPicker&quot;&gt;
+    &lt;input class=&quot;f-input f-color&quot; type=&quot;color&quot; id=&quot;color&quot; name=&quot;color&quot; value=&quot;#006cde&quot; list=&quot;brand-colors&quot; aria-haspopup=&quot;dialog&quot;&gt;
+    &lt;datalist id=&quot;brand-colors&quot;&gt;&lt;option value=&quot;#006cde&quot; label=&quot;Blue&quot;&gt;&lt;/option&gt;…&lt;/datalist&gt;
+    &lt;div data-fruit-ui wire:ignore&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="color">&lt;x-fruit::field control-id=&quot;gallery-color&quot; label=&quot;Workspace color&quot;&gt;
     &lt;x-fruit::color name=&quot;color&quot; value=&quot;#006cde&quot; /&gt;
 &lt;/x-fruit::field&gt;</pre></details></section>
         <section id="component-range" data-component="range" class="f-card component-card"><h2>Range slider</h2><p>A bounded numeric value. Native arrow, Home, and End keys adjust it.</p><!-- blade:range --><div class="f-field">
