@@ -65,6 +65,11 @@ export function fruitCommandPalette() {
         const option = event.target.closest('[role="option"]');
         if (option && !option.hidden) highlight(options().indexOf(option));
       });
+      // Focus stays in the search field, as in Spotlight: pointer presses elsewhere in the palette
+      // neither blur it nor focus the dialog; option clicks still activate.
+      listen(dialog, 'mousedown', event => {
+        if (event.target !== input) event.preventDefault();
+      });
       listen(list, 'click', event => {
         if (event.target.closest('[role="option"]') && dialog.open) dialog.close();
       });

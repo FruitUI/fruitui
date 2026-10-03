@@ -362,3 +362,37 @@ test('the command palette opens with its shortcut, filters, and activates comman
   await search.press('Enter');
   await expect(page).toHaveURL(/support\.html$/);
 });
+
+test('the command palette keeps search focus, rounds its search ring and keeps selected shortcuts legible', async ({
+  page,
+}) => {
+  await page.getByRole('button', { name: 'Open command palette' }).click();
+  const palette = page.getByRole('dialog', { name: 'Go to' });
+  const search = palette.getByRole('combobox', { name: 'Go to' });
+  await expect(search).toBeFocused();
+  // The inset focus ring follows the dialog's rounded top corners.
+  expect(parseFloat(await search.evaluate(element => getComputedStyle(element).borderTopLeftRadius))).toBeGreaterThan(
+    0,
+  );
+
+  // Pointer presses inside the palette leave focus in the search field.
+  const toast = palette.getByRole('option', { name: /Show a toast/ });
+  await toast.hover();
+  await expect(toast).toHaveAttribute('aria-selected', 'true');
+  const list = await palette.getByRole('listbox').boundingBox();
+  await page.mouse.click(list.x + list.width - 4, list.y + 3);
+  await expect(search).toBeFocused();
+
+  // A selected row's shortcut is text in the row's own color, not a light keycap.
+  const shortcut = toast.locator('.f-command__shortcut');
+  const styles = await shortcut.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { color: style.color, background: style.backgroundColor, border: style.borderTopWidth };
+  });
+  expect(styles.color).toBe(await toast.evaluate(element => getComputedStyle(element).color));
+  expect(styles.background).toBe('rgba(0, 0, 0, 0)');
+  expect(styles.border).toBe('0px');
+  // Menu shortcuts share the same text presentation on highlighted items.
+  const menuShortcut = page.locator('.f-menu-item__shortcut').first();
+  expect(await menuShortcut.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
+});
