@@ -241,6 +241,8 @@ test('data-theme="class" follows a Tailwind-style dark class instead of the syst
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/components.html');
   const html = page.locator('html');
+  // The gallery's appearance switcher sets data-theme as Alpine starts; change it only after that.
+  await expect(html).toHaveAttribute('data-theme', 'system');
   await html.evaluate(element => {
     element.dataset.theme = 'class';
     element.classList.remove('dark');
