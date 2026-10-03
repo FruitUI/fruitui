@@ -130,6 +130,16 @@ class CompletenessTest extends TestCase
         $this->assertSame('f-divider f-divider--start', $xpath->query('//div[@role="separator"]')->item(0)->getAttribute('class'));
     }
 
+    public function test_selection_bar_counts_selected_items_and_hides_at_zero(): void
+    {
+        $this->assertSame('', trim(Blade::render('<x-fruit::selection-bar :count="0"><button>Clear</button></x-fruit::selection-bar>')));
+        $xpath = $this->xpath(Blade::render('<x-fruit::selection-bar :count="3" aria-label="Selected conversations"><x-fruit::button>Close selected</x-fruit::button></x-fruit::selection-bar>'));
+        $bar = $xpath->query('//div[@role="region"]')->item(0);
+        $this->assertSame('Selected conversations', $bar->getAttribute('aria-label'));
+        $this->assertSame('3 selected', $xpath->query('.//span[@role="status"]', $bar)->item(0)->textContent);
+        $this->assertSame(1, $xpath->query('.//button', $bar)->length);
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -160,6 +170,7 @@ class CompletenessTest extends TestCase
             ['<x-fruit::message layout="bubble">Hi</x-fruit::message>', 'message layout must be'],
             ['<x-fruit::message variant="event">Hi</x-fruit::message>', 'message variant must be'],
             ['<x-fruit::divider align="end" />', 'divider align must be'],
+            ['<x-fruit::selection-bar count="-1" />', 'count must be a whole number'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }

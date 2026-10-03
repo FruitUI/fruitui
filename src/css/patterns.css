@@ -360,6 +360,34 @@
     color: var(--f-accent);
   }
 
+  /* Bulk selection: a list item can hold a checkbox beside its row button. */
+  .f-item-list > li:has(> .f-check) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+  }
+  .f-item-list > li > .f-check {
+    padding-inline: var(--f-item-select-padding, 10px 2px);
+  }
+  /* The count of selected items with independent actions for them. */
+  .f-selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: var(--f-selection-bar-padding, 10px 16px);
+    border-top: 1px solid var(--f-border);
+    background: var(--f-selection);
+    color: var(--f-selection-text);
+    font-size: var(--f-text-xs);
+  }
+  .f-selection-bar__count {
+    margin-inline-end: auto;
+  }
+  .f-selection-bar .f-button--ghost {
+    color: inherit;
+  }
+
   /* One message in a conversation: identity and time, the body, then attachments or actions.
      Inline puts the avatar beside everything; stacked puts the identity above a full-width body. */
   .f-message {

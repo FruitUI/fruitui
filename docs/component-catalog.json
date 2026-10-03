@@ -1062,5 +1062,21 @@
         "options": "`layout`: inline (default), stacked. `variant`: default, note. `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta`, `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply). Give it an accessible name."
       }
     }
+  },
+  {
+    "id": "selection-bar",
+    "kind": "pattern",
+    "classes": ["f-selection-bar"],
+    "blade": ["selection-bar"],
+    "uses": ["admin.html", "examples/laravel/support-desk.blade.php"],
+    "contracts": {
+      "selection-bar": {
+        "purpose": "Count selected items and offer actions for them.",
+        "element": "`div` region with a status count and independent buttons.",
+        "state": "`count` renders the count; nothing renders at zero. The application owns the selection.",
+        "keyboard": "Buttons keep their native behavior.",
+        "options": "`count`: number of selected items. Accessible label (default `Selection`). Slot: independent actions. Select items with Checkboxes beside Item Rows."
+      }
+    }
   }
 ]

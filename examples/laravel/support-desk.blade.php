@@ -35,6 +35,8 @@ new class extends Component
 
     public bool $closing = false;
 
+    public array $selected = [];
+
     public function mount(string $mailbox = 'all'): void
     {
         abort_unless(array_key_exists($mailbox, self::MAILBOXES), 404);
@@ -100,6 +102,22 @@ new class extends Component
         $this->closing = false;
         Fruit::flashToast("Conversation #{$id} closed as ".strtolower(self::REASONS[$this->closeReason]).'.');
         $this->redirect(url('/support/closed'), navigate: true);
+    }
+
+    public function closeSelected(): void
+    {
+        $tickets = $this->store();
+        $closed = 0;
+        foreach ($this->selected as $id) {
+            if (($tickets[(int) $id]['status'] ?? null) === 'open') {
+                $tickets[(int) $id] = [...$tickets[(int) $id], 'status' => 'closed', 'reason' => 'resolved'];
+                $closed++;
+            }
+        }
+        session(['fruit-support.tickets' => $tickets]);
+        unset($this->ticket, $this->tickets, $this->counts);
+        $this->selected = [];
+        Fruit::toast(trans_choice('{1} :count conversation closed.|[2,*] :count conversations closed.', $closed, ['count' => $closed]));
     }
 
     #[Computed]
@@ -203,6 +221,7 @@ new class extends Component
                     <x-fruit::item-list aria-label="{{ $this::MAILBOXES[$mailbox] }}">
                         @foreach ($this->tickets as $item)
                             <li wire:key="ticket-{{ $item['id'] }}">
+                                <x-fruit::checkbox wire:model.live="selected" value="{{ $item['id'] }}"><span class="f-sr-only">Select {{ $item['name'] }}</span></x-fruit::checkbox>
                                 <x-fruit::item-row wire:click="open({{ $item['id'] }})" :aria-current="$openId === $item['id'] ? 'true' : null">
                                     {{ $item['name'] }}
                                     <x-slot:leading class="f-avatar" aria-hidden="true">{{ $item['initials'] }}</x-slot:leading>
@@ -213,6 +232,10 @@ new class extends Component
                             </li>
                         @endforeach
                     </x-fruit::item-list>
+                    <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
+                        <x-fruit::button variant="ghost" size="small" wire:click="$set('selected', [])">Clear selection</x-fruit::button>
+                        <x-fruit::button size="small" wire:click="closeSelected">Close selected</x-fruit::button>
+                    </x-fruit::selection-bar>
                     <div style="padding: 0 var(--f-space-3)">{{ $this->tickets->links() }}</div>
                 @endif
             </div>

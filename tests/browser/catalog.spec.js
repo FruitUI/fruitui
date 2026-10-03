@@ -55,6 +55,8 @@ test('extracted patterns have at least two actual example consumers', () => {
     for (const file of entry.uses) {
       expect(file).not.toBe('components.html');
       const source = readFileSync(new URL(file, root), 'utf8');
+      // Blade examples may use the entry's adapter instead of writing its classes.
+      if (file.endsWith('.blade.php') && entry.blade.some(adapter => source.includes(`<x-fruit::${adapter}`))) continue;
       const classes = [...source.matchAll(/class="([^"<>]+)"/g)].flatMap(([, names]) => names.split(/\s+/));
       for (const family of entry.classes) expect(classes, `${file} must actually use ${family}`).toContain(family);
     }

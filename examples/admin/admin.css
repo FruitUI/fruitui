@@ -487,24 +487,10 @@
   width: 122px;
 }
 .admin-bulk-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px 20px;
-  background: var(--f-selection);
-  color: var(--f-selection-text);
-  border-top: 1px solid var(--f-border);
-  font-size: var(--f-text-xs);
-}
-.admin-bulk-actions > span {
-  margin-right: auto;
+  --f-selection-bar-padding: 10px 20px;
 }
 .admin-bulk-actions > .f-button {
   font-size: var(--f-text-2xs);
-}
-.admin-bulk-actions > .f-button--ghost {
-  color: var(--f-selection-text);
 }
 
 .admin-table {

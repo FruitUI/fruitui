@@ -238,3 +238,18 @@ test('the desk works with Livewire’s injected scripts and the self-registering
   await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('bulk selection shows the selection bar and closes the chosen conversations', async ({ page }) => {
+  const errors = await openDesk(page);
+  await expect(page.getByRole('region', { name: 'Selected conversations' })).toHaveCount(0);
+  await page.getByRole('checkbox', { name: 'Select Jordan Lee' }).check();
+  await page.getByRole('checkbox', { name: 'Select Daniel Brooks' }).check();
+  const bar = page.getByRole('region', { name: 'Selected conversations' });
+  await expect(bar.getByRole('status')).toHaveText('2 selected');
+  await bar.getByRole('button', { name: 'Close selected' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '2 conversations closed.' })).toBeVisible();
+  await expect(bar).toHaveCount(0);
+  await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Closed/ }).locator('.f-badge')).toHaveText('2');
+  expect(errors).toEqual([]);
+});

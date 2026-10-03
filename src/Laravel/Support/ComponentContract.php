@@ -82,6 +82,7 @@ final class ComponentContract
         'chip' => [],
         'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
         'toolbar' => ['roles' => ['group', 'region']],
+        'selection-bar' => ['roles' => ['region']],
         'skeleton' => [],
         'divider' => ['roles' => ['separator'], 'options' => ['tone' => ['neutral', 'accent'], 'align' => ['center', 'start']]],
         'message' => ['roles' => ['article', 'listitem'], 'options' => ['layout' => ['inline', 'stacked'], 'variant' => ['default', 'note']]],
@@ -147,6 +148,14 @@ final class ComponentContract
         $attributes = $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), self::CONTRACTS[$component]['emits'] ?? [], true));
 
         return self::fieldControl($attributes, $field);
+    }
+
+    public static function selectionBar(mixed $count, ComponentAttributeBag $attributes): void
+    {
+        self::validate('selection-bar', $attributes);
+        if (filter_var($count, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
+            throw new InvalidArgumentException('FruitUI selection-bar count must be a whole number of selected items.');
+        }
     }
 
     public static function skeleton(mixed $lines, ComponentAttributeBag $attributes): void
