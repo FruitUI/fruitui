@@ -1,11 +1,12 @@
-@php(\FruitUI\Support\ComponentContract::semantics('field', $attributes, 'group'))
+@php(\FruitUI\Support\ComponentContract::validate('field', $attributes))
+@php($fieldError = $fruitField->error())
 <div {{ $attributes->class(['f-field']) }}>
-    <label class="f-label" for="{{ $controlId }}">{{ $label }}</label>
+    <label class="f-label" for="{{ $fruitField->id() }}">{{ $label }}</label>
     {{ $slot }}
     @if($description !== null && $description !== '')
-        <p class="f-help" id="{{ $controlId }}-description">{{ $description }}</p>
+        <p class="f-help" id="{{ $fruitField->descriptionId() }}">{{ $description }}</p>
     @endif
-    @if($error !== null && $error !== '')
-        <p class="f-error" id="{{ $controlId }}-error">{{ $error }}</p>
+    @if($fieldError !== null)
+        <p class="f-error" id="{{ $fruitField->errorId() }}">{{ $fieldError }}</p>
     @endif
 </div>

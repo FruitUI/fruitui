@@ -1,0 +1,14 @@
+build/
+dist/
+vendor/
+node_modules/
+test-results/
+playwright-report/
+tests/host/.runtime/
+# Hand-authored example pages and the generated gallery keep their compact markup.
+*.html
+# Generated or tool-owned formats.
+*.md
+composer.json
+composer.lock
+package-lock.json

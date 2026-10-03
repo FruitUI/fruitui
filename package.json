@@ -7,6 +7,7 @@
   "exports": {
     "./css": "./src/fruitui.css",
     "./alpine": "./src/js/alpine.js",
+    "./livewire": "./src/js/livewire.js",
     "./editor": "./src/js/editor.js",
     "./core.css": "./src/core.css",
     "./mail.css": "./src/mail.css",
@@ -21,6 +22,7 @@
     "build",
     "docs",
     "CHANGELOG.md",
+    "LICENSE",
     "AGENTS.md"
   ],
   "scripts": {
@@ -31,19 +33,26 @@
     "build:package": "node scripts/build-package.mjs",
     "prepack": "npm run build:package",
     "test:package": "node scripts/test-package.mjs",
-    "pretest": "npm run build:package"
+    "pretest": "npm run build:package",
+    "build:docs": "node scripts/build-docs.mjs",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write . && eslint --fix ."
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
-    "alpinejs": "^3.17.4",
-    "vite": "^8.3.2",
     "@tiptap/core": "^3.31.4",
     "@tiptap/pm": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4",
-    "postcss": "^8.5.8"
+    "alpinejs": "^3.17.4",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "postcss": "^8.5.8",
+    "prettier": "^3.9.9",
+    "vite": "^8.3.2"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "peerDependencies": {
     "@tiptap/core": "^3.31.4",
     "@tiptap/pm": "^3.31.4",

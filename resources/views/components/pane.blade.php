@@ -1,4 +1,4 @@
-@php(\FruitUI\Support\ComponentContract::semantics('pane', $attributes, ['group', 'region']))
+@php(\FruitUI\Support\ComponentContract::validate('pane', $attributes))
 <div {{ $attributes->class(['f-pane']) }}>
     {{ $slot }}
 </div>

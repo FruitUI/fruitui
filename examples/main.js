@@ -4,6 +4,7 @@ import './shared/showcase.css';
 import fruitUI from '../src/js/alpine.js';
 import { installIcons } from './shared/icons.js';
 import { appearance } from './shared/appearance.js';
+import { withPreview } from './shared/preview.js';
 import { mailDemo } from './mail/mail.js';
 import { supportDemo } from './support/support.js';
 import { chatDemo } from './chat/chat.js';
@@ -17,9 +18,9 @@ if (document.querySelector('.f-editor')) {
   fruitEditor(Alpine);
 }
 Alpine.data('appearance', appearance);
-Alpine.data('mailDemo', mailDemo);
-Alpine.data('supportDemo', supportDemo);
-Alpine.data('chatDemo', chatDemo);
-Alpine.data('adminDemo', adminDemo);
+Alpine.data('mailDemo', withPreview(mailDemo));
+Alpine.data('supportDemo', withPreview(supportDemo));
+Alpine.data('chatDemo', withPreview(chatDemo));
+Alpine.data('adminDemo', withPreview(adminDemo));
 Alpine.data('uploadDemo', uploadDemo);
 Alpine.start();

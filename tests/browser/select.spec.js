@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,12 +30,27 @@ async function openFixture(page) {
 }
 
 async function requireStyledPicker(page) {
-  test.skip(!await page.evaluate(() => CSS.supports('appearance', 'base-select') && CSS.supports('selector(select::picker(select))')), 'Browser retains native option rendering');
+  test.skip(
+    !(await page.evaluate(
+      () => CSS.supports('appearance', 'base-select') && CSS.supports('selector(select::picker(select))'),
+    )),
+    'Browser retains native option rendering',
+  );
 }
 
 const palette = {
-  light: { control: 'rgb(255, 255, 255)', text: 'rgb(34, 34, 37)', secondary: 'rgb(101, 101, 108)', disabled: 'rgb(118, 118, 125)', selection: 'rgb(226, 237, 255)' },
-  dark: { control: 'rgb(57, 57, 62)', text: 'rgb(243, 243, 245)', secondary: 'rgb(176, 176, 184)', disabled: 'rgb(161, 161, 171)', selection: 'rgb(38, 62, 90)' },
+  light: {
+    control: 'rgb(255, 255, 255)',
+    text: 'rgb(34, 34, 37)',
+    secondary: 'rgb(101, 101, 108)',
+    disabled: 'rgb(118, 118, 125)',
+  },
+  dark: {
+    control: 'rgb(57, 57, 62)',
+    text: 'rgb(243, 243, 245)',
+    secondary: 'rgb(176, 176, 184)',
+    disabled: 'rgb(161, 161, 171)',
+  },
 };
 
 test.describe('CSS-only native selection', () => {
@@ -53,7 +68,10 @@ test.describe('CSS-only native selection', () => {
     await page.keyboard.press('Space');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
-    await expect(select.locator('option[value="work"]')).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+    await expect(select.locator('option[value="work"]')).toHaveCSS(
+      'background-color',
+      await tokenColor(page, '--f-accent-fill'),
+    );
     await page.keyboard.press('Enter');
     await expect(select).toHaveValue('work');
     await expect(select).toBeFocused();
@@ -77,7 +95,9 @@ test.describe('CSS-only native selection', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Shift+ArrowDown');
     await expect(folders).toHaveValues(['sent', 'archive']);
-    await page.route('**/select-submit?*', route => route.fulfill({ contentType: 'text/html', body: '<h1>Saved selections</h1>' }));
+    await page.route('**/select-submit?*', route =>
+      route.fulfill({ contentType: 'text/html', body: '<h1>Saved selections</h1>' }),
+    );
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Saved selections' })).toBeVisible();
     const submitted = new URL(page.url()).searchParams;
@@ -98,7 +118,9 @@ test.describe('CSS-only native selection', () => {
     await expect(folders).toHaveValues(['trash']); // Disabled option is skipped.
     await folders.selectOption('inbox');
     for (const size of [2, 3, 4]) {
-      await folders.evaluate((element, size) => { element.size = size; }, size);
+      await folders.evaluate((element, size) => {
+        element.size = size;
+      }, size);
       const rows = await folders.evaluate(element => {
         const style = getComputedStyle(element);
         const contentHeight = element.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
@@ -114,7 +136,9 @@ test.describe('CSS-only native selection', () => {
   });
 
   for (const appearance of ['light', 'dark']) {
-    test(`open picker options and groups follow live ${appearance} appearance outside a clipped pane`, async ({ page }) => {
+    test(`open picker options and groups follow live ${appearance} appearance outside a clipped pane`, async ({
+      page,
+    }) => {
       await page.emulateMedia({ colorScheme: appearance });
       await openFixture(page);
       await requireStyledPicker(page);
@@ -128,9 +152,12 @@ test.describe('CSS-only native selection', () => {
       const option = await work.boundingBox();
       expect(option.y + option.height).toBeGreaterThan(clipped.y + clipped.height);
       await work.hover();
-      await expect(work).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+      await expect(work).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
       await expect(work).toHaveCSS('color', 'rgb(255, 255, 255)');
-      await expect(select.locator('option:checked')).toHaveCSS('background-color', palette[appearance].selection);
+      await expect(select.locator('option:checked')).toHaveCSS(
+        'background-color',
+        await tokenColor(page, '--f-selection'),
+      );
       await offline.hover();
       expect(await offline.evaluate(element => element.matches(':disabled'))).toBe(true);
       for (const system of [appearance, appearance === 'light' ? 'dark' : 'light']) {
@@ -140,7 +167,9 @@ test.describe('CSS-only native selection', () => {
         await expect(personal).toHaveCSS('color', colors.text);
         await expect(offline).toHaveCSS('color', colors.disabled);
         await expect(select.locator('optgroup').first()).toHaveCSS('color', colors.secondary);
-        expect(await select.evaluate(element => getComputedStyle(element, '::picker(select)').backgroundColor)).toBe(colors.control);
+        expect(await select.evaluate(element => getComputedStyle(element, '::picker(select)').backgroundColor)).toBe(
+          colors.control,
+        );
         expect(await select.evaluate(element => element.matches(':open'))).toBe(true);
       }
       await personal.click();
@@ -154,13 +183,16 @@ test.describe('CSS-only native selection', () => {
     await requireStyledPicker(page);
     const select = page.getByRole('combobox', { name: 'Mailbox', exact: true });
     await select.evaluate(element => {
-      for (let i = 0; i < 20; i++) element.add(new Option(`A long mailbox label ${i} for customer-success@example.com`, `mailbox-${i}`));
+      for (let i = 0; i < 20; i++)
+        element.add(new Option(`A long mailbox label ${i} for customer-success@example.com`, `mailbox-${i}`));
     });
     await select.click();
     const first = await select.locator('option').first().boundingBox();
     expect(first.x).toBeGreaterThanOrEqual(0);
     expect(first.x + first.width).toBeLessThanOrEqual(320);
-    expect(await select.evaluate(element => parseFloat(getComputedStyle(element, '::picker(select)').height))).toBeLessThanOrEqual(320);
+    expect(
+      await select.evaluate(element => parseFloat(getComputedStyle(element, '::picker(select)').height)),
+    ).toBeLessThanOrEqual(320);
     await select.locator('option[value="mailbox-19"]').click();
     await expect(select).toHaveValue('mailbox-19');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -210,8 +242,7 @@ for (const appearance of ['light', 'dark']) {
     await openFixture(page);
     await requireStyledPicker(page);
     await page.getByRole('combobox', { name: 'Mailbox', exact: true }).click();
-    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-    expect(violations).toEqual([]);
+    await expectAccessible(page);
   });
 }
 
@@ -223,7 +254,10 @@ test('real native picker selection updates status through the existing Alpine su
   await select.locator('option[value="waiting"]').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(5);
   await expect(page.locator('#support-queues').getByRole('button', { name: /^Waiting/ })).toContainText('3');
-  await page.locator('#support-queues').getByRole('button', { name: /^Waiting/ }).click();
+  await page
+    .locator('#support-queues')
+    .getByRole('button', { name: /^Waiting/ })
+    .click();
   await page.locator('button.support-ticket[data-ticket-id="1042"]').click();
   await expect(select).toHaveValue('waiting');
 });

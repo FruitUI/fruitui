@@ -1,4 +1,4 @@
-@php(\FruitUI\Support\ComponentContract::semantics('empty-state', $attributes, ['group', 'region']))
+@php(\FruitUI\Support\ComponentContract::validate('empty-state', $attributes))
 <div {{ $attributes->class(['f-empty-state']) }}>
     @isset($icon)<span {{ $icon->attributes->class(['f-empty-state__icon']) }}>{{ $icon }}</span>@endisset
     @isset($title)<div {{ $title->attributes->class(['f-empty-state__title']) }}>{{ $title }}</div>@endisset

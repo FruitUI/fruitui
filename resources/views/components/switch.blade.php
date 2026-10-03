@@ -1,5 +1,6 @@
-@php(\FruitUI\Support\ComponentContract::choice('switch', $attributes))
+@aware(['fruitField' => null])
+@php($attributes = \FruitUI\Support\ComponentContract::control('switch', $attributes, $fruitField))
 <label class="f-switch">
-    <input type="checkbox" role="switch" {{ $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), ['type', 'role'], true)) }}>
+    <input type="checkbox" role="switch" {{ $attributes }}>
     <span>{{ $slot }}</span>
 </label>

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 const examples = [
   ['Mail', '/', '#mail', 280],
@@ -11,21 +11,23 @@ const width = async element => (await element.boundingBox()).width;
 
 for (const appearance of ['light', 'dark']) {
   for (const [name, path, frameSelector, reserve] of examples) {
-    test(`${name} shared splitters resize with pointer and keyboard in ${appearance} and hide on phones`, async ({ page }) => {
+    test(`${name} shared splitters resize with pointer and keyboard in ${appearance} and hide on phones`, async ({
+      page,
+    }) => {
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
       await page.emulateMedia({ colorScheme: appearance });
       await page.goto(path);
       const frame = page.locator(frameSelector);
       await expect(frame).toHaveClass(/f-workspace/);
-      const splitters = frame.getByRole('separator');
+      const splitters = frame.locator('.f-splitter[role="separator"]');
       await expect.poll(() => splitters.count()).toBeGreaterThan(0);
       for (const handle of await splitters.all()) {
         await expect(handle).toHaveAttribute('aria-valuenow', /\d+/);
         const pane = page.locator(`#${await handle.getAttribute('aria-controls')}`);
         const original = await width(pane);
         const start = await handle.boundingBox();
-        const sign = await handle.getAttribute('data-edge') === 'start' ? -1 : 1;
+        const sign = (await handle.getAttribute('data-edge')) === 'start' ? -1 : 1;
         await page.mouse.move(start.x + start.width / 2, start.y + 100);
         await page.mouse.down();
         await page.mouse.move(start.x + start.width / 2 + 24 * sign, start.y + 100, { steps: 4 });
@@ -42,13 +44,21 @@ for (const appearance of ['light', 'dark']) {
         await expect(handle).toHaveAttribute('aria-valuetext', /pixels$/);
         expect(await frame.evaluate(e => e.scrollWidth <= e.clientWidth)).toBe(true);
       }
-      const flexible = frame.locator(name === 'Mail' ? '#mail-reader' : name === 'Support' ? '#support-conversation' : name === 'Chat' ? '#chat-conversation' : '#admin-content');
+      const flexible = frame.locator(
+        name === 'Mail'
+          ? '#mail-reader'
+          : name === 'Support'
+            ? '#support-conversation'
+            : name === 'Chat'
+              ? '#chat-conversation'
+              : '#admin-content',
+      );
       expect(await width(flexible)).toBeGreaterThanOrEqual(reserve - 1);
       await page.setViewportSize({ width: 1000, height: 1100 });
-      await expect.poll(async () => (await width(flexible))).toBeGreaterThanOrEqual(reserve - 1);
+      await expect.poll(async () => await width(flexible)).toBeGreaterThanOrEqual(reserve - 1);
       expect(await frame.evaluate(e => e.scrollWidth <= e.clientWidth)).toBe(true);
       await page.setViewportSize({ width: 390, height: 844 });
-      await expect(frame.getByRole('separator')).toHaveCount(0);
+      await expect(frame.locator('.f-splitter[role="separator"]:visible')).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.setViewportSize({ width: 1440, height: 1100 });
       await expect(frame.getByRole('separator').first()).toBeVisible();
@@ -56,6 +66,18 @@ for (const appearance of ['light', 'dark']) {
     });
   }
 }
+
+test('visible splitters expose their value without waiting for an animation frame', async ({ page }) => {
+  // Some engines audit or read the page before the first frame; ARIA values must already be present.
+  await page.addInitScript(() => (window.requestAnimationFrame = () => 0));
+  await page.goto('/chat.html');
+  const splitters = page.locator('#chat .f-splitter[role="separator"]:visible');
+  await expect(splitters.first()).toHaveAttribute('data-ready', '');
+  for (const handle of await splitters.all()) {
+    await expect(handle).toHaveAttribute('aria-valuenow', /^\d+$/);
+    await expect(handle).toHaveAttribute('aria-valuemax', /^\d+$/);
+  }
+});
 
 test('splitter cancellation restores width and RTL follows physical divider movement', async ({ page }) => {
   await page.goto('/components.html');
@@ -74,7 +96,7 @@ test('splitter cancellation restores width and RTL follows physical divider move
   await page.mouse.up();
   await expect.poll(() => width(pane)).toBeCloseTo(original, 0);
   await expect(fixture.locator('.f-workspace')).not.toHaveAttribute('data-resizing');
-  await fixture.locator('.f-workspace').evaluate(e => e.dir = 'rtl');
+  await fixture.locator('.f-workspace').evaluate(e => (e.dir = 'rtl'));
   await handle.focus();
   await page.keyboard.press('ArrowLeft');
   await expect.poll(() => width(pane)).toBeCloseTo(original + 8, 0);
@@ -109,7 +131,9 @@ test('floating disclosure uses native toggle, optional outside/Escape dismissal 
   await expect(details.locator('[role="menu"], [role="menuitem"]')).toHaveCount(0);
 });
 
-test('composer owns native submit while textarea preserves multiline value and required validation', async ({ page }) => {
+test('composer owns native submit while textarea preserves multiline value and required validation', async ({
+  page,
+}) => {
   await page.goto('/components.html');
   const form = page.getByRole('form', { name: 'Composer preview' });
   const input = form.getByRole('textbox', { name: 'Message to the team' });
@@ -175,6 +199,6 @@ for (const appearance of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: appearance });
     await loadStandalone(page);
     await page.locator('summary').click();
-    expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+    await expectAccessible(page);
   });
 }

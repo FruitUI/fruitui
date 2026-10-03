@@ -5,3 +5,24 @@
 /vendor export-ignore
 /test-results export-ignore
 /playwright-report export-ignore
+/gallery export-ignore
+# The Composer package holds the Laravel adapters, styles, scripts and compiled build/; the
+# showcase, tooling and lockfiles stay in the repository.
+/public export-ignore
+/scripts export-ignore
+/index.html export-ignore
+/admin.html export-ignore
+/chat.html export-ignore
+/support.html export-ignore
+/components.html export-ignore
+/composer.lock export-ignore
+/package-lock.json export-ignore
+/playwright.config.js export-ignore
+/vite.config.js export-ignore
+/eslint.config.js export-ignore
+/phpunit.xml export-ignore
+/pint.json export-ignore
+/.prettierrc.json export-ignore
+/.prettierignore export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore

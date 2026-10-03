@@ -2,23 +2,13 @@
 
 namespace FruitUI\Tests;
 
-use DOMDocument;
-use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\View\ViewException;
-use InvalidArgumentException;
-use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 class ComponentContractsTest extends TestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [FruitUIServiceProvider::class];
-    }
-
     #[DataProvider('textTypes')]
     public function test_text_input_accepts_only_documented_subtypes(string $type): void
     {
@@ -108,6 +98,7 @@ class ComponentContractsTest extends TestCase
             ['<x-fruit::input as="select" />', 'fixed native element'],
             ['<x-fruit::input x-bind:type="kind" />', 'type and role belong to its component contract'],
             ['<x-fruit::input ::type="kind" />', 'type and role belong to its component contract'],
+            ['<x-fruit::input type="email" x-bind:type="kind" />', 'type and role belong to its component contract'],
             ['<x-fruit::checkbox type="radio">Choice</x-fruit::checkbox>', 'fixed native type'],
             ['<x-fruit::radio role="checkbox">Choice</x-fruit::radio>', 'overriding role'],
             ['<x-fruit::switch role="checkbox">Setting</x-fruit::switch>', 'overriding role'],
@@ -119,6 +110,32 @@ class ComponentContractsTest extends TestCase
             ['<x-fruit::card role="checkbox">A row</x-fruit::card>', 'overriding role'],
             ['<x-fruit::card as="button">An action</x-fruit::card>', 'fixed native element'],
         ];
+    }
+
+    public function test_a_password_input_can_bind_its_type_to_reveal_its_characters(): void
+    {
+        // Blade escapes ::type to Alpine's :type shorthand.
+        foreach (['x-bind:type' => 'x-bind:type', '::type' => ':type'] as $binding => $rendered) {
+            $html = Blade::render('<x-fruit::input type="password" name="password" autocomplete="current-password" '.$binding.'="shown ? \'text\' : \'password\'" wire:model="password" />');
+            $input = $this->document($html)->getElementsByTagName('input')->item(0);
+
+            $this->assertSame('password', $input->getAttribute('type'));
+            $this->assertSame("shown ? 'text' : 'password'", $input->getAttribute($rendered));
+            $this->assertSame('password', $input->getAttribute('wire:model'));
+        }
+
+        // The documented reveal toggle: Field still labels the input inside an input group.
+        $html = Blade::render(<<<'BLADE'
+            <x-fruit::field label="Password" x-data="{ shown: false }">
+                <div class="f-input-group">
+                    <x-fruit::input type="password" wire:model="password" autocomplete="current-password" x-bind:type="shown ? 'text' : 'password'" />
+                    <x-fruit::button type="button" x-on:click="shown = !shown" x-bind:aria-pressed="shown">Show</x-fruit::button>
+                </div>
+            </x-fruit::field>
+            BLADE);
+        $input = $this->document($html)->getElementsByTagName('input')->item(0);
+        $this->assertSame('field-password', $input->getAttribute('id'));
+        $this->assertStringContainsString('for="field-password"', $html);
     }
 
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
@@ -147,16 +164,16 @@ class ComponentContractsTest extends TestCase
             }
         }
 
-        $policy = file_get_contents($root.'/docs/component-policy.md');
-        preg_match_all('/^\| `([a-z][a-z0-9.-]*)` \|(.+)\|$/m', $policy, $rows, PREG_SET_ORDER);
+        $catalog = json_decode(file_get_contents($root.'/docs/component-catalog.json'), true, flags: JSON_THROW_ON_ERROR);
         $documented = [];
-        foreach ($rows as $row) {
-            $cells = array_map('trim', explode('|', trim($row[2])));
-            $this->assertCount(5, $cells, 'Document purpose, element/role, state, keyboard, and options/slots for '.$row[1]);
-            foreach ($cells as $cell) {
-                $this->assertNotSame('', $cell, 'Incomplete contract for '.$row[1]);
+        foreach ($catalog as $entry) {
+            foreach ($entry['contracts'] ?? [] as $name => $contract) {
+                foreach (['purpose', 'element', 'state', 'keyboard', 'options'] as $field) {
+                    $this->assertNotSame('', trim($contract[$field] ?? ''), "Document {$field} for {$name}");
+                }
+                $this->assertContains($name, $entry['blade'], "{$name}'s contract belongs to the entry that lists its adapter");
+                $documented[] = $name;
             }
-            $documented[] = $row[1];
         }
         sort($components);
         sort($documented);
@@ -183,6 +200,38 @@ class ComponentContractsTest extends TestCase
     public static function nativeInputFamilies(): array
     {
         return [['file', 'file'], ['number', 'number'], ['date', 'date'], ['date', 'datetime-local'], ['date', 'month'], ['date', 'week'], ['time', 'time'], ['color', 'color'], ['range', 'range']];
+    }
+
+    public function test_date_and_color_inputs_carry_their_picker_popups_without_moving_the_value(): void
+    {
+        $date = $this->xpath(Blade::render('<x-fruit::date name="start" wire:model="start" />'));
+        $wrapper = $date->query('//div[contains(@class, "f-date-picker")]')->item(0);
+        $this->assertSame('fruitDatePicker', $wrapper->getAttribute('x-data'));
+        $this->assertSame('Choose date', $wrapper->getAttribute('data-fruit-label'));
+        $input = $date->query('.//input', $wrapper)->item(0);
+        $this->assertSame('dialog', $input->getAttribute('aria-haspopup'));
+        $this->assertSame('start', $input->getAttribute('wire:model'));
+        $this->assertTrue($date->query('.//div[@data-fruit-ui]', $wrapper)->item(0)->hasAttribute('wire:ignore'));
+
+        // Month and week keep the browser's own controls: the calendar picks days.
+        $month = $this->xpath(Blade::render('<x-fruit::date type="month" name="period" />'));
+        $this->assertSame(0, $month->query('//div')->length);
+        $this->assertFalse($month->query('//input')->item(0)->hasAttribute('aria-haspopup'));
+
+        $color = $this->xpath(Blade::render('<x-fruit::color id="accent" name="accent" value="#007aff" />'));
+        $input = $color->query('//input')->item(0);
+        $this->assertSame('accent-palette', $input->getAttribute('list'));
+        $palette = $color->query('//datalist[@id="accent-palette"]/option');
+        $this->assertSame(13, $palette->length);
+        $this->assertSame('#ff3b30', $palette->item(0)->getAttribute('value'));
+        $this->assertSame('Red', $palette->item(0)->getAttribute('label'));
+
+        $custom = $this->xpath(Blade::render('<x-fruit::color name="label" list="brand-colors" />'));
+        $this->assertSame('brand-colors', $custom->query('//input')->item(0)->getAttribute('list'));
+        $this->assertSame(0, $custom->query('//datalist')->length);
+
+        $this->assertRejected('<x-fruit::date aria-expanded="true" />', 'owns its picker popup association');
+        $this->assertRejected('<x-fruit::color aria-haspopup="listbox" />', 'owns its picker popup association');
     }
 
     public function test_file_list_and_readonly_numeric_contracts_keep_native_attributes(): void
@@ -239,37 +288,5 @@ class ComponentContractsTest extends TestCase
         foreach (['min' => '0', 'max' => '100', 'low' => '60', 'high' => '85', 'optimum' => '20', 'value' => '35'] as $name => $value) {
             $this->assertSame($value, $meter->getAttribute($name));
         }
-    }
-
-    private function assertRejected(string $template, string $message, array $data = []): void
-    {
-        try {
-            Blade::render($template, $data);
-        } catch (ViewException $exception) {
-            $cause = $exception;
-            while ($cause->getPrevious()) {
-                $cause = $cause->getPrevious();
-            }
-            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
-            $this->assertStringContainsString($message, $cause->getMessage());
-
-            return;
-        }
-
-        $this->fail('An unsupported component contract rendered without an error.');
-    }
-
-    private function document(string $html): DOMDocument
-    {
-        $document = new DOMDocument;
-        $previous = libxml_use_internal_errors(true);
-        try {
-            $document->loadHTML($html);
-        } finally {
-            libxml_clear_errors();
-            libxml_use_internal_errors($previous);
-        }
-
-        return $document;
     }
 }

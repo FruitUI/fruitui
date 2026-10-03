@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { expectAccessible } from './helpers.js';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -22,7 +22,10 @@ test('search, unread filter, and reading a message update the inbox', async ({ p
 test('flagging and moving messages change the correct mailbox', async ({ page }) => {
   await page.getByRole('button', { name: 'Flag message', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Flag message', exact: true })).toHaveAttribute('aria-pressed', 'true');
-  await page.locator('#mailboxes').getByRole('button', { name: /Flagged/ }).click();
+  await page
+    .locator('#mailboxes')
+    .getByRole('button', { name: /Flagged/ })
+    .click();
   await expect(page.locator('.f-mail__message')).toHaveCount(2);
   await page.getByRole('button', { name: 'Archive message' }).click();
   await page.locator('#mailboxes').getByRole('button', { name: 'Archive', exact: true }).click();
@@ -42,7 +45,9 @@ test('compose keeps native validation and adds the demo message to Sent', async 
   await expect(dialog).toBeVisible();
   await dialog.getByRole('textbox', { name: 'To', exact: true }).fill('team@example.com');
   await dialog.getByRole('textbox', { name: 'Subject' }).fill('Hello FruitUI');
-  await dialog.getByRole('textbox', { name: 'Message', exact: true }).fill('One.\n\nTwo.\n\nThree.\n\nFour.\n\nFive.\n\nSix.');
+  await dialog
+    .getByRole('textbox', { name: 'Message', exact: true })
+    .fill('One.\n\nTwo.\n\nThree.\n\nFour.\n\nFive.\n\nSix.');
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
   await expect(dialog).not.toBeVisible();
   await expect(opener).toBeFocused();
@@ -70,7 +75,10 @@ test('mobile navigation opens a message and returns to the list', async ({ page 
   await expect(page.locator('.f-mail__list-pane')).toBeVisible();
   await page.getByRole('button', { name: 'Show mailboxes' }).click();
   await expect(page.locator('#mailboxes')).toBeVisible();
-  await page.locator('#mailboxes').getByRole('button', { name: /Drafts/ }).click();
+  await page
+    .locator('#mailboxes')
+    .getByRole('button', { name: /Drafts/ })
+    .click();
   await expect(page.locator('.f-mail__message')).toHaveCount(1);
   await expect(page.locator('#mailboxes')).not.toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -83,11 +91,17 @@ test('iPhone preview uses the same mailbox and reader state as desktop', async (
   await expect(page.locator('.f-mail__toolbar')).not.toBeVisible();
   await expect(page.getByRole('heading', { name: 'Re: A weekend in the mountains' })).toBeVisible();
   await page.getByRole('button', { name: 'Flag message', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Flag message', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByRole('button', { name: 'Flag message', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
   await page.getByRole('radio', { name: 'Responsive', exact: true }).check();
   await expect(page.locator('.f-mail__toolbar')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Re: A weekend in the mountains' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Flag message', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.getByRole('button', { name: 'Flag message', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('heading', { name: 'Re: A weekend in the mountains' })).toBeVisible();
   await page.getByRole('button', { name: 'Delete message', exact: true }).click();
@@ -170,8 +184,7 @@ for (const theme of ['light', 'dark']) {
         await page.getByRole('button', { name: 'Done', exact: true }).click();
         await page.getByRole('button', { name: /Sophie Chen/ }).click();
       }
-      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-      expect(violations).toEqual([]);
+      await expectAccessible(page);
     }
   });
 }
@@ -182,7 +195,13 @@ test('appearance persists and system dark mode works without an explicit overrid
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByLabel('Appearance', { exact: true }).selectOption('system');
   await page.emulateMedia({ colorScheme: 'dark' });
-  expect(await page.locator('html').evaluate(element => getComputedStyle(element).getPropertyValue('--f-surface').trim())).toBe('#252528');
+  // --f-surface resolves to its dark value where it is used.
+  const surface = await page.evaluate(() => {
+    const probe = document.body.appendChild(document.createElement('div'));
+    probe.style.backgroundColor = 'var(--f-surface)';
+    return getComputedStyle(probe).backgroundColor;
+  });
+  expect(surface).toBe('rgb(37, 37, 40)');
 });
 
 for (const theme of ['light', 'dark']) {
@@ -190,8 +209,7 @@ for (const theme of ['light', 'dark']) {
     test(`${path} has no serious accessibility issues in ${theme} appearance`, async ({ page }) => {
       await page.goto(path);
       await page.getByLabel('Appearance', { exact: true }).selectOption(theme);
-      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
-      expect(violations).toEqual([]);
+      await expectAccessible(page);
     });
   }
 }
@@ -211,7 +229,10 @@ test('selection controls keep native form values and Alpine state aligned', asyn
   expect(await form.evaluate(element => Object.fromEntries(new FormData(element)))).toEqual({ density: 'compact' });
   await checkbox.check();
   await expect(form.locator('output')).toContainText('Sound on');
-  expect(await form.evaluate(element => Object.fromEntries(new FormData(element)))).toEqual({ sounds: '1', density: 'compact' });
+  expect(await form.evaluate(element => Object.fromEntries(new FormData(element)))).toEqual({
+    sounds: '1',
+    density: 'compact',
+  });
 });
 
 test('CSS-only controls work with JavaScript disabled', async ({ browser }) => {

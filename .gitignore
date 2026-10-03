@@ -6,5 +6,4 @@ playwright-report/
 .phpunit.cache/
 .phpunit.result.cache
 .DS_Store
-build/
 tests/host/.runtime/

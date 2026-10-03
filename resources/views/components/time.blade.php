@@ -1,4 +1,3 @@
 @aware(['fruitField' => null])
-@php($attributes = \FruitUI\Support\ComponentContract::fieldControl($attributes, $fruitField))
-@php(\FruitUI\Support\ComponentContract::semantics('time', $attributes, null, 'time'))
-<input type="time" {{ $attributes->except('type')->class(['f-input']) }}>
+@php($attributes = \FruitUI\Support\ComponentContract::control('time', $attributes, $fruitField))
+<input type="time" {{ $attributes->class(['f-input']) }}>

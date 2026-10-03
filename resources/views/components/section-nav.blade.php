@@ -1,2 +1,2 @@
-@php(\FruitUI\Support\ComponentContract::semantics('section-nav', $attributes, 'navigation'))
+@php(\FruitUI\Support\ComponentContract::validate('section-nav', $attributes))
 <nav {{ $attributes->class(['f-section-nav']) }}>{{ $slot }}</nav>
