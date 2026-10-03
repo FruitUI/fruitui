@@ -705,7 +705,7 @@
         "element": "`details`/`summary` with child menu.",
         "state": "Native open state; helper owns focus and dismissal.",
         "keyboard": "Enter/Space/Down/Up opens; arrows, Home/End, typeahead; Escape closes; Tab leaves.",
-        "options": "Title; trigger and menu-item content slots. Fixed fruitMenu helper; application state on parent."
+        "options": "Title; trigger and menu-item content slots. A title trigger shows a pull-down chevron; a custom trigger adds `<span class=\"f-menu__chevron\" aria-hidden=\"true\">` when it shows text, and omits it for an icon-only button. Fixed fruitMenu helper; application state on parent."
       }
     }
   },

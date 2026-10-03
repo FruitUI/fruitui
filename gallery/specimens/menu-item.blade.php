@@ -1,6 +1,6 @@
 <div class="f-stack" x-data="{ sort: 'date', previews: true }">
     <x-fruit::menu title="View options">
-        <x-slot:trigger>View</x-slot:trigger>
+        <x-slot:trigger>View<span class="f-menu__chevron" aria-hidden="true"></span></x-slot:trigger>
         <x-fruit::menu-group label="Sort by">
             <x-fruit::menu-radio x-bind:aria-checked="String(sort === 'date')" @click="sort = 'date'">Date</x-fruit::menu-radio>
             <x-fruit::menu-radio x-bind:aria-checked="String(sort === 'sender')" @click="sort = 'sender'">Sender</x-fruit::menu-radio>

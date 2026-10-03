@@ -66,6 +66,22 @@
     top: auto;
     bottom: calc(100% + 4px);
   }
+  /* A pull-down button's chevron: text triggers show it; icon-only "more" triggers do not. */
+  .f-menu__chevron {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    margin-inline-end: -3px;
+    background: currentColor;
+    opacity: 0.7;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m3 4.5 3 3 3-3' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+  .f-button--icon > .f-menu__chevron {
+    margin: 0;
+  }
   /* A context menu floats at the pointer; an outline marks the item it acts on, as in macOS. */
   .f-context-menu {
     position: fixed;

@@ -55,6 +55,17 @@ class ServiceComponentsTest extends TestCase
         $this->assertSame(2, substr_count($html, 'type="button"'));
     }
 
+    public function test_a_text_titled_menu_shows_a_pull_down_chevron_and_a_custom_trigger_chooses_its_own(): void
+    {
+        $titled = $this->xpath(Blade::render('<x-fruit::menu title="Sort"><x-fruit::menu-item>Date</x-fruit::menu-item></x-fruit::menu>'));
+        $summary = $titled->query('//summary')->item(0);
+        $this->assertSame('Sort', trim($summary->textContent));
+        $this->assertSame('true', $titled->query('.//span[@class="f-menu__chevron"]', $summary)->item(0)->getAttribute('aria-hidden'));
+
+        $custom = $this->xpath(Blade::render('<x-fruit::menu title="More"><x-slot:trigger aria-label="More">…</x-slot:trigger><x-fruit::menu-item>Date</x-fruit::menu-item></x-fruit::menu>'));
+        $this->assertSame(0, $custom->query('//span[@class="f-menu__chevron"]')->length);
+    }
+
     public function test_alert_does_not_announce_static_content_unless_the_application_requests_it(): void
     {
         $html = Blade::render('<x-fruit::alert tone="danger">Delivery paused<x-slot:actions><x-fruit::button wire:click="retry">Retry</x-fruit::button></x-slot:actions></x-fruit::alert>');

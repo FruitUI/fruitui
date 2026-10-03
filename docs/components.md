@@ -320,6 +320,22 @@ import fruitUI from 'fruitui/alpine';
 fruitUI(Alpine);
 ```
 
+### Pull-down chevrons
+
+Like macOS pull-down buttons, a Menu whose trigger is text shows a chevron after it: Blade adds it to the default `title` trigger. A custom `trigger` slot chooses: add `<span class="f-menu__chevron" aria-hidden="true"></span>` after its text, use the chevron alone in an `f-button--icon` trigger with an `aria-label` (the menu half of a split button), or leave it out for an icon-only "more" button.
+
+```blade
+<x-fruit::menu title="Sort">…</x-fruit::menu>
+
+<div class="f-button-group">
+    <x-fruit::button type="submit">Send reply</x-fruit::button>
+    <x-fruit::menu title="Send options">
+        <x-slot:trigger class="f-button--icon" aria-label="Send options"><span class="f-menu__chevron" aria-hidden="true"></span></x-slot:trigger>
+        …
+    </x-fruit::menu>
+</div>
+```
+
 ### Context menus
 
 A context menu holds commands for the element it sits in: put it inside a list item, message or card, after the content. A secondary click opens it at the pointer; Shift+F10 or the context-menu key opens it below the focused control. It uses the same Menu Items, Checkboxes, Radios, Links, Separators and Groups as Menu, with the same arrows, Home/End and typeahead. Escape or Tab closes it and returns focus; activating a command closes it too. While it is open, its target carries `data-fruit-context-open` and an accent outline, as in macOS.
