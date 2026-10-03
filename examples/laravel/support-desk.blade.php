@@ -291,7 +291,14 @@ new class extends Component
                                 <x-fruit::token-field name="cc" wire:model="cc">{{ $cc }}</x-fruit::token-field>
                             </x-fruit::field>
                             <x-fruit::field control-id="support-reply" label="Reply to {{ $ticket['name'] }}">
-                                <x-fruit::textarea name="reply" class="f-composer__input" rows="4" wire:model="reply" />
+                                <x-fruit::autocomplete trigger="@">
+                                    <x-fruit::textarea name="reply" class="f-composer__input" rows="4" wire:model="reply" />
+                                    <x-slot:options>
+                                        @foreach ($this::AGENTS as $agent => $name)
+                                            <option value="{{ '@'.$agent }}">{{ $name }}</option>
+                                        @endforeach
+                                    </x-slot:options>
+                                </x-fruit::autocomplete>
                             </x-fruit::field>
                             <footer class="f-composer__footer">
                                 <x-fruit::button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="send">Send reply</x-fruit::button>

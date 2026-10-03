@@ -1078,5 +1078,21 @@
         "options": "`count`: number of selected items. Accessible label (default `Selection`). Slot: independent actions. Select items with Checkboxes beside Item Rows."
       }
     }
+  },
+  {
+    "id": "autocomplete",
+    "kind": "primitive",
+    "classes": ["f-autocomplete"],
+    "blade": ["autocomplete"],
+    "uses": ["examples/laravel/support-desk.blade.php"],
+    "contracts": {
+      "autocomplete": {
+        "purpose": "Suggest completions for the word being typed in a text field.",
+        "element": "`div` around a native input or textarea; a generated listbox in a wire:ignore mount.",
+        "state": "The native control owns its value; options come from a datalist the application keeps current.",
+        "keyboard": "Typing filters; Up/Down choose; Enter or Tab inserts; Escape closes.",
+        "options": "`trigger`: one or two punctuation characters (such as @ or :); without it the current word completes. Default slot: one Input or Textarea. `options` slot: option elements whose value is inserted and whose label is shown."
+      }
+    }
   }
 ]

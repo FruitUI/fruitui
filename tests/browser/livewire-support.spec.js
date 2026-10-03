@@ -253,3 +253,20 @@ test('bulk selection shows the selection bar and closes the chosen conversations
   await expect(page.getByRole('link', { name: /Closed/ }).locator('.f-badge')).toHaveText('2');
   expect(errors).toEqual([]);
 });
+
+test('mention autocomplete survives Livewire re-renders and its insertion reaches the server', async ({ page }) => {
+  const errors = await openDesk(page);
+  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  await assignee.fill('Mia');
+  await assignee.press('Enter');
+  await expect(page.getByRole('status').filter({ hasText: 'Assigned to Mia Patel.' })).toBeVisible();
+  const reply = page.getByRole('textbox', { name: 'Reply to Sophie Chen' });
+  await expect(reply).toHaveAttribute('aria-autocomplete', 'list');
+  await reply.fill('Looping in @no');
+  await page.getByRole('option', { name: /Noah Williams/ }).click();
+  await expect(reply).toHaveValue('Looping in @noah ');
+  await page.getByRole('button', { name: 'Send reply' }).click();
+  await expect(page.getByRole('list', { name: 'Messages' })).toContainText('Looping in @noah');
+  await expect(reply).toHaveAttribute('aria-autocomplete', 'list');
+  expect(errors).toEqual([]);
+});

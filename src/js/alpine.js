@@ -2,6 +2,7 @@ import { fruitToast, toast } from './toast.js';
 export { fruitToast, toast } from './toast.js';
 import { fruitDialogModel, listenForNamedDialogs } from './dialog.js';
 import { fruitSplitter } from './splitter.js';
+import { fruitAutocomplete } from './autocomplete.js';
 import { fruitCombobox, fruitTokenField } from './selection.js';
 import { fruitMenu, fruitTooltip, fruitTabs, fruitFloatingDisclosure } from './navigation.js';
 
@@ -15,6 +16,7 @@ export default function fruitUI(Alpine) {
   Alpine.magic('toast', () => toast);
   Alpine.data('fruitCombobox', fruitCombobox);
   Alpine.data('fruitTokenField', fruitTokenField);
+  Alpine.data('fruitAutocomplete', fruitAutocomplete);
   Alpine.data('fruitMenu', fruitMenu);
   Alpine.data('fruitTooltip', fruitTooltip);
   Alpine.data('fruitTabs', fruitTabs);

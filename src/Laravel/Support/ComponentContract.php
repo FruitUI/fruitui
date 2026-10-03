@@ -82,6 +82,7 @@ final class ComponentContract
         'chip' => [],
         'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
         'toolbar' => ['roles' => ['group', 'region']],
+        'autocomplete' => ['owns' => ['x-data'], 'message' => 'owns its fruitAutocomplete helper. Put application state on a parent'],
         'selection-bar' => ['roles' => ['region']],
         'skeleton' => [],
         'divider' => ['roles' => ['separator'], 'options' => ['tone' => ['neutral', 'accent'], 'align' => ['center', 'start']]],
@@ -148,6 +149,14 @@ final class ComponentContract
         $attributes = $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), self::CONTRACTS[$component]['emits'] ?? [], true));
 
         return self::fieldControl($attributes, $field);
+    }
+
+    public static function autocomplete(mixed $trigger, ComponentAttributeBag $attributes): void
+    {
+        self::validate('autocomplete', $attributes);
+        if ($trigger !== null && (! is_string($trigger) || ! preg_match('/^[^\s\w]{1,2}$/u', $trigger))) {
+            throw new InvalidArgumentException('FruitUI autocomplete trigger must be one or two punctuation characters, such as @ or :.');
+        }
     }
 
     public static function selectionBar(mixed $count, ComponentAttributeBag $attributes): void

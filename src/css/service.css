@@ -192,7 +192,11 @@
   .f-tooltip:dir(rtl) .f-tooltip__text {
     transform: translateX(50%);
   }
-  .f-combobox__options {
+  .f-autocomplete {
+    position: relative;
+    min-width: 0;
+  }
+  :is(.f-combobox__options, .f-autocomplete__options) {
     position: absolute;
     z-index: 20;
     top: calc(100% + 4px);
@@ -208,16 +212,28 @@
     backdrop-filter: blur(24px) saturate(1.8);
     box-shadow: var(--f-shadow);
   }
-  .f-combobox__option {
+  :is(.f-combobox__option, .f-autocomplete__option) {
     padding: 7px 10px;
     border-radius: 4px;
     font-size: var(--f-text-base);
     cursor: pointer;
     overflow-wrap: anywhere;
   }
-  .f-combobox__option[aria-selected='true'] {
+  :is(.f-combobox__option, .f-autocomplete__option)[aria-selected='true'] {
     background: var(--f-accent-fill);
     color: var(--f-on-accent);
+  }
+  .f-autocomplete__option {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .f-autocomplete__detail {
+    color: var(--f-secondary);
+    font-size: var(--f-text-sm);
+  }
+  .f-autocomplete__option[aria-selected='true'] .f-autocomplete__detail {
+    color: inherit;
   }
   .f-combobox__empty {
     padding: 7px 10px;
@@ -596,7 +612,7 @@
 
 @layer fruit.components {
   @media (prefers-reduced-transparency: reduce) {
-    :is(.f-menu__items, .f-combobox__options) {
+    :is(.f-menu__items, .f-combobox__options, .f-autocomplete__options) {
       background: var(--f-surface-elevated);
       backdrop-filter: none;
     }

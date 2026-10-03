@@ -140,6 +140,27 @@ class CompletenessTest extends TestCase
         $this->assertSame(1, $xpath->query('.//button', $bar)->length);
     }
 
+    public function test_autocomplete_wraps_a_native_control_with_datalist_options(): void
+    {
+        $xpath = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::field label="Reply">
+                <x-fruit::autocomplete trigger="@" class="mentions">
+                    <x-fruit::textarea name="reply" wire:model="reply" />
+                    <x-slot:options><option value="@mia">Mia Patel</option></x-slot:options>
+                </x-fruit::autocomplete>
+            </x-fruit::field>
+            BLADE));
+        $root = $xpath->query('//div[contains(@class, "f-autocomplete")]')->item(0);
+        $this->assertSame('fruitAutocomplete', $root->getAttribute('x-data'));
+        $this->assertSame('@', $root->getAttribute('data-fruit-trigger'));
+        $this->assertSame('{count} suggestions', $root->getAttribute('data-fruit-count-message'));
+        $textarea = $xpath->query('.//textarea', $root)->item(0);
+        $this->assertSame('field-reply', $textarea->getAttribute('id'), 'The control still joins its Field.');
+        $this->assertSame('reply', $textarea->getAttribute('wire:model'));
+        $this->assertSame('@mia', $xpath->query('.//datalist/option', $root)->item(0)->getAttribute('value'));
+        $this->assertSame(1, $xpath->query('.//div[@data-fruit-ui]', $root)->length);
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -171,6 +192,8 @@ class CompletenessTest extends TestCase
             ['<x-fruit::message variant="event">Hi</x-fruit::message>', 'message variant must be'],
             ['<x-fruit::divider align="end" />', 'divider align must be'],
             ['<x-fruit::selection-bar count="-1" />', 'count must be a whole number'],
+            ['<x-fruit::autocomplete trigger="at"><input></x-fruit::autocomplete>', 'trigger must be'],
+            ['<x-fruit::autocomplete x-data="{}"><input></x-fruit::autocomplete>', 'owns its fruitAutocomplete helper'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }

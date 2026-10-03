@@ -299,3 +299,29 @@ test('menus include groups, separators, checked items, links and shortcut hints'
   await expect(root.getByRole('menuitemradio', { name: 'Sender' })).toHaveAttribute('aria-checked', 'true');
   await expect(root.getByRole('menuitemcheckbox', { name: 'Show previews' })).toHaveAttribute('aria-checked', 'false');
 });
+
+test('autocomplete suggests mentions and saved replies and inserts them into the native field', async ({ page }) => {
+  const reply = page.getByRole('textbox', { name: 'Reply', exact: true });
+  await expect(reply).toHaveAttribute('aria-autocomplete', 'list');
+  await reply.fill('Thanks @m');
+  const suggestions = page.getByRole('listbox', { name: 'Suggestions' });
+  await expect(suggestions).toBeVisible();
+  // Word-start matches, with label prefixes first: Mia, then Alex Morgan.
+  await expect(suggestions.getByRole('option')).toHaveText(['Mia Patel@mia', 'Alex Morgan@alex']);
+  await expect(reply).toHaveAttribute('aria-haspopup', 'listbox');
+  await expect(page.locator('#component-autocomplete [role="status"]').first()).toHaveText('2 suggestions');
+  await reply.press('ArrowDown');
+  await expect(reply).toHaveAttribute('aria-activedescendant', /-1$/);
+  await reply.press('Enter');
+  await expect(reply).toHaveValue('Thanks @alex ');
+  await expect(suggestions).toBeHidden();
+  await reply.pressSequentially('and @a');
+  await expect(suggestions.getByRole('option')).toHaveText(['Alex Morgan@alex']);
+  await reply.press('Escape');
+  await expect(suggestions).toBeHidden();
+  await expect(reply).toHaveValue('Thanks @alex and @a');
+  const saved = page.getByRole('textbox', { name: 'Saved reply' });
+  await saved.fill('/sc');
+  await page.getByRole('option', { name: /screenshot/ }).click();
+  await expect(saved).toHaveValue('Could you send a screenshot of what you see? ');
+});

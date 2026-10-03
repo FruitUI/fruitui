@@ -349,6 +349,23 @@ Dispatch `fruit-token-reset` on the native textarea to discard pending entry and
 
 Choice queries keep focus while `aria-activedescendant` identifies the highlighted option. Up/Down navigate, Enter commits, Escape restores the selected label, and Tab leaves without changing the selection. Disabled options/optgroups are skipped. The enhanced controls preserve form resets, native required/disabled/readonly behavior, label focus, external Alpine model updates, and helper cleanup. Combobox does not support multiple/size modes; use Select for native multiple selection or Token Field for free text tokens.
 
+### Text completions
+
+`x-fruit::autocomplete` suggests completions while typing in one Input or Textarea: mentions after `@`, emoji after `:`, saved replies after `/`, or, without a `trigger`, the current word (for recipient fields). Options are `<option>` elements in its `options` slot; the value is inserted and the label shown. The native control keeps its value, name, models and Field association; inserting a suggestion sends `input` and `change`, so `wire:model` and `x-model` update. For server search, re-render the options from Livewire as the text changes.
+
+```blade
+<x-fruit::autocomplete trigger="@">
+    <x-fruit::textarea name="reply" wire:model="reply" />
+    <x-slot:options>
+        @foreach ($agents as $agent)
+            <option value="{{ '@'.$agent->handle }}">{{ $agent->name }}</option>
+        @endforeach
+    </x-slot:options>
+</x-fruit::autocomplete>
+```
+
+Up/Down choose, Enter or Tab inserts, Escape closes. The control gets `aria-autocomplete="list"` and `aria-activedescendant`; a polite status announces the number of suggestions.
+
 ### Optional rich editing
 
 The core Alpine module does not import Tiptap. Import the separate integration on pages that need editing. Its optional peers (installed only by source-editor consumers) are `@tiptap/core`, `@tiptap/pm`, and `@tiptap/starter-kit`; [Tiptap's vanilla installation](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript) describes the underlying editor.
