@@ -17,7 +17,7 @@
   gap: 8px;
   color: var(--f-text);
   text-decoration: none;
-  font-size: calc(var(--f-text-root) * 1.25);
+  font-size: var(--f-text-3xl);
   font-weight: 700;
   letter-spacing: -0.7px;
 }
@@ -164,10 +164,10 @@
 }
 .message-feature .eyebrow {
   color: var(--f-success);
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .message-feature h3 {
-  font-size: calc(var(--f-text-root) * 1.4375);
+  font-size: var(--f-text-4xl);
   font-weight: 600;
   letter-spacing: -0.7px;
   line-height: 1.25;
@@ -266,7 +266,7 @@
 }
 .integration h2 {
   margin-bottom: 10px;
-  font-size: calc(var(--f-text-root) * 1.25);
+  font-size: var(--f-text-3xl);
   letter-spacing: -0.5px;
 }
 .integration > p {
@@ -332,7 +332,7 @@
     padding: 28px 0 24px;
   }
   .page-intro h1 {
-    font-size: calc(var(--f-text-root) * 1.75);
+    font-size: var(--f-text-4xl);
   }
   .example-tag {
     display: none;
@@ -349,7 +349,7 @@
 }
 @media (max-width: 380px) {
   .brand {
-    font-size: calc(var(--f-text-root) * 1.125);
+    font-size: var(--f-text-2xl);
   }
   .site-nav {
     gap: 10px;
@@ -393,6 +393,6 @@
   --f-avatar-border: 1px solid var(--f-border);
   --f-avatar-background: var(--f-surface);
   --f-avatar-color: var(--f-text);
-  --f-avatar-font-size: calc(var(--f-text-root) * 1.125);
+  --f-avatar-font-size: var(--f-text-2xl);
   --f-avatar-font-weight: 700;
 }

@@ -4,8 +4,8 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    min-height: var(--f-button-height, 32px);
-    padding: var(--f-button-padding-block, 5px) var(--f-button-padding-inline, 13px);
+    min-height: var(--f-button-height, 36px);
+    padding: var(--f-button-padding-block, 6px) var(--f-button-padding-inline, 16px);
     border: 1px solid var(--f-border);
     border-radius: var(--f-radius-sm);
     background: var(--f-control);
@@ -40,20 +40,20 @@
     background: var(--f-hover);
   }
   .f-button--icon {
-    padding: 6px;
-    min-width: var(--f-button-height, 32px);
-    min-height: var(--f-button-height, 32px);
+    padding: 7px;
+    min-width: var(--f-button-height, 36px);
+    min-height: var(--f-button-height, 36px);
   }
   .f-button--small {
-    --f-button-height: 26px;
-    --f-button-padding-block: 2px;
-    --f-button-padding-inline: 10px;
+    --f-button-height: 30px;
+    --f-button-padding-block: 3px;
+    --f-button-padding-inline: 12px;
     --f-control-font-size: var(--f-text-sm);
   }
   .f-button--large {
-    --f-button-height: 40px;
-    --f-button-padding-block: 8px;
-    --f-button-padding-inline: 18px;
+    --f-button-height: 44px;
+    --f-button-padding-block: 9px;
+    --f-button-padding-inline: 20px;
     --f-control-font-size: var(--f-text-md);
   }
   .f-button[aria-pressed='true'] {
@@ -71,8 +71,8 @@
   .f-input {
     width: 100%;
     min-width: 0;
-    min-height: var(--f-control-height, 32px);
-    padding: var(--f-control-padding-block, 5px) var(--f-control-padding-inline, 10px);
+    min-height: var(--f-control-height, 36px);
+    padding: var(--f-control-padding-block, 6px) var(--f-control-padding-inline, 12px);
     border: 1px solid var(--f-border);
     border-radius: var(--f-radius-sm);
     background: var(--f-input-background, var(--f-control));
@@ -199,7 +199,8 @@
     padding: 1px 6px;
     border-radius: var(--f-radius-sm);
     background: var(--f-hover);
-    color: var(--f-secondary);
+    /* Darker than secondary text, so it stays legible on stacked hover and selection tints. */
+    color: color-mix(in srgb, var(--f-secondary), var(--f-text) 30%);
     font-size: var(--f-text-xs);
     font-variant-numeric: tabular-nums;
   }
@@ -320,7 +321,7 @@
   @media (pointer: coarse) {
     .f-button,
     .f-input:not([multiple]):not([size]) {
-      min-height: max(44px, var(--f-control-height, 32px));
+      min-height: max(44px, var(--f-control-height, 36px));
     }
     .f-input {
       font-size: max(16px, var(--f-control-font-size, var(--f-text-base)));

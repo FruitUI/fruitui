@@ -131,7 +131,7 @@
   }
   .f-mail__empty {
     --f-empty-padding: 30px;
-    --f-empty-title-size: calc(var(--f-text-root) * 1.125);
+    --f-empty-title-size: var(--f-text-2xl);
     --f-empty-description-size: var(--f-text-md);
     height: 100%;
   }

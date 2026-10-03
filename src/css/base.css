@@ -73,8 +73,8 @@
     color: var(--f-secondary);
   }
   .f-icon {
-    width: var(--f-icon-size, 19px);
-    height: var(--f-icon-size, 19px);
+    width: var(--f-icon-size, 20px);
+    height: var(--f-icon-size, 20px);
     flex-shrink: 0;
     fill: none;
     stroke: currentColor;

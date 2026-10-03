@@ -1,5 +1,9 @@
 @layer fruit.components {
   /* Native pickers honor different subsets of these rules across platforms. */
+  /* A single-line select shows its chosen option on one line. */
+  select.f-input:not([multiple], [size]) {
+    white-space: nowrap;
+  }
   select.f-input :where(option, optgroup) {
     font: inherit;
     color: var(--f-text);

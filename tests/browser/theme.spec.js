@@ -178,17 +178,17 @@ test('text follows the reader’s browser text size and a pixel-root host can pi
   const input = page.getByLabel('Your name');
   // An html scope must not redefine rem through its own font size.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');
-  await expect(page.locator('body')).toHaveCSS('font-size', '14px');
-  await expect(input).toHaveCSS('font-size', '13px');
+  await expect(page.locator('body')).toHaveCSS('font-size', '16px');
+  await expect(input).toHaveCSS('font-size', '15px');
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '20px';
   });
-  await expect(input).toHaveCSS('font-size', '16.25px');
+  await expect(input).toHaveCSS('font-size', '18.75px');
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '10px';
     document.documentElement.style.setProperty('--f-text-root', '16px');
   });
-  await expect(input).toHaveCSS('font-size', '13px');
+  await expect(input).toHaveCSS('font-size', '15px');
 });
 
 test('Increase Contrast strengthens boundaries and secondary text in both appearances', async ({ page }) => {

@@ -28,7 +28,7 @@
     --f-surface-elevated: light-dark(#fff, #2c2c30);
     --f-material-popup: light-dark(rgb(250 250 252 / 84%), rgb(44 44 48 / 84%));
     /* Unemphasized selection: a selected row whose list does not have focus. */
-    --f-selection-inactive: light-dark(#e3e3e7, #3a3a3e);
+    --f-selection-inactive: light-dark(#e8e8ec, #3a3a3e);
     --f-switch-off: light-dark(#e5e5ea, #3a3a3e);
     --f-switch-off-border: #8e8e93;
     --f-shadow:
@@ -56,20 +56,21 @@
     --f-focus-ring-width: 3px;
     --f-focus-ring-offset: 1px;
     --f-pressed: color-mix(in srgb, var(--f-text) 12%, transparent);
-    /* Text follows the reader's browser text size through rem. A host that fixes a
+    /* A web reading scale: body 16px, controls 15px, nothing below 12px at the default size.
+       Text follows the reader's browser text size through rem. A host that fixes a
        pixel size on html (Bootstrap 3 uses 10px) sets --f-text-root: 16px on its scope. */
     --f-text-root: 1rem;
-    --f-text-2xs: calc(var(--f-text-root) * 0.625);
-    --f-text-xs: calc(var(--f-text-root) * 0.6875);
-    --f-text-sm: calc(var(--f-text-root) * 0.75);
-    --f-text-base: calc(var(--f-text-root) * 0.8125);
-    --f-text-md: calc(var(--f-text-root) * 0.875);
-    --f-text-lg: calc(var(--f-text-root) * 0.9375);
-    --f-text-xl: var(--f-text-root);
-    --f-text-2xl: calc(var(--f-text-root) * 1.0625);
-    --f-text-3xl: calc(var(--f-text-root) * 1.3125);
-    --f-text-4xl: calc(var(--f-text-root) * 1.5);
-    --f-text-5xl: calc(var(--f-text-root) * 2);
+    --f-text-2xs: calc(var(--f-text-root) * 0.75);
+    --f-text-xs: calc(var(--f-text-root) * 0.8125);
+    --f-text-sm: calc(var(--f-text-root) * 0.875);
+    --f-text-base: calc(var(--f-text-root) * 0.9375);
+    --f-text-md: var(--f-text-root);
+    --f-text-lg: calc(var(--f-text-root) * 1.0625);
+    --f-text-xl: calc(var(--f-text-root) * 1.1875);
+    --f-text-2xl: calc(var(--f-text-root) * 1.3125);
+    --f-text-3xl: calc(var(--f-text-root) * 1.625);
+    --f-text-4xl: calc(var(--f-text-root) * 1.875);
+    --f-text-5xl: calc(var(--f-text-root) * 2.5);
   }
 
   @media (prefers-color-scheme: dark) {

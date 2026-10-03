@@ -71,8 +71,8 @@
     align-items: center;
     gap: 8px;
     width: 100%;
-    min-height: 32px;
-    padding: 6px 10px;
+    min-height: 36px;
+    padding: 7px 12px;
     border: 0;
     border-radius: 5px;
     background: transparent;
@@ -472,6 +472,10 @@
     flex-wrap: wrap;
     gap: 8px;
   }
+  .f-pagination__controls > .f-input {
+    width: auto;
+    min-width: max-content;
+  }
   .f-pagination a {
     color: var(--f-text);
     text-decoration: none;
@@ -660,8 +664,8 @@
     align-items: center;
     gap: 10px;
     width: 100%;
-    min-height: 36px;
-    padding: 7px 10px;
+    min-height: 40px;
+    padding: 8px 12px;
     border: 0;
     border-radius: var(--f-radius-sm);
     background: transparent;

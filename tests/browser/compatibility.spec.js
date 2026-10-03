@@ -19,9 +19,9 @@ for (const colorScheme of ['light', 'dark'])
     );
     await page.goto('/compatibility-fixture');
     await expect(page.locator('#legacy')).toHaveCSS('color', 'rgb(51, 122, 183)');
-    await expect(page.locator('.f-button')).toHaveCSS('font-size', '13px');
-    await expect(page.locator('.f-button')).toHaveCSS('line-height', '19.5px');
-    await expect(page.locator('.f-input')).toHaveCSS('line-height', '19.5px');
+    await expect(page.locator('.f-button')).toHaveCSS('font-size', '15px');
+    await expect(page.locator('.f-button')).toHaveCSS('line-height', '22.5px');
+    await expect(page.locator('.f-input')).toHaveCSS('line-height', '22.5px');
     await expect(page.locator('.f-label')).toHaveCSS('font-weight', '500');
     await expect(page.locator('.f-sidebar__item')).toHaveCSS(
       'color',
@@ -31,7 +31,7 @@ for (const colorScheme of ['light', 'dark'])
       'background-color',
       colorScheme === 'dark' ? 'rgb(57, 57, 62)' : 'rgb(255, 255, 255)',
     );
-    await expect(page.locator('.f-prose')).toHaveCSS('line-height', '23.1px');
+    await expect(page.locator('.f-prose')).toHaveCSS('line-height', '26.4px');
   });
 
 test('core stylesheet includes shared rich content but excludes optional editor and Mail presentation', () => {

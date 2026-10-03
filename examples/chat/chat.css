@@ -60,7 +60,7 @@
   --f-icon-size: 16px;
 }
 .chat-header-search {
-  width: 160px;
+  width: 190px;
   flex-shrink: 0;
 }
 .chat-header-search .f-input {
@@ -109,7 +109,7 @@
 }
 .chat-team small {
   margin-top: 2px;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .chat-sidebar .f-sidebar__item {
   margin-bottom: 3px;
@@ -146,7 +146,7 @@
 }
 .chat-dm-link .f-avatar {
   --f-avatar-size: 23px;
-  --f-avatar-font-size: calc(var(--f-text-root) * 0.5);
+  --f-avatar-font-size: var(--f-text-2xs);
 }
 .chat-presence {
   position: absolute;
@@ -212,7 +212,7 @@
 .chat-date {
   --f-divider-gap: 15px;
   --f-divider-margin: 0 12px 12px;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .chat-message {
   --f-message-gap: 11px;
@@ -238,7 +238,7 @@
   font-weight: 650;
 }
 .chat-message .f-message__time {
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .chat-message-body {
   line-height: 1.75;
@@ -269,7 +269,7 @@
   font-weight: 600;
 }
 .chat-attachment .f-attachment__detail {
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
   margin-top: 3px;
 }
 .chat-attachment > .f-icon {
@@ -346,7 +346,7 @@
 }
 
 .chat-composer-bottom .f-help {
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .chat-composer-bottom .f-button {
   min-height: 30px;
@@ -369,13 +369,13 @@
 }
 .chat-thread-history .f-avatar {
   --f-avatar-size: 28px;
-  --f-avatar-font-size: calc(var(--f-text-root) * 0.5625);
+  --f-avatar-font-size: var(--f-text-2xs);
 }
 .chat-thread-history .f-message__author {
   font-size: var(--f-text-xs);
 }
 .chat-thread-history .f-message__meta {
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
   margin-top: 2px;
 }
 .chat-thread-history .chat-message-body {
@@ -384,7 +384,7 @@
 }
 .chat-thread-divider {
   --f-divider-margin: 25px 0;
-  font-size: calc(var(--f-text-root) * 0.5625);
+  font-size: var(--f-text-2xs);
 }
 .chat-thread-reply + .chat-thread-reply {
   margin-top: 23px;
@@ -554,7 +554,7 @@
     display: none;
   }
   .chat-header-search {
-    width: 145px;
+    width: 170px;
   }
   .chat-thread-history {
     padding: 24px;
@@ -590,7 +590,7 @@
     display: inline-flex;
   }
   .chat-room-heading h2 {
-    font-size: calc(var(--f-text-root) * 1.1875);
+    font-size: var(--f-text-3xl);
   }
   .chat-room-heading p {
     font-size: var(--f-text-xs);
@@ -652,7 +652,7 @@
     min-width: 44px;
   }
   .chat-thread-toolbar h2 {
-    font-size: calc(var(--f-text-root) * 1.125);
+    font-size: var(--f-text-2xl);
   }
   .chat-thread-toolbar p {
     font-size: var(--f-text-sm);
