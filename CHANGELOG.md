@@ -23,6 +23,8 @@ Added:
 - Blade adapters for Avatar, Badge, Tooltip, Sidebar (`sidebar`, `sidebar-group`, `sidebar-item`) and a managed `toaster` outlet.
 - Named dialogs (`name`) opened and closed by `fruit-dialog-open`/`fruit-dialog-close` events; `fruitToast({ message })` initial messages.
 - `FruitUI\Fruit::toast()`, `flashToast()`, `openDialog()` and `closeDialog()`, callable from components, form objects, actions and controllers.
+- `Fruit::tokens()` splits a Token Field value into a clean array, and the `FruitUI\Rules\Tokens` rule validates every token with ordinary Laravel rules, reporting under the field's own key.
+- A password `x-fruit::input` may bind `x-bind:type` for a show/hide toggle. Every other client type binding is still rejected.
 - Dialog open state binds with `wire:model`/`x-model`; Escape and `<form method="dialog">` update it.
 - `fruit::pagination.default` for Laravel paginators, and a `fruit` Livewire pagination theme (`'pagination_theme' => 'fruit'`) for length-aware and simple paginators.
 - `fruitui/livewire` (`src/js/livewire.js`, `build/livewire.global.js`) registers the helpers on Livewire's injected Alpine; CSS and JS import from `vendor/fruitui/fruitui/src` without npm. Tailwind v4 layer order is documented and tested.

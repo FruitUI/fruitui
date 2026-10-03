@@ -39,6 +39,19 @@ final class Fruit
         self::requireComponent(__FUNCTION__)->dispatch('fruit-dialog-close', name: $name);
     }
 
+    /**
+     * The tokens in a Token Field's newline-delimited value, as the browser shows them:
+     * trimmed, without blank lines or exact duplicates. Join with "\n" to bind an array back.
+     *
+     * @return list<string>
+     */
+    public static function tokens(?string $value): array
+    {
+        $tokens = array_filter(array_map(trim(...), preg_split('/\r?\n/', $value ?? '')), fn (string $token) => $token !== '');
+
+        return array_values(array_unique($tokens));
+    }
+
     private static function component(): ?Component
     {
         // Livewire::current() returns false outside a component request.

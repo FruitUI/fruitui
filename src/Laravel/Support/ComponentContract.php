@@ -142,7 +142,8 @@ final class ComponentContract
             }
             // Server-bound props are validated above. Client bindings must
             // not turn a text field into a choice or change a control's role.
-            if (self::binds($name, 'type') || self::binds($name, 'role')) {
+            // A password input may bind its type to reveal the characters it holds.
+            if ((self::binds($name, 'type') && ! self::reveals($component, $options)) || self::binds($name, 'role')) {
                 throw new InvalidArgumentException("FruitUI {$component} does not support {$name}; type and role belong to its component contract.");
             }
             foreach ($owned as $attribute) {
@@ -365,6 +366,12 @@ final class ComponentContract
     }
 
     /** Whether an attribute name is a Blade or Alpine client binding of the given attribute, with optional modifiers. */
+    /** A password input's show/hide toggle switches between password and text, staying a text entry. */
+    private static function reveals(string $component, array $options): bool
+    {
+        return $component === 'input' && ($options['type'] ?? null) === 'password';
+    }
+
     private static function binds(string $name, string $attribute): bool
     {
         foreach ([':', 'x-bind:'] as $prefix) {

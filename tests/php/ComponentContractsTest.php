@@ -98,6 +98,7 @@ class ComponentContractsTest extends TestCase
             ['<x-fruit::input as="select" />', 'fixed native element'],
             ['<x-fruit::input x-bind:type="kind" />', 'type and role belong to its component contract'],
             ['<x-fruit::input ::type="kind" />', 'type and role belong to its component contract'],
+            ['<x-fruit::input type="email" x-bind:type="kind" />', 'type and role belong to its component contract'],
             ['<x-fruit::checkbox type="radio">Choice</x-fruit::checkbox>', 'fixed native type'],
             ['<x-fruit::radio role="checkbox">Choice</x-fruit::radio>', 'overriding role'],
             ['<x-fruit::switch role="checkbox">Setting</x-fruit::switch>', 'overriding role'],
@@ -109,6 +110,32 @@ class ComponentContractsTest extends TestCase
             ['<x-fruit::card role="checkbox">A row</x-fruit::card>', 'overriding role'],
             ['<x-fruit::card as="button">An action</x-fruit::card>', 'fixed native element'],
         ];
+    }
+
+    public function test_a_password_input_can_bind_its_type_to_reveal_its_characters(): void
+    {
+        // Blade escapes ::type to Alpine's :type shorthand.
+        foreach (['x-bind:type' => 'x-bind:type', '::type' => ':type'] as $binding => $rendered) {
+            $html = Blade::render('<x-fruit::input type="password" name="password" autocomplete="current-password" '.$binding.'="shown ? \'text\' : \'password\'" wire:model="password" />');
+            $input = $this->document($html)->getElementsByTagName('input')->item(0);
+
+            $this->assertSame('password', $input->getAttribute('type'));
+            $this->assertSame("shown ? 'text' : 'password'", $input->getAttribute($rendered));
+            $this->assertSame('password', $input->getAttribute('wire:model'));
+        }
+
+        // The documented reveal toggle: Field still labels the input inside an input group.
+        $html = Blade::render(<<<'BLADE'
+            <x-fruit::field label="Password" x-data="{ shown: false }">
+                <div class="f-input-group">
+                    <x-fruit::input type="password" wire:model="password" autocomplete="current-password" x-bind:type="shown ? 'text' : 'password'" />
+                    <x-fruit::button type="button" x-on:click="shown = !shown" x-bind:aria-pressed="shown">Show</x-fruit::button>
+                </div>
+            </x-fruit::field>
+            BLADE);
+        $input = $this->document($html)->getElementsByTagName('input')->item(0);
+        $this->assertSame('field-password', $input->getAttribute('id'));
+        $this->assertStringContainsString('for="field-password"', $html);
     }
 
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void

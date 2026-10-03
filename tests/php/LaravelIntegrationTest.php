@@ -3,9 +3,11 @@
 namespace FruitUI\Tests;
 
 use FruitUI\Fruit;
+use FruitUI\Rules\Tokens;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ViewException;
@@ -266,6 +268,34 @@ class LaravelIntegrationTest extends TestCase
         Fruit::openDialog('confirm-archive');
     }
 
+    public function test_token_values_split_the_way_the_token_field_shows_them(): void
+    {
+        $this->assertSame(['ann@example.com', 'bob@example.com', '0'], Fruit::tokens(" ann@example.com\r\n\n bob@example.com \nann@example.com\n0\n"));
+        $this->assertSame([], Fruit::tokens(''));
+        $this->assertSame([], Fruit::tokens(null));
+    }
+
+    public function test_the_tokens_rule_validates_each_entry_under_the_fields_own_key(): void
+    {
+        $rules = ['cc' => ['nullable', new Tokens('email')]];
+        $this->assertTrue(Validator::make(['cc' => "ann@example.com\nbob@example.com"], $rules)->passes());
+        $this->assertTrue(Validator::make(['cc' => ''], $rules)->passes());
+
+        $errors = Validator::make(['cc' => "ann@example.com\nbob@"], $rules)->errors();
+        $this->assertSame(['The cc field contains an invalid entry: bob@.'], $errors->get('cc'));
+        $this->assertSame(['The cc field must be a string.'], Validator::make(['cc' => ['ann@example.com']], $rules)->errors()->get('cc'));
+
+        Livewire::test(TokensFixture::class)
+            ->set('cc', "ann@example.com\nnot-an-address")
+            ->call('send')
+            ->assertHasErrors('cc')
+            ->assertSeeHtml('<p class="f-error" id="field-cc-error">The cc field contains an invalid entry: not-an-address.</p>')
+            ->set('cc', 'ann@example.com')
+            ->call('send')
+            ->assertHasNoErrors()
+            ->assertSet('sent', ['ann@example.com']);
+    }
+
     public function test_dialogs_bind_their_open_state_with_wire_model(): void
     {
         $xpath = $this->xpath(Blade::render('<x-fruit::dialog wire:model="closing" aria-label="Close">Sure?</x-fruit::dialog><x-fruit::dialog aria-label="Plain">Plain</x-fruit::dialog>'));
@@ -334,5 +364,25 @@ class FeedbackFixture extends Component
     public function render()
     {
         return '<div><x-fruit::toaster /></div>';
+    }
+}
+
+class TokensFixture extends Component
+{
+    public string $cc = '';
+
+    public array $sent = [];
+
+    public function send(): void
+    {
+        $this->validate(['cc' => ['required', new Tokens('email')]]);
+        $this->sent = Fruit::tokens($this->cc);
+    }
+
+    public function render()
+    {
+        return <<<'BLADE'
+            <div><x-fruit::field label="Cc"><x-fruit::token-field wire:model="cc" /></x-fruit::field></div>
+            BLADE;
     }
 }

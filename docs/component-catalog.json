@@ -27,7 +27,7 @@
         "element": "`input`; native role follows text-like type and native attributes.",
         "state": "Native string value, validation, disabled/readonly state.",
         "keyboard": "Native text editing and focus behavior.",
-        "options": "`type`: text (default), email, password, search, tel, url. No content slot; provide a label or accessible name."
+        "options": "`type`: text (default), email, password, search, tel, url. A password input may bind `x-bind:type` for a show/hide toggle; other types are fixed. No content slot; provide a label or accessible name."
       }
     }
   },

@@ -335,7 +335,23 @@ Blade includes stable `wire:ignore` containers for generated UI. The named nativ
     placeholder="Add a recipient">{{ $cc }}</x-fruit::token-field>
 ```
 
-Token entry adds on Enter, comma, or a multiline/comma paste. Values are trimmed and exact duplicates are ignored. Empty Backspace/Left focuses the last remove button; arrows navigate remove buttons, Escape returns to entry. Adding is atomic for a paste: if application validation rejects any value, the native value is unchanged. Applications can cancel the bubbling `fruit-token-add` event and set `event.detail.error`, or normalize `event.detail.value`. Existing server-provided values are not validated by this event; validate the entire submitted string on the server. Arrays belong to the application: split/join the newline string in its binding or request handler.
+Token entry adds on Enter, comma, or a multiline/comma paste. Values are trimmed and exact duplicates are ignored. Empty Backspace/Left focuses the last remove button; arrows navigate remove buttons, Escape returns to entry. Adding is atomic for a paste: if application validation rejects any value, the native value is unchanged. Applications can cancel the bubbling `fruit-token-add` event and set `event.detail.error`, or normalize `event.detail.value`. Existing server-provided values are not validated by this event; validate the entire submitted string on the server.
+
+On the server, `FruitUI\Fruit::tokens()` splits the value the way the field shows it: trimmed, without blank lines or exact duplicates. The `FruitUI\Rules\Tokens` rule applies ordinary Laravel rules to every token and reports a failure under the field's own key, so `x-fruit::field` shows it. Bind an existing array back with `implode("\n", $tags)`.
+
+```php
+use FruitUI\Fruit;
+use FruitUI\Rules\Tokens;
+
+public string $cc = '';
+
+public function send(): void
+{
+    $this->validate(['cc' => ['nullable', new Tokens('email')]]);
+
+    $recipients = Fruit::tokens($this->cc); // ['ann@example.com', 'bob@example.com']
+}
+```
 
 Dispatch `fruit-token-reset` on the native textarea to discard pending entry and validation feedback without changing committed tokens. Mail uses it when starting another draft, including when the serialized model was already empty. Ordinary form resets also clear pending entry.
 
@@ -507,6 +523,18 @@ The error comes from Laravel's shared `$errors` bag, the same one `@error` reads
 
 <x-fruit::field label="Terms">
     <x-fruit::checkbox wire:model="terms">I accept the terms</x-fruit::checkbox>
+</x-fruit::field>
+```
+
+Input's type is fixed at render time, with one exception: a password input may bind `x-bind:type` (or `::type`) so a toggle can reveal what was typed. Keep the toggle a separate, labelled button that reports its state with `aria-pressed`; the input keeps its name, `autocomplete` and `wire:model`.
+
+```blade
+<x-fruit::field label="Password" x-data="{ shown: false }">
+    <div class="f-input-group">
+        <x-fruit::input type="password" wire:model="password" autocomplete="current-password"
+            x-bind:type="shown ? 'text' : 'password'" />
+        <x-fruit::button type="button" x-on:click="shown = !shown" x-bind:aria-pressed="shown">Show</x-fruit::button>
+    </div>
 </x-fruit::field>
 ```
 
