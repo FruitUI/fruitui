@@ -326,3 +326,30 @@ test('the compat build honours data-theme and keeps headings in the text color a
   await expect(page.locator('main h2')).not.toHaveCSS('color', 'rgb(42, 59, 71)');
   await expect(page.locator('.app-title')).toHaveCSS('color', 'rgb(200, 0, 0)');
 });
+
+test('the compat build keeps choice groups and legends intact under Bootstrap 3 base rules', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/core.compat.css', import.meta.url), 'utf8');
+  // Bootstrap 3's label and legend rules, as on a host page that loads both.
+  const bootstrap = `label { display: inline-block; max-width: 100%; margin-bottom: 5px; font-weight: bold }
+    legend { display: block; width: 100%; padding: 0; margin-bottom: 20px; font-size: 21px; line-height: inherit;
+      color: #333; border: 0; border-bottom: 1px solid #e5e5e5 }`;
+  await page.setContent(`<!doctype html><html><head><style>${bootstrap}</style><style>${css}</style></head>
+    <body><main class="fruit-ui" data-theme="dark" style="width: 900px"><fieldset class="f-fieldset">
+      <legend>Permissions</legend>
+      <label class="f-check"><input type="checkbox"><span>Tags</span></label>
+      <label class="f-check"><input type="checkbox"><span>Folders</span></label>
+      <label class="f-switch"><input type="checkbox" role="switch"><span>Photos</span></label>
+    </fieldset></main></body></html>`);
+  const boxes = await Promise.all(['Tags', 'Folders', 'Photos'].map(name => page.getByText(name).boundingBox()));
+  expect(boxes[1].y).toBeGreaterThan(boxes[0].y + boxes[0].height);
+  expect(boxes[2].y).toBeGreaterThan(boxes[1].y + boxes[1].height);
+  const label = page.locator('label.f-check').first();
+  await expect(label).toHaveCSS('display', 'flex');
+  await expect(label).toHaveCSS('margin-bottom', '0px');
+  await expect(label).toHaveCSS('font-weight', '400');
+  const legend = page.locator('legend');
+  const text = await page.locator('main').evaluate(element => getComputedStyle(element).color);
+  await expect(legend).toHaveCSS('color', text);
+  await expect(legend).toHaveCSS('border-bottom-style', 'none');
+  expect((await legend.boundingBox()).width).toBeLessThan(300);
+});
