@@ -611,6 +611,99 @@
 }
 
 @layer fruit.components {
+  /* A modal search over commands and destinations. */
+  .f-command-palette {
+    width: min(560px, calc(100vw - 32px));
+    max-width: none;
+    margin-top: 12vh;
+    padding: 0;
+    overflow: hidden;
+  }
+  .f-command-palette__search {
+    position: relative;
+    border-bottom: 1px solid var(--f-border);
+  }
+  .f-command-palette__search > .f-icon {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 16px;
+    margin-block: auto;
+    color: var(--f-secondary);
+    pointer-events: none;
+    --f-icon-size: 16px;
+  }
+  .f-command-palette__search > .f-input {
+    min-height: 50px;
+    padding-inline-start: 42px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: var(--f-text-lg);
+  }
+  .f-command-palette__search > .f-input:focus-visible {
+    outline-offset: calc(var(--f-focus-ring-width) * -1);
+  }
+  .f-command-palette__list {
+    max-height: min(360px, 50vh);
+    overflow: auto;
+    padding: 6px;
+  }
+  .f-command-palette__group-label {
+    padding: 8px 10px 4px;
+    color: var(--f-secondary);
+    font-size: var(--f-text-xs);
+    font-weight: 600;
+  }
+  .f-command {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 36px;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: var(--f-radius-sm);
+    background: transparent;
+    color: var(--f-text);
+    font-size: var(--f-text-base);
+    text-align: start;
+    text-decoration: none;
+    cursor: default;
+  }
+  .f-command[aria-selected='true'] {
+    background: var(--f-accent-fill);
+    color: var(--f-on-accent);
+  }
+  .f-command__icon {
+    display: inline-flex;
+    color: var(--f-secondary);
+    --f-icon-size: 16px;
+  }
+  .f-command__shortcut {
+    margin-inline-start: auto;
+    color: var(--f-secondary);
+    font: inherit;
+    font-size: var(--f-text-sm);
+  }
+  .f-command[aria-selected='true'] :is(.f-command__icon, .f-command__shortcut) {
+    color: inherit;
+  }
+  .f-command-palette__empty {
+    padding: 18px;
+    color: var(--f-secondary);
+    font-size: var(--f-text-sm);
+    text-align: center;
+  }
+  @media (forced-colors: active) {
+    .f-command[aria-selected='true'] {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}
+
+@layer fruit.components {
   @media (prefers-reduced-transparency: reduce) {
     :is(.f-menu__items, .f-combobox__options, .f-autocomplete__options) {
       background: var(--f-surface-elevated);

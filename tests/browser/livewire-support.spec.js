@@ -270,3 +270,21 @@ test('mention autocomplete survives Livewire re-renders and its insertion reache
   await expect(reply).toHaveAttribute('aria-autocomplete', 'list');
   expect(errors).toEqual([]);
 });
+
+test('the command palette navigates with wire:navigate and runs Livewire actions', async ({ page }) => {
+  const errors = await openDesk(page);
+  await page.evaluate(() => {
+    window.fruitNavigationMarker = true;
+  });
+  await page.keyboard.press('ControlOrMeta+k');
+  const palette = page.getByRole('dialog', { name: 'Go to' });
+  await palette.getByRole('combobox').fill('unas');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(`${host}/support/unassigned`);
+  expect(await page.evaluate(() => window.fruitNavigationMarker)).toBe(true);
+  await page.keyboard.press('ControlOrMeta+k');
+  await page.getByRole('dialog', { name: 'Go to' }).getByRole('combobox').fill('close conv');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
+  expect(errors).toEqual([]);
+});

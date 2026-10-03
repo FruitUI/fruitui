@@ -325,3 +325,30 @@ test('autocomplete suggests mentions and saved replies and inserts them into the
   await page.getByRole('option', { name: /screenshot/ }).click();
   await expect(saved).toHaveValue('Could you send a screenshot of what you see? ');
 });
+
+test('the command palette opens with its shortcut, filters, and activates commands by keyboard', async ({ page }) => {
+  await page.keyboard.press('ControlOrMeta+k');
+  const palette = page.getByRole('dialog', { name: 'Go to' });
+  await expect(palette).toBeVisible();
+  const search = palette.getByRole('combobox', { name: 'Go to' });
+  await expect(search).toBeFocused();
+  await expect(palette.getByRole('option')).toHaveCount(5);
+  await search.fill('toa');
+  await expect(palette.getByRole('option', { name: /Show a toast/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(palette.getByRole('group', { name: 'Examples' })).toBeHidden();
+  await search.press('Enter');
+  await expect(palette).toBeHidden();
+  await expect(page.getByRole('status').filter({ hasText: 'Command palette works.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Open command palette' }).click();
+  await expect(search).toHaveValue('');
+  await search.fill('zzz');
+  await expect(palette.getByText('No results')).toBeVisible();
+  await search.fill('');
+  await search.press('ArrowDown');
+  await expect(search).toHaveAttribute(
+    'aria-activedescendant',
+    await palette.getByRole('option', { name: 'Support' }).getAttribute('id'),
+  );
+  await search.press('Enter');
+  await expect(page).toHaveURL(/support\.html$/);
+});

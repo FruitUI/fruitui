@@ -82,6 +82,10 @@ final class ComponentContract
         'chip' => [],
         'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
         'toolbar' => ['roles' => ['group', 'region']],
+        'command-palette' => ['roles' => ['dialog'], 'owns' => ['x-data'], 'message' => 'owns its fruitCommandPalette helper. Put application state on a parent'],
+        'command' => ['roles' => ['option'], 'type' => 'button'],
+        'command-link' => ['roles' => ['option'], 'requires' => 'href'],
+        'command-group' => ['roles' => ['group']],
         'autocomplete' => ['owns' => ['x-data'], 'message' => 'owns its fruitAutocomplete helper. Put application state on a parent'],
         'selection-bar' => ['roles' => ['region']],
         'skeleton' => [],
@@ -149,6 +153,17 @@ final class ComponentContract
         $attributes = $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), self::CONTRACTS[$component]['emits'] ?? [], true));
 
         return self::fieldControl($attributes, $field);
+    }
+
+    public static function commandPalette(mixed $name, mixed $shortcut, ComponentAttributeBag $attributes): void
+    {
+        self::validate('command-palette', $attributes);
+        if (! is_string($name) || ! preg_match('/^[\w-]+$/', $name)) {
+            throw new InvalidArgumentException('FruitUI command-palette needs a name of letters, digits, dashes or underscores; events open it by name.');
+        }
+        if ($shortcut !== null && (! is_string($shortcut) || ! preg_match('/^[a-z0-9]$/i', $shortcut))) {
+            throw new InvalidArgumentException('FruitUI command-palette shortcut must be one letter or digit, used with Cmd or Ctrl.');
+        }
     }
 
     public static function autocomplete(mixed $trigger, ComponentAttributeBag $attributes): void

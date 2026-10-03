@@ -366,6 +366,19 @@ Choice queries keep focus while `aria-activedescendant` identifies the highlight
 
 Up/Down choose, Enter or Tab inserts, Escape closes. The control gets `aria-autocomplete="list"` and `aria-activedescendant`; a polite status announces the number of suggestions.
 
+### Command palette
+
+`x-fruit::command-palette` is a modal search over destinations and actions, opened by Cmd/Ctrl with its `shortcut`, or by name like a named Dialog (`Fruit::openDialog('commands')`, `$dispatch('fruit-dialog-open', { name: 'commands' })`). `x-fruit::command-link` items navigate (including `wire:navigate`); `x-fruit::command` items run an action (`wire:click`, `@click`); `x-fruit::command-group` labels related items. Typing filters by label, Up/Down move the highlight, Enter activates it and closes the palette, Escape closes it.
+
+```blade
+<x-fruit::command-palette name="commands" shortcut="k" label="Go to">
+    <x-fruit::command-group label="Mailboxes">
+        <x-fruit::command-link href="{{ route('mailbox', 'inbox') }}" wire:navigate>Inbox</x-fruit::command-link>
+    </x-fruit::command-group>
+    <x-fruit::command wire:click="compose" shortcut="⌘N">New message</x-fruit::command>
+</x-fruit::command-palette>
+```
+
 ### Optional rich editing
 
 The core Alpine module does not import Tiptap. Import the separate integration on pages that need editing. Its optional peers (installed only by source-editor consumers) are `@tiptap/core`, `@tiptap/pm`, and `@tiptap/starter-kit`; [Tiptap's vanilla installation](https://tiptap.dev/docs/editor/getting-started/install/vanilla-javascript) describes the underlying editor.

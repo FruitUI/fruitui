@@ -334,4 +334,17 @@ new class extends Component
             <x-fruit::button variant="primary" wire:click="closeTicket">Close conversation</x-fruit::button>
         </footer>
     </x-fruit::dialog>
+
+    <x-fruit::command-palette name="support-commands" shortcut="k" label="Go to" placeholder="Mailboxes and actions">
+        <x-fruit::command-group label="Mailboxes">
+            @foreach ($this::MAILBOXES as $key => $label)
+                <x-fruit::command-link :href="url('/support/'.$key)" wire:navigate>{{ $label }}</x-fruit::command-link>
+            @endforeach
+        </x-fruit::command-group>
+        @if ($this->ticket && $this->ticket['status'] === 'open')
+            <x-fruit::command-group label="Conversation">
+                <x-fruit::command wire:click="confirmClose">Close conversation…</x-fruit::command>
+            </x-fruit::command-group>
+        @endif
+    </x-fruit::command-palette>
 </main>

@@ -1094,5 +1094,42 @@
         "options": "`trigger`: one or two punctuation characters (such as @ or :); without it the current word completes. Default slot: one Input or Textarea. `options` slot: option elements whose value is inserted and whose label is shown."
       }
     }
+  },
+  {
+    "id": "command-palette",
+    "kind": "primitive",
+    "classes": ["f-command-palette", "f-command"],
+    "blade": ["command-palette", "command", "command-link", "command-group"],
+    "uses": ["examples/laravel/support-desk.blade.php"],
+    "contracts": {
+      "command-palette": {
+        "purpose": "Search for a destination or command and activate it.",
+        "element": "Modal `dialog` with a combobox input and a listbox of options.",
+        "state": "Native open state; opens by name like a named Dialog. The query filters options.",
+        "keyboard": "Cmd/Ctrl + shortcut toggles; typing filters; Up/Down choose; Enter activates; Escape closes.",
+        "options": "`name`: required, for events and Fruit::openDialog. `shortcut`: one letter or digit. `label` (default Commands), `placeholder`. Slot: Commands, Command Links and Command Groups."
+      },
+      "command": {
+        "purpose": "Run an action from the command palette.",
+        "element": "Fixed button type=button with role=option.",
+        "state": "aria-selected follows the palette highlight.",
+        "keyboard": "Enter activates the highlighted command.",
+        "options": "Action bindings (wire:click, @click) on the button. `shortcut`: displayed key equivalent; `icon` slot: decorative."
+      },
+      "command-link": {
+        "purpose": "Go to a destination from the command palette.",
+        "element": "`a` with role=option and a required href.",
+        "state": "aria-selected follows the palette highlight.",
+        "keyboard": "Enter follows the highlighted link.",
+        "options": "Link attributes, including wire:navigate. `shortcut`, `icon` slot."
+      },
+      "command-group": {
+        "purpose": "Label related commands in the palette.",
+        "element": "`div` role=group with an aria-label; the visible label is presentational.",
+        "state": "Hidden while none of its commands match.",
+        "keyboard": "Commands keep the palette keyboard model.",
+        "options": "`label`: required. Slot: Commands and Command Links."
+      }
+    }
   }
 ]

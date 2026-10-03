@@ -161,6 +161,30 @@ class CompletenessTest extends TestCase
         $this->assertSame(1, $xpath->query('.//div[@data-fruit-ui]', $root)->length);
     }
 
+    public function test_command_palette_renders_a_named_dialog_with_a_combobox_and_options(): void
+    {
+        $xpath = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::command-palette name="commands" shortcut="k" label="Go to">
+                <x-fruit::command-group label="Pages"><x-fruit::command-link href="/inbox" wire:navigate>Inbox</x-fruit::command-link></x-fruit::command-group>
+                <x-fruit::command wire:click="compose" shortcut="⌘N">New message</x-fruit::command>
+            </x-fruit::command-palette>
+            BLADE));
+        $dialog = $xpath->query('//dialog')->item(0);
+        $this->assertSame('commands', $dialog->getAttribute('data-fruit-dialog'));
+        $this->assertSame('k', $dialog->getAttribute('data-fruit-shortcut'));
+        $this->assertSame('Go to', $dialog->getAttribute('aria-label'));
+        $input = $xpath->query('.//input[@role="combobox"]', $dialog)->item(0);
+        $this->assertSame('commands-commands', $input->getAttribute('aria-controls'));
+        $this->assertSame('listbox', $xpath->query('//*[@id="commands-commands"]')->item(0)->getAttribute('role'));
+        $options = $xpath->query('//*[@role="option"]');
+        $this->assertSame('a', $options->item(0)->nodeName);
+        $this->assertSame('/inbox', $options->item(0)->getAttribute('href'));
+        $this->assertSame('button', $options->item(1)->nodeName);
+        $this->assertSame('compose', $options->item(1)->getAttribute('wire:click'));
+        $this->assertSame('-1', $options->item(1)->getAttribute('tabindex'));
+        $this->assertSame('Pages', $xpath->query('//div[@role="group"]')->item(0)->getAttribute('aria-label'));
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -194,6 +218,10 @@ class CompletenessTest extends TestCase
             ['<x-fruit::selection-bar count="-1" />', 'count must be a whole number'],
             ['<x-fruit::autocomplete trigger="at"><input></x-fruit::autocomplete>', 'trigger must be'],
             ['<x-fruit::autocomplete x-data="{}"><input></x-fruit::autocomplete>', 'owns its fruitAutocomplete helper'],
+            ['<x-fruit::command-palette>Hi</x-fruit::command-palette>', 'needs a name'],
+            ['<x-fruit::command-palette name="go" shortcut="cmd+k">Hi</x-fruit::command-palette>', 'shortcut must be one letter'],
+            ['<x-fruit::command-link>Inbox</x-fruit::command-link>', 'requires href'],
+            ['<x-fruit::command role="button">Go</x-fruit::command>', 'overriding role'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }
