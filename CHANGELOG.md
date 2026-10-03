@@ -26,6 +26,7 @@ Added:
 - `Fruit::tokens()` splits a Token Field value into a clean array, and the `FruitUI\Rules\Tokens` rule validates every token with ordinary Laravel rules, reporting under the field's own key.
 - A password `x-fruit::input` may bind `x-bind:type` for a show/hide toggle. Every other client type binding is still rejected.
 - Dutch, German, French and Spanish translations of every component string, loaded automatically; publish them with the `fruit-lang` tag. The editor's default toolbar labels are now static translation keys.
+- Date, date-time, month, week, time and color fields use the shared rounded field frame in Safari and other WebKit browsers, which kept a native square frame; date and time fields also match the text field height.
 - Pull-down chevrons (`f-menu__chevron`): a Menu with a text title shows one automatically; custom triggers add it, alone in an `f-button--icon` trigger for split buttons.
 - `x-fruit::context-menu` (`f-context-menu`): commands for an item on right-click, Shift+F10 or the context-menu key, using the existing menu items. Command and menu shortcuts now read as text rather than keycaps.
 - `Livewire::test()` assertions: `assertToasted()`, `assertNotToasted()`, `assertDialogOpened()` and `assertDialogClosed()`.

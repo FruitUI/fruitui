@@ -348,3 +348,32 @@ test('Mail compose accepts dropped attachments through its existing upload handl
   });
   await expect(page.locator('.f-upload__row').first()).toContainText('brief.txt');
 });
+
+test('date, time and color fields share the text field frame in every engine', async ({ page }) => {
+  await page.goto('/components.html');
+  const frame = selector =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate(element => {
+        const style = getComputedStyle(element);
+        return {
+          appearance: style.appearance,
+          radius: style.borderTopLeftRadius,
+          height: element.getBoundingClientRect().height,
+        };
+      });
+  const text = await frame('#component-input input');
+  for (const selector of [
+    '#component-date input[type=date]',
+    '#component-date input[type=datetime-local]',
+    '#component-time input',
+    '#component-color input',
+  ]) {
+    const control = await frame(selector);
+    // WebKit otherwise keeps a native frame that ignores the shared radius and padding.
+    expect(control.appearance, selector).toBe('none');
+    expect(control.radius, selector).toBe(text.radius);
+    expect(Math.abs(control.height - text.height), selector).toBeLessThanOrEqual(1);
+  }
+});

@@ -24,6 +24,18 @@
   .f-input[type='search']:disabled::-webkit-search-cancel-button {
     cursor: not-allowed;
   }
+  /* WebKit keeps a native macOS frame for these types unless appearance is none, ignoring the
+     shared radius and padding; its inner field wrapper also adds vertical padding. */
+  .f-input:is([type='date'], [type='datetime-local'], [type='month'], [type='week'], [type='time'], [type='color']) {
+    appearance: none;
+  }
+  .f-input::-webkit-datetime-edit-fields-wrapper {
+    padding-block: 0;
+  }
+  .f-input::-webkit-date-and-time-value {
+    min-height: 1.5em;
+    text-align: start;
+  }
   .f-input:is(
       [type='date'],
       [type='datetime-local'],
@@ -167,11 +179,11 @@
   }
   .f-color::-webkit-color-swatch {
     border: 1px solid var(--f-border);
-    border-radius: 3px;
+    border-radius: calc(var(--f-radius-sm) - 2px);
   }
   .f-color::-moz-color-swatch {
     border: 1px solid var(--f-border);
-    border-radius: 3px;
+    border-radius: calc(var(--f-radius-sm) - 2px);
   }
 
   .f-range {
