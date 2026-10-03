@@ -82,6 +82,12 @@ final class ComponentContract
         'chip' => [],
         'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
         'toolbar' => ['roles' => ['group', 'region']],
+        'back-link' => ['roles' => ['link'], 'requires' => 'href'],
+        'upload-list' => ['roles' => ['list']],
+        'upload-row' => [],
+        'notification-group' => ['roles' => ['list']],
+        'notification' => ['roles' => ['link'], 'requires' => 'href'],
+        'typing' => ['roles' => ['status']],
         'dropzone' => ['type' => 'file', 'emits' => ['type']],
         'command-palette' => ['roles' => ['dialog'], 'owns' => ['x-data'], 'message' => 'owns its fruitCommandPalette helper. Put application state on a parent'],
         'command' => ['roles' => ['option'], 'type' => 'button'],
@@ -154,6 +160,18 @@ final class ComponentContract
         $attributes = $attributes->filter(fn ($value, $name) => ! in_array(strtolower($name), self::CONTRACTS[$component]['emits'] ?? [], true));
 
         return self::fieldControl($attributes, $field);
+    }
+
+    public static function uploadRow(mixed $name, mixed $state, mixed $progress, ComponentAttributeBag $attributes): void
+    {
+        self::validate('upload-row', $attributes);
+        self::option('upload-row', 'state', $state, ['uploading', 'complete', 'error', 'cancelled']);
+        if (! is_string($name) || trim($name) === '') {
+            throw new InvalidArgumentException('FruitUI upload-row needs the file name.');
+        }
+        if ($progress !== null && filter_var($progress, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 100]]) === false) {
+            throw new InvalidArgumentException('FruitUI upload-row progress must be a whole percentage from 0 to 100.');
+        }
     }
 
     public static function commandPalette(mixed $name, mixed $shortcut, ComponentAttributeBag $attributes): void

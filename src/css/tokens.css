@@ -1,7 +1,8 @@
 @layer fruit.tokens {
   :where(.fruit-ui) {
     /* Color tokens use light-dark(), resolved by color-scheme: light by default, dark when the
-       system prefers it, or fixed by data-theme. Same-valued tokens suit both appearances. */
+       system prefers it, fixed by data-theme="light" or "dark", or following a .dark class with
+       data-theme="class". Same-valued tokens suit both appearances. */
     color-scheme: light;
     --f-font:
       -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
@@ -74,12 +75,13 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :where(.fruit-ui:not([data-theme='light'])) {
+    :where(.fruit-ui:not([data-theme='light'], [data-theme='class'])) {
       color-scheme: dark;
     }
   }
 
-  :where(.fruit-ui[data-theme='dark']) {
+  /* data-theme="class" follows a Tailwind-style .dark class (Flux and Laravel's starter kits). */
+  :where(.fruit-ui[data-theme='dark'], .fruit-ui.dark[data-theme='class'], .dark .fruit-ui[data-theme='class']) {
     color-scheme: dark;
   }
 }

@@ -37,6 +37,10 @@ Added:
 - Text completions: `x-fruit::autocomplete` (`fruitAutocomplete`) suggests mentions, emoji, saved replies or words for a native input or textarea; the Livewire Support desk uses it for @mentions.
 - Command palette: `x-fruit::command-palette` with Command, Command Link and Command Group (`fruitCommandPalette`), opened by a Cmd/Ctrl shortcut or by name. The Livewire Support desk adds one for mailboxes and conversation actions.
 - File drop zone: `x-fruit::dropzone` (`fruitDropzone`) around a native file input; Mail compose and Support's new conversation use it.
+- Blade adapters for upload rows (`upload-list`, `upload-row`) and notifications (`notification-group`, `notification`); a typing indicator (`x-fruit::typing`, used in Chat direct messages); a back control (`f-back`, `x-fruit::back-link`) shared by Mail, Support and Admin.
+- `data-theme="class"` follows a Tailwind-style `.dark` class (Flux and Laravel's starter kits) instead of the system appearance.
+- Livewire pagination scrolls the list's pane (or the component) back to the start after a page change.
+- Guidance and a tested example for persistent app shells (`@persist` with `wire:navigate` and `data-current`), icon sets and infinite scroll (`wire:intersect`).
 - Color tokens are declared once with `light-dark()` instead of three palette copies; appearance still follows the system or `data-theme`.
 - Sidebar `header` and `footer` slots (`f-sidebar__header`, `f-sidebar__footer`) replace the account and workspace lockups each example reimplemented. `--f-icon-size` sizes icons; group children indent without `f-sidebar__item--nested`.
 - Shared internals: one Blade `ComponentContract::control()` call per control adapter, one details-popup helper for Menu and Floating Disclosure, one marker reset, shared PHP and browser test helpers, and one component guide (`support-components.md` merged into `components.md`).

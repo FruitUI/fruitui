@@ -12,6 +12,8 @@ export function chatDemo() {
     drafts: {},
     threadDrafts: {},
     error: '',
+    typing: '',
+    typingTimer: null,
     threadError: '',
     nextId: 1000,
     highlightedId: null,
@@ -213,6 +215,12 @@ export function chatDemo() {
       } else {
         this.room.messages.push(message);
         this.draft = '';
+        // In a direct message, the other person starts typing a reply for a moment.
+        if (this.room.kind === 'dm') {
+          clearTimeout(this.typingTimer);
+          this.typing = this.person(this.room.personId).name.split(' ')[0];
+          this.typingTimer = setTimeout(() => (this.typing = ''), 2400);
+        }
       }
       this.$nextTick(() => {
         const history = inThread ? refs.threadHistory : refs.history;

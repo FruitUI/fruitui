@@ -192,17 +192,27 @@ test('upload composition reads real files and supports cancel, retry, error and 
   await root
     .locator('input[type=file]')
     .setInputFiles({ name: 'brief.txt', mimeType: 'text/plain', buffer: Buffer.from('FruitUI brief') });
-  await expect(root.locator('.f-upload__row')).toContainText('brief.txt');
+  await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toContainText('brief.txt');
   await root.getByRole('button', { name: 'Cancel brief.txt' }).click();
-  await expect(root.locator('.f-upload__row')).toHaveAttribute('data-state', 'cancelled');
+  await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveAttribute(
+    'data-state',
+    'cancelled',
+  );
   await root.getByRole('button', { name: 'Retry' }).click();
   await root.getByRole('button', { name: 'Simulate error' }).click();
-  await expect(root.locator('.f-upload__row')).toHaveAttribute('data-state', 'error');
+  await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveAttribute(
+    'data-state',
+    'error',
+  );
   await root.getByRole('button', { name: 'Retry' }).click();
-  await expect(root.locator('.f-upload__row')).toHaveAttribute('data-state', 'complete', { timeout: 7000 });
+  await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveAttribute(
+    'data-state',
+    'complete',
+    { timeout: 7000 },
+  );
   await expect(root.getByRole('link', { name: 'Download local file' })).toHaveAttribute('href', /^blob:/);
   await root.getByRole('button', { name: 'Remove brief.txt' }).click();
-  await expect(root.locator('.f-upload__row')).toHaveCount(0);
+  await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveCount(0);
 });
 
 for (const scheme of ['light', 'dark']) {

@@ -44,7 +44,7 @@ Wrap your layout in `fruit-ui` and use the Blade components:
 </main>
 ```
 
-Use `data-theme="light"` or `data-theme="dark"` on the same container to override the system appearance. Customize presentation with the shared `--f-` CSS tokens. To change a component's markup, `php artisan vendor:publish --tag=fruit-views` copies the views to `resources/views/vendor/fruit`.
+Use `data-theme="light"` or `data-theme="dark"` on the same container to override the system appearance, or `data-theme="class"` to follow a Tailwind-style `dark` class (as Flux and Laravel's starter kits toggle on `<html>`). Customize presentation with the shared `--f-` CSS tokens. To change a component's markup, `php artisan vendor:publish --tag=fruit-views` copies the views to `resources/views/vendor/fruit`.
 
 ## Use with HTML
 

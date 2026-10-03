@@ -260,15 +260,12 @@
       --f-icon-size: 24px;
       stroke-width: 1.8;
     }
-    .f-mail__open-mailboxes,
-    .f-mail__back-to-list {
+    .f-mail__open-mailboxes {
       gap: 3px;
       max-width: calc(100% - 88px);
     }
-    .f-mail__back-to-list > span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .f-mail__back-to-list {
+      --f-back-max-width: calc(100% - 88px);
     }
     .f-mail__large-title {
       margin: 8px 0 14px;

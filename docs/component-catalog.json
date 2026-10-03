@@ -913,8 +913,24 @@
     "id": "upload",
     "kind": "pattern",
     "classes": ["f-upload"],
-    "blade": [],
-    "uses": ["index.html", "support.html"]
+    "blade": ["upload-list", "upload-row"],
+    "uses": ["index.html", "support.html"],
+    "contracts": {
+      "upload-list": {
+        "purpose": "List files being uploaded or attached.",
+        "element": "`ul` with list semantics (default label Attachments).",
+        "state": "No state; rows describe each file.",
+        "keyboard": "Row actions keep their native behavior.",
+        "options": "Accessible label. Slot: Upload Rows."
+      },
+      "upload-row": {
+        "purpose": "Show one file, its upload state and its actions.",
+        "element": "`li` with a status text and, while uploading, a native progress.",
+        "state": "`state`: uploading, complete, error, cancelled; `progress`: 0 to 100. The application owns transport.",
+        "keyboard": "Actions are independent native buttons or links.",
+        "options": "`name`: file name (required). `state`, `progress`. Default slot: links such as Download; `detail` slot replaces the status text; `actions` slot: independent buttons."
+      }
+    }
   },
   {
     "id": "avatar-group",
@@ -943,8 +959,24 @@
     "id": "notifications",
     "kind": "pattern",
     "classes": ["f-notifications"],
-    "blade": [],
-    "uses": ["admin.html", "chat.html"]
+    "blade": ["notification-group", "notification"],
+    "uses": ["admin.html", "chat.html"],
+    "contracts": {
+      "notification-group": {
+        "purpose": "Group notifications under a heading such as Today.",
+        "element": "An `h3` heading and an `ol` labeled by it.",
+        "state": "No state; the application owns read state.",
+        "keyboard": "Notification links keep their behavior.",
+        "options": "`heading`: required. Slot: Notifications."
+      },
+      "notification": {
+        "purpose": "Link to the subject of one notification.",
+        "element": "`li` containing a native link.",
+        "state": "Read state belongs to the application; show it with the badge slot.",
+        "keyboard": "Tab focuses the link; Enter follows it.",
+        "options": "`href` (required) and link attributes such as wire:navigate. Default slot: text; `avatar`, `meta` and `badge` slots."
+      }
+    }
   },
   {
     "id": "prose",
@@ -1145,6 +1177,38 @@
         "state": "Native FileList; a drop assigns files the input accepts and sends input and change.",
         "keyboard": "Tab focuses the input; Space or Enter opens the picker.",
         "options": "Native file input attributes and models (name, accept, multiple, wire:model) go to the input. Default slot: label text (default \"Drop files here or choose files\"); `hint` slot; `wrapper`: presentation attributes."
+      }
+    }
+  },
+  {
+    "id": "typing",
+    "kind": "composition",
+    "classes": ["f-typing"],
+    "blade": ["typing"],
+    "uses": ["chat.html"],
+    "contracts": {
+      "typing": {
+        "purpose": "Tell people that someone is writing.",
+        "element": "`p` role=status with decorative animated dots.",
+        "state": "The application provides the text; empty renders a quiet, persistent status region.",
+        "keyboard": "Not focusable.",
+        "options": "Default slot: who is typing. Nothing renders visibly when empty."
+      }
+    }
+  },
+  {
+    "id": "back",
+    "kind": "pattern",
+    "classes": ["f-back"],
+    "blade": ["back-link"],
+    "uses": ["index.html", "support.html", "admin.html"],
+    "contracts": {
+      "back-link": {
+        "purpose": "Go back to the parent screen.",
+        "element": "`a` with a required href, styled as a quiet button with a chevron.",
+        "state": "No state.",
+        "keyboard": "Tab focuses; Enter follows the link.",
+        "options": "`href` and link attributes such as wire:navigate. Slot: the parent screen’s title, truncated to `--f-back-max-width`. Buttons that switch views in place can use the `f-back` class."
       }
     }
   }

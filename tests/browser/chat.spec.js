@@ -339,3 +339,13 @@ function room(page, id) {
 function threadButton(page, id) {
   return page.locator(`.chat-history button[data-thread-trigger="${id}"]`);
 }
+
+test('a direct message shows the other person typing for a moment', async ({ page }) => {
+  await room(page, 'dm-sophie').click();
+  const composer = page.getByRole('textbox', { name: 'Message Sophie Chen', exact: true });
+  await composer.fill('Lunch tomorrow?');
+  await composer.press('Enter');
+  const typing = page.locator('.chat-typing');
+  await expect(typing).toHaveText('Sophie is typing…');
+  await expect(typing).toHaveText('', { timeout: 5000 });
+});

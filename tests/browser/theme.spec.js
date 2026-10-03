@@ -231,3 +231,29 @@ test('Tailwind v4 utilities win once the documented layer order is declared', as
   await page.goto('/layers-undeclared');
   await expect(page.getByLabel('Sized')).not.toHaveCSS('width', '256px');
 });
+
+test('data-theme="class" follows a Tailwind-style dark class instead of the system', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/components.html');
+  const html = page.locator('html');
+  await html.evaluate(element => {
+    element.dataset.theme = 'class';
+    element.classList.remove('dark');
+  });
+  await expect(html).toHaveCSS('color-scheme', 'light');
+  await html.evaluate(element => element.classList.add('dark'));
+  await expect(html).toHaveCSS('color-scheme', 'dark');
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(html).toHaveCSS('color-scheme', 'dark');
+  // A nested scope can follow a .dark class on an ancestor.
+  const nested = await page.evaluate(() => {
+    document.documentElement.classList.remove('dark', 'fruit-ui');
+    document.body.classList.add('dark');
+    const scope = document.createElement('div');
+    scope.className = 'fruit-ui';
+    scope.dataset.theme = 'class';
+    document.body.append(scope);
+    return getComputedStyle(scope).colorScheme;
+  });
+  expect(nested).toBe('dark');
+});

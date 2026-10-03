@@ -59,7 +59,7 @@
         <header class="f-mail__mobile-header" x-ref="mobileHeader" aria-label="Mail navigation">
           <div class="f-mail__mobile-nav">
             <button class="f-button f-button--ghost f-mail__open-mailboxes" type="button" @click="showMailboxes" aria-controls="mailboxes" aria-label="Show mailboxes"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg>Mailboxes</button>
-            <button class="f-button f-button--ghost f-mail__back-to-list" type="button" x-ref="mobileBack" @click="backToList" aria-label="Back to messages"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="mailboxTitle">All Inboxes</span></button>
+            <button class="f-button f-button--ghost f-back f-mail__back-to-list" type="button" x-ref="mobileBack" @click="backToList" aria-label="Back to messages"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="mailboxTitle">All Inboxes</span></button>
             <button class="f-button f-button--ghost f-mail__close-mailboxes" type="button" @click="backToList">Done</button>
             <details class="f-floating-disclosure f-mail__options" x-data="fruitFloatingDisclosure">
               <summary class="f-button f-button--ghost f-button--icon" aria-label="Mailbox options"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></summary>

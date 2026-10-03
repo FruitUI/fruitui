@@ -44,6 +44,22 @@
     min-width: var(--f-button-height, 36px);
     min-height: var(--f-button-height, 36px);
   }
+  /* Back to the parent screen in compact layouts: a chevron and the parent's title. */
+  .f-back {
+    gap: 3px;
+    max-width: var(--f-back-max-width, 160px);
+    padding-inline: 4px 8px;
+    /* The selection text blue keeps 4.5:1 on the ghost button's hover surface. */
+    color: var(--f-selection-text);
+  }
+  .f-back > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-back:dir(rtl) > .f-icon {
+    scale: -1 1;
+  }
   .f-button--small {
     --f-button-height: 30px;
     --f-button-padding-block: 3px;

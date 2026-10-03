@@ -13,6 +13,9 @@ Livewire\Livewire::addComponent('fruit-support-desk', viewPath: "{$examples}/sup
 Route::get('/preferences', fn () => view('host', ['component' => 'fruit-mail-preferences']));
 Route::get('/support/{mailbox?}', fn (string $mailbox = 'all') => view('host', ['component' => 'fruit-support-desk', 'parameters' => ['mailbox' => $mailbox]]));
 
+// An application shell whose sidebar persists across wire:navigate.
+Route::get('/shell/{page}', fn (string $page) => view('shell', ['page' => $page]))->whereIn('page', ['inbox', 'preferences']);
+
 // The same desk with Livewire's injected scripts and FruitUI's self-registering entry, as in starter kits.
 Route::get('/injected/support/{mailbox?}', fn (string $mailbox = 'all') => view('injected', ['mailbox' => $mailbox]));
 

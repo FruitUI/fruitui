@@ -371,8 +371,6 @@
   font-size: var(--f-text-xs);
 }
 .support-customer-profile .f-badge {
-  border: 1px solid var(--f-border);
-  background: var(--f-surface);
   font-size: var(--f-text-2xs);
 }
 .support-inspector-section {
@@ -623,15 +621,11 @@
     grid-column: 1;
   }
   .support-back {
+    --f-back-max-width: 130px;
     display: inline-flex;
-    max-width: 130px;
-    padding: 8px 4px;
-    color: var(--f-accent);
+    padding-block: 8px;
   }
   .support-back > span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: var(--f-text-lg);
   }
   .support-ticket-number {

@@ -288,3 +288,40 @@ test('the command palette navigates with wire:navigate and runs Livewire actions
   await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('changing page scrolls the conversation pane back to the start of the list', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 600 });
+  const errors = await openDesk(page);
+  // A short workspace makes the list scroll; a stylesheet survives Livewire morphs.
+  await page.addStyleTag({ content: '.support-desk .f-workspace { --f-workspace-height: 420px !important; }' });
+  const pane = page.getByRole('region', { name: 'Conversations' }).locator('.f-pane__scroll');
+  await pane.evaluate(element => element.scrollTo({ top: element.scrollHeight }));
+  expect(await pane.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  await page.getByRole('navigation', { name: 'Pagination' }).getByRole('button', { name: 'Next' }).click();
+  await expect(page.getByRole('navigation', { name: 'Pagination' })).toContainText('5–7 of 7');
+  await expect.poll(() => pane.evaluate(element => element.scrollTop)).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test('a persisted sidebar keeps its element across wire:navigate and follows the current page', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${host}/shell/inbox`);
+  const sidebar = page.getByRole('navigation', { name: 'App' });
+  await sidebar.evaluate(element => {
+    element.dataset.marker = 'kept';
+  });
+  const inbox = sidebar.getByRole('link', { name: 'Inbox' });
+  const preferences = sidebar.getByRole('link', { name: 'Preferences' });
+  await expect(inbox).toHaveAttribute('aria-current', 'page');
+  const current = await inbox.evaluate(element => getComputedStyle(element).backgroundColor);
+  await preferences.click();
+  await expect(page).toHaveURL(`${host}/shell/preferences`);
+  await expect(page.getByRole('switch', { name: 'Show message previews' })).toBeVisible();
+  await expect(sidebar).toHaveAttribute('data-marker', 'kept');
+  // The persisted markup keeps its server aria-current; Livewire's data-current shows the page.
+  await expect(preferences).toHaveAttribute('data-current', '');
+  await expect(inbox).not.toHaveAttribute('data-current');
+  await expect(preferences).toHaveCSS('background-color', current);
+  expect(errors).toEqual([]);
+});

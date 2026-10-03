@@ -427,6 +427,10 @@ These cover the core screens of helpdesks, mail and chat. Contracts are in the [
 - **Bulk selection**: put a Checkbox beside each Item Row in its list item; the list gets a checkbox column. `x-fruit::selection-bar :count="count($selected)"` shows the count and independent actions, and renders nothing at zero.
 - **Loading**: `x-fruit::skeleton :lines="3"` inside a container with `aria-busy="true"`, for example a Livewire lazy component's `placeholder()`. Busy buttons (Livewire `data-loading`, or `aria-busy`) show a progress cursor; compose `x-fruit::spinner` beside a readable label.
 - **Files**: `x-fruit::dropzone` wraps a native file input. Dropped files are filtered by `accept` and `multiple`, then assigned to the input with `input` and `change`, so `wire:model` uploads and change handlers work unchanged. Use Livewire's `temporaryUrl()` with Avatar or Attachment for previews.
+- **Uploads**: `x-fruit::upload-list` with `upload-row` (`name`, `state`: uploading, complete, error, cancelled, and `progress`). With Livewire uploads, read progress from the input's `livewire-upload-progress` event, as below.
+- **Notifications**: `x-fruit::notification-group heading="Today"` with `x-fruit::notification` links (`avatar`, `meta` and `badge` slots).
+- **Typing**: `x-fruit::typing` renders a persistent status region; give it text such as "Mia is typing…" while someone types, and leave it empty otherwise.
+- **Back**: `x-fruit::back-link` returns to the parent screen in compact layouts, with its title truncated. Buttons that switch views in place use the `f-back` class.
 - **Badges** take `tone` (accent, success, warning, danger), `variant="outline"` and a `dot` slot for status labels.
 - **Menus** add Menu Checkbox, Menu Radio, Menu Link, Menu Separator, Menu Group and `shortcut` hints; checked state is the caller's (`checked` or `x-bind:aria-checked`).
 - **Breadcrumbs** (`x-fruit::breadcrumbs`, `crumb`): ancestors link, the current page uses `current`.
@@ -445,6 +449,49 @@ These cover the core screens of helpdesks, mail and chat. Contracts are in the [
 <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
     <x-fruit::button size="small" wire:click="closeSelected">Close selected</x-fruit::button>
 </x-fruit::selection-bar>
+```
+
+```blade
+<div x-data="{ progress: null }">
+    <x-fruit::dropzone wire:model="attachments" multiple
+        x-on:livewire-upload-start="progress = 0"
+        x-on:livewire-upload-progress="progress = $event.detail.progress"
+        x-on:livewire-upload-finish="progress = null" />
+    <x-fruit::upload-list x-show="progress !== null">
+        <li class="f-upload__row" data-state="uploading"><div class="f-upload__body">
+            <strong>Uploading</strong><progress class="f-progress" max="100" :value="progress" aria-label="Upload progress"></progress>
+        </div></li>
+    </x-fruit::upload-list>
+    <x-fruit::upload-list aria-label="Attached files">
+        @foreach ($attachments as $index => $file)
+            <x-fruit::upload-row :name="$file->getClientOriginalName()">
+                <x-slot:actions><x-fruit::button size="small" wire:click="removeAttachment({{ $index }})">Remove</x-fruit::button></x-slot:actions>
+            </x-fruit::upload-row>
+        @endforeach
+    </x-fruit::upload-list>
+</div>
+```
+
+## App shells, icons and infinite scroll
+
+**Persistent shells.** Put the sidebar in the layout inside `@persist('sidebar')` and give its links `wire:navigate`. The sidebar keeps its element (and scroll position) across navigations; Livewire marks the link for the current URL with `data-current`, which Sidebar Items and Section Nav style like `aria-current="page"`.
+
+```blade
+@persist('sidebar')
+    <x-fruit::sidebar class="f-pane f-pane--column" aria-label="App">
+        <x-fruit::sidebar-item :href="route('inbox')" :current="request()->routeIs('inbox')" wire:navigate>Inbox</x-fruit::sidebar-item>
+    </x-fruit::sidebar>
+@endpersist
+```
+
+**Icons.** FruitUI ships no icon set. Any SVG set works; `.f-icon` sizes it (20px, or `--f-icon-size`), draws strokes in `currentColor` and leaves fills off, which suits outline sets such as Heroicons through blade-icons: `<x-heroicon-o-archive-box class="f-icon" aria-hidden="true" />`. Put icons in the `icon`, `leading` or `avatar` slots, or inside buttons beside a text or `aria-label` name.
+
+**Infinite scroll.** End the list with a sentinel that loads more when it scrolls into view, and show placeholders while it loads:
+
+```blade
+@if ($conversations->hasMorePages())
+    <div wire:intersect="loadMore" aria-busy="true"><x-fruit::skeleton :lines="2" /></div>
+@endif
 ```
 
 ## Field associations and validation errors

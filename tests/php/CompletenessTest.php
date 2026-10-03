@@ -198,6 +198,39 @@ class CompletenessTest extends TestCase
         $this->assertSame('Images', $xpath->query('.//span[@class="f-dropzone__hint"]', $zone)->item(0)->textContent);
     }
 
+    public function test_uploads_notifications_typing_and_back_links_render_native_markup(): void
+    {
+        $xpath = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::upload-list>
+                <x-fruit::upload-row name="brief.pdf" state="uploading" :progress="40"><x-slot:actions><x-fruit::button wire:click="cancel">Cancel</x-fruit::button></x-slot:actions></x-fruit::upload-row>
+                <x-fruit::upload-row name="notes.txt" state="error" />
+            </x-fruit::upload-list>
+            <x-fruit::notification-group heading="Today">
+                <x-fruit::notification href="/conversations/1" wire:navigate>Sophie replied<x-slot:meta>10:42</x-slot:meta><x-slot:badge>New</x-slot:badge></x-fruit::notification>
+            </x-fruit::notification-group>
+            <x-fruit::typing>Mia is typing…</x-fruit::typing>
+            <x-fruit::typing />
+            <x-fruit::back-link href="/support/all" wire:navigate>All Inboxes</x-fruit::back-link>
+            BLADE));
+        $this->assertSame('Attachments', $xpath->query('//ul[@class="f-upload"]')->item(0)->getAttribute('aria-label'));
+        $rows = $xpath->query('//li[contains(@class, "f-upload__row")]');
+        $this->assertSame('uploading', $rows->item(0)->getAttribute('data-state'));
+        $this->assertSame('40', $xpath->query('.//progress', $rows->item(0))->item(0)->getAttribute('value'));
+        $this->assertSame('Upload brief.pdf', $xpath->query('.//progress', $rows->item(0))->item(0)->getAttribute('aria-label'));
+        $this->assertSame(1, $xpath->query('.//div[@class="f-upload__actions"]/button', $rows->item(0))->length);
+        $this->assertSame('Upload failed. Retry or remove the file.', $xpath->query('.//span[@role="status"]', $rows->item(1))->item(0)->textContent);
+        $this->assertSame(0, $xpath->query('.//progress', $rows->item(1))->length);
+        $this->assertSame('Today', $xpath->query('//h3[@class="f-notifications__heading"]')->item(0)->textContent);
+        $this->assertSame('Today', $xpath->query('//ol[@class="f-notifications"]')->item(0)->getAttribute('aria-label'));
+        $this->assertSame('/conversations/1', $xpath->query('//li[@class="f-notifications__item"]/a')->item(0)->getAttribute('href'));
+        $typing = $xpath->query('//p[@role="status" and contains(@class, "f-typing")]');
+        $this->assertSame(1, $xpath->query('.//span[@class="f-typing__dots"]', $typing->item(0))->length);
+        $this->assertSame('', trim($typing->item(1)->textContent), 'An empty indicator keeps its quiet status region.');
+        $back = $xpath->query('//a[contains(@class, "f-back")]')->item(0);
+        $this->assertSame('/support/all', $back->getAttribute('href'));
+        $this->assertSame('All Inboxes', $xpath->query('.//span', $back)->item(0)->textContent);
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -236,6 +269,11 @@ class CompletenessTest extends TestCase
             ['<x-fruit::command-link>Inbox</x-fruit::command-link>', 'requires href'],
             ['<x-fruit::command role="button">Go</x-fruit::command>', 'overriding role'],
             ['<x-fruit::dropzone type="text" />', 'fixed native type'],
+            ['<x-fruit::upload-row state="complete" />', 'needs the file name'],
+            ['<x-fruit::upload-row name="a.txt" state="paused" />', 'upload-row state must be'],
+            ['<x-fruit::upload-row name="a.txt" state="uploading" progress="140" />', 'whole percentage'],
+            ['<x-fruit::notification>Hi</x-fruit::notification>', 'requires href'],
+            ['<x-fruit::back-link>Back</x-fruit::back-link>', 'requires href'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }

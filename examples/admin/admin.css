@@ -171,9 +171,8 @@
   min-width: 0;
 }
 .admin-page-heading > .admin-back-link {
-  color: var(--f-selection-text);
+  --f-back-max-width: none;
   font-size: var(--f-text-xs);
-  text-decoration: none;
   flex-shrink: 0;
 }
 .admin-page-heading > div > p:last-child {
