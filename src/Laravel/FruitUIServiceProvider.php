@@ -2,9 +2,11 @@
 
 namespace FruitUI;
 
+use FruitUI\Testing\LivewireAssertions;
 use FruitUI\View\Components\Field;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Features\SupportTesting\Testable;
 
 class FruitUIServiceProvider extends ServiceProvider
 {
@@ -20,5 +22,16 @@ class FruitUIServiceProvider extends ServiceProvider
         $this->callAfterResolving('view', fn ($factory) => $factory->addNamespace('livewire', "{$views}/pagination/livewire"));
 
         $this->publishes([$views => resource_path('views/vendor/fruit')], 'fruit-views');
+
+        // English text is the key. Published copies override the shipped ones; the app's own lang/{locale}.json overrides both.
+        $lang = __DIR__.'/../../lang';
+        $this->loadJsonTranslationsFrom($lang);
+        $this->loadJsonTranslationsFrom($this->app->langPath('vendor/fruit'));
+        $this->publishes([$lang => $this->app->langPath('vendor/fruit')], 'fruit-lang');
+
+        // Livewire is optional; with it, Livewire::test() gains assertToasted() and the dialog assertions.
+        if (class_exists(Testable::class)) {
+            LivewireAssertions::register();
+        }
     }
 }

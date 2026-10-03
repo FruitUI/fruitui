@@ -16,6 +16,7 @@ use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\WithPagination;
 use LogicException;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class LaravelIntegrationTest extends TestCase
@@ -268,6 +269,38 @@ class LaravelIntegrationTest extends TestCase
         Fruit::openDialog('confirm-archive');
     }
 
+    public function test_livewire_tests_assert_fruit_feedback_directly(): void
+    {
+        Livewire::test(FeedbackFixture::class)
+            ->assertNotToasted()
+            ->call('archive')
+            ->assertToasted()
+            ->assertToasted('Conversation archived.')
+            ->assertDialogClosed('confirm-archive')
+            ->call('confirm')
+            ->assertDialogOpened('confirm-archive')
+            ->assertNotToasted();
+
+        // A toast flashed before a redirect counts too.
+        Livewire::test(FeedbackFixture::class)->call('leave')->assertToasted('See you on the next page.')->assertRedirect('/inbox');
+
+        $failures = 0;
+        foreach ([
+            fn () => Livewire::test(FeedbackFixture::class)->call('archive')->assertToasted('Something else.'),
+            fn () => Livewire::test(FeedbackFixture::class)->call('confirm')->assertToasted(),
+            fn () => Livewire::test(FeedbackFixture::class)->call('archive')->assertNotToasted(),
+            fn () => Livewire::test(FeedbackFixture::class)->call('archive')->assertDialogOpened('confirm-archive'),
+        ] as $assertion) {
+            session()->forget('fruit-toast');
+            try {
+                $assertion();
+            } catch (AssertionFailedError) {
+                $failures++;
+            }
+        }
+        $this->assertSame(4, $failures);
+    }
+
     public function test_token_values_split_the_way_the_token_field_shows_them(): void
     {
         $this->assertSame(['ann@example.com', 'bob@example.com', '0'], Fruit::tokens(" ann@example.com\r\n\n bob@example.com \nann@example.com\n0\n"));
@@ -359,6 +392,12 @@ class FeedbackFixture extends Component
     public function confirm(): void
     {
         Fruit::openDialog('confirm-archive');
+    }
+
+    public function leave(): void
+    {
+        Fruit::flashToast('See you on the next page.');
+        $this->redirect('/inbox');
     }
 
     public function render()

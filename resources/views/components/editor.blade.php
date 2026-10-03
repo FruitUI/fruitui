@@ -6,8 +6,8 @@
         @isset($toolbar)
             {{ $toolbar }}
         @else
-        @foreach(['bold' => 'Bold', 'italic' => 'Italic', 'bulletList' => 'Bullets', 'orderedList' => 'Numbered list', 'blockquote' => 'Quote', 'undo' => 'Undo', 'redo' => 'Redo'] as $command => $label)
-            <button class="f-button f-button--ghost" type="button" data-fruit-command="{{ $command }}">{{ __($label) }}</button>
+        @foreach(['bold' => __('Bold'), 'italic' => __('Italic'), 'bulletList' => __('Bullets'), 'orderedList' => __('Numbered list'), 'blockquote' => __('Quote'), 'undo' => __('Undo'), 'redo' => __('Redo')] as $command => $label)
+            <button class="f-button f-button--ghost" type="button" data-fruit-command="{{ $command }}">{{ $label }}</button>
         @endforeach
         @endisset
     </div>

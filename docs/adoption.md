@@ -68,7 +68,9 @@ Field associates one control with its label, description and validation error; s
 
 Enhanced adapters accept `:wrapper="['class' => 'account-picker', 'style' => 'max-width:20rem', 'data-fruit-no-matches' => __('No matches')]"`. The wrapper accepts id/class/style/dir/lang/data attributes. Native attributes and bindings remain on the control. Native class/style are mirrored to visible presentation, retaining the same no-JavaScript fallback. Token Field maxlength limits the complete newline-serialized string.
 
-Editor accepts a named `toolbar` slot for translated/custom button content. Use native buttons with `data-fruit-command` set to bold, italic, bulletList, orderedList, blockquote, undo or redo. Unknown commands remain disabled. Default toolbar labels, menu/pagination labels and generated helper text use Laravel's `__()`; wrapper overrides take precedence. Use the same literal template keys (including curly placeholders) in the host JSON translations.
+Editor accepts a named `toolbar` slot for translated/custom button content. Use native buttons with `data-fruit-command` set to bold, italic, bulletList, orderedList, blockquote, undo or redo. Unknown commands remain disabled. Default toolbar labels, menu/pagination labels, generated helper text and the `Tokens` rule message use Laravel's `__()` with the English text as the key; wrapper overrides take precedence.
+
+FruitUI ships Dutch, German, French and Spanish strings in `lang/{locale}.json`, plus `lang/en.json` listing every key. They follow the application locale with no setup. To change a string, add the same key to the application's `lang/{locale}.json`, which takes precedence, or publish FruitUI's files with `php artisan vendor:publish --tag=fruit-lang` and edit them in `lang/vendor/fruit`. Keep curly `{count}` placeholders (filled in the browser) and `:count`-style placeholders (filled by Laravel) as they are. A new locale only needs a `lang/vendor/fruit/{locale}.json` with the keys from `en.json`.
 
 ## Customization, direction and generated text
 

@@ -580,7 +580,16 @@ A dialog opens in one of two ways. Bind its open state when the server owns it; 
 
 Or give it a `name` and open or close it with events, from the server (`Fruit::openDialog`) or the browser (`$dispatch('fruit-dialog-open', { name: 'close-ticket' })`). Either way, Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
 
-In tests, assert the browser events: `->assertDispatched('fruit-toast', message: 'Conversation closed.')`.
+In tests, `Livewire::test()` gains matching assertions. `assertToasted()` accepts a toast dispatched in the request or flashed for the next page, optionally with its exact message:
+
+```php
+Livewire::test(Inbox::class)
+    ->call('archive')
+    ->assertToasted('Conversation archived.')
+    ->assertDialogClosed('confirm-archive');
+
+Livewire::test(Inbox::class)->call('confirm')->assertDialogOpened('confirm-archive')->assertNotToasted();
+```
 
 ## Pagination
 
