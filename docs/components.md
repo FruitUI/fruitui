@@ -196,7 +196,7 @@ An optional `icon` slot contains decorative artwork. HTML uses `f-empty-state__i
 
 ## Example boundaries
 
-Charts, customer tabs, breadcrumbs, full Support inspectors, and Chat message arrangements remain example compositions. Their frames, panes, composers, facts, floating disclosures, and table presentation now use the public components below. They are identified as such in the gallery. Application records, searches, queues, assignment, billing, and routing belong to the host application. New examples must compare existing arrangements and extract common presentation once a second actual use demonstrates the need.
+Charts, customer tabs, full Support inspectors, and Chat reactions remain example compositions; messages, dividers, breadcrumbs and timelines are shared. Their frames, panes, composers, facts, floating disclosures, and table presentation now use the public components below. They are identified as such in the gallery. Application records, searches, queues, assignment, billing, and routing belong to the host application. New examples must compare existing arrangements and extract common presentation once a second actual use demonstrates the need.
 
 ## Workspace frames, panes, and resizing
 

@@ -352,9 +352,91 @@
   .f-divider:empty::after {
     display: none;
   }
+  .f-divider--start::before {
+    display: none;
+  }
   .f-divider--accent {
     --f-divider-color: var(--f-accent);
     color: var(--f-accent);
+  }
+
+  /* One message in a conversation: identity and time, the body, then attachments or actions.
+     Inline puts the avatar beside everything; stacked puts the identity above a full-width body. */
+  .f-message {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--f-message-gap, 10px);
+    align-items: start;
+  }
+  .f-message > :not(.f-message__avatar) {
+    grid-column: -2;
+  }
+  .f-message__avatar {
+    grid-row: span 4;
+    --f-avatar-size: var(--f-message-avatar-size, 32px);
+    --f-avatar-font-size: var(--f-text-2xs);
+  }
+  .f-message__header {
+    display: flex;
+    align-items: baseline;
+    gap: 4px 8px;
+    min-width: 0;
+  }
+  .f-message__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 8px;
+    min-width: 0;
+  }
+  .f-message__author {
+    font-size: var(--f-text-sm);
+    font-weight: 600;
+  }
+  .f-message__meta,
+  .f-message__time {
+    color: var(--f-secondary);
+    font-size: var(--f-text-2xs);
+    white-space: nowrap;
+  }
+  .f-message__body {
+    margin-top: var(--f-message-body-gap, 4px);
+    font-size: var(--f-text-sm);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .f-message__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .f-message--stacked {
+    align-items: center;
+  }
+  .f-message--stacked > .f-message__avatar {
+    grid-row: auto;
+  }
+  .f-message--stacked > :not(.f-message__avatar, .f-message__header) {
+    grid-column: 1 / -1;
+  }
+  .f-message--stacked .f-message__header {
+    align-items: flex-start;
+  }
+  .f-message--stacked .f-message__identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .f-message--stacked .f-message__time {
+    margin-inline-start: auto;
+  }
+  .f-message--note {
+    padding: var(--f-message-note-padding, 14px);
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius);
+    background: var(--f-surface-secondary);
   }
 
   /* A chronological list of events, such as conversation history or an audit log. */

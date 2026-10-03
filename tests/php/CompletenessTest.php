@@ -105,6 +105,31 @@ class CompletenessTest extends TestCase
         $this->assertSame('page', $xpath->query('//nav[@class="f-breadcrumbs"]/ol/li/span')->item(0)->getAttribute('aria-current'));
     }
 
+    public function test_messages_render_identity_body_attachments_and_footer(): void
+    {
+        $xpath = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::message layout="stacked" variant="note" datetime="2026-10-02T10:48" aria-label="Internal note">
+                <x-slot:avatar><x-fruit::avatar>MP</x-fruit::avatar></x-slot:avatar>
+                <x-slot:author>Mia Patel</x-slot:author>
+                <x-slot:meta>Internal note</x-slot:meta>
+                <x-slot:time>10:48</x-slot:time>
+                Existing projects stay in place.
+                <x-slot:attachments><a class="f-attachment" href="/notes.txt">Notes</a></x-slot:attachments>
+                <x-slot:footer><x-fruit::button size="small">Reply</x-fruit::button></x-slot:footer>
+            </x-fruit::message>
+            <x-fruit::divider align="start">2 replies</x-fruit::divider>
+            BLADE));
+        $message = $xpath->query('//article')->item(0);
+        $this->assertSame('f-message f-message--stacked f-message--note', $message->getAttribute('class'));
+        $this->assertSame('Internal note', $message->getAttribute('aria-label'));
+        $this->assertSame('Mia Patel', $xpath->query('.//strong[@class="f-message__author"]', $message)->item(0)->textContent);
+        $this->assertSame('2026-10-02T10:48', $xpath->query('.//time[@class="f-message__time"]', $message)->item(0)->getAttribute('datetime'));
+        $this->assertSame('Existing projects stay in place.', trim($xpath->query('.//div[@class="f-message__body"]', $message)->item(0)->textContent));
+        $this->assertSame(1, $xpath->query('.//div[@class="f-message__attachments"]/a', $message)->length);
+        $this->assertSame(1, $xpath->query('.//footer[@class="f-message__footer"]/button', $message)->length);
+        $this->assertSame('f-divider f-divider--start', $xpath->query('//div[@role="separator"]')->item(0)->getAttribute('class'));
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -132,6 +157,9 @@ class CompletenessTest extends TestCase
             ['<x-fruit::crumb>Customers</x-fruit::crumb>', 'needs an href, or current'],
             ['<x-fruit::crumb href="/" current>Home</x-fruit::crumb>', 'needs an href, or current'],
             ['<x-fruit::breadcrumbs role="list"><li>Home</li></x-fruit::breadcrumbs>', 'overriding role'],
+            ['<x-fruit::message layout="bubble">Hi</x-fruit::message>', 'message layout must be'],
+            ['<x-fruit::message variant="event">Hi</x-fruit::message>', 'message variant must be'],
+            ['<x-fruit::divider align="end" />', 'divider align must be'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }

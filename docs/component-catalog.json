@@ -997,7 +997,7 @@
         "element": "`div` role=separator; a label becomes its accessible name.",
         "state": "No state.",
         "keyboard": "Not focusable.",
-        "options": "`tone`: neutral (default), accent. Slot: optional label text."
+        "options": "`tone`: neutral (default), accent. `align`: center (default), start. Slot: optional label text."
       }
     }
   },
@@ -1044,6 +1044,22 @@
         "state": "`current` marks the current page.",
         "keyboard": "Links follow with Enter.",
         "options": "`href` (or a client binding) for ancestors; `current` for the page itself, without href. Link attributes such as wire:navigate pass through."
+      }
+    }
+  },
+  {
+    "id": "message",
+    "kind": "pattern",
+    "classes": ["f-message"],
+    "blade": ["message"],
+    "uses": ["support.html", "chat.html"],
+    "contracts": {
+      "message": {
+        "purpose": "Present one message in a conversation.",
+        "element": "`article` (or a listitem role) with a header, body, attachments and footer.",
+        "state": "No state; the application owns message data and actions.",
+        "keyboard": "Child links and buttons keep their behavior; no added keyboard model.",
+        "options": "`layout`: inline (default), stacked. `variant`: default, note. `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta`, `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply). Give it an accessible name."
       }
     }
   }

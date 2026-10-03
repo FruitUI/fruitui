@@ -242,7 +242,14 @@ new class extends Component
 
                     <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
                         @foreach ($ticket['messages'] as $message)
-                            <li class="f-card"><strong>{{ $message['author'] }}</strong><p>{{ $message['body'] }}</p></li>
+                            <li>
+                                <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
+                                    <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
+                                    <x-slot:author>{{ $message['author'] }}</x-slot:author>
+                                    <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
+                                    {{ $message['body'] }}
+                                </x-fruit::message>
+                            </li>
                         @endforeach
                     </ol>
 

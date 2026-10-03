@@ -272,47 +272,27 @@
   --f-pane-scroll-padding: 22px 26px 16px;
 }
 
+.support-message {
+  --f-message-gap: 9px;
+  --f-message-avatar-size: 29px;
+  --f-message-body-gap: 13px;
+}
 .support-message + .support-message {
   margin-top: 25px;
 }
-.support-message header {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.support-message .f-avatar {
-  --f-avatar-size: 29px;
-  --f-avatar-font-size: var(--f-text-2xs);
-}
-.support-message header strong {
+.support-message .f-message__author {
   font-size: var(--f-text-xs);
-  font-weight: 600;
 }
-.support-message header small {
-  display: block;
-  color: var(--f-secondary);
+.support-message :is(.f-message__meta, .f-message__time) {
   font-size: calc(var(--f-text-root) * 0.5625);
 }
-.support-message time {
-  margin-left: auto;
-  align-self: flex-start;
+.support-message .f-message__time {
   padding-top: 3px;
-  font-size: calc(var(--f-text-root) * 0.5625);
-  color: var(--f-secondary);
-  white-space: nowrap;
 }
 .support-message-body {
-  margin-top: 13px;
   font-size: var(--f-text-sm);
   line-height: 1.7;
   white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.support-message[data-kind='note'] {
-  padding: 14px;
-  border: 1px solid var(--f-border);
-  border-radius: 10px;
-  background: var(--f-surface-secondary);
 }
 .support-note-lock {
   flex-shrink: 0;
