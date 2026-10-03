@@ -41,7 +41,7 @@ php artisan vendor:publish --tag=fruit-assets
 <script src="{{ asset('vendor/fruitui/livewire.global.js') }}" defer></script>
 ```
 
-Re-run the publish command (with `--force`) after updating FruitUI, or add it to Composer's `post-update-cmd`.
+The files are also in Laravel's `laravel-assets` group, which the default Laravel skeleton re-publishes in Composer's `post-update-cmd` (`@php artisan vendor:publish --tag=laravel-assets --ansi --force`), so updates keep them current.
 
 Wrap your layout in `fruit-ui` and use the Blade components:
 

@@ -329,6 +329,8 @@ class LaravelIntegrationTest extends TestCase
         foreach (['fruitui.css', 'core.compat.css', 'layout.compat.css', 'livewire.global.js', 'alpine.global.js', 'editor.global.js'] as $file) {
             $this->assertFileExists("{$source}/{$file}");
         }
+        // Laravel's skeleton re-publishes this group in post-update-cmd, keeping the copy current.
+        $this->assertSame($paths, ServiceProvider::pathsToPublish(FruitUIServiceProvider::class, 'laravel-assets'));
     }
 
     public function test_token_values_split_the_way_the_token_field_shows_them(): void
