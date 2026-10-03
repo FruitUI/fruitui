@@ -375,6 +375,10 @@
   .f-button-group > .f-menu > summary {
     border-radius: 0;
   }
+  /* A menu's trigger fills the group's height, matching the buttons beside it. */
+  .f-button-group > .f-menu {
+    display: flex;
+  }
   .f-button-group > :first-child,
   .f-button-group > :first-child > summary {
     border-start-start-radius: 6px;

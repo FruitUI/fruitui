@@ -455,3 +455,18 @@ for (const colorScheme of ['light', 'dark']) {
     await expectAccessible(page, '#component-context-menu');
   });
 }
+
+test('a split button menu trigger matches the height of the button beside it', async ({ page }) => {
+  for (const path of ['/components.html', '/support.html']) {
+    await page.goto(path);
+    for (const group of await page.locator('.f-button-group:has(> .f-menu)').all()) {
+      const edges = await group.evaluate(element =>
+        [...element.children].map(child => {
+          const rect = (child.matches('details') ? child.querySelector('summary') : child).getBoundingClientRect();
+          return [rect.top, rect.bottom];
+        }),
+      );
+      for (const edge of edges) expect(edge, path).toEqual(edges[0]);
+    }
+  }
+});
