@@ -545,7 +545,7 @@
       background: var(--f-surface);
       font-size: var(--f-text-xl);
     }
-    .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__item[aria-current='page'] {
+    .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-sidebar__item:is([aria-current='page'], [data-current]) {
       background: var(--f-selection);
     }
     .f-mail[data-view='mailboxes'] .f-mail__sidebar .f-icon {

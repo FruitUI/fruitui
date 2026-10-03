@@ -31,6 +31,14 @@ This fits FreeScout's existing Blade/Bootstrap/jQuery setup without changing its
 
 ## JavaScript and optional editing
 
+With Livewire's injected scripts (the default, as in Laravel's starter kits), import the self-registering entry from the app's Vite entry. It registers FruitUI on the Alpine instance Livewire injects, before Livewire starts it:
+
+```js
+import '../../vendor/fruitui/fruitui/src/js/livewire.js'; // or 'fruitui/livewire' from npm
+```
+
+With Livewire's [manual bundling](https://livewire.laravel.com/docs/4.x/alpine#manually-bundling-alpine-in-your-javascript-build), import `{ Livewire, Alpine }` from `vendor/livewire/livewire/dist/livewire.esm`, call `fruitUI(Alpine)`, then `Livewire.start()`. Without Livewire, register on your own instance:
+
 ```js
 import Alpine from 'alpinejs';
 import fruitUI from 'fruitui/alpine';
@@ -38,11 +46,9 @@ fruitUI(Alpine);
 Alpine.start();
 ```
 
-This setup is for an application that owns a standalone Alpine instance. With Livewire, use its existing Alpine instance: import `{ Livewire, Alpine }` from the host's `vendor/livewire/livewire/dist/livewire.esm`, register `fruitUI(Alpine)`, and call `Livewire.start()`. Follow [Livewire's manual bundling setup](https://livewire.laravel.com/docs/4.x/alpine#manually-bundling-alpine-in-your-javascript-build), including `@livewireScriptConfig` in the layout.
+Without a bundler, `build/livewire.global.js` self-registers like the Livewire entry, and `alpine.global.js` exposes `FruitUI.default(Alpine)` and `FruitUI.fruitToast`; load either before Alpine starts. The helpers never include or start Alpine.
 
-The compiled `fruitui/dist/alpine.js` provides the same exports without a bundler. `alpine.global.js` exposes `FruitUI.default(Alpine)` and `FruitUI.fruitToast`; load it before your existing instance starts. The helpers never include or start Alpine. With automatically loaded Livewire scripts, register in `alpine:init` before Livewire initializes. With Livewire's manual bundle, register on its exported Alpine, then call `Livewire.start()`.
-
-Core installs no editor packages. To import the source `fruitui/editor` module, install its optional peers (`@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit`, compatible 3.x) in the host. Alternatively, `fruitui/dist/editor.js` bundles those dependencies; `editor.global.js` exposes `FruitEditor(Alpine)`. Register fruitUI first, then fruitEditor on that same instance, and load Editor CSS. Core registers a quiet native Editor fallback; the optional plugin replaces it before Alpine starts. Without it, Editor remains a native textarea; Token Field and Combobox also preserve editable native fallbacks without Alpine.
+Core installs no editor packages. To import the source `fruitui/editor` module, install its optional peers (`@tiptap/core`, `@tiptap/pm`, `@tiptap/starter-kit`, compatible 3.x) in the host. Alternatively, `fruitui/dist/editor.js` bundles those dependencies; `editor.global.js` exposes `FruitEditor(Alpine)`. Register fruitUI first, then fruitEditor on that same instance (in `alpine:init` with injected Livewire scripts), and load Editor CSS. Core registers a quiet native Editor fallback; the optional plugin replaces it before Alpine starts. Without it, Editor remains a native textarea; Token Field and Combobox also preserve editable native fallbacks without Alpine.
 
 All form names, IDs, validation and models belong to the canonical select/textarea. Only generated presentation containers use `wire:ignore`; never ignore the whole control wrapper. Editor sends `input` during editing and one `change` when focus leaves the widget, including its toolbar; it forwards native `focus`/`blur`. Discrete option/token commits send `input` and `change`. An unchanged value sends no duplicate events. Resets and external value updates do not emit user edit events.
 
@@ -50,24 +56,15 @@ Livewire 4 uses `.live.change`/`.live.blur` to send network updates on change/bl
 
 ## Laravel and single-file Livewire components
 
-The Composer service provider auto-registers the `x-fruit::` Blade adapters. Use them inside a `.fruit-ui` scope and import `fruitui/css` through the application's asset build. Blade controls retain their native attributes, including `name`, `required`, `wire:model`, and action bindings; plain Blade usage does not require Livewire.
+The Composer service provider registers the `x-fruit::` Blade adapters. Use them inside a `.fruit-ui` scope; plain Blade usage does not require Livewire. Blade controls retain their native attributes, including `name`, `required`, `wire:model`, and action bindings. `php artisan vendor:publish --tag=fruit-views` copies the views to `resources/views/vendor/fruit` for local changes; published views take precedence.
 
-Install optional server behavior with `composer require "livewire/livewire:^4.0"`. The included `<livewire:fruit-mail-preferences />` example stores two boolean settings in the current session. Its PHP state/actions and Blade template live together in `resources/views/livewire/mail-preferences.blade.php`.
+With Tailwind v4, declare `@layer theme, base, fruit, components, utilities;` before importing Tailwind and FruitUI, so utility classes still override FruitUI's layered component styles.
 
-FruitUI uses Livewire 4's native single-file format for server-driven examples. This is the class-based syntax previously supplied by Volt (`new class extends Livewire\Component`); [Livewire's migration guide](https://livewire.laravel.com/docs/4.x/upgrading#upgrading-volt) explains the transition. The separate `livewire/volt` package is not required. Application components can compose the same thin Blade adapters in this format.
-
-The existing `fruit-mail-preferences` tag and session key are preserved. PHP callers that used `FruitUI\Livewire\MailPreferences::class` must use the registered name instead, including `Livewire::test('fruit-mail-preferences')`. Clear compiled views with `php artisan view:clear` when updating.
+Install optional server behavior with `composer require "livewire/livewire:^4.0"`. The reference examples in `examples/laravel` are Livewire 4 single-file components (the class-based format previously supplied by Volt; [Livewire's migration guide](https://livewire.laravel.com/docs/4.x/upgrading#upgrading-volt) explains it). The package does not register them; the browser host does, and applications can copy them. Clear compiled views with `php artisan view:clear` when updating.
 
 ## Fields and presentation ownership
 
-```blade
-<x-fruit::field control-id="email" label="Email" description="Use your work address">
-    <x-fruit::input type="email" name="email" wire:model.live.blur="email"
-        aria-describedby="additional-help" />
-</x-fruit::field>
-```
-
-Field associates one control with its label, merges help/error IDs into `aria-describedby`, and marks an error invalid. The error is the first message in the shared `$errors` bag for the control's `wire:model` key, or its `name`; this works after a validated redirect and inside Livewire. Pass `error` to override it, or `error=""` for none. Supported child adapters are Input, Textarea, Select, Number, Date, Time, File, Color, Range, Combobox, Token Field and Editor. They inherit a namespaced Field association, isolated from unrelated parent component props; a mismatched child ID is rejected. Give plain HTML children those associations yourself. Independent choice groups use Fieldset/Legend. Field owns no value, validation rule or model.
+Field associates one control with its label, description and validation error; see [Field associations](components.md#field-associations-and-validation-errors). Supported child adapters are Input, Textarea, Select, Number, Date, Time, File, Color, Range, Checkbox, Radio, Switch, Combobox, Token Field and Editor. They inherit a namespaced Field association, isolated from unrelated parent component props; a mismatched child ID is rejected.
 
 Enhanced adapters accept `:wrapper="['class' => 'account-picker', 'style' => 'max-width:20rem', 'data-fruit-no-matches' => __('No matches')]"`. The wrapper accepts id/class/style/dir/lang/data attributes. Native attributes and bindings remain on the control. Native class/style are mirrored to visible presentation, retaining the same no-JavaScript fallback. Token Field maxlength limits the complete newline-serialized string.
 
@@ -95,7 +92,7 @@ Text is rendered as text, with no HTML interpolation. For pluralization, set the
 
 The Blade Toast adapter renders a native status container with a content slot. It does not start timers. Add independent action/dismiss buttons as needed and pause the helper on pointer hover and focus within. For messages requiring a response, use persistent Alert or Dialog.
 
-For messages sent by the server, put one `<x-fruit::toaster />` in the layout. It listens for `fruit-toast` window events (`{ message }`) and shows a `fruit-toast` session flash on load. Livewire components `use FruitUI\Livewire\WithFruitUI` for `toast()`, `flashToast()`, `openDialog()` and `closeDialog()`; named dialogs respond to `fruit-dialog-open` and `fruit-dialog-close` events. The plugin registers that dialog listener once when `fruitUI(Alpine)` runs. Toaster shows one message at a time and does not queue or route notifications.
+For messages sent by the server, use `<x-fruit::toaster />` and `FruitUI\Fruit`; see [server feedback](components.md#server-feedback-dialogs-and-toasts).
 
 ## Compatibility and upgrades
 

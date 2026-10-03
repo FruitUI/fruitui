@@ -41,6 +41,11 @@
     --f-space-6: 24px;
     --f-space-8: 32px;
     --f-motion: 140ms;
+    /* Derived from palette tokens, so they follow every appearance without separate dark values. */
+    --f-focus-ring-color: color-mix(in srgb, var(--f-accent) 75%, transparent);
+    --f-focus-ring-width: 3px;
+    --f-focus-ring-offset: 1px;
+    --f-pressed: color-mix(in srgb, var(--f-text) 12%, transparent);
     /* Text follows the reader's browser text size through rem. A host that fixes a
        pixel size on html (Bootstrap 3 uses 10px) sets --f-text-root: 16px on its scope. */
     --f-text-root: 1rem;

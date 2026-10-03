@@ -624,9 +624,6 @@
     min-height: 42px;
     font-size: 16px;
   }
-  .support-list-tools .f-search > .f-icon {
-    top: 13px;
-  }
   .support-list-order {
     font-size: var(--f-text-sm);
   }

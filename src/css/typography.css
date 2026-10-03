@@ -39,10 +39,6 @@
     font-size: inherit;
     overflow-wrap: normal;
   }
-  :where(.fruit-ui) :where(pre[tabindex]):focus-visible {
-    outline: 3px solid var(--f-accent);
-    outline-offset: 3px;
-  }
   :where(.fruit-ui) :where(blockquote) {
     margin: var(--f-space-4) 0;
     padding-inline-start: var(--f-space-4);

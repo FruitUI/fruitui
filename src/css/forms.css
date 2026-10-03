@@ -397,4 +397,30 @@
       background: Highlight;
     }
   }
+
+  /* Pressed controls darken (or lighten in dark mode) over whatever surface they use. */
+  :is(
+      .f-button,
+      .f-sidebar__item,
+      .f-menu-item,
+      .f-item-row,
+      .f-tab,
+      .f-chip__remove,
+      .f-segmented > label > span
+    ):active:not(:disabled, [aria-disabled='true']) {
+    background-image: linear-gradient(var(--f-pressed), var(--f-pressed));
+  }
+
+  /* Livewire 4 disables or locks every control in a form while wire:submit is in flight and marks the
+     submitter (or the form) with data-loading. Keep the controls' appearance stable and show progress. */
+  :where(form[data-loading], form:has([type='submit'][data-loading]))
+    :is(button, input, select, textarea):is(:disabled, [readonly]) {
+    opacity: 1;
+    cursor: progress;
+  }
+  :where(form[data-loading], form:has([type='submit'][data-loading])) .f-input:is(input, textarea)[readonly] {
+    background: var(--f-input-background, var(--f-control));
+    color: var(--f-input-color, var(--f-text));
+    box-shadow: var(--f-input-shadow);
+  }
 }

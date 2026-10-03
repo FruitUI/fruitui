@@ -6,7 +6,7 @@
     overscroll-behavior-inline: contain;
   }
   .f-table__scroll:focus-visible {
-    outline-offset: -3px;
+    outline-offset: calc(var(--f-focus-ring-width) * -1);
   }
   .f-table {
     width: 100%;

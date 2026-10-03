@@ -24,6 +24,8 @@ try {
     'build/layout.compat.css',
     'build/alpine.js',
     'build/editor.js',
+    'build/livewire.global.js',
+    'src/js/livewire.js',
     'docs/component-policy.md',
     'docs/component-catalog.json',
     'docs/adoption.md',

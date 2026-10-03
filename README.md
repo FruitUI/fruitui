@@ -11,14 +11,23 @@ From a Laravel application alongside this checkout:
 ```sh
 composer config repositories.fruitui path ../fruitui
 composer require fruitui/fruitui:@dev
-npm install ../fruitui
 ```
 
-Import the CSS in your application's Vite entry:
+The Composer package contains the CSS and JavaScript sources, so Vite can import them from `vendor/` without an npm package. In `resources/css/app.css`:
+
+```css
+/* With Tailwind v4, declare this order first so utilities still override FruitUI. */
+@layer theme, base, fruit, components, utilities;
+@import 'tailwindcss';
+@import '../../vendor/fruitui/fruitui/src/fruitui.css';
+/* Only for the Mail reference layout: */
+@import '../../vendor/fruitui/fruitui/src/mail.css';
+```
+
+In `resources/js/app.js`, register the interactive helpers on the Alpine instance that Livewire injects:
 
 ```js
-import 'fruitui/css';
-import 'fruitui/mail.css'; // only for the Mail reference layout
+import '../../vendor/fruitui/fruitui/src/js/livewire.js';
 ```
 
 Wrap your layout in `fruit-ui` and use the Blade components:
@@ -26,7 +35,7 @@ Wrap your layout in `fruit-ui` and use the Blade components:
 ```blade
 <main class="fruit-ui">
     <x-fruit::card class="f-stack">
-        <x-fruit::field control-id="email" label="Email">
+        <x-fruit::field label="Email">
             {{-- Shows the validation error for "email" from $errors automatically --}}
             <x-fruit::input type="email" name="email" required />
         </x-fruit::field>
@@ -35,7 +44,7 @@ Wrap your layout in `fruit-ui` and use the Blade components:
 </main>
 ```
 
-Use `data-theme="light"` or `data-theme="dark"` on the same container to override the system appearance. Customize presentation with the shared `--f-` CSS tokens.
+Use `data-theme="light"` or `data-theme="dark"` on the same container to override the system appearance. Customize presentation with the shared `--f-` CSS tokens. To change a component's markup, `php artisan vendor:publish --tag=fruit-views` copies the views to `resources/views/vendor/fruit`.
 
 ## Use with HTML
 
@@ -52,40 +61,21 @@ The [component guide](docs/components.md) includes HTML and Blade examples. For 
 
 ## Livewire and Alpine.js
 
-Blade controls accept `wire:model`, `wire:click`, and other native bindings. The included Mail preferences example uses **Livewire 4 single-file components**: PHP and Blade together, using the class-based format previously provided by Volt. [Livewire 4 supports this format directly](https://livewire.laravel.com/docs/4.x/upgrading#upgrading-volt).
+Blade controls accept `wire:model`, `wire:click`, and other native bindings, and survive Livewire's re-renders. Livewire 4's request states are styled: a busy submit keeps the form's appearance with a progress cursor, and `wire:navigate` links marked current are highlighted.
 
-```sh
-composer require "livewire/livewire:^4.0"
-```
-
-```blade
-<main class="fruit-ui">
-    <livewire:fruit-mail-preferences />
-</main>
-```
-
-These example preferences are stored in the current session.
-
-Components can send feedback from the server. Put `<x-fruit::toaster />` in your layout, then:
+Send feedback from components, form objects, actions or controllers. Put `<x-fruit::toaster />` in your layout, then:
 
 ```php
-use FruitUI\Livewire\WithFruitUI;
+use FruitUI\Fruit;
 
-class Tickets extends Component
-{
-    use WithFruitUI;
-
-    public function archive(): void
-    {
-        $this->closeDialog('confirm-archive'); // <x-fruit::dialog name="confirm-archive">
-        $this->toast('Conversation archived.');
-    }
-}
+Fruit::toast('Conversation archived.');      // now; outside Livewire, on the next page
+Fruit::flashToast('Closed.');                // on the next page, after a redirect
+Fruit::openDialog('confirm-archive');        // <x-fruit::dialog name="confirm-archive">
 ```
 
-Laravel paginators render with `$items->links('fruit::pagination.default')`, which also works inside Livewire components that use `WithPagination`.
+A dialog can also bind its open state: `<x-fruit::dialog wire:model="confirming">`. For pagination, set `'pagination_theme' => 'fruit'` in `config/livewire.php`; outside Livewire, use `$items->links('fruit::pagination.default')`.
 
-For interactive helpers such as searchable choices, dialogs, and resizable panes, register `fruitui/alpine` on your application's existing Alpine instance. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
+Without Livewire, register the helpers on your own Alpine instance: `fruitUI(Alpine)` from `src/js/alpine.js`. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
 
 ## Explore the examples
 
@@ -98,7 +88,7 @@ npm run dev
 
 Open [Mail](http://127.0.0.1:5173/), [Support](http://127.0.0.1:5173/support.html), [Chat](http://127.0.0.1:5173/chat.html), [Admin](http://127.0.0.1:5173/admin.html), or the [component gallery](http://127.0.0.1:5173/components.html). These are interactive frontend examples using sample data.
 
-The Support interface also exists as a Livewire 4 single-file component in [examples/laravel](examples/laravel/support-desk.blade.php). With `npm run dev` running, start the bundled Laravel host with `composer install && node scripts/serve-host.mjs` and open [the Livewire Support desk](http://127.0.0.1:5180/support).
+The Support interface and a Mail preferences form also exist as Livewire 4 single-file components in [examples/laravel](examples/laravel/). With `npm run dev` running, start the bundled Laravel host with `composer install && node scripts/serve-host.mjs` and open [the Livewire Support desk](http://127.0.0.1:5180/support).
 
 ## Documentation
 

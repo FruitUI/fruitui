@@ -6,7 +6,7 @@
         <footer class="f-dialog__footer"><x-fruit::button variant="primary" @click="close" autofocus>Got it</x-fruit::button></footer>
     </x-fruit::dialog>
 </div>
-{{-- A named dialog also opens from Livewire: $this->openDialog('archive-confirmation') --}}
+{{-- A named dialog also opens from the server: Fruit::openDialog('archive-confirmation') --}}
 <div x-data>
     <x-fruit::button @click="$dispatch('fruit-dialog-open', { name: 'archive-confirmation' })">Open named dialog</x-fruit::button>
 </div>

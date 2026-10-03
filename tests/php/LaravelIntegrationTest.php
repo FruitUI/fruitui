@@ -4,8 +4,8 @@ namespace FruitUI\Tests;
 
 use DOMDocument;
 use DOMXPath;
+use FruitUI\Fruit;
 use FruitUI\FruitUIServiceProvider;
-use FruitUI\Livewire\WithFruitUI;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
@@ -18,6 +18,7 @@ use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\LivewireServiceProvider;
 use Livewire\WithPagination;
+use LogicException;
 use Orchestra\Testbench\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -26,6 +27,7 @@ class LaravelIntegrationTest extends TestCase
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('app.key', str_repeat('a', 32));
+        $app['config']->set('livewire.pagination_theme', 'fruit');
         $app['config']->set('session.driver', 'array');
     }
 
@@ -77,6 +79,67 @@ class LaravelIntegrationTest extends TestCase
         $html = Blade::render('<x-fruit::field control-id="email" label="Email"><x-fruit::input name="email" /></x-fruit::field>');
         $this->assertStringNotContainsString('f-error', $html);
         $this->assertStringNotContainsString('aria-describedby', $html);
+    }
+
+    public function test_field_derives_its_control_id_when_control_id_is_omitted(): void
+    {
+        $this->shareErrors(['form.email' => ['Enter an email.']]);
+        $model = $this->xpath(Blade::render('<x-fruit::field label="Email"><x-fruit::input wire:model="form.email" /></x-fruit::field>'));
+        $this->assertSame('field-form-email', $model->query('//input')->item(0)->getAttribute('id'));
+        $this->assertSame('field-form-email', $model->query('//label')->item(0)->getAttribute('for'));
+        $this->assertSame('field-form-email-error', $model->query('//p[@class="f-error"]')->item(0)->getAttribute('id'));
+        $own = $this->xpath(Blade::render('<x-fruit::field label="Name"><x-fruit::input id="profile-name" /></x-fruit::field>'));
+        $this->assertSame('profile-name', $own->query('//label')->item(0)->getAttribute('for'));
+    }
+
+    public function test_choice_controls_join_a_field_and_show_their_validation_error(): void
+    {
+        $this->shareErrors(['terms' => ['Accept the terms to continue.']]);
+        $xpath = $this->xpath(Blade::render('<x-fruit::field label="Terms" description="Required to create an account."><x-fruit::checkbox wire:model="terms">I accept the terms</x-fruit::checkbox></x-fruit::field>'));
+        $input = $xpath->query('//input')->item(0);
+        $this->assertSame('field-terms', $input->getAttribute('id'));
+        $this->assertSame('field-terms', $xpath->query('//label[@class="f-label"]')->item(0)->getAttribute('for'));
+        $this->assertSame('field-terms-description field-terms-error', $input->getAttribute('aria-describedby'));
+        $this->assertSame('true', $input->getAttribute('aria-invalid'));
+        $this->assertSame('checkbox', $input->getAttribute('type'));
+        $this->assertSame('Accept the terms to continue.', $xpath->query('//p[@class="f-error"]')->item(0)->textContent);
+    }
+
+    public function test_field_reads_a_named_error_bag(): void
+    {
+        view()->share('errors', (new ViewErrorBag)->put('default', new MessageBag)->put('updatePassword', new MessageBag(['password' => ['Too short.']])));
+        $default = Blade::render('<x-fruit::field label="Password"><x-fruit::input type="password" name="password" /></x-fruit::field>');
+        $this->assertStringNotContainsString('Too short.', $default);
+        $named = Blade::render('<x-fruit::field label="Password" bag="updatePassword"><x-fruit::input type="password" name="password" /></x-fruit::field>');
+        $this->assertStringContainsString('>Too short.</p>', $named);
+    }
+
+    #[DataProvider('invalidFields')]
+    public function test_field_rejects_ambiguous_associations(string $template, string $message): void
+    {
+        try {
+            Blade::render($template);
+        } catch (ViewException $exception) {
+            $cause = $exception;
+            while ($cause->getPrevious()) {
+                $cause = $cause->getPrevious();
+            }
+            $this->assertInstanceOf(InvalidArgumentException::class, $cause);
+            $this->assertStringContainsString($message, $cause->getMessage());
+
+            return;
+        }
+        $this->fail('An ambiguous Field association rendered without an error.');
+    }
+
+    public static function invalidFields(): array
+    {
+        return [
+            ['<x-fruit::field label="Size"><x-fruit::radio name="size" value="s">S</x-fruit::radio><x-fruit::radio name="size" value="m">M</x-fruit::radio></x-fruit::field>', 'associates one control'],
+            ['<x-fruit::field label="Plain"><input class="f-input"></x-fruit::field>', 'needs a control-id when its control is plain HTML'],
+            ['<x-fruit::field label="Nothing"><x-fruit::input /></x-fruit::field>', 'needs a control-id, or a control with'],
+            ['<x-fruit::field label="Email" bag=""><x-fruit::input name="email" /></x-fruit::field>', 'bag must name an error bag'],
+        ];
     }
 
     public function test_livewire_validation_errors_reach_field(): void
@@ -207,17 +270,23 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame(0, $simpleXpath->query('//nav/span')->length);
     }
 
-    public function test_pagination_view_uses_livewire_page_actions_inside_a_component(): void
+    public function test_the_fruit_livewire_pagination_theme_uses_livewire_page_actions(): void
     {
         Livewire::test(PaginationFixture::class)
+            ->assertSeeHtml('class="f-pagination"')
             ->assertSeeHtml('wire:click="nextPage(&#039;page&#039;)"')
             ->assertSeeHtml('wire:click="gotoPage(2, &#039;page&#039;)"')
             ->call('nextPage', 'page')
             ->assertSeeHtml('11–20 of 25')
             ->assertSeeHtml('wire:click="previousPage(&#039;page&#039;)"');
+
+        Livewire::test(PaginationFixture::class, ['simple' => true])
+            ->assertSeeHtml('class="f-pagination"')
+            ->assertSeeHtml('wire:click="nextPage(&#039;page&#039;)"')
+            ->assertDontSeeHtml('gotoPage');
     }
 
-    public function test_livewire_helpers_dispatch_browser_events_and_flash_toasts(): void
+    public function test_fruit_feedback_dispatches_from_livewire_and_flashes_elsewhere(): void
     {
         Livewire::test(FeedbackFixture::class)
             ->call('archive')
@@ -225,8 +294,25 @@ class LaravelIntegrationTest extends TestCase
             ->assertDispatched('fruit-dialog-close', name: 'confirm-archive')
             ->call('confirm')
             ->assertDispatched('fruit-dialog-open', name: 'confirm-archive');
-        (new FeedbackFixture)->leave();
+
+        Fruit::toast('Saved from a controller.');
+        $this->assertSame('Saved from a controller.', session('fruit-toast'));
+        Fruit::flashToast('See you soon.');
         $this->assertSame('See you soon.', session('fruit-toast'));
+        $this->expectException(LogicException::class);
+        Fruit::openDialog('confirm-archive');
+    }
+
+    public function test_dialogs_bind_their_open_state_with_wire_model(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::dialog wire:model="closing" aria-label="Close">Sure?</x-fruit::dialog><x-fruit::dialog aria-label="Plain">Plain</x-fruit::dialog>'));
+        $bound = $xpath->query('//dialog')->item(0);
+        $this->assertSame('fruitDialogModel', $bound->getAttribute('x-data'));
+        $this->assertSame('open', $bound->getAttribute('x-modelable'));
+        $this->assertSame('closing', $bound->getAttribute('wire:model'));
+        $this->assertFalse($xpath->query('//dialog')->item(1)->hasAttribute('x-data'));
+        $this->expectException(ViewException::class);
+        Blade::render('<x-fruit::dialog wire:model="closing" x-data="{ other: true }">Sure?</x-fruit::dialog>');
     }
 
     private function xpath(string $html): DOMXPath
@@ -265,17 +351,16 @@ class PaginationFixture extends Component
 {
     use WithPagination;
 
-    public function paginationView(): string
-    {
-        return 'fruit::pagination.default';
-    }
+    public bool $simple = false;
 
     #[Computed]
-    public function items(): LengthAwarePaginator
+    public function items(): LengthAwarePaginator|Paginator
     {
         $items = collect(range(1, 25));
 
-        return new LengthAwarePaginator($items->forPage($this->getPage(), 10), $items->count(), 10, $this->getPage());
+        return $this->simple
+            ? new Paginator($items->slice(($this->getPage() - 1) * 10, 11)->values(), 10, $this->getPage())
+            : new LengthAwarePaginator($items->forPage($this->getPage(), 10), $items->count(), 10, $this->getPage());
     }
 
     public function render()
@@ -286,22 +371,15 @@ class PaginationFixture extends Component
 
 class FeedbackFixture extends Component
 {
-    use WithFruitUI;
-
     public function archive(): void
     {
-        $this->closeDialog('confirm-archive');
-        $this->toast('Conversation archived.');
+        Fruit::closeDialog('confirm-archive');
+        Fruit::toast('Conversation archived.');
     }
 
     public function confirm(): void
     {
-        $this->openDialog('confirm-archive');
-    }
-
-    public function leave(): void
-    {
-        $this->flashToast('See you soon.');
+        Fruit::openDialog('confirm-archive');
     }
 
     public function render()

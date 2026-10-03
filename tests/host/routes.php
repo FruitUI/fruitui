@@ -6,16 +6,15 @@ use Illuminate\Support\Facades\Route;
 
 Livewire\Livewire::component('fruit-adoption', AdoptionFixture::class);
 Route::get('/', fn () => view('host'));
+// Reference interfaces as Livewire single-file components (examples/laravel).
+$examples = dirname(__DIR__, 2).'/examples/laravel';
+Livewire\Livewire::addComponent('fruit-mail-preferences', viewPath: "{$examples}/mail-preferences.blade.php");
+Livewire\Livewire::addComponent('fruit-support-desk', viewPath: "{$examples}/support-desk.blade.php");
 Route::get('/preferences', fn () => view('host', ['component' => 'fruit-mail-preferences']));
-
-// The Support reference interface as a Livewire single-file component (examples/laravel).
-Livewire\Livewire::addComponent('fruit-support-desk', viewPath: dirname(__DIR__, 2).'/examples/laravel/support-desk.blade.php');
 Route::get('/support/{mailbox?}', fn (string $mailbox = 'all') => view('host', ['component' => 'fruit-support-desk', 'parameters' => ['mailbox' => $mailbox]]));
-Route::get('/support-reset', function () {
-    session()->forget('fruit-support.tickets');
 
-    return redirect('/support');
-});
+// The same desk with Livewire's injected scripts and FruitUI's self-registering entry, as in starter kits.
+Route::get('/injected/support/{mailbox?}', fn (string $mailbox = 'all') => view('injected', ['mailbox' => $mailbox]));
 
 // Test-only native form endpoint verifies real received bytes, not a browser protocol approximation.
 Route::post('/native-submit', function (Request $request) {

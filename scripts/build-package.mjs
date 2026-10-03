@@ -36,7 +36,13 @@ for (const [name, file] of Object.entries({
   });
   await writeFile(`${outDir}/${name}.compat.css`, legacy.toString());
 }
-for (const [name, entry] of Object.entries({ alpine: 'src/js/alpine.js', editor: 'src/js/editor.js' })) {
+// livewire.js registers itself on Livewire's injected Alpine; alpine and editor export plugins.
+const globals = { alpine: 'FruitUI', editor: 'FruitEditor', livewire: 'FruitLivewire' };
+for (const [name, entry] of Object.entries({
+  alpine: 'src/js/alpine.js',
+  editor: 'src/js/editor.js',
+  livewire: 'src/js/livewire.js',
+})) {
   await build({
     configFile: false,
     logLevel: 'warn',
@@ -47,7 +53,7 @@ for (const [name, entry] of Object.entries({ alpine: 'src/js/alpine.js', editor:
       rolldownOptions: { output: { exports: name === 'alpine' ? 'named' : 'auto' } },
       lib: {
         entry: resolve(entry),
-        name: name === 'alpine' ? 'FruitUI' : 'FruitEditor',
+        name: globals[name],
         formats: ['es', 'iife'],
         fileName: format => `${name}.${format === 'es' ? 'js' : 'global.js'}`,
       },

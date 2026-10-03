@@ -97,15 +97,12 @@
     min-width: 0;
   }
   .f-item-row {
-    --f-internal-conversation-current-background: var(--f-selection);
-    --f-internal-conversation-current-hover: var(
-      --f-item-current-background,
-      var(--f-internal-conversation-current-background)
-    );
-    --f-internal-conversation-current-color: var(--f-text);
-    --f-internal-conversation-current-secondary: var(--f-secondary);
-    --f-internal-conversation-current-unread: var(--f-accent);
-    --f-internal-conversation-current-border: transparent;
+    --f-internal-item-current-background: var(--f-selection);
+    --f-internal-item-current-hover: var(--f-item-current-background, var(--f-internal-item-current-background));
+    --f-internal-item-current-color: var(--f-text);
+    --f-internal-item-current-secondary: var(--f-secondary);
+    --f-internal-item-current-unread: var(--f-accent);
+    --f-internal-item-current-border: transparent;
     position: relative;
     display: block;
     width: 100%;
@@ -134,29 +131,29 @@
     background: var(--f-hover);
   }
   .f-item-row[aria-current='true'] {
-    background: var(--f-item-current-background, var(--f-internal-conversation-current-background));
-    color: var(--f-item-current-color, var(--f-internal-conversation-current-color));
+    background: var(--f-item-current-background, var(--f-internal-item-current-background));
+    color: var(--f-item-current-color, var(--f-internal-item-current-color));
   }
   .f-item-row[aria-current='true']:hover {
-    background: var(--f-item-current-hover, var(--f-internal-conversation-current-hover));
+    background: var(--f-item-current-hover, var(--f-internal-item-current-hover));
   }
   .f-item-row[aria-current='true']::after {
-    border-color: var(--f-item-current-border, var(--f-internal-conversation-current-border));
+    border-color: var(--f-item-current-border, var(--f-internal-item-current-border));
   }
   .f-item-row[aria-current='true'] :is(.f-item-row__time, .f-item-row__preview, .f-item-row__meta) {
-    color: var(--f-item-current-secondary, var(--f-internal-conversation-current-secondary));
+    color: var(--f-item-current-secondary, var(--f-internal-item-current-secondary));
   }
   .f-item-row[aria-current='true'] .f-item-row__unread {
-    background: var(--f-item-current-unread, var(--f-internal-conversation-current-unread));
+    background: var(--f-item-current-unread, var(--f-internal-item-current-unread));
   }
   .f-item-row--filled {
-    --f-internal-conversation-current-background: var(--f-accent-fill);
-    --f-internal-conversation-current-color: var(--f-on-accent);
-    --f-internal-conversation-current-secondary: var(--f-on-accent);
-    --f-internal-conversation-current-unread: var(--f-on-accent);
+    --f-internal-item-current-background: var(--f-accent-fill);
+    --f-internal-item-current-color: var(--f-on-accent);
+    --f-internal-item-current-secondary: var(--f-on-accent);
+    --f-internal-item-current-unread: var(--f-on-accent);
   }
   .f-item-row:focus-visible {
-    outline-offset: -3px;
+    outline-offset: calc(var(--f-focus-ring-width) * -1);
   }
   .f-item-row:disabled:hover {
     background: transparent;

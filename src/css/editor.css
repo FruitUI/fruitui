@@ -26,8 +26,8 @@
     opacity: 0.45;
   }
   .f-editor:focus-within {
-    outline: 3px solid var(--f-accent);
-    outline-offset: 2px;
+    outline: var(--f-focus-ring-width) solid var(--f-focus-ring-color);
+    outline-offset: var(--f-focus-ring-offset);
   }
   .f-editor__surface .tiptap:focus-visible {
     outline: none;

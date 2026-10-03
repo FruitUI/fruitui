@@ -6,11 +6,11 @@
  * It composes FruitUI's Blade adapters with server state: mailbox links use
  * wire:navigate, ticket rows and pagination call actions, enhanced controls
  * bind with wire:model, validation errors reach Field, and the server opens
- * dialogs and sends toasts through WithFruitUI. Sample tickets live in the
+ * dialogs and sends toasts through FruitUI\Fruit. Sample tickets live in the
  * session so each visitor can change them.
  */
 
-use FruitUI\Livewire\WithFruitUI;
+use FruitUI\Fruit;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -18,7 +18,7 @@ use Livewire\WithPagination;
 
 new class extends Component
 {
-    use WithFruitUI, WithPagination;
+    use WithPagination;
 
     public const MAILBOXES = ['all' => 'All open', 'unassigned' => 'Unassigned', 'mine' => 'Assigned to me', 'closed' => 'Closed'];
     public const AGENTS = ['alex' => 'Alex Morgan', 'mia' => 'Mia Patel', 'noah' => 'Noah Williams'];
@@ -33,6 +33,8 @@ new class extends Component
     public string $reply = '';
     public string $closeReason = 'resolved';
 
+    public bool $closing = false;
+
     public function mount(string $mailbox = 'all'): void
     {
         abort_unless(array_key_exists($mailbox, self::MAILBOXES), 404);
@@ -41,11 +43,6 @@ new class extends Component
         if ($first) {
             $this->open($first['id']);
         }
-    }
-
-    public function paginationView(): string
-    {
-        return 'fruit::pagination.default';
     }
 
     public function updatedSearch(): void
@@ -70,7 +67,7 @@ new class extends Component
     {
         $this->assignee = array_key_exists($assignee, self::AGENTS) ? $assignee : '';
         $this->change(fn (array $ticket) => [...$ticket, 'assignee' => $this->assignee]);
-        $this->toast($this->assignee === '' ? 'Conversation unassigned.' : 'Assigned to '.self::AGENTS[$this->assignee].'.');
+        Fruit::toast($this->assignee === '' ? 'Conversation unassigned.' : 'Assigned to '.self::AGENTS[$this->assignee].'.');
     }
 
     public function send(): void
@@ -87,21 +84,21 @@ new class extends Component
         ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.']);
         $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply]]]);
         $this->reply = '';
-        $this->toast('Reply sent to '.$this->ticket['name'].'.');
+        Fruit::toast('Reply sent to '.$this->ticket['name'].'.');
     }
 
     public function confirmClose(): void
     {
         $this->closeReason = 'resolved';
-        $this->openDialog('close-ticket');
+        $this->closing = true;
     }
 
     public function closeTicket(): void
     {
         $id = $this->openId;
         $this->change(fn (array $ticket) => [...$ticket, 'status' => 'closed', 'reason' => $this->closeReason]);
-        $this->closeDialog('close-ticket');
-        $this->flashToast("Conversation #{$id} closed as ".strtolower(self::REASONS[$this->closeReason]).'.');
+        $this->closing = false;
+        Fruit::flashToast("Conversation #{$id} closed as ".strtolower(self::REASONS[$this->closeReason]).'.');
         $this->redirect(url('/support/closed'), navigate: true);
     }
 
@@ -191,7 +188,7 @@ new class extends Component
         </x-fruit::sidebar>
 
         <x-fruit::pane class="f-pane--column f-pane--border-end" role="region" aria-label="Conversations">
-            <div style="padding: 12px">
+            <div style="padding: var(--f-space-3)">
                 <x-fruit::field control-id="support-search" label="Search conversations">
                     <x-fruit::input type="search" wire:model.live.debounce.200ms="search" />
                 </x-fruit::field>
@@ -216,7 +213,7 @@ new class extends Component
                             </li>
                         @endforeach
                     </x-fruit::item-list>
-                    <div style="padding: 0 12px">{{ $this->tickets->links() }}</div>
+                    <div style="padding: 0 var(--f-space-3)">{{ $this->tickets->links() }}</div>
                 @endif
             </div>
         </x-fruit::pane>
@@ -224,25 +221,26 @@ new class extends Component
         <x-fruit::pane class="f-pane--column" role="region" aria-label="Conversation">
             @if ($ticket = $this->ticket)
                 <header class="f-toolbar">
-                    <div class="f-row" style="flex: 1; min-width: 0">
+                    <div class="f-toolbar__group">
                         <x-fruit::avatar>{{ $ticket['initials'] }}</x-fruit::avatar>
-                        <h1 style="font-size: 1rem; margin: 0">{{ $ticket['subject'] }}</h1>
+                        <h1 style="font-size: var(--f-text-xl)">{{ $ticket['subject'] }}</h1>
                         <x-fruit::badge>{{ $ticket['status'] === 'open' ? 'Open' : 'Closed' }}</x-fruit::badge>
                     </div>
+                    <span class="f-toolbar__spacer"></span>
                     @if ($ticket['status'] === 'open')
                         <x-fruit::tooltip text="Close when the customer needs nothing else." text-id="close-help">
                             <x-fruit::button wire:click="confirmClose" aria-describedby="close-help">Close conversation</x-fruit::button>
                         </x-fruit::tooltip>
                     @endif
                 </header>
-                <div class="f-pane__scroll f-stack" style="padding: 16px" wire:key="conversation-{{ $ticket['id'] }}">
+                <div class="f-pane__scroll f-stack" style="--f-pane-scroll-padding: var(--f-space-4)" wire:key="conversation-{{ $ticket['id'] }}">
                     <x-fruit::description-list>
                         <div><dt>Customer</dt><dd>{{ $ticket['name'] }}</dd></div>
                         <div><dt>Email</dt><dd>{{ $ticket['email'] }}</dd></div>
                         <div><dt>Company</dt><dd>{{ $ticket['company'] }}</dd></div>
                     </x-fruit::description-list>
 
-                    <ol class="f-stack" aria-label="Messages" style="list-style: none; margin: 0; padding: 0">
+                    <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
                         @foreach ($ticket['messages'] as $message)
                             <li class="f-card"><strong>{{ $message['author'] }}</strong><p>{{ $message['body'] }}</p></li>
                         @endforeach
@@ -282,7 +280,7 @@ new class extends Component
         </x-fruit::pane>
     </x-fruit::workspace>
 
-    <x-fruit::dialog name="close-ticket" aria-labelledby="close-ticket-title">
+    <x-fruit::dialog wire:model="closing" aria-labelledby="close-ticket-title">
         <header class="f-dialog__header"><h2 id="close-ticket-title">Close this conversation?</h2></header>
         <div class="f-dialog__body f-stack">
             <x-fruit::field control-id="close-reason" label="Reason">
@@ -295,7 +293,7 @@ new class extends Component
             <p id="close-summary">It will move to Closed as {{ strtolower($this::REASONS[$closeReason]) }}.</p>
         </div>
         <footer class="f-dialog__footer">
-            <x-fruit::button x-on:click="$el.closest('dialog').close()">Cancel</x-fruit::button>
+            <form method="dialog"><x-fruit::button type="submit">Cancel</x-fruit::button></form>
             <x-fruit::button variant="primary" wire:click="closeTicket">Close conversation</x-fruit::button>
         </footer>
     </x-fruit::dialog>

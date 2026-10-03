@@ -22,9 +22,9 @@
     font: inherit;
     color: inherit;
   }
-  :where(.fruit-ui) :where(button, a, input, select, textarea, summary):focus-visible {
-    outline: 3px solid var(--f-accent);
-    outline-offset: 3px;
+  :where(.fruit-ui) :where(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: var(--f-focus-ring-width) solid var(--f-focus-ring-color);
+    outline-offset: var(--f-focus-ring-offset);
   }
   :where(.fruit-ui) :where(button) {
     cursor: pointer;
@@ -75,6 +75,16 @@
     stroke-width: 1.65;
     stroke-linecap: round;
     stroke-linejoin: round;
+  }
+  @media (prefers-contrast: more) {
+    :where(.fruit-ui) {
+      --f-border: color-mix(in srgb, var(--f-text) 45%, transparent);
+      --f-hover: color-mix(in srgb, var(--f-text) 12%, transparent);
+      --f-secondary: color-mix(in srgb, var(--f-text) 85%, var(--f-bg));
+      --f-tertiary: color-mix(in srgb, var(--f-text) 72%, var(--f-bg));
+      --f-material: var(--f-surface-secondary);
+      --f-focus-ring-color: var(--f-accent);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     :where(.fruit-ui) {

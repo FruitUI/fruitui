@@ -5,19 +5,20 @@ namespace FruitUI;
 use FruitUI\View\Components\Field;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
 
 class FruitUIServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        Blade::component(Field::class, 'fruit::field');
-        Blade::anonymousComponentPath(__DIR__.'/../../resources/views/components', 'fruit');
-        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'fruit');
+        $views = __DIR__.'/../../resources/views';
 
-        // The CSS and Blade components work without installing Livewire.
-        if (class_exists(Livewire::class) && $this->app->bound('livewire')) {
-            Livewire::addComponent('fruit-mail-preferences', viewPath: __DIR__.'/../../resources/views/livewire/mail-preferences.blade.php');
-        }
+        // Anonymous adapters resolve as fruit::components.*, so published overrides apply too.
+        $this->loadViewsFrom($views, 'fruit');
+        Blade::component(Field::class, 'fruit::field');
+
+        // Livewire's pagination_theme 'fruit' resolves livewire::fruit and livewire::simple-fruit.
+        $this->callAfterResolving('view', fn ($factory) => $factory->addNamespace('livewire', "{$views}/pagination/livewire"));
+
+        $this->publishes([$views => resource_path('views/vendor/fruit')], 'fruit-views');
     }
 }

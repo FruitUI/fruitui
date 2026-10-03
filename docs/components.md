@@ -1,6 +1,6 @@
 # Public components and patterns
 
-The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#current-blade-contracts) defines the native contracts for every Blade adapter. Gallery specimens are rendered from the Blade sources in `gallery/specimens/` (`composer gallery`), so the live specimen and the Blade usage shown beside it are the same code.
+The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css` and the opt-in `fruitui/mail.css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#blade-contracts) defines the native contracts for every Blade adapter. Gallery specimens are rendered from the Blade sources in `gallery/specimens/` (`composer gallery`), so the live specimen and the Blade usage shown beside it are the same code.
 
 ## CSS compositions and utilities
 
@@ -301,57 +301,57 @@ See [support interface components](support-components.md) for the new selection,
 
 ## Field associations and validation errors
 
-`x-fruit::field` composes one native control with its label, description and error. Give it `control-id` and `label`, plus optional text `description`; supported child form adapters inherit matching IDs and merged ARIA descriptions. The association is scoped to Field, with no value/model ownership. Use Fieldset for independent choice groups. Plain HTML retains explicit label/ARIA associations.
+`x-fruit::field` composes one native control with its `label`, an optional `description` and its error. Child form adapters, including Checkbox, Radio and Switch, inherit the id and merged ARIA descriptions. The id is `control-id` when given, otherwise the child's own `id`, otherwise one derived from its `wire:model` or `name` (`form.email` becomes `field-form-email`). Plain HTML children need `control-id` and their own associations. Field associates exactly one control and owns no value, rule or model; use Fieldset for choice groups.
 
-The error comes from Laravel's shared `$errors` bag, the same one `@error` reads: Field shows the first message for its control's `wire:model` key, or for its `name` (`items[0][title]` becomes `items.0.title`; a trailing `[]` is dropped). That covers controller validation after a redirect and Livewire `validate()` alike. An explicit `error` string takes precedence, and `error=""` shows no error.
+The error comes from Laravel's shared `$errors` bag, the same one `@error` reads: Field shows the first message for its control's `wire:model` key, or its `name` (`items[0][title]` becomes `items.0.title`; a trailing `[]` is dropped). That covers controller validation after a redirect and Livewire `validate()` alike. `bag` reads a named bag, as with `validateWithBag()`. An explicit `error` string takes precedence, and `error=""` shows no error.
 
 ```blade
-<x-fruit::field control-id="email" label="Email" description="Use your work address">
-    <x-fruit::input type="email" wire:model.blur="form.email" />
+<x-fruit::field label="Email" description="Use your work address">
+    <x-fruit::input type="email" wire:model.live.blur="form.email" />
+</x-fruit::field>
+
+<x-fruit::field label="Terms">
+    <x-fruit::checkbox wire:model="terms">I accept the terms</x-fruit::checkbox>
 </x-fruit::field>
 ```
 
 ## Server feedback: dialogs and toasts
 
-Give a dialog a `name` to open and close it with browser events. Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
+Put one `<x-fruit::toaster />` in the layout. It announces `fruit-toast` window events and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it. It shows one message at a time and does not queue or route notifications.
 
-```blade
-<x-fruit::dialog name="close-ticket" aria-labelledby="close-ticket-title">…</x-fruit::dialog>
-
-{{-- From Alpine --}}
-<x-fruit::button x-on:click="$dispatch('fruit-dialog-open', { name: 'close-ticket' })">Close…</x-fruit::button>
-```
-
-Put one `<x-fruit::toaster />` in the layout. It announces `fruit-toast` events and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it.
+`FruitUI\Fruit` sends feedback from Livewire components, form objects, actions and controllers:
 
 ```php
-use FruitUI\Livewire\WithFruitUI;
+use FruitUI\Fruit;
 
-class Tickets extends Component
-{
-    use WithFruitUI;
-
-    public function close(): void
-    {
-        // …
-        $this->closeDialog('close-ticket');
-        $this->toast('Conversation closed.');         // shows now
-        // $this->flashToast('Closed.'); $this->redirect(...); // shows on the next page
-    }
-}
+Fruit::toast('Conversation closed.');   // now; outside a Livewire request, on the next page
+Fruit::flashToast('Closed.');           // on the next page, e.g. before $this->redirect(...)
+Fruit::openDialog('close-ticket');      // Livewire requests only
+Fruit::closeDialog('close-ticket');
 ```
 
-`openDialog()`, `closeDialog()`, `toast()` and `flashToast()` are protected, so they are not client-callable actions. Controllers can flash the same message with `->with('fruit-toast', 'Saved.')`. `x-fruit::toast` remains the plain status container for application-owned `fruitToast` scopes; all four examples use that helper directly.
+A dialog opens in one of two ways. Bind its open state when the server owns it; Escape and `<form method="dialog">` buttons close it and update the property:
+
+```blade
+<x-fruit::dialog wire:model="closing" aria-labelledby="close-title">
+    …
+    <form method="dialog"><x-fruit::button type="submit">Cancel</x-fruit::button></form>
+</x-fruit::dialog>
+```
+
+Or give it a `name` and open or close it with events, from the server (`Fruit::openDialog`) or the browser (`$dispatch('fruit-dialog-open', { name: 'close-ticket' })`). Either way, Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
+
+In tests, assert the browser events: `->assertDispatched('fruit-toast', message: 'Conversation closed.')`. `x-fruit::toast` remains the plain status container for application-owned `fruitToast` scopes; the four HTML examples use that helper directly.
 
 ## Pagination
 
-`fruit::pagination.default` renders a Laravel paginator with `x-fruit::pagination`: a range summary, Previous/Next and page links. Inside a Livewire component the same view calls Livewire's `previousPage`, `nextPage`, `gotoPage` and `setPage` actions instead of links.
+`fruit::pagination.default` renders a Laravel paginator with `x-fruit::pagination`: a range summary, Previous/Next and page links. Use it with `$items->links('fruit::pagination.default')`, or make it the default with `Paginator::defaultView()` in a service provider.
 
-```blade
-{{ $customers->links('fruit::pagination.default') }}
-```
+In Livewire components, set `'pagination_theme' => 'fruit'` in `config/livewire.php`. Paginators then call Livewire's page actions instead of links, without a per-component `paginationView()`. Labels use Laravel translations: `Previous`, `Next`, `Page :page` and `:first–:last of :total`.
 
-Make it the default with `Paginator::defaultView('fruit::pagination.default')` in a service provider, and return it from `paginationView()` in Livewire components that use `WithPagination`. Labels use Laravel translations: `Previous`, `Next`, `Page :page` and `:first–:last of :total`.
+## Livewire request states
+
+Livewire 4 marks the element that started a request with `data-loading`. Busy buttons show a progress cursor. During `wire:submit`, Livewire disables or locks every control in the form; FruitUI keeps their appearance instead of dimming the whole form. (A control that was already disabled looks enabled until the request ends.) Livewire also marks `wire:navigate` links for the current page with `data-current`; Sidebar items and Section Nav links style it like `aria-current="page"`, so a persisted sidebar stays correct after navigation.
 
 ## Text size
 

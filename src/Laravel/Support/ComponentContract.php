@@ -120,12 +120,20 @@ final class ComponentContract
         }
     }
 
-    public static function dialog(mixed $name, ComponentAttributeBag $attributes): void
+    /** Returns whether the dialog's open state is bound with wire:model or x-model. */
+    public static function dialog(mixed $name, ComponentAttributeBag $attributes): bool
     {
         self::validate('dialog', $attributes);
         if ($name !== null && (! is_string($name) || ! preg_match('/^[\w.:-]+$/', $name))) {
             throw new InvalidArgumentException('FruitUI dialog name must be letters, digits, dashes, dots, colons or underscores.');
         }
+        $names = array_map('strtolower', array_keys($attributes->all()));
+        $bound = (bool) preg_grep('/^(wire:model|x-model)(\.|$)/', $names);
+        if ($bound && preg_grep('/^(:|x-bind:)?(x-data|x-modelable)(\.|$)/', $names)) {
+            throw new InvalidArgumentException('FruitUI dialog owns its open state when bound with wire:model or x-model. Put application state on a parent.');
+        }
+
+        return $bound;
     }
 
     public static function sidebarItem(mixed $current, ComponentAttributeBag $attributes): void
@@ -205,10 +213,8 @@ final class ComponentContract
         if ($field === null) {
             return $attributes;
         }
-        if ($attributes->has('id') && $attributes->get('id') !== $field->id) {
-            throw new InvalidArgumentException('FruitUI Field control-id must match its control id.');
-        }
-        $error = $field->resolveError($attributes);
+        $id = $field->bind($attributes);
+        $error = $field->error();
         $described = preg_split('/\s+/', trim($attributes->get('aria-describedby', '')), -1, PREG_SPLIT_NO_EMPTY);
         if ($field->description !== null && $field->description !== '') {
             $described[] = $field->descriptionId();
@@ -221,7 +227,7 @@ final class ComponentContract
             $attributes = $attributes->except('aria-describedby')->merge(['aria-describedby' => implode(' ', array_unique($described))]);
         }
 
-        return $attributes->merge(['id' => $field->id]);
+        return $attributes->merge(['id' => $id]);
     }
 
     /** Whether an attribute name is a Blade or Alpine client binding of the given attribute, with optional modifiers. */

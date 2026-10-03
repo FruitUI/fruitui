@@ -9,21 +9,30 @@ Breaking changes in this pass, with migration:
 - **Text uses rem.** Font sizes are `--f-text-*` tokens that follow the reader's browser text size, identical at the default size. An html `.fruit-ui` scope now sizes its body instead of html. Hosts that set a pixel font size on html (Bootstrap 3) add `--f-text-root: 16px` to their scope. The reference examples use the same scale; only their 16px phone text-field sizes stay in pixels to prevent iOS input zoom.
 - **Field shows shared validation errors.** Without an `error` prop, Field shows the `$errors` message for its control's `wire:model` key or `name`. Pass `error=""` to opt out for a field.
 - `x-fruit::attachment download` now renders `download=""` and keeps the URL's filename (it previously named every file "download").
+- **The package no longer registers `<livewire:fruit-mail-preferences />`.** The example moved to `examples/laravel/mail-preferences.blade.php`; register it yourself with `Livewire::addComponent()` if you used it.
+- **Field `control-id` is optional and Field associates exactly one control.** Without it, the id comes from the child's id or its `wire:model`/`name` (`field-form-email`). A Field containing two controls now throws; use Fieldset for groups.
+- **Inputs no longer change their border color on focus;** the shared focus ring (`--f-focus-ring-*`) is the focus indicator everywhere.
 - Dialogs rendered by `x-fruit::dialog` carry `wire:ignore.self`, so Livewire morphs no longer close an open dialog. Server-changed dialog attributes need a `wire:key` change to re-render.
 
 Added:
 
 - Blade adapters for Avatar, Badge, Tooltip, Sidebar (`sidebar`, `sidebar-group`, `sidebar-item`) and a managed `toaster` outlet.
 - Named dialogs (`name`) opened and closed by `fruit-dialog-open`/`fruit-dialog-close` events; `fruitToast({ message })` initial messages.
-- `FruitUI\Livewire\WithFruitUI` with `toast()`, `flashToast()`, `openDialog()` and `closeDialog()`.
-- `fruit::pagination.default` for Laravel paginators, with Livewire page actions inside components.
+- `FruitUI\Fruit::toast()`, `flashToast()`, `openDialog()` and `closeDialog()`, callable from components, form objects, actions and controllers.
+- Dialog open state binds with `wire:model`/`x-model`; Escape and `<form method="dialog">` update it.
+- `fruit::pagination.default` for Laravel paginators, and a `fruit` Livewire pagination theme (`'pagination_theme' => 'fruit'`) for length-aware and simple paginators.
+- `fruitui/livewire` (`src/js/livewire.js`, `build/livewire.global.js`) registers the helpers on Livewire's injected Alpine; CSS and JS import from `vendor/fruitui/fruitui/src` without npm. Tailwind v4 layer order is documented and tested.
+- Livewire 4 request states: forms keep their appearance while `wire:submit` locks them (previously every control dimmed or grayed), busy `[data-loading]` buttons show a progress cursor, and `wire:navigate` links marked `data-current` are highlighted.
+- Field reads named error bags (`bag`) and accepts Checkbox, Radio and Switch.
+- `--f-focus-ring-*` tokens and one focus ring across controls, panes, tables and editors; pressed states; Increase Contrast (`prefers-contrast: more`) support; search icon and combobox chevron stay centered at any control height.
+- `php artisan vendor:publish --tag=fruit-views` publishes the views.
 - The Support interface as a Livewire single-file component (`examples/laravel`) with browser tests for morphs, `wire:navigate`, validation, dialogs, toasts and pagination.
 - Blade contracts live in `docs/component-catalog.json`; `npm run build:docs` generates the policy table. Gallery specimens render from `gallery/specimens` (`composer gallery`); tests fail when either is stale.
 - Pint, Prettier and ESLint (`composer lint`, `npm run lint`, `composer format`, `npm run format`), checked in CI.
 
 - Simplify the README to installation and basic usage; keep detailed guidance in the component and adoption docs.
 - Require Laravel 13 and PHP 8.3+, with Livewire 4 for optional server interactions. Remove older framework CI jobs and the Laravel 11 advisory exception.
-- Convert Mail preferences to a native Livewire 4 single-file component using the class-based format previously provided by Volt. Keep the existing component tag and session data; replace PHP class references with `Livewire::test('fruit-mail-preferences')`. See docs/adoption.md for migration details.
+- Convert Mail preferences to a native Livewire 4 single-file component using the class-based format previously provided by Volt.
 
 - Add standalone layered core, Layout, Mail and Editor CSS and generated compatibility styles for existing unlayered hosts; preserve the all-in-one CSS entry.
 - Ship ES module and browser-global helper bundles, complete package documentation, and optional editor peers. Core installation no longer pulls in Tiptap.

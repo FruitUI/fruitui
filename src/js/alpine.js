@@ -1,6 +1,6 @@
 import { fruitToast } from './toast.js';
 export { fruitToast } from './toast.js';
-import { fruitDialog, listenForNamedDialogs } from './dialog.js';
+import { fruitDialog, fruitDialogModel, listenForNamedDialogs } from './dialog.js';
 import { fruitSplitter } from './splitter.js';
 import { fruitCombobox, fruitTokenField } from './selection.js';
 import { fruitMenu, fruitTooltip, fruitTabs, fruitFloatingDisclosure } from './navigation.js';
@@ -20,5 +20,6 @@ export default function fruitUI(Alpine) {
   Alpine.data('fruitSplitter', fruitSplitter);
   Alpine.data('fruitFloatingDisclosure', fruitFloatingDisclosure);
   Alpine.data('fruitDialog', fruitDialog);
+  Alpine.data('fruitDialogModel', fruitDialogModel);
   if (typeof window !== 'undefined') stopListening ??= listenForNamedDialogs(window);
 }

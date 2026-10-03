@@ -50,8 +50,7 @@
   }
   .f-pane--scroll:focus-visible,
   .f-pane__scroll:focus-visible {
-    outline: 3px solid var(--f-accent);
-    outline-offset: -3px;
+    outline-offset: calc(var(--f-focus-ring-width) * -1);
   }
   /* Overlay the existing divider, so adding resizing never consumes a grid track.
      Inert without the optional helper; applications hide handles in compact views. */
@@ -90,8 +89,7 @@
     background: var(--f-accent);
   }
   .f-splitter:focus-visible {
-    outline: 2px solid var(--f-accent);
-    outline-offset: -2px;
+    outline-offset: calc(var(--f-focus-ring-width) * -1);
   }
   .f-workspace[data-resizing] {
     cursor: col-resize;

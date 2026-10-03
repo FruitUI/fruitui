@@ -11,16 +11,15 @@ test('every color/effect token has matching automatic and explicit dark palettes
   );
   expect(palettes).toHaveLength(3);
   const [light, explicitDark, automaticDark] = palettes;
-  // CSS.supports accepts any value containing var(), so classify tokens by their resolved values.
-  const resolve = value =>
-    value.replace(/var\((--f-[\w-]+)\)/g, (reference, name) => (name in light ? resolve(light[name]) : reference));
-  const resolved = Object.fromEntries(Object.entries(light).map(([name, value]) => [name, resolve(value)]));
+  // Tokens derived from other tokens (var(--f-…)) follow their source in every appearance.
+  // CSS.supports accepts any value containing var(), so only literal values are classified.
+  const literal = Object.fromEntries(Object.entries(light).filter(([, value]) => !value.includes('var(--f-')));
   const appearanceTokens = await page.evaluate(
     palette =>
       Object.entries(palette)
         .filter(([, value]) => CSS.supports('color', value) || CSS.supports('box-shadow', value))
         .map(([name]) => name),
-    resolved,
+    literal,
   );
   expect(appearanceTokens.length).toBeGreaterThan(0);
   for (const name of appearanceTokens) {
@@ -176,4 +175,45 @@ test('text follows the reader’s browser text size and a pixel-root host can pi
     document.documentElement.style.setProperty('--f-text-root', '16px');
   });
   await expect(input).toHaveCSS('font-size', '13px');
+});
+
+test('Increase Contrast strengthens boundaries and secondary text in both appearances', async ({ page }) => {
+  await page.goto('/components.html');
+  const input = page.getByLabel('Your name');
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme, contrast: 'no-preference' });
+    const normal = await input.evaluate(element => getComputedStyle(element).borderTopColor);
+    await page.emulateMedia({ colorScheme, contrast: 'more' });
+    const more = await input.evaluate(element => getComputedStyle(element).borderTopColor);
+    expect(more, `${colorScheme} border`).not.toBe(normal);
+    const alpha = value => Number(value.match(/[\d.]+(?=\)$)/)?.[0] ?? 1);
+    expect(alpha(more)).toBeGreaterThan(alpha(normal));
+  }
+});
+
+test('pressed controls show the shared pressed overlay', async ({ page }) => {
+  await page.goto('/components.html');
+  const button = page.locator('#component-button').getByRole('button', { name: 'Default' });
+  await expect(button).toHaveCSS('background-image', 'none');
+  await button.hover();
+  await page.mouse.down();
+  await expect(button).not.toHaveCSS('background-image', 'none');
+  await page.mouse.up();
+});
+
+test('Tailwind v4 utilities win once the documented layer order is declared', async ({ page }) => {
+  const fixture = order => `<!doctype html><html class="fruit-ui" lang="en"><head><title>Layers</title>
+    <style>${order}</style><link rel="stylesheet" href="/src/fruitui.css">
+    <style>@layer utilities { .w-64 { width: 16rem; } }</style></head>
+    <body><main><label for="sized">Sized</label><input id="sized" class="f-input w-64"></main></body></html>`;
+  await page.route('**/layers-documented', route =>
+    route.fulfill({ contentType: 'text/html', body: fixture('@layer theme, base, fruit, components, utilities;') }),
+  );
+  await page.route('**/layers-undeclared', route =>
+    route.fulfill({ contentType: 'text/html', body: fixture('@layer theme, base, components, utilities;') }),
+  );
+  await page.goto('/layers-documented');
+  await expect(page.getByLabel('Sized')).toHaveCSS('width', '256px');
+  await page.goto('/layers-undeclared');
+  await expect(page.getByLabel('Sized')).not.toHaveCSS('width', '256px');
 });

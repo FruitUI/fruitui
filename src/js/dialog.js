@@ -29,3 +29,22 @@ export function listenForNamedDialogs(target = window) {
     target.removeEventListener('fruit-dialog-close', close);
   };
 }
+
+/** Open state for a dialog bound with wire:model or x-model; closing it natively updates the model. */
+export function fruitDialogModel() {
+  return {
+    open: false,
+    init() {
+      const dialog = this.$el;
+      const sync = () => {
+        if (this.open && !dialog.open) dialog.showModal();
+        else if (!this.open && dialog.open) dialog.close();
+      };
+      this.$watch('open', sync);
+      dialog.addEventListener('close', () => {
+        this.open = false;
+      });
+      this.$nextTick(sync);
+    },
+  };
+}

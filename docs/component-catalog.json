@@ -41,9 +41,9 @@
       "field": {
         "purpose": "Associate one independent form control with label, help and error.",
         "element": "Native div with label and described text.",
-        "state": "Child retains its value and bindings; control-id fixes the association.",
+        "state": "Child retains its value and bindings; the field settles one control id.",
         "keyboard": "Native label focuses the control or enhanced query.",
-        "options": "Required control-id/label; description/error strings; one control slot. Form adapters inherit associations; plain HTML children must supply their own id/ARIA."
+        "options": "`label`: required. `control-id`: optional; otherwise the child id or one derived from its wire:model/name. `description`, `error` strings; `bag`: named error bag. The error defaults to the shared $errors message for the control. One control slot, including Checkbox/Radio/Switch; plain HTML children need control-id and their own ARIA."
       }
     }
   },
@@ -59,7 +59,7 @@
         "element": "`input type=checkbox`, switch role inside its label.",
         "state": "Native checked state and submitted value; checked/required/disabled attributes.",
         "keyboard": "Tab focuses; Space toggles.",
-        "options": "Fixed type and role. Slot: setting label; attributes go to the input."
+        "options": "Fixed type and role. Slot: setting label; attributes go to the input. Inside Field, inherits its id, description and error."
       }
     }
   },
@@ -75,7 +75,7 @@
         "element": "`input type=checkbox`, checkbox role inside its label.",
         "state": "Native checked state and submitted value; checked/required/disabled attributes.",
         "keyboard": "Tab focuses; Space toggles.",
-        "options": "Fixed type and role. Slot: label; attributes go to the input."
+        "options": "Fixed type and role. Slot: label; attributes go to the input. Inside Field, inherits its id, description and error."
       }
     }
   },
@@ -91,7 +91,7 @@
         "element": "`input type=radio`, radio role inside its label.",
         "state": "Native checked state and selected group value; name/value/required/disabled attributes.",
         "keyboard": "Tab enters group; arrow keys select; Space checks.",
-        "options": "Fixed type and role. Slot: label; attributes go to the input. Group using the same name and a fieldset/legend."
+        "options": "Fixed type and role. Slot: label; attributes go to the input. Group using the same name and a fieldset/legend; a single radio may sit in Field."
       }
     }
   },
@@ -318,9 +318,9 @@
       "dialog": {
         "purpose": "Present a focused task in a modal or nonmodal dialog.",
         "element": "`dialog`, dialog role; optional alertdialog role.",
-        "state": "Native open/modal state; browser-managed focus and Escape cancellation for modals.",
+        "state": "Native open/modal state; optional wire:model/x-model open state that Escape and form method=dialog update.",
         "keyboard": "showModal manages focus; Tab stays within a modal; Escape dismisses.",
-        "options": "Native dialog attributes and an accessible name. Slot: composed content/actions. fruitDialog adds open/close helpers using x-ref=dialog. Optional `name`: the `fruit-dialog-open`/`fruit-dialog-close` window events (and Livewire `openDialog`/`closeDialog`) open and close it. Livewire ignores its own attributes so morphs keep it open."
+        "options": "Native dialog attributes and an accessible name. Slot: composed content/actions. Bind open state with wire:model or x-model, or give a `name` for `fruit-dialog-open`/`fruit-dialog-close` events (Fruit::openDialog/closeDialog). fruitDialog adds open/close helpers using x-ref=dialog. Livewire morphs keep it open."
       }
     }
   },
@@ -428,7 +428,7 @@
         "element": "`div role=status`, `f-toast` presentation.",
         "state": "fruitToast owns the message and its timing; hidden while empty.",
         "keyboard": "No focus transfer; hover or focus within pauses dismissal.",
-        "options": "`duration`: milliseconds (default 4000, 0 keeps it until replaced). `message`: initial text; defaults to the flashed `fruit-toast` session value. Receives `fruit-toast` window events, including Livewire `toast()` dispatches. No slot."
+        "options": "`duration`: milliseconds (default 4000, 0 keeps it until replaced). `message`: initial text; defaults to the flashed `fruit-toast` session value. Receives `fruit-toast` window events, including Fruit::toast(). No slot."
       }
     }
   },

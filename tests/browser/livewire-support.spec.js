@@ -176,3 +176,65 @@ for (const colorScheme of ['light', 'dark']) {
     expect((await new AxeBuilder({ page }).include('dialog').analyze()).violations).toEqual([]);
   });
 }
+
+test('controls keep their appearance while Livewire locks a submitting form', async ({ page }) => {
+  const errors = await openDesk(page);
+  let release;
+  const held = new Promise(resolve => (release = resolve));
+  await page.route('**/livewire*/update', async route => {
+    await held;
+    await route.continue();
+  });
+  const reply = page.getByRole('textbox', { name: 'Reply to Sophie Chen' });
+  const before = await reply.evaluate(element => getComputedStyle(element).backgroundColor);
+  await reply.fill('Thanks, we will move you over today.');
+  await page.getByRole('button', { name: 'Send reply' }).click();
+  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveAttribute('data-loading', 'true');
+  await expect(reply).toHaveAttribute('readonly');
+  expect(await reply.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(before);
+  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveCSS('opacity', '1');
+  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveCSS('cursor', 'progress');
+  release();
+  await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
+  await expect(reply).not.toHaveAttribute('readonly');
+  expect(errors).toEqual([]);
+});
+
+test('a dialog bound with wire:model closes natively and reopens from the server', async ({ page }) => {
+  const errors = await openDesk(page);
+  const dialog = page.getByRole('dialog', { name: 'Close this conversation?' });
+  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(dialog).toBeHidden();
+  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+test('Livewire marks the current wire:navigate link and FruitUI styles it', async ({ page }) => {
+  await openDesk(page);
+  const unassigned = page.getByRole('link', { name: /Unassigned/ });
+  const idle = await unassigned.evaluate(element => getComputedStyle(element).backgroundColor);
+  await unassigned.click();
+  await expect(page).toHaveURL(`${host}/support/unassigned`);
+  await expect(unassigned).toHaveAttribute('data-current', '');
+  await expect(unassigned).not.toHaveCSS('background-color', idle);
+});
+
+test('the desk works with Livewire’s injected scripts and the self-registering FruitUI entry', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${host}/injected/support/all`);
+  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  await expect(assignee).toHaveValue('Alex Morgan');
+  await expect(page.locator('#field-assignee, #support-assignee')).toBeHidden();
+  await assignee.fill('Mia');
+  await assignee.press('Enter');
+  await expect(page.getByRole('status').filter({ hasText: 'Assigned to Mia Patel.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
+  expect(errors).toEqual([]);
+});

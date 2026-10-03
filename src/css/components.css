@@ -73,9 +73,6 @@
   .f-input::placeholder {
     color: var(--f-tertiary);
   }
-  .f-input:focus {
-    border-color: var(--f-accent);
-  }
   .f-input[aria-invalid='true'] {
     border-color: var(--f-danger);
   }
@@ -95,7 +92,8 @@
   }
   .f-search > .f-icon {
     position: absolute;
-    top: 9px;
+    inset-block: 0;
+    margin-block: auto;
     inset-inline-start: 10px;
     width: 16px;
     height: 16px;
@@ -177,8 +175,8 @@
     box-shadow: var(--f-segmented-shadow);
   }
   .f-segmented > label > input:focus-visible + span {
-    outline: 3px solid var(--f-accent);
-    outline-offset: 2px;
+    outline: var(--f-focus-ring-width) solid var(--f-focus-ring-color);
+    outline-offset: var(--f-focus-ring-offset);
   }
   .f-badge {
     display: inline-flex;
