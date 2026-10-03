@@ -95,3 +95,7 @@ The Support interface and a Mail preferences form also exist as Livewire 4 singl
 - [Components](docs/components.md): usage, slots, and customization.
 - [Adoption](docs/adoption.md): integration, compatibility, and verification.
 - [Component policy](docs/component-policy.md): contracts and contributor rules.
+
+## License
+
+FruitUI is open-source software licensed under the [MIT license](LICENSE).

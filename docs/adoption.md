@@ -1,6 +1,6 @@
 # Adopting FruitUI
 
-FruitUI remains an unpublished 0.1 development package. Public contracts are the checked catalog, component policy and this guide. The npm package is private/UNLICENSED and Composer metadata is proprietary; no open-source redistribution license has been chosen. Existing private-project use can continue. Publication requires an explicit license and release decision.
+FruitUI is an unpublished 0.1 development package, released under the [MIT license](../LICENSE). Public contracts are the checked catalog, component policy and this guide. The npm package stays marked private until its first release.
 
 ## Delivery and CSS coexistence
 
