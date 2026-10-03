@@ -2,13 +2,14 @@
 
 namespace FruitUI\View\Components;
 
+use FruitUI\Support\FieldContext;
 use Illuminate\View\Component;
 use InvalidArgumentException;
 
 /** A scoped association for one control, independent of application props/state. */
 class Field extends Component
 {
-    public array $fruitField;
+    public FieldContext $fruitField;
 
     public function __construct(
         public mixed $controlId = null,
@@ -25,8 +26,11 @@ class Field extends Component
         if (($description !== null && ! is_string($description)) || ($error !== null && ! is_string($error))) {
             throw new InvalidArgumentException('FruitUI Field description and error must be text strings.');
         }
-        $this->fruitField = ['id' => $controlId, 'description' => $description, 'error' => $error];
+        $this->fruitField = new FieldContext($controlId, $description, $error);
     }
 
-    public function render() { return view('fruit::components.field'); }
+    public function render()
+    {
+        return view('fruit::components.field');
+    }
 }

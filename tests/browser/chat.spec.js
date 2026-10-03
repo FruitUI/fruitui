@@ -9,7 +9,9 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/chat.html');
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(5);
 });
-test.afterEach(({ page }) => { expect(errors.get(page)).toEqual([]); });
+test.afterEach(({ page }) => {
+  expect(errors.get(page)).toEqual([]);
+});
 
 test('Chat is linked beside the examples and unread activity follows real conversations', async ({ page }) => {
   const main = page.getByRole('navigation', { name: 'Main navigation' });
@@ -83,7 +85,9 @@ test('threads preserve their drafts and add replies without posting to the chann
   await expect(page.getByRole('textbox', { name: 'Message #design', exact: true })).toHaveValue('A channel draft.');
   await expect(threadButton(page, 202)).toContainText('3 replies');
   await page.getByRole('button', { name: 'Close thread', exact: true }).click();
-  await navigation(page).getByRole('button', { name: /^Threads/ }).click();
+  await navigation(page)
+    .getByRole('button', { name: /^Threads/ })
+    .click();
   await expect(page.locator('.chat-result')).toHaveCount(3);
   await page.locator('.chat-result').filter({ hasText: 'mobile conversation view' }).click();
   await expect(page.locator('.chat-thread-reply')).toHaveCount(3);
@@ -93,7 +97,9 @@ test('threads preserve their drafts and add replies without posting to the chann
   await expect(navigation(page).getByRole('button', { name: /^Threads/ })).toContainText('4');
 });
 
-test('workspace search finds channel messages, direct messages, and thread replies with their context', async ({ page }) => {
+test('workspace search finds channel messages, direct messages, and thread replies with their context', async ({
+  page,
+}) => {
   const search = page.getByRole('searchbox', { name: 'Search workspace' });
   await search.fill('second pair of eyes');
   await expect(page.locator('.chat-result')).toHaveCount(1);
@@ -198,11 +204,15 @@ test('phone and tablet navigation preserve conversation and thread state with cl
   const trigger = threadButton(page, 202);
   await trigger.click();
   await expect(page.locator('#chat-thread-title')).toBeFocused();
-  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue('A thread draft across layouts.');
+  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue(
+    'A thread draft across layouts.',
+  );
   await expect(page.locator('.chat-conversation')).not.toBeVisible();
   await page.getByRole('button', { name: 'Close thread', exact: true }).click();
   await expect(trigger).toBeFocused();
-  await expect(page.getByRole('textbox', { name: 'Message #design', exact: true })).toHaveValue('A draft across layouts.');
+  await expect(page.getByRole('textbox', { name: 'Message #design', exact: true })).toHaveValue(
+    'A draft across layouts.',
+  );
   await page.getByRole('button', { name: 'Show workspace', exact: true }).click();
   await expect(room(page, 'design')).toBeFocused();
   await room(page, 'dm-mia').click();
@@ -217,11 +227,15 @@ test('phone and tablet navigation preserve conversation and thread state with cl
   await expect(page.locator('.chat-conversation')).not.toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.chat-conversation')).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue('A thread draft across layouts.');
+  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue(
+    'A thread draft across layouts.',
+  );
 });
 
 test('all screens, dialogs, and long messages fit a 320px container', async ({ page }) => {
-  await page.locator('.chat-container').evaluate(element => { element.style.maxWidth = '320px'; });
+  await page.locator('.chat-container').evaluate(element => {
+    element.style.maxWidth = '320px';
+  });
   const composer = page.getByRole('textbox', { name: 'Message #design', exact: true });
   await composer.fill('A long message: ' + 'x'.repeat(300));
   await composer.press('Enter');
@@ -236,14 +250,18 @@ test('all screens, dialogs, and long messages fit a 320px container', async ({ p
   await noOverflow(page);
   await page.keyboard.press('Escape');
   for (const width of [320, 390, 720, 820, 1100, 1440]) {
-    await page.locator('.chat-container').evaluate(element => { element.style.maxWidth = ''; });
+    await page.locator('.chat-container').evaluate(element => {
+      element.style.maxWidth = '';
+    });
     await page.setViewportSize({ width, height: 1000 });
     await noOverflow(page);
   }
 });
 
 for (const appearance of ['light', 'dark']) {
-  test(`conversation, reactions, activity, threads, and dialogs are accessible in automatic ${appearance} appearance`, async ({ page }) => {
+  test(`conversation, reactions, activity, threads, and dialogs are accessible in automatic ${appearance} appearance`, async ({
+    page,
+  }) => {
     // Full-page audits across nine states share this scenario's time budget.
     test.slow();
     await page.emulateMedia({ colorScheme: appearance });
@@ -265,7 +283,9 @@ for (const appearance of ['light', 'dark']) {
     await page.getByRole('button', { name: 'New direct message', exact: true }).click();
     await accessible(page);
     await page.keyboard.press('Escape');
-    await navigation(page).getByRole('button', { name: /^All unread/ }).click();
+    await navigation(page)
+      .getByRole('button', { name: /^All unread/ })
+      .click();
     await accessible(page);
     await room(page, 'design').click();
     await page.setViewportSize({ width: 390, height: 844 });
@@ -281,13 +301,17 @@ for (const appearance of ['light', 'dark']) {
   });
 }
 
-test('the CSS-only sample keeps native disclosure and follows system appearance without JavaScript', async ({ browser }) => {
+test('the CSS-only sample keeps native disclosure and follows system appearance without JavaScript', async ({
+  browser,
+}) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1440, height: 1100 } });
   try {
     const page = await context.newPage();
     await page.goto('/chat.html');
     await expect(page.locator('.chat-history noscript .chat-message-body').last()).toBeVisible();
-    await expect(page.locator('.chat-history noscript .chat-message-body').last()).toContainText('mobile conversation view');
+    await expect(page.locator('.chat-history noscript .chat-message-body').last()).toContainText(
+      'mobile conversation view',
+    );
     await expect(page.getByRole('textbox', { name: 'Message #design', exact: true })).toBeDisabled();
     const group = page.locator('.chat-room-group').first();
     await group.locator('summary').focus();
@@ -296,15 +320,28 @@ test('the CSS-only sample keeps native disclosure and follows system appearance 
     for (const scheme of ['light', 'dark']) {
       await page.emulateMedia({ colorScheme: scheme });
       await expect(page.locator('html')).toHaveCSS('color-scheme', scheme);
-      await expect(page.locator('#chat')).toHaveCSS('background-color', scheme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(37, 37, 40)');
+      await expect(page.locator('#chat')).toHaveCSS(
+        'background-color',
+        scheme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(37, 37, 40)',
+      );
     }
-  } finally { await context.close(); }
+  } finally {
+    await context.close();
+  }
 });
 
-function navigation(page) { return page.getByRole('navigation', { name: 'Workspace conversations', exact: true }); }
-function room(page, id) { return navigation(page).locator(`[data-room-id="${id}"]`); }
-function threadButton(page, id) { return page.locator(`.chat-history button[data-thread-trigger="${id}"]`); }
-async function accessible(page) { expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]); }
+function navigation(page) {
+  return page.getByRole('navigation', { name: 'Workspace conversations', exact: true });
+}
+function room(page, id) {
+  return navigation(page).locator(`[data-room-id="${id}"]`);
+}
+function threadButton(page, id) {
+  return page.locator(`.chat-history button[data-thread-trigger="${id}"]`);
+}
+async function accessible(page) {
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+}
 async function noOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   expect(await page.locator('#chat').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);

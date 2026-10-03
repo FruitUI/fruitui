@@ -21,18 +21,18 @@ class PatternsTest extends TestCase
     public function test_conversation_slots_and_action_attributes_reach_the_button_while_checkbox_is_independent(): void
     {
         $html = Blade::render(<<<'BLADE'
-            <x-fruit::conversation-list aria-label="Conversations" role="list">
+            <x-fruit::item-list aria-label="Conversations" role="list">
                 <li><x-fruit::checkbox name="selected[]" value="42" wire:model="selected">Select conversation</x-fruit::checkbox>
-                    <x-fruit::conversation-row variant="filled" type="button" class="custom" aria-current="true" wire:click="open(42)" x-on:click="open" disabled>
+                    <x-fruit::item-row variant="filled" type="button" class="custom" aria-current="true" wire:click="open(42)" x-on:click="open" disabled>
                         Sophie Chen
                         <x-slot:leading aria-hidden="true"><span class="f-avatar">SC</span></x-slot:leading>
                         <x-slot:trailing>10:42</x-slot:trailing>
                         <x-slot:subtitle>A fresh start</x-slot:subtitle>
                         <x-slot:preview>A few thoughts…</x-slot:preview>
                         <x-slot:meta>Work mailbox</x-slot:meta>
-                    </x-fruit::conversation-row>
+                    </x-fruit::item-row>
                 </li>
-            </x-fruit::conversation-list>
+            </x-fruit::item-list>
             BLADE);
         $document = $this->document($html);
         $button = $document->getElementsByTagName('button')->item(0);
@@ -41,7 +41,7 @@ class PatternsTest extends TestCase
         $this->assertSame('open', $button->getAttribute('x-on:click'));
         $this->assertSame('true', $button->getAttribute('aria-current'));
         $this->assertTrue($button->hasAttribute('disabled'));
-        $this->assertStringContainsString('f-conversation-row--filled', $button->getAttribute('class'));
+        $this->assertStringContainsString('f-item-row--filled', $button->getAttribute('class'));
         $this->assertStringContainsString('custom', $button->getAttribute('class'));
         $this->assertSame(0, $button->getElementsByTagName('input')->length);
         $input = $document->getElementsByTagName('input')->item(0);
@@ -51,11 +51,11 @@ class PatternsTest extends TestCase
         $xpath = new DOMXPath($document);
         foreach (['title' => 'Sophie Chen', 'trailing' => '10:42', 'subtitle' => 'A fresh start', 'preview' => 'A few thoughts…', 'meta' => 'Work mailbox'] as $part => $content) {
             $class = $part === 'trailing' ? 'time' : $part;
-            $node = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " f-conversation-row__'.$class.' ")]')->item(0);
+            $node = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " f-item-row__'.$class.' ")]')->item(0);
             $this->assertSame($content, trim($node->textContent));
         }
         $leading = $xpath->query('//*[@aria-hidden="true"]')->item(0);
-        $this->assertStringContainsString('f-conversation-row__leading', $leading->getAttribute('class'));
+        $this->assertStringContainsString('f-item-row__leading', $leading->getAttribute('class'));
         $this->assertSame(1, preg_match_all('/role="list"/', $html));
         $this->assertSame(1, preg_match_all('/type="button"/', $html));
     }
@@ -91,10 +91,12 @@ class PatternsTest extends TestCase
 
     public function test_defaults_and_client_url_bindings_retain_native_semantics(): void
     {
-        $html = Blade::render('<x-fruit::conversation-row>Inbox</x-fruit::conversation-row><x-fruit::attachment x-bind:href="file.url" download>Notes</x-fruit::attachment>');
-        $this->assertStringNotContainsString('f-conversation-row--filled', $html);
+        $html = Blade::render('<x-fruit::item-row>Inbox</x-fruit::item-row><x-fruit::attachment x-bind:href="file.url" download>Notes</x-fruit::attachment>');
+        $this->assertStringNotContainsString('f-item-row--filled', $html);
         $this->assertStringContainsString('type="button"', $html);
         $this->assertStringContainsString('x-bind:href="file.url"', $html);
+        // A bare download attribute keeps the URL's filename instead of naming every file "download".
+        $this->assertStringContainsString('download=""', $html);
     }
 
     #[DataProvider('invalidPatterns')]
@@ -104,8 +106,11 @@ class PatternsTest extends TestCase
             Blade::render($template);
         } catch (ViewException $exception) {
             $cause = $exception;
-            while ($cause->getPrevious()) $cause = $cause->getPrevious();
+            while ($cause->getPrevious()) {
+                $cause = $cause->getPrevious();
+            }
             $this->assertInstanceOf(InvalidArgumentException::class, $cause);
+
             return;
         }
         $this->fail('An invalid pattern rendered without an error.');
@@ -114,13 +119,13 @@ class PatternsTest extends TestCase
     public static function invalidPatterns(): array
     {
         return array_map(fn ($template) => [$template], [
-            '<x-fruit::conversation-row variant="checkbox">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-row variant="danger">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-row type="submit">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-row role="checkbox">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-row x-bind:type="kind">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-row as="a">Inbox</x-fruit::conversation-row>',
-            '<x-fruit::conversation-list role="listbox" />',
+            '<x-fruit::item-row variant="checkbox">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-row variant="danger">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-row type="submit">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-row role="checkbox">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-row x-bind:type="kind">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-row as="a">Inbox</x-fruit::item-row>',
+            '<x-fruit::item-list role="listbox" />',
             '<x-fruit::attachment>Notes</x-fruit::attachment>',
             '<x-fruit::attachment href="/notes" role="button">Notes</x-fruit::attachment>',
             '<x-fruit::empty-state role="checkbox">Empty</x-fruit::empty-state>',
@@ -131,6 +136,7 @@ class PatternsTest extends TestCase
     {
         $document = new DOMDocument;
         @$document->loadHTML('<?xml encoding="utf-8" ?>'.$html);
+
         return $document;
     }
 }

@@ -1,59 +1,312 @@
 @layer fruit.components {
-  .f-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: var(--f-button-height, 32px); padding: var(--f-button-padding-block, 5px) var(--f-button-padding-inline, 13px); border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-control); box-shadow: var(--f-control-shadow); font-family: var(--f-font); line-height: var(--f-control-line-height, 1.5); font-size: var(--f-control-font-size, 13px); font-weight: 500; text-decoration: none; white-space: nowrap; }
-  .f-button:hover { background: var(--f-surface-secondary); }
-  .f-button--primary { color: var(--f-on-accent); border-color: transparent; background: var(--f-accent-fill); }
-  .f-button--primary:hover { background: var(--f-accent-fill-hover); }
-  .f-button--danger { color: var(--f-danger); }
-  .f-button--ghost { background: transparent; border-color: transparent; box-shadow: none; }
-  .f-button--ghost:hover { background: var(--f-hover); }
-  .f-button--icon { padding: 7px; min-width: 34px; min-height: 34px; }
-  .f-button[aria-pressed='true'] { background: var(--f-selection); color: var(--f-selection-text); }
-  .f-field { display: grid; gap: var(--f-field-gap, 7px); }
-  .f-label { font-size: 13px; font-weight: 500; }
-  .f-input { width: 100%; min-width: 0; min-height: var(--f-control-height, 34px); padding: var(--f-control-padding-block, 6px) var(--f-control-padding-inline, 10px); border: 1px solid var(--f-border); border-radius: var(--f-radius-sm); background: var(--f-input-background, var(--f-control)); color: var(--f-input-color, var(--f-text)); box-shadow: var(--f-input-shadow); font-family: var(--f-font); line-height: var(--f-control-line-height, 1.5); font-size: var(--f-control-font-size, 13px); }
-  .f-input::placeholder { color: var(--f-tertiary); }
-  .f-input:focus { border-color: var(--f-accent); }
-  .f-input[aria-invalid='true'] { border-color: var(--f-danger); }
-  textarea.f-input { resize: vertical; }
-  .f-help { color: var(--f-secondary); font-size: 12px; }
-  .f-error { color: var(--f-danger); font-size: 12px; }
-  .f-search { position: relative; }
-  .f-search > .f-icon { position: absolute; top: 9px; inset-inline-start: 10px; width: 16px; height: 16px; color: var(--f-secondary); pointer-events: none; }
-  .f-search > .f-input { background: var(--f-input-background, var(--f-hover)); padding-inline-start: 33px; box-shadow: none; }
-  .f-switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
-  .f-switch > input { appearance: none; width: 34px; height: 20px; margin: 0; border: 1px solid var(--f-border); border-radius: 20px; background: var(--f-tertiary); position: relative; flex-shrink: 0; cursor: pointer; transition: background var(--f-motion); }
-  .f-switch > input::before { content: ''; position: absolute; width: 16px; height: 16px; top: 1px; inset-inline-start: 1px; border-radius: 50%; background: var(--f-switch-thumb); box-shadow: var(--f-switch-shadow); transition: transform var(--f-motion); }
-  .f-switch > input:checked { background: var(--f-accent); border-color: var(--f-accent); }
-  .f-switch > input:checked::before { transform: translateX(14px); }
-  .f-switch:dir(rtl) > input:checked::before { transform: translateX(-14px); }
-  .f-segmented { display: inline-flex; gap: 2px; padding: 3px; border-radius: 8px; background: var(--f-hover); border: 1px solid var(--f-border); }
-  .f-segmented > label { position: relative; cursor: pointer; }
-  .f-segmented > label > input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .f-segmented > label > span { display: block; border-radius: 5px; padding: 4px 13px; font-size: 12px; }
-  .f-segmented > label > input:checked + span { background: var(--f-control); box-shadow: var(--f-segmented-shadow); }
-  .f-segmented > label > input:focus-visible + span { outline: 3px solid var(--f-accent); outline-offset: 2px; }
-  .f-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; padding: 1px 6px; border-radius: 6px; background: var(--f-hover); color: var(--f-secondary); font-size: 11px; font-variant-numeric: tabular-nums; }
-  .f-card { padding: var(--f-space-6); border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-surface); }
-  .f-avatar { display: grid; place-items: center; width: var(--f-avatar-size, 34px); height: var(--f-avatar-size, 34px); flex-shrink: 0; border-radius: var(--f-avatar-radius, 50%); color: var(--f-avatar-color, var(--f-selection-text)); background: var(--f-avatar-background, var(--f-selection)); border: var(--f-avatar-border, 0); font-size: var(--f-avatar-font-size, 12px); font-weight: var(--f-avatar-font-weight, 600); }
-  .f-disclosure { border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-surface); }
-  .f-disclosure > summary { padding: 14px 16px; cursor: pointer; font-weight: 500; }
-  .f-disclosure > :not(summary) { padding: 0 16px 16px; }
-  .f-dialog { width: min(480px, calc(100% - 32px)); padding: 0; color: var(--f-text); background: var(--f-surface); border: 1px solid var(--f-border); border-radius: var(--f-radius-lg); box-shadow: var(--f-shadow); }
-  .f-dialog::backdrop { background: var(--f-backdrop); backdrop-filter: blur(5px); }
-  .f-dialog__header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--f-border); }
-  .f-dialog__header h2 { font-size: 16px; font-weight: 600; }
-  .f-dialog__body { display: grid; gap: 18px; padding: 22px; }
-  .f-dialog__footer { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 22px; border-top: 1px solid var(--f-border); }
-  .f-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px); padding: 11px 18px; border: 1px solid var(--f-border); border-radius: 12px; background: var(--f-surface); box-shadow: var(--f-shadow); z-index: 10; }
-  @media (pointer: coarse) {
-    .f-button, .f-input:not([multiple]):not([size]) { min-height: max(44px, var(--f-control-height, 34px)); }
-    .f-input { font-size: max(16px, var(--f-control-font-size, 13px)); }
+  .f-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: var(--f-button-height, 32px);
+    padding: var(--f-button-padding-block, 5px) var(--f-button-padding-inline, 13px);
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius-sm);
+    background: var(--f-control);
+    box-shadow: var(--f-control-shadow);
+    font-family: var(--f-font);
+    line-height: var(--f-control-line-height, 1.5);
+    font-size: var(--f-control-font-size, var(--f-text-base));
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
   }
-  .f-stack { display: grid; gap: var(--f-space-4); }
-  .f-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--f-space-3); }
+  .f-button:hover {
+    background: var(--f-surface-secondary);
+  }
+  .f-button--primary {
+    color: var(--f-on-accent);
+    border-color: transparent;
+    background: var(--f-accent-fill);
+  }
+  .f-button--primary:hover {
+    background: var(--f-accent-fill-hover);
+  }
+  .f-button--danger {
+    color: var(--f-danger);
+  }
+  .f-button--ghost {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .f-button--ghost:hover {
+    background: var(--f-hover);
+  }
+  .f-button--icon {
+    padding: 7px;
+    min-width: 34px;
+    min-height: 34px;
+  }
+  .f-button[aria-pressed='true'] {
+    background: var(--f-selection);
+    color: var(--f-selection-text);
+  }
+  .f-field {
+    display: grid;
+    gap: var(--f-field-gap, 7px);
+  }
+  .f-label {
+    font-size: var(--f-text-base);
+    font-weight: 500;
+  }
+  .f-input {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--f-control-height, 34px);
+    padding: var(--f-control-padding-block, 6px) var(--f-control-padding-inline, 10px);
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius-sm);
+    background: var(--f-input-background, var(--f-control));
+    color: var(--f-input-color, var(--f-text));
+    box-shadow: var(--f-input-shadow);
+    font-family: var(--f-font);
+    line-height: var(--f-control-line-height, 1.5);
+    font-size: var(--f-control-font-size, var(--f-text-base));
+  }
+  .f-input::placeholder {
+    color: var(--f-tertiary);
+  }
+  .f-input:focus {
+    border-color: var(--f-accent);
+  }
+  .f-input[aria-invalid='true'] {
+    border-color: var(--f-danger);
+  }
+  textarea.f-input {
+    resize: vertical;
+  }
+  .f-help {
+    color: var(--f-secondary);
+    font-size: var(--f-text-sm);
+  }
+  .f-error {
+    color: var(--f-danger);
+    font-size: var(--f-text-sm);
+  }
+  .f-search {
+    position: relative;
+  }
+  .f-search > .f-icon {
+    position: absolute;
+    top: 9px;
+    inset-inline-start: 10px;
+    width: 16px;
+    height: 16px;
+    color: var(--f-secondary);
+    pointer-events: none;
+  }
+  .f-search > .f-input {
+    background: var(--f-input-background, var(--f-hover));
+    padding-inline-start: 33px;
+    box-shadow: none;
+  }
+  .f-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .f-switch > input {
+    appearance: none;
+    width: 34px;
+    height: 20px;
+    margin: 0;
+    border: 1px solid var(--f-border);
+    border-radius: 20px;
+    background: var(--f-tertiary);
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background var(--f-motion);
+  }
+  .f-switch > input::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 1px;
+    inset-inline-start: 1px;
+    border-radius: 50%;
+    background: var(--f-switch-thumb);
+    box-shadow: var(--f-switch-shadow);
+    transition: transform var(--f-motion);
+  }
+  .f-switch > input:checked {
+    background: var(--f-accent);
+    border-color: var(--f-accent);
+  }
+  .f-switch > input:checked::before {
+    transform: translateX(14px);
+  }
+  .f-switch:dir(rtl) > input:checked::before {
+    transform: translateX(-14px);
+  }
+  .f-segmented {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border-radius: 8px;
+    background: var(--f-hover);
+    border: 1px solid var(--f-border);
+  }
+  .f-segmented > label {
+    position: relative;
+    cursor: pointer;
+  }
+  .f-segmented > label > input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  .f-segmented > label > span {
+    display: block;
+    border-radius: 5px;
+    padding: 4px 13px;
+    font-size: var(--f-text-sm);
+  }
+  .f-segmented > label > input:checked + span {
+    background: var(--f-control);
+    box-shadow: var(--f-segmented-shadow);
+  }
+  .f-segmented > label > input:focus-visible + span {
+    outline: 3px solid var(--f-accent);
+    outline-offset: 2px;
+  }
+  .f-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: var(--f-hover);
+    color: var(--f-secondary);
+    font-size: var(--f-text-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .f-card {
+    padding: var(--f-space-6);
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius);
+    background: var(--f-surface);
+  }
+  .f-avatar {
+    display: grid;
+    place-items: center;
+    width: var(--f-avatar-size, 34px);
+    height: var(--f-avatar-size, 34px);
+    flex-shrink: 0;
+    border-radius: var(--f-avatar-radius, 50%);
+    color: var(--f-avatar-color, var(--f-selection-text));
+    background: var(--f-avatar-background, var(--f-selection));
+    border: var(--f-avatar-border, 0);
+    font-size: var(--f-avatar-font-size, var(--f-text-sm));
+    font-weight: var(--f-avatar-font-weight, 600);
+  }
+  .f-disclosure {
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius);
+    background: var(--f-surface);
+  }
+  .f-disclosure > summary {
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .f-disclosure > :not(summary) {
+    padding: 0 16px 16px;
+  }
+  .f-dialog {
+    width: min(480px, calc(100% - 32px));
+    padding: 0;
+    color: var(--f-text);
+    background: var(--f-surface);
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius-lg);
+    box-shadow: var(--f-shadow);
+  }
+  .f-dialog::backdrop {
+    background: var(--f-backdrop);
+    backdrop-filter: blur(5px);
+  }
+  .f-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--f-border);
+  }
+  .f-dialog__header h2 {
+    font-size: var(--f-text-xl);
+    font-weight: 600;
+  }
+  .f-dialog__body {
+    display: grid;
+    gap: 18px;
+    padding: 22px;
+  }
+  .f-dialog__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--f-border);
+  }
+  .f-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: 11px 18px;
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    background: var(--f-surface);
+    box-shadow: var(--f-shadow);
+    z-index: 10;
+  }
+  @media (pointer: coarse) {
+    .f-button,
+    .f-input:not([multiple]):not([size]) {
+      min-height: max(44px, var(--f-control-height, 34px));
+    }
+    .f-input {
+      font-size: max(16px, var(--f-control-font-size, var(--f-text-base)));
+    }
+  }
+  .f-stack {
+    display: grid;
+    gap: var(--f-space-4);
+  }
+  .f-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--f-space-3);
+  }
   @media (forced-colors: active) {
-    .f-button, .f-input, .f-switch > input, .f-segmented, .f-card, .f-dialog { border: 1px solid ButtonText; }
-    .f-switch > input:checked { background: Highlight; }
-    .f-switch > input::before { background: ButtonText; }
+    .f-button,
+    .f-input,
+    .f-switch > input,
+    .f-segmented,
+    .f-card,
+    .f-dialog {
+      border: 1px solid ButtonText;
+    }
+    .f-switch > input:checked {
+      background: Highlight;
+    }
+    .f-switch > input::before {
+      background: ButtonText;
+    }
   }
 }

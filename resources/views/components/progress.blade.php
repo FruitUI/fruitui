@@ -1,2 +1,2 @@
-@php(\FruitUI\Support\ComponentContract::semantics('progress', $attributes, 'progressbar'))
+@php(\FruitUI\Support\ComponentContract::validate('progress', $attributes))
 <progress {{ $attributes->class(['f-progress']) }}>{{ $slot }}</progress>

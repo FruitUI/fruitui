@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" class="fruit-ui" data-theme="system">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="FruitUI’s CSS-first controls and Laravel integration."><title>Components · FruitUI</title><link rel="stylesheet" href="/src/fruitui.css"><link rel="stylesheet" href="/examples/shared/showcase.css"><script type="module" src="/examples/main.js"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="FruitUI’s CSS-first controls and Laravel integration."><title>Components · FruitUI</title><link rel="stylesheet" href="/src/fruitui.css"><link rel="stylesheet" href="/src/mail.css"><link rel="stylesheet" href="/examples/shared/showcase.css"><script type="module" src="/examples/main.js"></script></head>
 <body>
   <a class="skip-link" href="#components">Skip to components</a>
   <div class="showcase">
@@ -11,38 +11,124 @@
     </header>
     <main id="components">
       <div class="page-intro"><div><p class="eyebrow">The small things, considered</p><h1>Good interfaces start here.</h1><p>Every public CSS family, with native HTML and Blade usage. System light and dark appearances throughout.</p></div><span class="example-tag">Foundation · 0.1</span></div>
-<nav class="gallery-index" aria-label="Component index"><a href="#component-button">Button</a><a href="#component-input">Input</a><a href="#component-field">Field</a><a href="#component-switch">Switch</a><a href="#component-checkbox">Checkbox</a><a href="#component-radio">Radio</a><a href="#component-select">Select</a><a href="#component-fieldset">Fieldset</a><a href="#component-file">File</a><a href="#component-number">Number</a><a href="#component-date">Date</a><a href="#component-time">Time</a><a href="#component-color">Color</a><a href="#component-range">Range</a><a href="#component-progress">Progress</a><a href="#component-meter">Meter</a><a href="#component-typography">Typography</a><a href="#component-textarea">Textarea</a><a href="#component-search">Search</a><a href="#component-segmented">Segmented</a><a href="#component-disclosure">Disclosure</a><a href="#component-dialog">Dialog</a><a href="#component-avatar">Avatar</a><a href="#component-sidebar">Sidebar</a><a href="#component-toolbar">Toolbar</a><a href="#component-card">Card</a><a href="#component-badge">Badge</a><a href="#component-toast">Toast</a><a href="#component-row">Row</a><a href="#component-stack">Stack</a><a href="#component-muted">Muted</a><a href="#component-screen-reader">Screen Reader</a><a href="#component-icon">Icon</a><a href="#component-conversation-list">Conversation List</a><a href="#component-conversation-row">Conversation Row</a><a href="#component-attachment">Attachment</a><a href="#component-empty-state">Empty State</a><a href="#component-workspace">Workspace frame</a><a href="#component-pane">Panes and scrolling</a><a href="#component-splitter">Resizable panes</a><a href="#component-composer">Message composer</a><a href="#component-description-list">Description list</a><a href="#component-floating-disclosure">Floating disclosure</a><a href="#component-table">Table</a><a href="#component-mail">Mail</a><a href="#component-alert">Alert</a><a href="#component-menu">Menu</a><a href="#component-menu-item">Menu Item</a><a href="#component-tooltip">Tooltip</a><a href="#component-combobox">Combobox</a><a href="#component-token-field">Token Field</a><a href="#component-chip">Chip</a><a href="#component-button-group">Button Group</a><a href="#component-input-group">Input Group</a><a href="#component-tabs">Tabs</a><a href="#component-section-nav">Section Nav</a><a href="#component-pagination">Pagination</a><a href="#component-spinner">Spinner</a><a href="#component-upload">Upload</a><a href="#component-avatar-group">Avatar Group</a><a href="#component-presence">Presence</a><a href="#component-notifications">Notifications</a><a href="#component-prose">Prose</a><a href="#component-editor">Editor</a></nav>
+<nav class="gallery-index" aria-label="Component index"><a href="#component-button">Button</a><a href="#component-input">Input</a><a href="#component-field">Field</a><a href="#component-switch">Switch</a><a href="#component-checkbox">Checkbox</a><a href="#component-radio">Radio</a><a href="#component-select">Select</a><a href="#component-fieldset">Fieldset</a><a href="#component-file">File</a><a href="#component-number">Number</a><a href="#component-date">Date</a><a href="#component-time">Time</a><a href="#component-color">Color</a><a href="#component-range">Range</a><a href="#component-progress">Progress</a><a href="#component-meter">Meter</a><a href="#component-typography">Typography</a><a href="#component-textarea">Textarea</a><a href="#component-search">Search</a><a href="#component-segmented">Segmented</a><a href="#component-disclosure">Disclosure</a><a href="#component-dialog">Dialog</a><a href="#component-avatar">Avatar</a><a href="#component-sidebar">Sidebar</a><a href="#component-toolbar">Toolbar</a><a href="#component-card">Card</a><a href="#component-badge">Badge</a><a href="#component-toast">Toast</a><a href="#component-row">Row</a><a href="#component-stack">Stack</a><a href="#component-muted">Muted</a><a href="#component-screen-reader">Screen Reader</a><a href="#component-icon">Icon</a><a href="#component-item-list">Conversation List</a><a href="#component-item-row">Conversation Row</a><a href="#component-attachment">Attachment</a><a href="#component-empty-state">Empty State</a><a href="#component-workspace">Workspace frame</a><a href="#component-pane">Panes and scrolling</a><a href="#component-splitter">Resizable panes</a><a href="#component-composer">Message composer</a><a href="#component-description-list">Description list</a><a href="#component-floating-disclosure">Floating disclosure</a><a href="#component-table">Table</a><a href="#component-mail">Mail</a><a href="#component-alert">Alert</a><a href="#component-menu">Menu</a><a href="#component-menu-item">Menu Item</a><a href="#component-tooltip">Tooltip</a><a href="#component-combobox">Combobox</a><a href="#component-token-field">Token Field</a><a href="#component-chip">Chip</a><a href="#component-button-group">Button Group</a><a href="#component-input-group">Input Group</a><a href="#component-tabs">Tabs</a><a href="#component-section-nav">Section Nav</a><a href="#component-pagination">Pagination</a><a href="#component-spinner">Spinner</a><a href="#component-upload">Upload</a><a href="#component-avatar-group">Avatar Group</a><a href="#component-presence">Presence</a><a href="#component-notifications">Notifications</a><a href="#component-prose">Prose</a><a href="#component-editor">Editor</a></nav>
       <div class="component-grid">
-        <section id="component-button" data-component="button" class="f-card component-card"><h2>Buttons</h2><p>One action control, with four visual variants and native disabled state.</p><div class="f-row"><button class="f-button f-button--primary" type="button">Primary</button><button class="f-button" type="button">Default</button><button class="f-button f-button--ghost" type="button">Quiet</button><button class="f-button f-button--danger" type="button">Delete</button><button class="f-button" type="button" disabled>Disabled</button><button class="f-button f-button--icon" type="button" aria-label="Add an item"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg></button><button class="f-button" type="button" aria-pressed="true">Pinned</button></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;button&quot;&gt;Continue&lt;/button&gt;
-&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-pressed=&quot;true&quot;&gt;Pinned&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::button variant=&quot;primary&quot; wire:click=&quot;save&quot;&gt;Save&lt;/x-fruit::button&gt;
-&lt;x-fruit::button disabled&gt;Unavailable&lt;/x-fruit::button&gt;</pre></details></section>
-        <section id="component-input" data-component="input" class="f-card component-card"><h2>Text fields</h2><p>Single-line text entry; email, password, search, tel, and url retain native editing.</p><label class="f-field"><span class="f-label">Your name</span><input class="f-input" placeholder="Alex Morgan" autocomplete="name" aria-describedby="name-help"><span class="f-help" id="name-help">How you’ll appear to your teammates.</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+        <section id="component-button" data-component="button" class="f-card component-card"><h2>Buttons</h2><p>One action control, with four visual variants and native disabled state.</p><!-- blade:button --><div class="f-row">
+    <button type="button" class="f-button f-button--primary">Primary</button>
+    <button type="button" class="f-button">Default</button>
+    <button type="button" class="f-button f-button--ghost">Quiet</button>
+    <button type="button" class="f-button f-button--danger">Delete</button>
+    <button type="button" class="f-button" disabled="disabled">Disabled</button>
+    <button type="button" class="f-button f-button--icon" aria-label="Add an item"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+    <button type="button" class="f-button" aria-pressed="true">Pinned</button>
+</div><!-- /blade:button --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;button&quot;&gt;Continue&lt;/button&gt;
+&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-pressed=&quot;true&quot;&gt;Pinned&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="button">&lt;div class=&quot;f-row&quot;&gt;
+    &lt;x-fruit::button variant=&quot;primary&quot;&gt;Primary&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button&gt;Default&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button variant=&quot;ghost&quot;&gt;Quiet&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button variant=&quot;danger&quot;&gt;Delete&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button disabled&gt;Disabled&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button class=&quot;f-button--icon&quot; aria-label=&quot;Add an item&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-plus&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button aria-pressed=&quot;true&quot;&gt;Pinned&lt;/x-fruit::button&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-input" data-component="input" class="f-card component-card"><h2>Text fields</h2><p>Single-line text entry; email, password, search, tel, and url retain native editing.</p><!-- blade:input --><label class="f-field">
+    <span class="f-label">Your name</span>
+    <input type="text" class="f-input" placeholder="Alex Morgan" autocomplete="name" aria-describedby="name-help">
+    <span class="f-help" id="name-help">How you’ll appear to your teammates.</span>
+</label><!-- /blade:input --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Your name&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; autocomplete=&quot;name&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
-  &lt;x-fruit::input type=&quot;email&quot; name=&quot;email&quot; wire:model=&quot;email&quot; required /&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="input">&lt;label class=&quot;f-field&quot;&gt;
+    &lt;span class=&quot;f-label&quot;&gt;Your name&lt;/span&gt;
+    &lt;x-fruit::input placeholder=&quot;Alex Morgan&quot; autocomplete=&quot;name&quot; aria-describedby=&quot;name-help&quot; /&gt;
+    &lt;span class=&quot;f-help&quot; id=&quot;name-help&quot;&gt;How you’ll appear to your teammates.&lt;/span&gt;
 &lt;/label&gt;</pre></details></section>
-        <section id="component-field" data-component="field" class="f-card component-card"><h2>Labels, help, and errors</h2><p>Field composition keeps the label and validation message connected to the native input.</p><div class="f-stack"><label class="f-field"><span class="f-label">Contact email</span><input class="f-input" type="email" value="alex@" aria-invalid="true" aria-describedby="contact-error"><span class="f-error" id="contact-error">Enter a complete email address.</span></label><label class="f-field"><span class="f-label">Workspace ID</span><input class="f-input" value="forma" readonly><span class="f-help">This identifier is read only.</span></label><label class="f-field"><span class="f-label">Invitation code</span><input class="f-input" disabled value="Not available"></label></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+        <section id="component-field" data-component="field" class="f-card component-card"><h2>Labels, help, and errors</h2><p>Field composition keeps the label and validation message connected to the native input.</p><!-- blade:field --><div class="f-stack">
+    
+    <div class="f-field">
+    <label class="f-label" for="contact-email">Contact email</label>
+    <input type="email" class="f-input" id="contact-email" aria-describedby="contact-email-error" aria-invalid="true" name="email" value="alex@">
+                <p class="f-error" id="contact-email-error">Enter a complete email address.</p>
+    </div>
+    <div class="f-field">
+    <label class="f-label" for="workspace-id">Workspace ID</label>
+    <input type="text" class="f-input" id="workspace-id" aria-describedby="workspace-id-description" name="workspace" value="forma" readonly="readonly">
+            <p class="f-help" id="workspace-id-description">This identifier is read only.</p>
+        </div>
+    <div class="f-field">
+    <label class="f-label" for="invitation-code">Invitation code</label>
+    <input type="text" class="f-input" id="invitation-code" name="invitation" value="Not available" disabled="disabled">
+        </div>
+</div><!-- /blade:field --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; aria-invalid=&quot;true&quot; aria-describedby=&quot;email-error&quot;&gt;
   &lt;span class=&quot;f-error&quot; id=&quot;email-error&quot;&gt;Enter a valid email.&lt;/span&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::field control-id=&quot;email&quot; label=&quot;Email&quot; description=&quot;Work address&quot; :error=&quot;$errors-&gt;first(&#x27;email&#x27;)&quot;&gt;
-  &lt;x-fruit::input type=&quot;email&quot; name=&quot;email&quot; wire:model.blur=&quot;email&quot; /&gt;
-&lt;/x-fruit::field&gt;</pre></details></section>
-        <section class="f-card component-card"><h2>Selection controls</h2><p>Independent native values. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><div id="component-switch" data-component="switch" class="f-stack"><h3>Switch</h3><label class="f-switch"><input type="checkbox" role="switch" name="previews" value="1" x-model="previews" checked><span>Show message previews</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-switch&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="field">&lt;div class=&quot;f-stack&quot;&gt;
+    {{-- The error is the shared validation message for &quot;email&quot;, as after a failed request or Livewire validation. --}}
+    &lt;x-fruit::field control-id=&quot;contact-email&quot; label=&quot;Contact email&quot;&gt;
+        &lt;x-fruit::input type=&quot;email&quot; name=&quot;email&quot; value=&quot;alex@&quot; /&gt;
+    &lt;/x-fruit::field&gt;
+    &lt;x-fruit::field control-id=&quot;workspace-id&quot; label=&quot;Workspace ID&quot; description=&quot;This identifier is read only.&quot;&gt;
+        &lt;x-fruit::input name=&quot;workspace&quot; value=&quot;forma&quot; readonly /&gt;
+    &lt;/x-fruit::field&gt;
+    &lt;x-fruit::field control-id=&quot;invitation-code&quot; label=&quot;Invitation code&quot;&gt;
+        &lt;x-fruit::input name=&quot;invitation&quot; value=&quot;Not available&quot; disabled /&gt;
+    &lt;/x-fruit::field&gt;
+&lt;/div&gt;</pre></details></section>
+        <section class="f-card component-card"><h2>Selection controls</h2><p>Independent native values. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><div id="component-switch" data-component="switch" class="f-stack"><h3>Switch</h3><!-- blade:switch --><label class="f-switch">
+    <input type="checkbox" role="switch" name="previews" value="1" x-model="previews" checked="checked">
+    <span>Show message previews</span>
+</label><!-- /blade:switch --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-switch&quot;&gt;
   &lt;input type=&quot;checkbox&quot; role=&quot;switch&quot; name=&quot;previews&quot; checked&gt;
   &lt;span&gt;Show message previews&lt;/span&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::switch name=&quot;previews&quot; wire:model=&quot;previews&quot;&gt;Show previews&lt;/x-fruit::switch&gt;</pre></details></div><div id="component-checkbox" data-component="checkbox" class="f-stack"><h3>Checkbox</h3><label class="f-check"><input type="checkbox" name="sounds" value="1" x-model="sounds" checked>Play a sound for new messages</label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-check&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="switch">&lt;x-fruit::switch name=&quot;previews&quot; value=&quot;1&quot; x-model=&quot;previews&quot; checked&gt;Show message previews&lt;/x-fruit::switch&gt;</pre></details></div><div id="component-checkbox" data-component="checkbox" class="f-stack"><h3>Checkbox</h3><!-- blade:checkbox --><label class="f-check">
+    <input type="checkbox" role="checkbox" name="sounds" value="1" x-model="sounds" checked="checked">
+    <span>Play a sound for new messages</span>
+</label><!-- /blade:checkbox --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-check&quot;&gt;
   &lt;input type=&quot;checkbox&quot; name=&quot;sounds&quot; value=&quot;1&quot;&gt;
   Play a sound
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::checkbox name=&quot;sounds&quot; wire:model=&quot;sounds&quot;&gt;Play a sound&lt;/x-fruit::checkbox&gt;</pre></details></div><div id="component-radio" data-component="radio" class="f-stack"><h3>Radio</h3><fieldset class="f-fieldset"><legend>Message density</legend><div class="f-row"><label class="f-check"><input type="radio" name="density" value="comfortable" x-model="density" checked>Comfortable</label><label class="f-check"><input type="radio" name="density" value="compact" x-model="density">Compact</label></div></fieldset><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="checkbox">&lt;x-fruit::checkbox name=&quot;sounds&quot; value=&quot;1&quot; x-model=&quot;sounds&quot; checked&gt;Play a sound for new messages&lt;/x-fruit::checkbox&gt;</pre></details></div><div id="component-radio" data-component="radio" class="f-stack"><h3>Radio</h3><!-- blade:radio --><fieldset class="f-fieldset"><legend>Message density</legend>
+    <div class="f-row">
+        <label class="f-check">
+    <input type="radio" role="radio" name="density" value="comfortable" x-model="density" checked="checked">
+    <span>Comfortable</span>
+</label>
+        <label class="f-check">
+    <input type="radio" role="radio" name="density" value="compact" x-model="density">
+    <span>Compact</span>
+</label>
+    </div></fieldset><!-- /blade:radio --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;
   &lt;legend&gt;Density&lt;/legend&gt;
   &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;density&quot; value=&quot;comfortable&quot; checked&gt;Comfortable&lt;/label&gt;
   &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;radio&quot; name=&quot;density&quot; value=&quot;compact&quot;&gt;Compact&lt;/label&gt;
-&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::radio name=&quot;density&quot; value=&quot;comfortable&quot; wire:model=&quot;density&quot;&gt;Comfortable&lt;/x-fruit::radio&gt;
-&lt;x-fruit::radio name=&quot;density&quot; value=&quot;compact&quot; wire:model=&quot;density&quot;&gt;Compact&lt;/x-fruit::radio&gt;</pre></details></div><output class="f-help" x-cloak x-text="'Previews ' + (previews ? 'on' : 'off') + ' · Sound ' + (sounds ? 'on' : 'off') + ' · ' + density + ' density'"></output></form></section>
-        <section id="component-select" data-component="select" class="f-card component-card"><h2>Select</h2><p>Native single and multiple selection with shared option, group, and disabled styles.</p><label class="f-field"><span class="f-label">Default mailbox</span><select class="f-input" name="mailbox"><optgroup label="Combined folders"><option value="all">All Inboxes</option><option value="flagged">Flagged</option><option value="archive">Archive</option></optgroup><optgroup label="Accounts"><option value="work">Work</option><option value="personal">Personal</option><option value="offline" disabled>Offline account</option></optgroup></select></label><label class="f-field"><span class="f-label">Included folders</span><select class="f-input" name="folders[]" multiple size="3"><option value="inbox" selected>Inbox</option><option value="sent">Sent</option><option value="archive">Archive</option><option value="junk" disabled>Junk (unavailable)</option></select></label><p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="radio">&lt;x-fruit::fieldset&gt;
+    &lt;legend&gt;Message density&lt;/legend&gt;
+    &lt;div class=&quot;f-row&quot;&gt;
+        &lt;x-fruit::radio name=&quot;density&quot; value=&quot;comfortable&quot; x-model=&quot;density&quot; checked&gt;Comfortable&lt;/x-fruit::radio&gt;
+        &lt;x-fruit::radio name=&quot;density&quot; value=&quot;compact&quot; x-model=&quot;density&quot;&gt;Compact&lt;/x-fruit::radio&gt;
+    &lt;/div&gt;
+&lt;/x-fruit::fieldset&gt;</pre></details></div><output class="f-help" x-cloak x-text="'Previews ' + (previews ? 'on' : 'off') + ' · Sound ' + (sounds ? 'on' : 'off') + ' · ' + density + ' density'"></output></form></section>
+        <section id="component-select" data-component="select" class="f-card component-card"><h2>Select</h2><p>Native single and multiple selection with shared option, group, and disabled styles.</p><!-- blade:select --><div class="f-field">
+    <label class="f-label" for="default-mailbox">Default mailbox</label>
+    <select class="f-input" id="default-mailbox" name="mailbox"><optgroup label="Combined folders">
+            <option value="all">All Inboxes</option>
+            <option value="flagged">Flagged</option>
+            <option value="archive">Archive</option>
+        </optgroup>
+        <optgroup label="Accounts">
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="offline" disabled>Offline account</option>
+        </optgroup></select>
+        </div>
+<div class="f-field">
+    <label class="f-label" for="included-folders">Included folders</label>
+    <select class="f-input" id="included-folders" name="folders[]" multiple="multiple" size="3"><option value="inbox" selected>Inbox</option>
+        <option value="sent">Sent</option>
+        <option value="archive">Archive</option>
+        <option value="junk" disabled>Junk (unavailable)</option></select>
+        </div>
+<p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p><!-- /blade:select --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Default mailbox&lt;/span&gt;
   &lt;select class=&quot;f-input&quot; name=&quot;mailbox&quot;&gt;
     &lt;option value=&quot;all&quot;&gt;All Inboxes&lt;/option&gt;
@@ -51,76 +137,153 @@
       &lt;option value=&quot;offline&quot; disabled&gt;Offline account&lt;/option&gt;
     &lt;/optgroup&gt;
   &lt;/select&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Included folders&lt;/span&gt;
-  &lt;x-fruit::select name=&quot;folders[]&quot; multiple size=&quot;3&quot; wire:model=&quot;folders&quot;&gt;
-    &lt;option value=&quot;inbox&quot;&gt;Inbox&lt;/option&gt;
-    &lt;option value=&quot;sent&quot;&gt;Sent&lt;/option&gt;
-    &lt;option value=&quot;archive&quot;&gt;Archive&lt;/option&gt;
-  &lt;/x-fruit::select&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-fieldset" data-component="fieldset" class="f-card component-card"><h2>Fieldset and legend</h2><p>A named group of independent controls. Native disabled state propagates to its fields.</p><fieldset class="f-fieldset"><legend>Delivery preferences</legend><div class="f-stack"><label class="f-check"><input type="checkbox" name="delivery[]" value="email" checked>Email updates</label><label class="f-check"><input type="checkbox" name="delivery[]" value="push">Push notifications</label></div></fieldset><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;&lt;legend&gt;Delivery preferences&lt;/legend&gt;&lt;div class=&quot;f-stack&quot;&gt;&lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;delivery[]&quot; value=&quot;email&quot; checked&gt;Email updates&lt;/label&gt;&lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;delivery[]&quot; value=&quot;push&quot;&gt;Push notifications&lt;/label&gt;&lt;/div&gt;&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::fieldset disabled&gt;
-  &lt;legend&gt;Delivery preferences&lt;/legend&gt;
-  &lt;x-fruit::checkbox name=&quot;email&quot; wire:model=&quot;email&quot;&gt;Email updates&lt;/x-fruit::checkbox&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="select">&lt;x-fruit::field control-id=&quot;default-mailbox&quot; label=&quot;Default mailbox&quot;&gt;
+    &lt;x-fruit::select name=&quot;mailbox&quot;&gt;
+        &lt;optgroup label=&quot;Combined folders&quot;&gt;
+            &lt;option value=&quot;all&quot;&gt;All Inboxes&lt;/option&gt;
+            &lt;option value=&quot;flagged&quot;&gt;Flagged&lt;/option&gt;
+            &lt;option value=&quot;archive&quot;&gt;Archive&lt;/option&gt;
+        &lt;/optgroup&gt;
+        &lt;optgroup label=&quot;Accounts&quot;&gt;
+            &lt;option value=&quot;work&quot;&gt;Work&lt;/option&gt;
+            &lt;option value=&quot;personal&quot;&gt;Personal&lt;/option&gt;
+            &lt;option value=&quot;offline&quot; disabled&gt;Offline account&lt;/option&gt;
+        &lt;/optgroup&gt;
+    &lt;/x-fruit::select&gt;
+&lt;/x-fruit::field&gt;
+&lt;x-fruit::field control-id=&quot;included-folders&quot; label=&quot;Included folders&quot;&gt;
+    &lt;x-fruit::select name=&quot;folders[]&quot; multiple size=&quot;3&quot;&gt;
+        &lt;option value=&quot;inbox&quot; selected&gt;Inbox&lt;/option&gt;
+        &lt;option value=&quot;sent&quot;&gt;Sent&lt;/option&gt;
+        &lt;option value=&quot;archive&quot;&gt;Archive&lt;/option&gt;
+        &lt;option value=&quot;junk&quot; disabled&gt;Junk (unavailable)&lt;/option&gt;
+    &lt;/x-fruit::select&gt;
+&lt;/x-fruit::field&gt;
+&lt;p class=&quot;f-help&quot;&gt;Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.&lt;/p&gt;</pre></details></section>
+        <section id="component-fieldset" data-component="fieldset" class="f-card component-card"><h2>Fieldset and legend</h2><p>A named group of independent controls. Native disabled state propagates to its fields.</p><!-- blade:fieldset --><fieldset class="f-fieldset"><legend>Delivery preferences</legend>
+    <div class="f-stack">
+        <label class="f-check">
+    <input type="checkbox" role="checkbox" name="delivery[]" value="email" checked="checked">
+    <span>Email updates</span>
+</label>
+        <label class="f-check">
+    <input type="checkbox" role="checkbox" name="delivery[]" value="push">
+    <span>Push notifications</span>
+</label>
+    </div></fieldset><!-- /blade:fieldset --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;&lt;legend&gt;Delivery preferences&lt;/legend&gt;&lt;div class=&quot;f-stack&quot;&gt;&lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;delivery[]&quot; value=&quot;email&quot; checked&gt;Email updates&lt;/label&gt;&lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot; name=&quot;delivery[]&quot; value=&quot;push&quot;&gt;Push notifications&lt;/label&gt;&lt;/div&gt;&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="fieldset">&lt;x-fruit::fieldset&gt;
+    &lt;legend&gt;Delivery preferences&lt;/legend&gt;
+    &lt;div class=&quot;f-stack&quot;&gt;
+        &lt;x-fruit::checkbox name=&quot;delivery[]&quot; value=&quot;email&quot; checked&gt;Email updates&lt;/x-fruit::checkbox&gt;
+        &lt;x-fruit::checkbox name=&quot;delivery[]&quot; value=&quot;push&quot;&gt;Push notifications&lt;/x-fruit::checkbox&gt;
+    &lt;/div&gt;
 &lt;/x-fruit::fieldset&gt;</pre></details></section>
-        <section id="component-file" data-component="file" class="f-card component-card"><h2>File picker</h2><p>Choose files with the native picker. The button and filename field follow your appearance.</p><label class="f-field"><span class="f-label">Attachment</span><input class="f-input f-file" type="file" name="attachments[]" accept=".pdf,.png,.jpg" multiple></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+        <section id="component-file" data-component="file" class="f-card component-card"><h2>File picker</h2><p>Choose files with the native picker. The button and filename field follow your appearance.</p><!-- blade:file --><div class="f-field">
+    <label class="f-label" for="gallery-attachments">Attachment</label>
+    <input type="file" class="f-input f-file" id="gallery-attachments" name="attachments[]" accept=".pdf,.png,.jpg" multiple="multiple">
+        </div><!-- /blade:file --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Attachment&lt;/span&gt;
   &lt;input class=&quot;f-input f-file&quot; type=&quot;file&quot; name=&quot;attachment&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Attachment&lt;/span&gt;
-  &lt;x-fruit::file name=&quot;attachments&quot; accept=&quot;.pdf,.png,.jpg&quot; multiple wire:model=&quot;attachments&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-number" data-component="number" class="f-card component-card"><h2>Number</h2><p>A numeric value with native stepping, bounds, and validation.</p><label class="f-field"><span class="f-label">Seats</span><input class="f-input" type="number" name="seats" min="1" max="50" step="1" value="12"></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="file">&lt;x-fruit::field control-id=&quot;gallery-attachments&quot; label=&quot;Attachment&quot;&gt;
+    &lt;x-fruit::file name=&quot;attachments[]&quot; accept=&quot;.pdf,.png,.jpg&quot; multiple /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-number" data-component="number" class="f-card component-card"><h2>Number</h2><p>A numeric value with native stepping, bounds, and validation.</p><!-- blade:number --><div class="f-field">
+    <label class="f-label" for="gallery-seats">Seats</label>
+    <input type="number" class="f-input" id="gallery-seats" name="seats" min="1" max="50" step="1" value="12">
+        </div><!-- /blade:number --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Seats&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; type=&quot;number&quot; name=&quot;seats&quot; min=&quot;1&quot; max=&quot;50&quot; value=&quot;12&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Seats&lt;/span&gt;
-  &lt;x-fruit::number name=&quot;seats&quot; min=&quot;1&quot; max=&quot;50&quot; step=&quot;1&quot; wire:model=&quot;seats&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-date" data-component="date" class="f-card component-card"><h2>Date and calendar</h2><p>Calendar values keep native date, date-time, month, and week editing.</p><label class="f-field"><span class="f-label">Start date</span><input class="f-input" type="date" name="start" value="2026-10-02"></label><label class="f-field"><span class="f-label">Scheduled at</span><input class="f-input" type="datetime-local" name="scheduled" value="2026-10-02T09:30"></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="number">&lt;x-fruit::field control-id=&quot;gallery-seats&quot; label=&quot;Seats&quot;&gt;
+    &lt;x-fruit::number name=&quot;seats&quot; min=&quot;1&quot; max=&quot;50&quot; step=&quot;1&quot; value=&quot;12&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-date" data-component="date" class="f-card component-card"><h2>Date and calendar</h2><p>Calendar values keep native date, date-time, month, and week editing.</p><!-- blade:date --><div class="f-field">
+    <label class="f-label" for="gallery-start">Start date</label>
+    <input type="date" class="f-input" id="gallery-start" name="start" value="2026-10-02">
+        </div>
+<div class="f-field">
+    <label class="f-label" for="gallery-scheduled">Scheduled at</label>
+    <input type="datetime-local" class="f-input" id="gallery-scheduled" name="scheduled" value="2026-10-02T09:30">
+        </div><!-- /blade:date --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Start date&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; type=&quot;date&quot; name=&quot;start&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Start date&lt;/span&gt;
-  &lt;x-fruit::date name=&quot;start&quot; wire:model=&quot;start&quot; /&gt;
-&lt;/label&gt;
-&lt;x-fruit::date type=&quot;datetime-local&quot; aria-label=&quot;Scheduled at&quot; wire:model=&quot;scheduled&quot; /&gt;</pre></details></section>
-        <section id="component-time" data-component="time" class="f-card component-card"><h2>Time</h2><p>A time of day with native editing and precision.</p><label class="f-field"><span class="f-label">Quiet hours begin</span><input class="f-input" type="time" name="quiet" value="18:30"></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="date">&lt;x-fruit::field control-id=&quot;gallery-start&quot; label=&quot;Start date&quot;&gt;
+    &lt;x-fruit::date name=&quot;start&quot; value=&quot;2026-10-02&quot; /&gt;
+&lt;/x-fruit::field&gt;
+&lt;x-fruit::field control-id=&quot;gallery-scheduled&quot; label=&quot;Scheduled at&quot;&gt;
+    &lt;x-fruit::date type=&quot;datetime-local&quot; name=&quot;scheduled&quot; value=&quot;2026-10-02T09:30&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-time" data-component="time" class="f-card component-card"><h2>Time</h2><p>A time of day with native editing and precision.</p><!-- blade:time --><div class="f-field">
+    <label class="f-label" for="gallery-quiet">Quiet hours begin</label>
+    <input type="time" class="f-input" id="gallery-quiet" name="quiet" value="18:30">
+        </div><!-- /blade:time --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Quiet hours begin&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; type=&quot;time&quot; name=&quot;quiet&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Quiet hours begin&lt;/span&gt;
-  &lt;x-fruit::time name=&quot;quiet&quot; step=&quot;60&quot; wire:model=&quot;quiet&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-color" data-component="color" class="f-card component-card"><h2>Color picker</h2><p>A native color value, with a shared swatch and control frame.</p><label class="f-field"><span class="f-label">Workspace color</span><input class="f-input f-color" type="color" name="color" value="#006cde"></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="time">&lt;x-fruit::field control-id=&quot;gallery-quiet&quot; label=&quot;Quiet hours begin&quot;&gt;
+    &lt;x-fruit::time name=&quot;quiet&quot; value=&quot;18:30&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-color" data-component="color" class="f-card component-card"><h2>Color picker</h2><p>A native color value, with a shared swatch and control frame.</p><!-- blade:color --><div class="f-field">
+    <label class="f-label" for="gallery-color">Workspace color</label>
+    <input type="color" class="f-input f-color" id="gallery-color" name="color" value="#006cde">
+        </div><!-- /blade:color --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Workspace color&lt;/span&gt;
   &lt;input class=&quot;f-input f-color&quot; type=&quot;color&quot; name=&quot;color&quot; value=&quot;#006cde&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Workspace color&lt;/span&gt;
-  &lt;x-fruit::color name=&quot;color&quot; wire:model=&quot;color&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-range" data-component="range" class="f-card component-card"><h2>Range slider</h2><p>A bounded numeric value. Native arrow, Home, and End keys adjust it.</p><label class="f-field"><span class="f-label">Preview scale</span><input class="f-range" type="range" name="scale" min="50" max="150" step="10" value="100"></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="color">&lt;x-fruit::field control-id=&quot;gallery-color&quot; label=&quot;Workspace color&quot;&gt;
+    &lt;x-fruit::color name=&quot;color&quot; value=&quot;#006cde&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-range" data-component="range" class="f-card component-card"><h2>Range slider</h2><p>A bounded numeric value. Native arrow, Home, and End keys adjust it.</p><!-- blade:range --><div class="f-field">
+    <label class="f-label" for="gallery-scale">Preview scale</label>
+    <input type="range" class="f-range" id="gallery-scale" name="scale" min="50" max="150" step="10" value="100">
+        </div><!-- /blade:range --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Preview scale&lt;/span&gt;
   &lt;input class=&quot;f-range&quot; type=&quot;range&quot; name=&quot;scale&quot; min=&quot;50&quot; max=&quot;150&quot; step=&quot;10&quot; value=&quot;100&quot;&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Preview scale&lt;/span&gt;
-  &lt;x-fruit::range name=&quot;scale&quot; min=&quot;50&quot; max=&quot;150&quot; step=&quot;10&quot; wire:model=&quot;scale&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
-        <section id="component-progress" data-component="progress" class="f-card component-card"><h2>Progress</h2><p>Task completion, or indeterminate activity when value is omitted. Reduced motion keeps the indicator still.</p><div class="f-stack"><label class="f-field"><span class="f-label">Import progress · 64%</span><progress class="f-progress" value="64" max="100">64%</progress></label><label class="f-field"><span class="f-label">Connecting</span><progress class="f-progress">Connecting…</progress></label></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="range">&lt;x-fruit::field control-id=&quot;gallery-scale&quot; label=&quot;Preview scale&quot;&gt;
+    &lt;x-fruit::range name=&quot;scale&quot; min=&quot;50&quot; max=&quot;150&quot; step=&quot;10&quot; value=&quot;100&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
+        <section id="component-progress" data-component="progress" class="f-card component-card"><h2>Progress</h2><p>Task completion, or indeterminate activity when value is omitted. Reduced motion keeps the indicator still.</p><!-- blade:progress --><div class="f-stack">
+    <label class="f-field">
+        <span class="f-label">Import progress · 64%</span>
+        <progress class="f-progress" value="64" max="100">64%</progress>
+    </label>
+    <label class="f-field">
+        <span class="f-label">Connecting</span>
+        <progress class="f-progress">Connecting…</progress>
+    </label>
+</div><!-- /blade:progress --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Import progress&lt;/span&gt;
   &lt;progress class=&quot;f-progress&quot; value=&quot;64&quot; max=&quot;100&quot;&gt;64%&lt;/progress&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Import progress&lt;/span&gt;
-  &lt;x-fruit::progress :value=&quot;$completed&quot; :max=&quot;$total&quot; /&gt;
-&lt;/label&gt;
-&lt;x-fruit::progress aria-label=&quot;Connecting&quot; /&gt;</pre></details></section>
-        <section id="component-meter" data-component="meter" class="f-card component-card"><h2>Meter</h2><p>A measurement within a known range. Native thresholds determine the good, caution, or critical appearance.</p><div class="f-stack"><label class="f-field"><span class="f-label">Storage · 35 of 100 GB</span><meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="35">35 GB</meter></label><label class="f-field"><span class="f-label">Storage · 75 of 100 GB</span><meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="75">75 GB</meter></label><label class="f-field"><span class="f-label">Storage · 95 of 100 GB</span><meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="95">95 GB</meter></label></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="progress">&lt;div class=&quot;f-stack&quot;&gt;
+    &lt;label class=&quot;f-field&quot;&gt;
+        &lt;span class=&quot;f-label&quot;&gt;Import progress · 64%&lt;/span&gt;
+        &lt;x-fruit::progress value=&quot;64&quot; max=&quot;100&quot;&gt;64%&lt;/x-fruit::progress&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;f-field&quot;&gt;
+        &lt;span class=&quot;f-label&quot;&gt;Connecting&lt;/span&gt;
+        &lt;x-fruit::progress&gt;Connecting…&lt;/x-fruit::progress&gt;
+    &lt;/label&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-meter" data-component="meter" class="f-card component-card"><h2>Meter</h2><p>A measurement within a known range. Native thresholds determine the good, caution, or critical appearance.</p><!-- blade:meter --><div class="f-stack">
+            <label class="f-field">
+            <span class="f-label">Storage · 35 of 100 GB</span>
+            <meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="35">35 GB</meter>
+        </label>
+            <label class="f-field">
+            <span class="f-label">Storage · 75 of 100 GB</span>
+            <meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="75">75 GB</meter>
+        </label>
+            <label class="f-field">
+            <span class="f-label">Storage · 95 of 100 GB</span>
+            <meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="95">95 GB</meter>
+        </label>
+    </div><!-- /blade:meter --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Storage usage&lt;/span&gt;
   &lt;meter class=&quot;f-meter&quot; min=&quot;0&quot; max=&quot;100&quot; low=&quot;60&quot; high=&quot;85&quot; optimum=&quot;20&quot; value=&quot;35&quot;&gt;35 GB&lt;/meter&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Storage usage&lt;/span&gt;
-  &lt;x-fruit::meter min=&quot;0&quot; max=&quot;100&quot; low=&quot;60&quot; high=&quot;85&quot; optimum=&quot;20&quot; :value=&quot;$storageUsed&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="meter">&lt;div class=&quot;f-stack&quot;&gt;
+    @foreach ([35, 75, 95] as $used)
+        &lt;label class=&quot;f-field&quot;&gt;
+            &lt;span class=&quot;f-label&quot;&gt;Storage · {{ $used }} of 100 GB&lt;/span&gt;
+            &lt;x-fruit::meter min=&quot;0&quot; max=&quot;100&quot; low=&quot;60&quot; high=&quot;85&quot; optimum=&quot;20&quot; :value=&quot;$used&quot;&gt;{{ $used }} GB&lt;/x-fruit::meter&gt;
+        &lt;/label&gt;
+    @endforeach
+&lt;/div&gt;</pre></details></section>
         <section id="component-typography" data-component="typography" class="f-card component-card"><h2>Rich text</h2><p>Native quotes, inline code, keyboard hints, dividers, and code blocks share automatic light and dark styling.</p><div class="f-stack"><p>Use <code>wire:model</code> to bind a value. Press <kbd>⌘</kbd> <kbd>Return</kbd> to send.</p><blockquote><p>Clarity comes from familiar controls and thoughtful hierarchy.</p></blockquote><hr><pre tabindex="0" role="region" aria-label="Input markup"><code>&lt;input class="f-input" name="email"&gt;</code></pre></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;p&gt;Bind with &lt;code&gt;wire:model&lt;/code&gt;. Press &lt;kbd&gt;Return&lt;/kbd&gt;.&lt;/p&gt;
 &lt;blockquote&gt;&lt;p&gt;A quoted passage.&lt;/p&gt;&lt;/blockquote&gt;
 &lt;hr&gt;
@@ -128,13 +291,16 @@
 &lt;blockquote&gt;&lt;p&gt;{{ $quote }}&lt;/p&gt;&lt;/blockquote&gt;
 &lt;hr&gt;
 &lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code example&quot;&gt;&lt;code&gt;{{ $exampleCode }}&lt;/code&gt;&lt;/pre&gt;</pre></details></section>
-        <section id="component-textarea" data-component="textarea" class="f-card component-card"><h2>Textarea</h2><p>Multiple lines of text, with native editing and resizing.</p><label class="f-field"><span class="f-label">Internal note</span><textarea class="f-input" rows="4" placeholder="A little context for your team."></textarea><span class="f-help">Enter inserts a new line.</span></label><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
+        <section id="component-textarea" data-component="textarea" class="f-card component-card"><h2>Textarea</h2><p>Multiple lines of text, with native editing and resizing.</p><!-- blade:textarea --><div class="f-field">
+    <label class="f-label" for="gallery-note">Internal note</label>
+    <textarea class="f-input" id="gallery-note" aria-describedby="gallery-note-description" name="note" rows="4" placeholder="A little context for your team."></textarea>
+            <p class="f-help" id="gallery-note-description">Enter inserts a new line.</p>
+        </div><!-- /blade:textarea --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Internal note&lt;/span&gt;
   &lt;textarea class=&quot;f-input&quot; name=&quot;note&quot; rows=&quot;4&quot;&gt;&lt;/textarea&gt;
-&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
-  &lt;span class=&quot;f-label&quot;&gt;Internal note&lt;/span&gt;
-  &lt;x-fruit::textarea name=&quot;note&quot; rows=&quot;4&quot; wire:model=&quot;note&quot; /&gt;
-&lt;/label&gt;</pre></details></section>
+&lt;/label&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="textarea">&lt;x-fruit::field control-id=&quot;gallery-note&quot; label=&quot;Internal note&quot; description=&quot;Enter inserts a new line.&quot;&gt;
+    &lt;x-fruit::textarea name=&quot;note&quot; rows=&quot;4&quot; placeholder=&quot;A little context for your team.&quot; /&gt;
+&lt;/x-fruit::field&gt;</pre></details></section>
         <section id="component-search" data-component="search" class="f-card component-card"><h2>Search field</h2><p>An icon and a native search input. Search results belong to the application.</p><div class="f-search"><svg class="f-icon" aria-hidden="true"><use href="#i-search"/></svg><label class="f-sr-only" for="gallery-search">Search the workspace</label><input class="f-input" id="gallery-search" type="search" placeholder="Search the workspace"></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-search&quot;&gt;
   &lt;!-- Optional decorative SVG with class=&quot;f-icon&quot; --&gt;
   &lt;label class=&quot;f-sr-only&quot; for=&quot;search&quot;&gt;Search&lt;/label&gt;
@@ -156,39 +322,105 @@
     &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;below&quot; wire:model=&quot;preview&quot;&gt;&lt;span&gt;Below&lt;/span&gt;&lt;/label&gt;
   &lt;/div&gt;
 &lt;/fieldset&gt;</pre></details></section>
-        <section id="component-disclosure" data-component="disclosure" class="f-card component-card"><h2>Disclosure</h2><p>Reveal supporting content with native Enter/Space and open state.</p><details class="f-disclosure"><summary>What makes FruitUI CSS first?</summary><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.</p></details><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-disclosure&quot;&gt;
+        <section id="component-disclosure" data-component="disclosure" class="f-card component-card"><h2>Disclosure</h2><p>Reveal supporting content with native Enter/Space and open state.</p><!-- blade:disclosure --><details class="f-disclosure">
+    <summary>What makes FruitUI CSS first?</summary>
+    <div><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.</p></div>
+</details><!-- /blade:disclosure --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-disclosure&quot;&gt;
   &lt;summary&gt;More details&lt;/summary&gt;
   &lt;p&gt;The details, when you need them.&lt;/p&gt;
-&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::disclosure title=&quot;More details&quot;&gt;
-  The details, when you need them.
+&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="disclosure">&lt;x-fruit::disclosure title=&quot;What makes FruitUI CSS first?&quot;&gt;
+    &lt;p class=&quot;f-help&quot;&gt;Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.&lt;/p&gt;
 &lt;/x-fruit::disclosure&gt;</pre></details></section>
-        <section id="component-dialog" data-component="dialog" class="f-card component-card"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. The optional fruitDialog helper opens and closes it.</p><div x-data="fruitDialog"><button class="f-button" type="button" @click="open">Open dialog</button><dialog class="f-dialog" x-ref="dialog" aria-labelledby="dialog-title"><header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header><div class="f-dialog__body"><p>Good dialogs ask for one thing at a time.</p></div><footer class="f-dialog__footer"><button class="f-button f-button--primary" type="button" @click="close" autofocus>Got it</button></footer></dialog></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;fruitDialog&quot;&gt;
+        <section id="component-dialog" data-component="dialog" class="f-card component-card"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. The optional fruitDialog helper opens and closes it.</p><!-- blade:dialog --><div x-data="fruitDialog">
+    <button type="button" class="f-button" @click="open">Open dialog</button>
+    <dialog class="f-dialog" x-ref="dialog" aria-labelledby="dialog-title" wire:ignore.self><header class="f-dialog__header"><h2 id="dialog-title">A moment of focus.</h2></header>
+        <div class="f-dialog__body"><p>Good dialogs ask for one thing at a time.</p></div>
+        <footer class="f-dialog__footer"><button type="button" class="f-button f-button--primary" @click="close" autofocus="autofocus">Got it</button>
+</footer></dialog>
+</div>
+
+<div x-data>
+    <button type="button" class="f-button" @click="$dispatch('fruit-dialog-open', { name: 'archive-confirmation' })">Open named dialog</button>
+</div>
+<dialog data-fruit-dialog="archive-confirmation" class="f-dialog" aria-labelledby="archive-confirmation-title" wire:ignore.self><header class="f-dialog__header"><h2 id="archive-confirmation-title">Archive this conversation?</h2></header>
+    <div class="f-dialog__body"><p>Events open and close this dialog by name.</p></div>
+    <footer class="f-dialog__footer" x-data>
+        <button type="button" class="f-button f-button--primary" @click="$dispatch('fruit-dialog-close', { name: 'archive-confirmation' })">Done</button>
+    </footer></dialog><!-- /blade:dialog --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;fruitDialog&quot;&gt;
   &lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;open&quot;&gt;Open&lt;/button&gt;
   &lt;dialog class=&quot;f-dialog&quot; x-ref=&quot;dialog&quot; aria-label=&quot;Welcome&quot;&gt;
     &lt;div class=&quot;f-dialog__body&quot;&gt;Welcome.&lt;/div&gt;
     &lt;footer class=&quot;f-dialog__footer&quot;&gt;&lt;button class=&quot;f-button&quot; @click=&quot;close&quot; type=&quot;button&quot;&gt;Close&lt;/button&gt;&lt;/footer&gt;
   &lt;/dialog&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div x-data=&quot;fruitDialog&quot;&gt;
-  &lt;x-fruit::button @click=&quot;open&quot;&gt;Open&lt;/x-fruit::button&gt;
-  &lt;x-fruit::dialog x-ref=&quot;dialog&quot; aria-label=&quot;Welcome&quot;&gt;
-    &lt;div class=&quot;f-dialog__body&quot;&gt;Welcome.&lt;/div&gt;
-    &lt;x-fruit::button @click=&quot;close&quot;&gt;Close&lt;/x-fruit::button&gt;
-  &lt;/x-fruit::dialog&gt;
-&lt;/div&gt;</pre></details></section>
-        <section id="component-avatar" data-component="avatar" class="f-card component-card"><h2>People and context</h2><p>Initials provide an identity cue; the adjacent name supplies the accessible identity.</p><div class="f-row"><span class="f-avatar" aria-hidden="true">SC</span><div><strong>Sophie Chen</strong><p class="f-help">Studio North</p></div></div><span class="f-avatar"><img alt="Profile illustration" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23d8e7f7'/%3E%3Cellipse cx='32' cy='66' rx='26' ry='25' fill='%23325273'/%3E%3Ccircle cx='32' cy='27' r='14' fill='%23c29270'/%3E%3Cpath d='M18 27V21a14 14 0 0 1 28 0v5l-9-13-19 14Z' fill='%23483a34'/%3E%3C/svg%3E"></span><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
-&lt;span&gt;Sophie Chen&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;{{ $person-&gt;initials }}&lt;/span&gt;
-&lt;span&gt;{{ $person-&gt;name }}&lt;/span&gt;</pre></details></section>
-        <section id="component-sidebar" data-component="sidebar" class="f-card component-card"><h2>Grouped navigation</h2><p>Native disclosure reveals independent links. Counts and navigation state belong to the application.</p><nav class="f-sidebar" aria-label="Reference interfaces"><p class="f-sidebar__heading">Workspaces</p><details class="f-sidebar__group"><summary class="f-sidebar__item"><svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg><span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span><svg class="f-icon f-sidebar__chevron" aria-hidden="true"><use href="#i-chevron"/></svg></summary><a class="f-sidebar__item f-sidebar__item--nested" href="/">Mail</a><a class="f-sidebar__item f-sidebar__item--nested" href="/support.html">Support</a><a class="f-sidebar__item f-sidebar__item--nested" href="/chat.html">Chat</a><a class="f-sidebar__item f-sidebar__item--nested" href="/admin.html">Admin</a></details></nav><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="dialog">&lt;div x-data=&quot;fruitDialog&quot;&gt;
+    &lt;x-fruit::button @click=&quot;open&quot;&gt;Open dialog&lt;/x-fruit::button&gt;
+    &lt;x-fruit::dialog x-ref=&quot;dialog&quot; aria-labelledby=&quot;dialog-title&quot;&gt;
+        &lt;header class=&quot;f-dialog__header&quot;&gt;&lt;h2 id=&quot;dialog-title&quot;&gt;A moment of focus.&lt;/h2&gt;&lt;/header&gt;
+        &lt;div class=&quot;f-dialog__body&quot;&gt;&lt;p&gt;Good dialogs ask for one thing at a time.&lt;/p&gt;&lt;/div&gt;
+        &lt;footer class=&quot;f-dialog__footer&quot;&gt;&lt;x-fruit::button variant=&quot;primary&quot; @click=&quot;close&quot; autofocus&gt;Got it&lt;/x-fruit::button&gt;&lt;/footer&gt;
+    &lt;/x-fruit::dialog&gt;
+&lt;/div&gt;
+{{-- A named dialog also opens from Livewire: $this-&gt;openDialog(&apos;archive-confirmation&apos;) --}}
+&lt;div x-data&gt;
+    &lt;x-fruit::button @click=&quot;$dispatch(&apos;fruit-dialog-open&apos;, { name: &apos;archive-confirmation&apos; })&quot;&gt;Open named dialog&lt;/x-fruit::button&gt;
+&lt;/div&gt;
+&lt;x-fruit::dialog name=&quot;archive-confirmation&quot; aria-labelledby=&quot;archive-confirmation-title&quot;&gt;
+    &lt;header class=&quot;f-dialog__header&quot;&gt;&lt;h2 id=&quot;archive-confirmation-title&quot;&gt;Archive this conversation?&lt;/h2&gt;&lt;/header&gt;
+    &lt;div class=&quot;f-dialog__body&quot;&gt;&lt;p&gt;Events open and close this dialog by name.&lt;/p&gt;&lt;/div&gt;
+    &lt;footer class=&quot;f-dialog__footer&quot; x-data&gt;
+        &lt;x-fruit::button variant=&quot;primary&quot; @click=&quot;$dispatch(&apos;fruit-dialog-close&apos;, { name: &apos;archive-confirmation&apos; })&quot;&gt;Done&lt;/x-fruit::button&gt;
+    &lt;/footer&gt;
+&lt;/x-fruit::dialog&gt;</pre></details></section>
+        <section id="component-avatar" data-component="avatar" class="f-card component-card"><h2>People and context</h2><p>Initials provide an identity cue; the adjacent name supplies the accessible identity.</p><!-- blade:avatar --><div class="f-row">
+    <span class="f-avatar"  aria-hidden="true" >SC</span>
+    <div><strong>Sophie Chen</strong><p class="f-help">Studio North</p></div>
+</div>
+<span class="f-avatar" ><img src="data:image/svg+xml,%3Csvg xmlns=&#039;http://www.w3.org/2000/svg&#039; viewBox=&#039;0 0 64 64&#039;%3E%3Crect width=&#039;64&#039; height=&#039;64&#039; fill=&#039;%23d8e7f7&#039;/%3E%3Cellipse cx=&#039;32&#039; cy=&#039;66&#039; rx=&#039;26&#039; ry=&#039;25&#039; fill=&#039;%23325273&#039;/%3E%3Ccircle cx=&#039;32&#039; cy=&#039;27&#039; r=&#039;14&#039; fill=&#039;%23c29270&#039;/%3E%3Cpath d=&#039;M18 27V21a14 14 0 0 1 28 0v5l-9-13-19 14Z&#039; fill=&#039;%23483a34&#039;/%3E%3C/svg%3E" alt="Profile illustration"></span><!-- /blade:avatar --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
+&lt;span&gt;Sophie Chen&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="avatar">&lt;div class=&quot;f-row&quot;&gt;
+    &lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;
+    &lt;div&gt;&lt;strong&gt;Sophie Chen&lt;/strong&gt;&lt;p class=&quot;f-help&quot;&gt;Studio North&lt;/p&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;x-fruit::avatar label=&quot;Profile illustration&quot; src=&quot;data:image/svg+xml,%3Csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; viewBox=&apos;0 0 64 64&apos;%3E%3Crect width=&apos;64&apos; height=&apos;64&apos; fill=&apos;%23d8e7f7&apos;/%3E%3Cellipse cx=&apos;32&apos; cy=&apos;66&apos; rx=&apos;26&apos; ry=&apos;25&apos; fill=&apos;%23325273&apos;/%3E%3Ccircle cx=&apos;32&apos; cy=&apos;27&apos; r=&apos;14&apos; fill=&apos;%23c29270&apos;/%3E%3Cpath d=&apos;M18 27V21a14 14 0 0 1 28 0v5l-9-13-19 14Z&apos; fill=&apos;%23483a34&apos;/%3E%3C/svg%3E&quot; /&gt;</pre></details></section>
+        <section id="component-sidebar" data-component="sidebar" class="f-card component-card"><h2>Grouped navigation</h2><p>Native disclosure reveals independent links. Counts and navigation state belong to the application.</p><!-- blade:sidebar --><nav class="f-sidebar" aria-label="Reference interfaces"><p class="f-sidebar__heading">Workspaces</p>
+    <details class="f-sidebar__group">
+    <summary class="f-sidebar__item">
+        <svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg>                    <span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span>
+                <svg class="f-icon f-sidebar__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg>
+    </summary>
+    <a class="f-sidebar__item" href="/">
+        <span class="f-sidebar__identity">Mail</span>
+    </a>
+        <a class="f-sidebar__item" href="/support.html">
+        <span class="f-sidebar__identity">Support</span>
+    </a>
+        <a class="f-sidebar__item" href="/chat.html">
+        <span class="f-sidebar__identity">Chat</span>
+    </a>
+        <a class="f-sidebar__item" href="/admin.html">
+        <span class="f-sidebar__identity">Admin</span>
+    </a>
+</details>
+    <a aria-current="page" class="f-sidebar__item" href="/components.html">
+        <span class="f-sidebar__identity">Components</span>
+    <span class="f-badge">64</span></a></nav><!-- /blade:sidebar --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;
   &lt;details class=&quot;f-sidebar__group&quot; open&gt;
     &lt;summary class=&quot;f-sidebar__item&quot;&gt;Work account&lt;/summary&gt;
     &lt;a class=&quot;f-sidebar__item f-sidebar__item--nested&quot; href=&quot;/inbox&quot; aria-current=&quot;page&quot;&gt;Inbox&lt;/a&gt;
   &lt;/details&gt;
-&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;nav class=&quot;f-sidebar&quot; aria-label=&quot;Mailboxes&quot;&gt;
-  &lt;details class=&quot;f-sidebar__group&quot; open&gt;
-    &lt;summary class=&quot;f-sidebar__item&quot;&gt;{{ $account-&gt;name }}&lt;/summary&gt;
-    &lt;a class=&quot;f-sidebar__item f-sidebar__item--nested&quot; href=&quot;{{ route(&#x27;inbox&#x27;) }}&quot;&gt;Inbox&lt;/a&gt;
-  &lt;/details&gt;
-&lt;/nav&gt;</pre></details></section>
+&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="sidebar">&lt;x-fruit::sidebar aria-label=&quot;Reference interfaces&quot;&gt;
+    &lt;p class=&quot;f-sidebar__heading&quot;&gt;Workspaces&lt;/p&gt;
+    &lt;x-fruit::sidebar-group title=&quot;Examples&quot; subtitle=&quot;Reference interfaces&quot;&gt;
+        &lt;x-slot:icon&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-folder&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:icon&gt;
+        &lt;x-fruit::sidebar-item href=&quot;/&quot;&gt;Mail&lt;/x-fruit::sidebar-item&gt;
+        &lt;x-fruit::sidebar-item href=&quot;/support.html&quot;&gt;Support&lt;/x-fruit::sidebar-item&gt;
+        &lt;x-fruit::sidebar-item href=&quot;/chat.html&quot;&gt;Chat&lt;/x-fruit::sidebar-item&gt;
+        &lt;x-fruit::sidebar-item href=&quot;/admin.html&quot;&gt;Admin&lt;/x-fruit::sidebar-item&gt;
+    &lt;/x-fruit::sidebar-group&gt;
+    &lt;x-fruit::sidebar-item href=&quot;/components.html&quot; current&gt;
+        Components
+        &lt;x-slot:badge&gt;{{ 64 }}&lt;/x-slot:badge&gt;
+    &lt;/x-fruit::sidebar-item&gt;
+&lt;/x-fruit::sidebar&gt;</pre></details></section>
         <section id="component-toolbar" data-component="toolbar" class="f-card component-card"><h2>Toolbar</h2><p>Arrange independent actions with groups and flexible spacing; no extra keyboard model is added.</p><div class="f-toolbar"><strong>Inbox</strong><div class="f-toolbar__spacer"></div><div class="f-toolbar__group"><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Archive conversation"><svg class="f-icon" aria-hidden="true"><use href="#i-archive"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" aria-label="Compose a message"><svg class="f-icon" aria-hidden="true"><use href="#i-compose"/></svg></button></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toolbar&quot;&gt;
   &lt;strong&gt;Inbox&lt;/strong&gt;
   &lt;div class=&quot;f-toolbar__spacer&quot;&gt;&lt;/div&gt;
@@ -198,21 +430,45 @@
   &lt;div class=&quot;f-toolbar__spacer&quot;&gt;&lt;/div&gt;
   &lt;div class=&quot;f-toolbar__group&quot;&gt;&lt;x-fruit::button wire:click=&quot;compose&quot;&gt;Compose&lt;/x-fruit::button&gt;&lt;/div&gt;
 &lt;/div&gt;</pre></details></section>
-        <section id="component-card" data-component="card" class="f-card component-card"><h2>Card</h2><p>Group related content in a section; contained controls retain their own behavior.</p><section class="f-card f-stack" aria-label="Workspace summary"><h3>Forma workspace</h3><p class="f-help">A place for the people and projects you care about.</p><div><button class="f-button" type="button">View workspace</button></div></section><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-card&quot;&gt;
+        <section id="component-card" data-component="card" class="f-card component-card"><h2>Card</h2><p>Group related content in a section; contained controls retain their own behavior.</p><!-- blade:card --><section class="f-card f-stack" aria-label="Workspace summary"><h3>Forma workspace</h3>
+    <p class="f-help">A place for the people and projects you care about.</p>
+    <div><button type="button" class="f-button">View workspace</button>
+</div></section><!-- /blade:card --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-card&quot;&gt;
   &lt;h3&gt;Workspace&lt;/h3&gt;
   &lt;p&gt;Related content, together.&lt;/p&gt;
-&lt;/section&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::card class=&quot;f-stack&quot;&gt;
-  &lt;h3&gt;Workspace&lt;/h3&gt;
-  &lt;x-fruit::button wire:click=&quot;openWorkspace&quot;&gt;View workspace&lt;/x-fruit::button&gt;
+&lt;/section&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="card">&lt;x-fruit::card class=&quot;f-stack&quot; aria-label=&quot;Workspace summary&quot;&gt;
+    &lt;h3&gt;Forma workspace&lt;/h3&gt;
+    &lt;p class=&quot;f-help&quot;&gt;A place for the people and projects you care about.&lt;/p&gt;
+    &lt;div&gt;&lt;x-fruit::button&gt;View workspace&lt;/x-fruit::button&gt;&lt;/div&gt;
 &lt;/x-fruit::card&gt;</pre></details></section>
-        <section id="component-badge" data-component="badge" class="f-card component-card"><h2>Badges</h2><p>Compact informational labels and counts. A badge has no selection behavior.</p><div class="f-row"><span class="f-badge">Unread</span><span class="f-badge">12 conversations</span><span class="f-badge">Studio plan</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-badge&quot;&gt;12 unread&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-badge&quot;&gt;{{ $unreadCount }} unread&lt;/span&gt;</pre></details></section>
-        <section id="component-toast" data-component="toast" class="f-card component-card" x-data="fruitToast({ duration: 5000 })"><h2>Status messages</h2><p>A short update after an action. The application supplies text; fruitToast shares dismissal timing, pause and cleanup.</p><button class="f-button" type="button" @click="notify('Conversation archived.')">Show toast</button><div class="f-toast gallery-toast" role="status" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" x-text="notice || 'Conversation archived.'"></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toast&quot; role=&quot;status&quot;&gt;Conversation archived.&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div x-data=&quot;fruitToast({ duration: 5000 })&quot;&gt;
-  &lt;x-fruit::button @click=&quot;notify(&#x27;Saved&#x27;)&quot;&gt;Save&lt;/x-fruit::button&gt;
-  &lt;x-fruit::toast x-show=&quot;notice&quot; x-cloak @mouseenter=&quot;pauseNotice()&quot; @mouseleave=&quot;resumeNotice()&quot;&gt;
-    &lt;span x-text=&quot;notice&quot;&gt;&lt;/span&gt;
-    &lt;x-fruit::button @click=&quot;dismissNotice()&quot;&gt;Dismiss&lt;/x-fruit::button&gt;
-  &lt;/x-fruit::toast&gt;
+        <section id="component-badge" data-component="badge" class="f-card component-card"><h2>Badges</h2><p>Compact informational labels and counts. A badge has no selection behavior.</p><!-- blade:badge --><div class="f-row">
+    <span class="f-badge">Unread</span>
+    <span class="f-badge">12 conversations</span>
+    <span class="f-badge">Studio plan</span>
+</div><!-- /blade:badge --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-badge&quot;&gt;12 unread&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="badge">&lt;div class=&quot;f-row&quot;&gt;
+    &lt;x-fruit::badge&gt;Unread&lt;/x-fruit::badge&gt;
+    &lt;x-fruit::badge&gt;{{ 12 }} conversations&lt;/x-fruit::badge&gt;
+    &lt;x-fruit::badge&gt;Studio plan&lt;/x-fruit::badge&gt;
 &lt;/div&gt;</pre></details></section>
+        <section id="component-toast" data-component="toast" class="f-card component-card" x-data="fruitToast({ duration: 5000 })"><h2>Status messages</h2><p>A short update after an action. The application supplies text; fruitToast shares dismissal timing, pause and cleanup.</p><!-- blade:toast --><button type="button" class="f-button" @click="notify('Conversation archived.')">Show toast</button>
+<div role="status" class="f-toast gallery-toast" @mouseenter="pauseNotice()" @mouseleave="resumeNotice()" x-text="notice || 'Conversation archived.'"></div>
+
+<div x-data>
+    <button type="button" class="f-button" @click="$dispatch('fruit-toast', { message: 'Sent with a fruit-toast event.' })">Dispatch a toast event</button>
+</div>
+<div role="status" class="f-toast"
+    x-data="fruitToast({&quot;duration&quot;:4000,&quot;message&quot;:null})"
+    x-show="notice" x-text="notice" x-cloak
+    x-on:fruit-toast.window="notify($event.detail.message)"
+    x-on:mouseenter="pauseNotice()" x-on:mouseleave="resumeNotice()"
+    x-on:focusin="pauseNotice()" x-on:focusout="resumeNotice()"></div><!-- /blade:toast --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toast&quot; role=&quot;status&quot;&gt;Conversation archived.&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="toast">{{-- Toast: a status container inside your own fruitToast scope. --}}
+&lt;x-fruit::button @click=&quot;notify(&apos;Conversation archived.&apos;)&quot;&gt;Show toast&lt;/x-fruit::button&gt;
+&lt;x-fruit::toast class=&quot;gallery-toast&quot; @mouseenter=&quot;pauseNotice()&quot; @mouseleave=&quot;resumeNotice()&quot; x-text=&quot;notice || &apos;Conversation archived.&apos;&quot; /&gt;
+{{-- Toaster: one per layout; Livewire calls $this-&gt;toast(&apos;…&apos;), redirects flash fruit-toast. --}}
+&lt;div x-data&gt;
+    &lt;x-fruit::button @click=&quot;$dispatch(&apos;fruit-toast&apos;, { message: &apos;Sent with a fruit-toast event.&apos; })&quot;&gt;Dispatch a toast event&lt;/x-fruit::button&gt;
+&lt;/div&gt;
+&lt;x-fruit::toaster /&gt;</pre></details></section>
         <section id="component-row" data-component="row" class="f-card component-card"><h2>Horizontal layout</h2><p>Arrange independent content and controls. The row owns no value or interaction state.</p><div class="f-row"><label class="f-check"><input type="checkbox" name="include-archived">Include archived</label><span class="f-badge">Optional</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-row&quot;&gt;
   &lt;label class=&quot;f-check&quot;&gt;&lt;input type=&quot;checkbox&quot;&gt;Include archived&lt;/label&gt;
   &lt;span class=&quot;f-badge&quot;&gt;Optional&lt;/span&gt;
@@ -237,124 +493,232 @@
 &lt;/svg&gt;
 &lt;span&gt;Search&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#your-search-icon&quot; /&gt;&lt;/svg&gt;
 &lt;span&gt;Search&lt;/span&gt;</pre></details></section>
-        <section id="component-conversation-list" data-component="conversation-list" class="f-card component-card"><h2>Conversation list</h2><p>Mail and Support share this native list. List items contain independent opening buttons.</p><ul class="f-conversation-list" role="list" aria-label="Sample conversations"><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Jordan Lee</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A little help with our team plan</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li></ul><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ul class=&quot;f-conversation-list&quot; role=&quot;list&quot; aria-label=&quot;Conversations&quot;&gt;
-  &lt;li&gt;&lt;button class=&quot;f-conversation-row&quot; type=&quot;button&quot;&gt;
-    &lt;span class=&quot;f-conversation-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
-    &lt;span class=&quot;f-conversation-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
+        <section id="component-item-list" data-component="item-list" class="f-card component-card"><h2>Item list</h2><p>Mail and Support share this native list. List items contain independent opening buttons.</p><!-- blade:item-list --><ul role="list" class="f-item-list" aria-label="Sample conversations"><li>
+            <button type="button" class="f-item-row">
+        <span class="f-item-row__top">
+        <span class="f-item-row__title">Sophie Chen</span>
+        <span class="f-item-row__time">10:42</span>    </span>
+    <span class="f-item-row__subtitle">A fresh start for FruitUI</span>    <span class="f-item-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span>    </button>
+        </li>
+            <li>
+            <button type="button" class="f-item-row">
+        <span class="f-item-row__top">
+        <span class="f-item-row__title">Jordan Lee</span>
+        <span class="f-item-row__time">10:42</span>    </span>
+    <span class="f-item-row__subtitle">A little help with our team plan</span>    <span class="f-item-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span>    </button>
+        </li></ul><!-- /blade:item-list --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ul class=&quot;f-item-list&quot; role=&quot;list&quot; aria-label=&quot;Conversations&quot;&gt;
+  &lt;li&gt;&lt;button class=&quot;f-item-row&quot; type=&quot;button&quot;&gt;
+    &lt;span class=&quot;f-item-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
+    &lt;span class=&quot;f-item-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
   &lt;/button&gt;&lt;/li&gt;
-&lt;/ul&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::conversation-list aria-label=&quot;Conversations&quot;&gt;
-  @foreach ($conversations as $conversation)
-    &lt;li&gt;&lt;x-fruit::conversation-row wire:click=&quot;open({{ $conversation-&gt;id }})&quot;&gt;
-      {{ $conversation-&gt;sender }}
-      &lt;x-slot:preview&gt;{{ $conversation-&gt;preview }}&lt;/x-slot:preview&gt;
-    &lt;/x-fruit::conversation-row&gt;&lt;/li&gt;
-  @endforeach
-&lt;/x-fruit::conversation-list&gt;</pre></details></section>
-        <section id="component-conversation-row" data-component="conversation-row" class="f-card component-card"><h2>Conversation row</h2><p>A button opens one conversation. Quiet and filled are visual variants; selection controls stay outside the button.</p><div x-data="{ opened: false }" class="f-stack"><button class="f-conversation-row f-conversation-row--filled" type="button" @click="opened = !opened" :aria-current="opened ? 'true' : null"><span class="f-avatar f-conversation-row__leading" aria-hidden="true">SC</span><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">Open this conversation to see its current state.</span><span class="f-conversation-row__meta">Work mailbox</span></button><label class="f-check"><input type="checkbox" name="selected-conversation" value="42">Select this conversation for a bulk action</label><p class="f-help" x-text="opened ? 'Conversation open. The checkbox keeps its own value.' : 'Conversation closed.'">Conversation closed.</p><button class="f-conversation-row" type="button" disabled><span class="f-conversation-row__title">Unavailable conversation</span></button></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-conversation-row f-conversation-row--filled&quot; type=&quot;button&quot; aria-current=&quot;true&quot;&gt;
-  &lt;span class=&quot;f-avatar f-conversation-row__leading&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
-  &lt;span class=&quot;f-conversation-row__top&quot;&gt;
-    &lt;span class=&quot;f-conversation-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
-    &lt;span class=&quot;f-conversation-row__time&quot;&gt;10:42&lt;/span&gt;
+&lt;/ul&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="item-list">&lt;x-fruit::item-list aria-label=&quot;Sample conversations&quot;&gt;
+    @foreach ([&apos;Sophie Chen&apos; =&gt; &apos;A fresh start for FruitUI&apos;, &apos;Jordan Lee&apos; =&gt; &apos;A little help with our team plan&apos;] as $sender =&gt; $subject)
+        &lt;li&gt;
+            &lt;x-fruit::item-row&gt;
+                {{ $sender }}
+                &lt;x-slot:trailing&gt;10:42&lt;/x-slot:trailing&gt;
+                &lt;x-slot:subtitle&gt;{{ $subject }}&lt;/x-slot:subtitle&gt;
+                &lt;x-slot:preview&gt;A few thoughts on making everyday interfaces feel a little more human.&lt;/x-slot:preview&gt;
+            &lt;/x-fruit::item-row&gt;
+        &lt;/li&gt;
+    @endforeach
+&lt;/x-fruit::item-list&gt;</pre></details></section>
+        <section id="component-item-row" data-component="item-row" class="f-card component-card"><h2>Item row</h2><p>A button opens one conversation. Quiet and filled are visual variants; selection controls stay outside the button.</p><!-- blade:item-row --><div x-data="{ opened: false }" class="f-stack">
+    <button type="button" class="f-item-row f-item-row--filled" @click="opened = !opened" :aria-current="opened ? 'true' : null">
+    <span class="f-item-row__leading f-avatar" aria-hidden="true">SC</span>    <span class="f-item-row__top">
+        <span class="f-item-row__title">Sophie Chen</span>
+        <span class="f-item-row__time">10:42</span>    </span>
+    <span class="f-item-row__subtitle">A fresh start for FruitUI</span>    <span class="f-item-row__preview">Open this conversation to see its current state.</span>    <span class="f-item-row__meta">Work mailbox</span></button>
+    <label class="f-check">
+    <input type="checkbox" role="checkbox" name="selected-conversation" value="42">
+    <span>Select this conversation for a bulk action</span>
+</label>
+    <p class="f-help" x-text="opened ? 'Conversation open. The checkbox keeps its own value.' : 'Conversation closed.'">Conversation closed.</p>
+    <button type="button" class="f-item-row" disabled="disabled">
+        <span class="f-item-row__top">
+        <span class="f-item-row__title">Unavailable conversation</span>
+            </span>
+            </button>
+</div><!-- /blade:item-row --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-item-row f-item-row--filled&quot; type=&quot;button&quot; aria-current=&quot;true&quot;&gt;
+  &lt;span class=&quot;f-avatar f-item-row__leading&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;
+  &lt;span class=&quot;f-item-row__top&quot;&gt;
+    &lt;span class=&quot;f-item-row__title&quot;&gt;Sophie Chen&lt;/span&gt;
+    &lt;span class=&quot;f-item-row__time&quot;&gt;10:42&lt;/span&gt;
   &lt;/span&gt;
-  &lt;span class=&quot;f-conversation-row__subtitle&quot;&gt;A fresh start&lt;/span&gt;
-  &lt;span class=&quot;f-conversation-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
-  &lt;span class=&quot;f-conversation-row__meta&quot;&gt;Work mailbox&lt;/span&gt;
-&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::conversation-row variant=&quot;filled&quot; aria-current=&quot;true&quot; wire:click=&quot;open(42)&quot;&gt;
-  Sophie Chen
-  &lt;x-slot:leading&gt;&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;&lt;/x-slot:leading&gt;
-  &lt;x-slot:trailing&gt;10:42&lt;/x-slot:trailing&gt;
-  &lt;x-slot:subtitle&gt;A fresh start&lt;/x-slot:subtitle&gt;
-  &lt;x-slot:preview&gt;A few thoughts…&lt;/x-slot:preview&gt;
-  &lt;x-slot:meta&gt;Work mailbox&lt;/x-slot:meta&gt;
-&lt;/x-fruit::conversation-row&gt;</pre></details></section>
-        <section id="component-attachment" data-component="attachment" class="f-card component-card"><h2>Attachment link</h2><p>Mail and Chat share the same native download link. Icons, file details, and the URL belong to the caller.</p><a class="f-attachment" href="/attachments/fruitui-design-notes.txt" download><svg class="f-icon f-attachment__leading" aria-hidden="true"><use href="#i-file"/></svg><span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span><svg class="f-icon f-attachment__trailing" aria-hidden="true"><use href="#i-download"/></svg></a><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-attachment&quot; href=&quot;/notes.txt&quot; download&gt;
+  &lt;span class=&quot;f-item-row__subtitle&quot;&gt;A fresh start&lt;/span&gt;
+  &lt;span class=&quot;f-item-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
+  &lt;span class=&quot;f-item-row__meta&quot;&gt;Work mailbox&lt;/span&gt;
+&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="item-row">&lt;div x-data=&quot;{ opened: false }&quot; class=&quot;f-stack&quot;&gt;
+    &lt;x-fruit::item-row variant=&quot;filled&quot; @click=&quot;opened = !opened&quot; ::aria-current=&quot;opened ? &apos;true&apos; : null&quot;&gt;
+        Sophie Chen
+        &lt;x-slot:leading class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/x-slot:leading&gt;
+        &lt;x-slot:trailing&gt;10:42&lt;/x-slot:trailing&gt;
+        &lt;x-slot:subtitle&gt;A fresh start for FruitUI&lt;/x-slot:subtitle&gt;
+        &lt;x-slot:preview&gt;Open this conversation to see its current state.&lt;/x-slot:preview&gt;
+        &lt;x-slot:meta&gt;Work mailbox&lt;/x-slot:meta&gt;
+    &lt;/x-fruit::item-row&gt;
+    &lt;x-fruit::checkbox name=&quot;selected-conversation&quot; value=&quot;42&quot;&gt;Select this conversation for a bulk action&lt;/x-fruit::checkbox&gt;
+    &lt;p class=&quot;f-help&quot; x-text=&quot;opened ? &apos;Conversation open. The checkbox keeps its own value.&apos; : &apos;Conversation closed.&apos;&quot;&gt;Conversation closed.&lt;/p&gt;
+    &lt;x-fruit::item-row disabled&gt;Unavailable conversation&lt;/x-fruit::item-row&gt;
+&lt;/div&gt;</pre></details></section>
+        <section id="component-attachment" data-component="attachment" class="f-card component-card"><h2>Attachment link</h2><p>Mail and Chat share the same native download link. Icons, file details, and the URL belong to the caller.</p><!-- blade:attachment --><a class="f-attachment" download="" href="/attachments/fruitui-design-notes.txt">
+    <span class="f-attachment__leading"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg></span>    <span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span>
+    <span class="f-attachment__trailing"><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg></span></a><!-- /blade:attachment --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-attachment&quot; href=&quot;/notes.txt&quot; download&gt;
   &lt;span class=&quot;f-attachment__body&quot;&gt;Design notes.txt
     &lt;small class=&quot;f-attachment__detail&quot;&gt;Text document · 1 KB&lt;/small&gt;
   &lt;/span&gt;
-&lt;/a&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::attachment href=&quot;/notes.txt&quot; download&gt;
-  Design notes.txt
-  &lt;x-slot:detail&gt;Text document · 1 KB&lt;/x-slot:detail&gt;
+&lt;/a&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="attachment">&lt;x-fruit::attachment href=&quot;/attachments/fruitui-design-notes.txt&quot; download&gt;
+    FruitUI — design notes.txt
+    &lt;x-slot:detail&gt;Text document · 1 KB&lt;/x-slot:detail&gt;
+    &lt;x-slot:leading&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-file&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:leading&gt;
+    &lt;x-slot:trailing&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-download&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:trailing&gt;
 &lt;/x-fruit::attachment&gt;</pre></details></section>
-        <section id="component-empty-state" data-component="empty-state" class="f-card component-card"><h2>Empty state</h2><p>The same informational arrangement supports empty mailboxes, queues, channels, and customer results.</p><div class="f-empty-state"><svg class="f-icon f-empty-state__icon" aria-hidden="true"><use href="#i-inbox"/></svg><h3 class="f-empty-state__title">You’re all caught up.</h3><p class="f-empty-state__description">New conversations will appear here.</p><div class="f-empty-state__actions"><button class="f-button" type="button">Clear filters</button></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-empty-state&quot;&gt;
+        <section id="component-empty-state" data-component="empty-state" class="f-card component-card"><h2>Empty state</h2><p>The same informational arrangement supports empty mailboxes, queues, channels, and customer results.</p><!-- blade:empty-state --><div class="f-empty-state">
+    <span class="f-empty-state__icon"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg></span>    <div class="f-empty-state__title"><h3>You’re all caught up.</h3></div>    <div class="f-empty-state__description">New conversations will appear here.</div>
+    <div class="f-empty-state__actions"><button type="button" class="f-button">Clear filters</button></div></div><!-- /blade:empty-state --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-empty-state&quot;&gt;
   &lt;h3 class=&quot;f-empty-state__title&quot;&gt;No conversations&lt;/h3&gt;
   &lt;p class=&quot;f-empty-state__description&quot;&gt;Try another search.&lt;/p&gt;
   &lt;div class=&quot;f-empty-state__actions&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot;&gt;Clear filters&lt;/button&gt;&lt;/div&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::empty-state&gt;
-  &lt;x-slot:title&gt;&lt;h3&gt;No conversations&lt;/h3&gt;&lt;/x-slot:title&gt;
-  Try another search.
-  &lt;x-slot:actions&gt;&lt;x-fruit::button wire:click=&quot;clearFilters&quot;&gt;Clear filters&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="empty-state">&lt;x-fruit::empty-state&gt;
+    &lt;x-slot:icon&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-inbox&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:icon&gt;
+    &lt;x-slot:title&gt;&lt;h3&gt;You’re all caught up.&lt;/h3&gt;&lt;/x-slot:title&gt;
+    New conversations will appear here.
+    &lt;x-slot:actions&gt;&lt;x-fruit::button&gt;Clear filters&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;
 &lt;/x-fruit::empty-state&gt;</pre></details></section>
-        <section id="component-workspace" data-component="workspace" class="f-card component-card"><h2>Workspace frame</h2><p>A shared frame; column geometry and compact navigation belong to your application.</p><section class="f-workspace" aria-label="Workspace preview" style="--f-workspace-columns: minmax(0, 1fr) minmax(0, 2fr); --f-workspace-rows: auto minmax(0, 1fr); --f-workspace-height: 210px"><header class="f-toolbar" style="grid-column: 1 / -1">Workspace</header><nav class="f-pane f-pane--column f-pane--border-end f-sidebar" aria-label="Preview sections"><button class="f-sidebar__item" type="button" aria-current="page">Inbox</button><button class="f-sidebar__item" type="button">Archive</button></nav><div class="f-pane f-pane--scroll" style="padding: 16px"><p>Room for your content.</p></div></section><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-workspace&quot; aria-label=&quot;Workspace&quot;
+        <section id="component-workspace" data-component="workspace" class="f-card component-card"><h2>Workspace frame</h2><p>A shared frame; column geometry and compact navigation belong to your application.</p><!-- blade:workspace --><section class="f-workspace" style="--f-workspace-columns: minmax(0, 1fr) minmax(0, 2fr); --f-workspace-rows: auto minmax(0, 1fr); --f-workspace-height: 210px;" aria-label="Workspace preview">
+    <header class="f-toolbar" style="grid-column: 1 / -1">Workspace</header>
+    <nav class="f-pane f-pane--column f-pane--border-end f-sidebar" aria-label="Preview sections">
+        <button class="f-sidebar__item" type="button" aria-current="page">Inbox</button>
+        <button class="f-sidebar__item" type="button">Archive</button>
+    </nav>
+    <div class="f-pane f-pane--scroll" style="padding: 16px;">
+    <p>Room for your content.</p>
+</div>
+</section><!-- /blade:workspace --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-workspace&quot; aria-label=&quot;Workspace&quot;
   style=&quot;--f-workspace-columns: 220px minmax(0, 1fr)&quot;&gt;
   &lt;nav class=&quot;f-pane f-pane--column f-sidebar&quot; aria-label=&quot;Sections&quot;&gt;…&lt;/nav&gt;
   &lt;section class=&quot;f-pane f-pane--scroll&quot; aria-label=&quot;Content&quot;&gt;…&lt;/section&gt;
-&lt;/section&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::workspace aria-label=&quot;Workspace&quot; style=&quot;--f-workspace-columns: 220px minmax(0, 1fr)&quot;&gt;
-  &lt;nav class=&quot;f-pane f-sidebar&quot; aria-label=&quot;Sections&quot;&gt;…&lt;/nav&gt;
-  &lt;x-fruit::pane class=&quot;f-pane--scroll&quot;&gt;…&lt;/x-fruit::pane&gt;
+&lt;/section&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="workspace">&lt;x-fruit::workspace aria-label=&quot;Workspace preview&quot; style=&quot;--f-workspace-columns: minmax(0, 1fr) minmax(0, 2fr); --f-workspace-rows: auto minmax(0, 1fr); --f-workspace-height: 210px&quot;&gt;
+    &lt;header class=&quot;f-toolbar&quot; style=&quot;grid-column: 1 / -1&quot;&gt;Workspace&lt;/header&gt;
+    &lt;nav class=&quot;f-pane f-pane--column f-pane--border-end f-sidebar&quot; aria-label=&quot;Preview sections&quot;&gt;
+        &lt;button class=&quot;f-sidebar__item&quot; type=&quot;button&quot; aria-current=&quot;page&quot;&gt;Inbox&lt;/button&gt;
+        &lt;button class=&quot;f-sidebar__item&quot; type=&quot;button&quot;&gt;Archive&lt;/button&gt;
+    &lt;/nav&gt;
+    &lt;x-fruit::pane class=&quot;f-pane--scroll&quot; style=&quot;padding: 16px&quot;&gt;&lt;p&gt;Room for your content.&lt;/p&gt;&lt;/x-fruit::pane&gt;
 &lt;/x-fruit::workspace&gt;</pre></details></section>
-<section id="component-pane" data-component="pane" class="f-card component-card"><h2>Panes and scrolling</h2><p>A pane contains content. Child controls retain their own state and keyboard behavior.</p><div class="f-pane f-pane--column" style="height: 150px; border: 1px solid var(--f-border)"><header class="f-toolbar">Activity</header><div class="f-pane__scroll" role="region" aria-label="Pane activity" tabindex="0" style="--f-pane-scroll-padding: 16px"><p>Scrolling belongs to the content area.</p><p style="margin-top: 80px">The toolbar stays in place.</p></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-pane f-pane--column&quot;&gt;
+<section id="component-pane" data-component="pane" class="f-card component-card"><h2>Panes and scrolling</h2><p>A pane contains content. Child controls retain their own state and keyboard behavior.</p><!-- blade:pane --><div class="f-pane f-pane--column" style="height: 150px; border: 1px solid var(--f-border);">
+    <header class="f-toolbar">Activity</header>
+    <div class="f-pane__scroll" role="region" aria-label="Pane activity" tabindex="0" style="--f-pane-scroll-padding: 16px">
+        <p>Scrolling belongs to the content area.</p>
+        <p style="margin-top: 80px">The toolbar stays in place.</p>
+    </div>
+</div><!-- /blade:pane --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-pane f-pane--column&quot;&gt;
   &lt;header class=&quot;f-toolbar&quot;&gt;Activity&lt;/header&gt;
   &lt;div class=&quot;f-pane__scroll&quot; role=&quot;region&quot; aria-label=&quot;Activity history&quot; tabindex=&quot;0&quot;&gt;…&lt;/div&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::pane class=&quot;f-pane--column&quot;&gt;
-  &lt;header class=&quot;f-toolbar&quot;&gt;Activity&lt;/header&gt;
-  &lt;div class=&quot;f-pane__scroll&quot; role=&quot;region&quot; aria-label=&quot;Activity history&quot; tabindex=&quot;0&quot;&gt;…&lt;/div&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="pane">&lt;x-fruit::pane class=&quot;f-pane--column&quot; style=&quot;height: 150px; border: 1px solid var(--f-border)&quot;&gt;
+    &lt;header class=&quot;f-toolbar&quot;&gt;Activity&lt;/header&gt;
+    &lt;div class=&quot;f-pane__scroll&quot; role=&quot;region&quot; aria-label=&quot;Pane activity&quot; tabindex=&quot;0&quot; style=&quot;--f-pane-scroll-padding: 16px&quot;&gt;
+        &lt;p&gt;Scrolling belongs to the content area.&lt;/p&gt;
+        &lt;p style=&quot;margin-top: 80px&quot;&gt;The toolbar stays in place.&lt;/p&gt;
+    &lt;/div&gt;
 &lt;/x-fruit::pane&gt;</pre></details></section>
-<section id="component-splitter" data-component="splitter" class="f-card component-card"><h2>Resizable panes</h2><p>Drag the divider or focus it and use Left/Right. Shift moves faster; Home/End reach the bounds.</p><section class="f-workspace" aria-label="Resizable pane preview" style="--f-workspace-columns: var(--f-preview-width, 120px) minmax(0, 1fr); --f-workspace-height: 200px"><div id="gallery-resize-pane" class="f-pane f-pane--border-end f-pane--scroll" style="padding: 16px">Navigation</div><div id="gallery-resize-content" class="f-pane f-pane--scroll" style="padding: 16px">Content keeps its minimum width.</div><div class="f-splitter" style="--f-splitter-column: 1" role="separator" aria-label="Preview navigation" tabindex="0" aria-controls="gallery-resize-pane" aria-orientation="vertical" x-data="fruitSplitter({pane: 'gallery-resize-pane', flexible: 'gallery-resize-content', variable: '--f-preview-width', min: 96, max: 240, reserve: 96})"></div></section><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-splitter&quot; style=&quot;--f-splitter-column: 1&quot; role=&quot;separator&quot;
+<section id="component-splitter" data-component="splitter" class="f-card component-card"><h2>Resizable panes</h2><p>Drag the divider or focus it and use Left/Right. Shift moves faster; Home/End reach the bounds.</p><!-- blade:splitter --><section class="f-workspace" style="--f-workspace-columns: var(--f-preview-width, 120px) minmax(0, 1fr); --f-workspace-height: 200px;" aria-label="Resizable pane preview">
+    <div class="f-pane f-pane--border-end f-pane--scroll" style="padding: 16px;" id="gallery-resize-pane">
+    Navigation
+</div>
+    <div class="f-pane f-pane--scroll" style="padding: 16px;" id="gallery-resize-content">
+    Content keeps its minimum width.
+</div>
+    <div class="f-splitter" style="--f-splitter-column: 1;" data-fruit-value-text="{count} pixels" aria-label="Preview navigation" role="separator" tabindex="0" aria-orientation="vertical" aria-controls="gallery-resize-pane" data-edge="end" x-data="fruitSplitter({&quot;pane&quot;:&quot;gallery-resize-pane&quot;,&quot;flexible&quot;:&quot;gallery-resize-content&quot;,&quot;variable&quot;:&quot;--f-preview-width&quot;,&quot;min&quot;:96,&quot;max&quot;:240,&quot;reserve&quot;:96,&quot;edge&quot;:&quot;end&quot;})"></div>
+</section><!-- /blade:splitter --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-splitter&quot; style=&quot;--f-splitter-column: 1&quot; role=&quot;separator&quot;
   tabindex=&quot;0&quot; aria-orientation=&quot;vertical&quot; aria-label=&quot;Navigation&quot;
   aria-controls=&quot;navigation&quot;
   x-data=&quot;fruitSplitter({pane: &#x27;navigation&#x27;, flexible: &#x27;content&#x27;,
     variable: &#x27;--f-navigation-width&#x27;, min: 160, max: 300, reserve: 280})&quot;&gt;&lt;/div&gt;
 &lt;!-- Place inside f-workspace. Its grid track uses the same width variable.
-     Hide this handle in your compact container query. --&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::splitter pane=&quot;navigation&quot; flexible=&quot;content&quot;
-  variable=&quot;--f-navigation-width&quot; :min=&quot;160&quot; :max=&quot;300&quot; :reserve=&quot;280&quot;
-  aria-label=&quot;Navigation&quot; style=&quot;--f-splitter-column: 1&quot; /&gt;
-{{-- Register fruitUI on the existing Alpine/Livewire instance. --}}</pre></details></section>
-<section id="component-composer" data-component="composer" class="f-card component-card"><h2>Message composer</h2><p>One native form arrangement. Labels, draft values, validation and sending belong to its controls and application.</p><form class="f-composer" aria-label="Composer preview" x-data="{draft: '', sent: ''}" @submit.prevent="sent = draft; draft = ''" style="--f-composer-padding: 16px"><label class="f-label" for="gallery-compose">Message to the team</label><textarea id="gallery-compose" class="f-input f-composer__input" name="message" rows="3" required x-model="draft" aria-describedby="gallery-compose-help"></textarea><footer class="f-composer__footer"><span class="f-help" id="gallery-compose-help">Enter inserts a new line.</span><button class="f-button f-button--primary" type="submit">Send preview</button></footer><output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output></form><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-composer&quot; action=&quot;/messages&quot; method=&quot;post&quot;&gt;
+     Hide this handle in your compact container query. --&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="splitter">&lt;x-fruit::workspace aria-label=&quot;Resizable pane preview&quot; style=&quot;--f-workspace-columns: var(--f-preview-width, 120px) minmax(0, 1fr); --f-workspace-height: 200px&quot;&gt;
+    &lt;x-fruit::pane id=&quot;gallery-resize-pane&quot; class=&quot;f-pane--border-end f-pane--scroll&quot; style=&quot;padding: 16px&quot;&gt;Navigation&lt;/x-fruit::pane&gt;
+    &lt;x-fruit::pane id=&quot;gallery-resize-content&quot; class=&quot;f-pane--scroll&quot; style=&quot;padding: 16px&quot;&gt;Content keeps its minimum width.&lt;/x-fruit::pane&gt;
+    &lt;x-fruit::splitter pane=&quot;gallery-resize-pane&quot; flexible=&quot;gallery-resize-content&quot; variable=&quot;--f-preview-width&quot;
+        :min=&quot;96&quot; :max=&quot;240&quot; :reserve=&quot;96&quot; aria-label=&quot;Preview navigation&quot; style=&quot;--f-splitter-column: 1&quot; /&gt;
+&lt;/x-fruit::workspace&gt;</pre></details></section>
+<section id="component-composer" data-component="composer" class="f-card component-card"><h2>Message composer</h2><p>One native form arrangement. Labels, draft values, validation and sending belong to its controls and application.</p><!-- blade:composer --><form class="f-composer" style="--f-composer-padding: 16px;" aria-label="Composer preview" x-data="{ draft: '', sent: '' }" @submit.prevent="sent = draft; draft = ''">
+    <label class="f-label" for="gallery-compose">Message to the team</label>
+    <textarea class="f-input f-composer__input" id="gallery-compose" name="message" rows="3" required="required" x-model="draft" aria-describedby="gallery-compose-help"></textarea>
+    <footer class="f-composer__footer">
+        <span class="f-help" id="gallery-compose-help">Enter inserts a new line.</span>
+        <button type="submit" class="f-button f-button--primary">Send preview</button>
+    </footer>
+    <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
+</form><!-- /blade:composer --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-composer&quot; action=&quot;/messages&quot; method=&quot;post&quot;&gt;
   &lt;label for=&quot;message&quot;&gt;Reply&lt;/label&gt;
   &lt;textarea class=&quot;f-input f-composer__input&quot; id=&quot;message&quot; name=&quot;message&quot; required&gt;&lt;/textarea&gt;
   &lt;footer class=&quot;f-composer__footer&quot;&gt;&lt;span class=&quot;f-help&quot;&gt;Enter inserts a new line.&lt;/span&gt;
     &lt;button class=&quot;f-button f-button--primary&quot; type=&quot;submit&quot;&gt;Send&lt;/button&gt;
   &lt;/footer&gt;
-&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::composer wire:submit=&quot;send&quot;&gt;
-  &lt;label for=&quot;reply&quot;&gt;Reply&lt;/label&gt;
-  &lt;x-fruit::textarea class=&quot;f-composer__input&quot; id=&quot;reply&quot; name=&quot;reply&quot;
-    wire:model=&quot;draft&quot; aria-describedby=&quot;reply-error&quot; required /&gt;
-  @error(&#x27;draft&#x27;) &lt;p class=&quot;f-error&quot; id=&quot;reply-error&quot;&gt;{{ $message }}&lt;/p&gt; @enderror
-  &lt;footer class=&quot;f-composer__footer&quot;&gt;&lt;x-fruit::button type=&quot;submit&quot; variant=&quot;primary&quot;&gt;Send&lt;/x-fruit::button&gt;&lt;/footer&gt;
+&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="composer">&lt;x-fruit::composer aria-label=&quot;Composer preview&quot; x-data=&quot;{ draft: &apos;&apos;, sent: &apos;&apos; }&quot; @submit.prevent=&quot;sent = draft; draft = &apos;&apos;&quot; style=&quot;--f-composer-padding: 16px&quot;&gt;
+    &lt;label class=&quot;f-label&quot; for=&quot;gallery-compose&quot;&gt;Message to the team&lt;/label&gt;
+    &lt;x-fruit::textarea id=&quot;gallery-compose&quot; class=&quot;f-composer__input&quot; name=&quot;message&quot; rows=&quot;3&quot; required x-model=&quot;draft&quot; aria-describedby=&quot;gallery-compose-help&quot; /&gt;
+    &lt;footer class=&quot;f-composer__footer&quot;&gt;
+        &lt;span class=&quot;f-help&quot; id=&quot;gallery-compose-help&quot;&gt;Enter inserts a new line.&lt;/span&gt;
+        &lt;x-fruit::button type=&quot;submit&quot; variant=&quot;primary&quot;&gt;Send preview&lt;/x-fruit::button&gt;
+    &lt;/footer&gt;
+    &lt;output class=&quot;f-help&quot; x-show=&quot;sent&quot; x-text=&quot;&apos;Sent: &apos; + sent&quot; x-cloak&gt;&lt;/output&gt;
 &lt;/x-fruit::composer&gt;</pre></details></section>
-<section id="component-description-list" data-component="description-list" class="f-card component-card"><h2>Description list</h2><p>Native name/value facts. Columns, spacing, and typography are presentation tokens.</p><dl class="f-description-list"><div><dt>Workspace</dt><dd>Studio North</dd></div><div><dt>Email</dt><dd>sophie@example.com</dd></div><div><dt>Plan</dt><dd>Team, billed annually</dd></div></dl><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;dl class=&quot;f-description-list&quot;&gt;
+<section id="component-description-list" data-component="description-list" class="f-card component-card"><h2>Description list</h2><p>Native name/value facts. Columns, spacing, and typography are presentation tokens.</p><!-- blade:description-list --><dl class="f-description-list">
+    <div><dt>Workspace</dt><dd>Studio North</dd></div>
+    <div><dt>Email</dt><dd>sophie@example.com</dd></div>
+    <div><dt>Plan</dt><dd>Team, billed annually</dd></div>
+</dl><!-- /blade:description-list --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;dl class=&quot;f-description-list&quot;&gt;
   &lt;div&gt;&lt;dt&gt;Email&lt;/dt&gt;&lt;dd&gt;sophie@example.com&lt;/dd&gt;&lt;/div&gt;
   &lt;div&gt;&lt;dt&gt;Plan&lt;/dt&gt;&lt;dd&gt;Team&lt;/dd&gt;&lt;/div&gt;
-&lt;/dl&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::description-list style=&quot;--f-description-columns: repeat(2, minmax(0, 1fr))&quot;&gt;
-  &lt;div&gt;&lt;dt&gt;Email&lt;/dt&gt;&lt;dd&gt;{{ $customer-&gt;email }}&lt;/dd&gt;&lt;/div&gt;
-  &lt;div&gt;&lt;dt&gt;Plan&lt;/dt&gt;&lt;dd&gt;{{ $customer-&gt;plan }}&lt;/dd&gt;&lt;/div&gt;
+&lt;/dl&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="description-list">&lt;x-fruit::description-list&gt;
+    &lt;div&gt;&lt;dt&gt;Workspace&lt;/dt&gt;&lt;dd&gt;Studio North&lt;/dd&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;dt&gt;Email&lt;/dt&gt;&lt;dd&gt;sophie@example.com&lt;/dd&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;dt&gt;Plan&lt;/dt&gt;&lt;dd&gt;Team, billed annually&lt;/dd&gt;&lt;/div&gt;
 &lt;/x-fruit::description-list&gt;</pre></details></section>
-<section id="component-floating-disclosure" data-component="floating-disclosure" class="f-card component-card"><h2>Floating disclosure</h2><p>Native details/summary with independent actions. Optional Alpine adds outside dismissal and Escape with focus return.</p><details class="f-floating-disclosure" x-data="fruitFloatingDisclosure"><summary class="f-button">Preview options</summary><div class="f-floating-disclosure__content f-stack"><button class="f-button f-button--ghost" type="button" @click="close(true)">Show all messages</button><button class="f-button f-button--ghost" type="button" @click="close(true)">Show unread</button></div></details><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-floating-disclosure&quot; x-data=&quot;fruitFloatingDisclosure&quot;&gt;
+<section id="component-floating-disclosure" data-component="floating-disclosure" class="f-card component-card"><h2>Floating disclosure</h2><p>Native details/summary with independent actions. Optional Alpine adds outside dismissal and Escape with focus return.</p><!-- blade:floating-disclosure --><details class="f-floating-disclosure" x-data="fruitFloatingDisclosure">
+    <summary  class="f-button" >Preview options</summary>
+    <div  class="f-floating-disclosure__content f-stack" ><button type="button" class="f-button f-button--ghost" @click="close(true)">Show all messages</button>
+        <button type="button" class="f-button f-button--ghost" @click="close(true)">Show unread</button></div>
+</details><!-- /blade:floating-disclosure --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-floating-disclosure&quot; x-data=&quot;fruitFloatingDisclosure&quot;&gt;
   &lt;summary class=&quot;f-button&quot;&gt;Options&lt;/summary&gt;
   &lt;div class=&quot;f-floating-disclosure__content&quot;&gt;
     &lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;close(true)&quot;&gt;Done&lt;/button&gt;
   &lt;/div&gt;
-&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::floating-disclosure placement=&quot;above&quot; x-data=&quot;fruitFloatingDisclosure&quot;&gt;
-  &lt;x-slot:trigger class=&quot;f-button&quot;&gt;Options&lt;/x-slot:trigger&gt;
-  &lt;x-slot:content class=&quot;f-stack&quot;&gt;
-    &lt;x-fruit::button wire:click=&quot;markAllRead&quot; x-on:click=&quot;close(true)&quot;&gt;Mark all read&lt;/x-fruit::button&gt;
-  &lt;/x-slot:content&gt;
+&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="floating-disclosure">&lt;x-fruit::floating-disclosure x-data=&quot;fruitFloatingDisclosure&quot;&gt;
+    &lt;x-slot:trigger class=&quot;f-button&quot;&gt;Preview options&lt;/x-slot:trigger&gt;
+    &lt;x-slot:content class=&quot;f-stack&quot;&gt;
+        &lt;x-fruit::button variant=&quot;ghost&quot; @click=&quot;close(true)&quot;&gt;Show all messages&lt;/x-fruit::button&gt;
+        &lt;x-fruit::button variant=&quot;ghost&quot; @click=&quot;close(true)&quot;&gt;Show unread&lt;/x-fruit::button&gt;
+    &lt;/x-slot:content&gt;
 &lt;/x-fruit::floating-disclosure&gt;</pre></details></section>
-<section id="component-table" data-component="table" class="f-card component-card"><h2>Table</h2><p>Native tabular data. Captions, headers, sorting actions, and independent selection controls stay in your markup.</p><div class="f-table__scroll" tabindex="0" role="region" aria-label="Team member table"><table class="f-table"><caption>Team members</caption><thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead><tbody><tr><th scope="row">Sophie Chen</th><td>Designer</td></tr><tr><th scope="row">Alex Morgan</th><td>Administrator</td></tr></tbody></table></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Customers&quot;&gt;
+<section id="component-table" data-component="table" class="f-card component-card"><h2>Table</h2><p>Native tabular data. Captions, headers, sorting actions, and independent selection controls stay in your markup.</p><!-- blade:table --><div class="f-table__scroll" tabindex="0" role="region" aria-label="Team member table">
+    <table class="f-table">
+    <caption>Team members</caption>
+        <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
+        <tbody>
+                            <tr><th scope="row">Sophie Chen</th><td>Designer</td></tr>
+                            <tr><th scope="row">Alex Morgan</th><td>Administrator</td></tr>
+                    </tbody>
+</table>
+</div><!-- /blade:table --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Customers&quot;&gt;
   &lt;table class=&quot;f-table&quot;&gt;&lt;caption&gt;Customers&lt;/caption&gt;
     &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Plan&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
     &lt;tbody&gt;&lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;Sophie Chen&lt;/th&gt;&lt;td&gt;Team&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
   &lt;/table&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Customers&quot;&gt;
-  &lt;x-fruit::table&gt;
-    &lt;caption&gt;Customers&lt;/caption&gt;
-    &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Plan&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-    &lt;tbody&gt;@foreach ($customers as $customer)
-      &lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;{{ $customer-&gt;name }}&lt;/th&gt;&lt;td&gt;{{ $customer-&gt;plan }}&lt;/td&gt;&lt;/tr&gt;
-    @endforeach&lt;/tbody&gt;
-  &lt;/x-fruit::table&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="table">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Team member table&quot;&gt;
+    &lt;x-fruit::table&gt;
+        &lt;caption&gt;Team members&lt;/caption&gt;
+        &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Role&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+        &lt;tbody&gt;
+            @foreach ([&apos;Sophie Chen&apos; =&gt; &apos;Designer&apos;, &apos;Alex Morgan&apos; =&gt; &apos;Administrator&apos;] as $name =&gt; $role)
+                &lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;{{ $name }}&lt;/th&gt;&lt;td&gt;{{ $role }}&lt;/td&gt;&lt;/tr&gt;
+            @endforeach
+        &lt;/tbody&gt;
+    &lt;/x-fruit::table&gt;
 &lt;/div&gt;</pre></details></section>
-        <section id="component-mail" data-component="mail" class="f-card component-card component-card--wide"><h2>Responsive Mail layout</h2><p>The original reference pattern remains public CSS. Container queries choose its layout; application state selects the phone screen.</p><div class="f-mail-container"><section class="f-workspace f-mail gallery-mail" data-view="list" aria-label="Mail layout sample"><div class="f-toolbar f-mail__sidebar-toolbar"><strong>Mail</strong></div><header class="f-toolbar f-mail__toolbar"><strong>All Inboxes</strong></header><header class="f-mail__mobile-header"><h3 class="f-mail__large-title">All Inboxes</h3></header><nav class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar f-mail__sidebar" aria-label="Sample mailboxes"><p class="f-sidebar__heading">All Accounts</p><a class="f-sidebar__item" href="/">All Inboxes</a></nav><section class="f-pane f-pane--column f-pane--border-end f-mail__list-pane" aria-label="Sample message list"><ul class="f-conversation-list" role="list"><li><button class="f-conversation-row" type="button"><span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie Chen</span><span class="f-conversation-row__time">10:42</span></span><span class="f-conversation-row__subtitle">A fresh start for FruitUI</span><span class="f-conversation-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li></ul></section><article class="f-pane f-pane--scroll f-mail__reader" aria-label="Sample reading pane"><header class="f-mail__message-header"><h3>A fresh start for FruitUI</h3></header><div class="f-mail__body"><p>The same container adapts from three panes to a phone-sized list.</p><p><a href="/">Explore the working Mail example</a></p></div></article></section></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-mail-container&quot;&gt;
+        <section id="component-mail" data-component="mail" class="f-card component-card component-card--wide"><h2>Responsive Mail layout</h2><p>The original reference pattern remains public CSS. Container queries choose its layout; application state selects the phone screen.</p><div class="f-mail-container"><section class="f-workspace f-mail gallery-mail" data-view="list" aria-label="Mail layout sample"><div class="f-toolbar f-mail__sidebar-toolbar"><strong>Mail</strong></div><header class="f-toolbar f-mail__toolbar"><strong>All Inboxes</strong></header><header class="f-mail__mobile-header"><h3 class="f-mail__large-title">All Inboxes</h3></header><nav class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar f-mail__sidebar" aria-label="Sample mailboxes"><p class="f-sidebar__heading">All Accounts</p><a class="f-sidebar__item" href="/">All Inboxes</a></nav><section class="f-pane f-pane--column f-pane--border-end f-mail__list-pane" aria-label="Sample message list"><ul class="f-item-list" role="list"><li><button class="f-item-row" type="button"><span class="f-item-row__top"><span class="f-item-row__title">Sophie Chen</span><span class="f-item-row__time">10:42</span></span><span class="f-item-row__subtitle">A fresh start for FruitUI</span><span class="f-item-row__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li></ul></section><article class="f-pane f-pane--scroll f-mail__reader" aria-label="Sample reading pane"><header class="f-mail__message-header"><h3>A fresh start for FruitUI</h3></header><div class="f-mail__body"><p>The same container adapts from three panes to a phone-sized list.</p><p><a href="/">Explore the working Mail example</a></p></div></article></section></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-mail-container&quot;&gt;
   &lt;section class=&quot;f-workspace f-mail&quot; data-view=&quot;list&quot;&gt;
     &lt;div class=&quot;f-toolbar f-mail__sidebar-toolbar&quot;&gt;Mail&lt;/div&gt;
     &lt;header class=&quot;f-toolbar f-mail__toolbar&quot;&gt;Actions&lt;/header&gt;
@@ -367,45 +731,186 @@
   &lt;section class=&quot;f-workspace f-mail&quot; :data-view=&quot;view&quot;&gt;
     &lt;!-- Same CSS layout; render application data with Blade. --&gt;
     &lt;section class=&quot;f-pane f-pane--column f-pane--border-end f-mail__list-pane&quot; aria-label=&quot;Messages&quot;&gt;
-      &lt;x-fruit::conversation-list&gt;
-        &lt;li&gt;&lt;x-fruit::conversation-row wire:click=&quot;open(42)&quot;&gt;Sophie Chen&lt;/x-fruit::conversation-row&gt;&lt;/li&gt;
-      &lt;/x-fruit::conversation-list&gt;
+      &lt;x-fruit::item-list&gt;
+        &lt;li&gt;&lt;x-fruit::item-row wire:click=&quot;open(42)&quot;&gt;Sophie Chen&lt;/x-fruit::item-row&gt;&lt;/li&gt;
+      &lt;/x-fruit::item-list&gt;
     &lt;/section&gt;
     &lt;!-- Add the toolbars, navigation, and reader shown in the HTML example. --&gt;
   &lt;/section&gt;
 &lt;/div&gt;</pre></details></section>
-<section id="component-alert" data-component="alert" class="f-card component-card"><h2>Alerts</h2><p>Persistent feedback. Tone changes presentation; use role="status" or role="alert" only for messages that need announcing.</p><div class="f-stack"><div class="f-alert f-alert--info"><div class="f-alert__body"><strong>A little context</strong><br>Messages are saved for this visit.</div></div><div class="f-alert f-alert--success"><div class="f-alert__body"><strong>All set</strong><br>Your changes have been saved.</div></div><div class="f-alert f-alert--warning"><div class="f-alert__body"><strong>Reconnect your mailbox</strong><br>Mail delivery is paused until you reconnect.</div></div><div class="f-alert f-alert--danger"><div class="f-alert__body"><strong>Could not save</strong><br>Check your connection and try again.</div></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-stack&quot;&gt;&lt;div class=&quot;f-alert f-alert--info&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;A little context&lt;/strong&gt;&lt;br&gt;Messages are saved for this visit.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--success&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;All set&lt;/strong&gt;&lt;br&gt;Your changes have been saved.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--warning&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;Reconnect your mailbox&lt;/strong&gt;&lt;br&gt;Mail delivery is paused until you reconnect.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--danger&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;Could not save&lt;/strong&gt;&lt;br&gt;Check your connection and try again.&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::alert tone=&quot;warning&quot;&gt;&lt;strong&gt;Reconnect your mailbox&lt;/strong&gt;&lt;p&gt;Delivery is paused.&lt;/p&gt;&lt;x-slot:actions&gt;&lt;x-fruit::button wire:click=&quot;reconnect&quot;&gt;Reconnect&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;&lt;/x-fruit::alert&gt;</pre></details></section>
-<section id="component-menu" data-component="menu" class="f-card component-card"><h2>Action menu</h2><p>Arrow keys, Home/End, type-ahead, Escape, and outside dismissal through the existing Alpine instance.</p><div x-data="{ action: 'No action yet' }"><details class="f-menu" x-data="fruitMenu"><summary role="button" class="f-button" aria-haspopup="menu">More actions</summary><div class="f-menu__items" role="menu" aria-label="Message actions"><button class="f-menu-item" type="button" role="menuitem" @click="action = 'Archived'">Archive</button><button class="f-menu-item" type="button" role="menuitem" disabled>Forward</button><button class="f-menu-item" type="button" role="menuitem" @click="action = 'Marked unread'">Mark unread</button><button class="f-menu-item f-menu-item--danger" type="button" role="menuitem" @click="action = 'Deleted'">Delete</button></div></details><p class="f-help" role="status" x-text="action"></p></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;{ action: &#x27;No action yet&#x27; }&quot;&gt;&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot; aria-haspopup=&quot;menu&quot;&gt;More actions&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Message actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Archived&#x27;&quot;&gt;Archive&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; disabled&gt;Forward&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Marked unread&#x27;&quot;&gt;Mark unread&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Deleted&#x27;&quot;&gt;Delete&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;&lt;p class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;action&quot;&gt;&lt;/p&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::menu title=&quot;Message actions&quot;&gt;&lt;x-slot:trigger&gt;More actions&lt;/x-slot:trigger&gt;&lt;x-fruit::menu-item wire:click=&quot;archive&quot;&gt;Archive&lt;/x-fruit::menu-item&gt;&lt;/x-fruit::menu&gt;</pre></details></section>
-<section id="component-menu-item" data-component="menu-item" class="f-card component-card"><h2>Menu item</h2><p>A command button in an action menu. No checkbox or radio mode.</p><details class="f-menu" x-data="fruitMenu"><summary role="button" class="f-button">Ticket actions</summary><div class="f-menu__items" role="menu" aria-label="Ticket actions"><button class="f-menu-item" role="menuitem" type="button">Resolve</button><button class="f-menu-item f-menu-item--danger" role="menuitem" type="button">Delete ticket</button></div></details><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot;&gt;Ticket actions&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Ticket actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; role=&quot;menuitem&quot; type=&quot;button&quot;&gt;Resolve&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; role=&quot;menuitem&quot; type=&quot;button&quot;&gt;Delete ticket&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::menu-item variant=&quot;danger&quot; wire:click=&quot;delete&quot;&gt;Delete ticket&lt;/x-fruit::menu-item&gt;</pre></details></section>
-<section id="component-tooltip" data-component="tooltip" class="f-card component-card"><h2>Tooltip</h2><p>Hover or focus for supplementary help; Escape dismisses it. The control keeps its accessible name.</p><span class="f-tooltip" x-data="fruitTooltip"><button class="f-button" type="button" aria-describedby="gallery-tooltip">Archive</button><span class="f-tooltip__text" role="tooltip" id="gallery-tooltip">Move this conversation to the archive.</span></span><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-tooltip&quot; x-data=&quot;fruitTooltip&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-describedby=&quot;gallery-tooltip&quot;&gt;Archive&lt;/button&gt;&lt;span class=&quot;f-tooltip__text&quot; role=&quot;tooltip&quot; id=&quot;gallery-tooltip&quot;&gt;Move this conversation to the archive.&lt;/span&gt;&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-tooltip&quot; x-data=&quot;fruitTooltip&quot;&gt;&lt;x-fruit::button aria-describedby=&quot;archive-help&quot;&gt;Archive&lt;/x-fruit::button&gt;&lt;span class=&quot;f-tooltip__text&quot; role=&quot;tooltip&quot; id=&quot;archive-help&quot;&gt;Move to the archive.&lt;/span&gt;&lt;/span&gt;</pre></details></section>
-<section id="component-combobox" data-component="combobox" class="f-card component-card"><h2>Searchable choice</h2><p>A single native select value, enhanced with a searchable listbox. Without JavaScript the select remains usable.</p><form class="f-stack" id="combobox-example" x-data="{ choice: 'support' }" @submit.prevent><label class="f-label" for="gallery-assignee">Assign conversation</label><div class="f-combobox" x-data="fruitCombobox"><select class="f-input" data-fruit-control id="gallery-assignee" name="assignee" x-model="choice" required><option value="support" selected>Support team</option><option value="alex">Alex Morgan</option><option value="mia">Mia Patel</option><optgroup label="Unavailable" disabled><option value="noah">Noah Williams</option></optgroup></select></div><div class="f-row"><button class="f-button" type="button" @click="choice = 'mia'">Assign Mia externally</button><button class="f-button" type="reset">Reset choice</button></div></form><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;combobox-example&quot; x-data=&quot;{ choice: &#x27;support&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-assignee&quot;&gt;Assign conversation&lt;/label&gt;&lt;div class=&quot;f-combobox&quot; x-data=&quot;fruitCombobox&quot;&gt;&lt;select class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-assignee&quot; name=&quot;assignee&quot; x-model=&quot;choice&quot; required&gt;&lt;option value=&quot;support&quot; selected&gt;Support team&lt;/option&gt;&lt;option value=&quot;alex&quot;&gt;Alex Morgan&lt;/option&gt;&lt;option value=&quot;mia&quot;&gt;Mia Patel&lt;/option&gt;&lt;optgroup label=&quot;Unavailable&quot; disabled&gt;&lt;option value=&quot;noah&quot;&gt;Noah Williams&lt;/option&gt;&lt;/optgroup&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;choice = &#x27;mia&#x27;&quot;&gt;Assign Mia externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset choice&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::combobox id=&quot;assignee&quot; name=&quot;assignee&quot; wire:model=&quot;assignee&quot;
-  :wrapper=&quot;[&#x27;style&#x27; =&gt; &#x27;max-width:20rem&#x27;, &#x27;data-fruit-no-matches&#x27; =&gt; __(&#x27;No matches&#x27;)]&quot;&gt;
-  &lt;option value=&quot;alex&quot;&gt;Alex Morgan&lt;/option&gt;
-  &lt;option value=&quot;mia&quot;&gt;Mia Patel&lt;/option&gt;
-&lt;/x-fruit::combobox&gt;</pre></details></section>
-<section id="component-token-field" data-component="token-field" class="f-card component-card"><h2>Token entry</h2><p>One item per line in the native textarea. Enter/comma adds an item; remove buttons own removal. Applications validate tokens.</p><form class="f-stack" id="token-example" x-data="{ recipients: 'sophie@example.com' }" @submit.prevent><label class="f-label" for="gallery-recipients">Recipients</label><div class="f-token-field" x-data="fruitTokenField"><textarea class="f-input" data-fruit-control id="gallery-recipients" name="recipients" x-model="recipients" required placeholder="Add a recipient" @fruit-token-add="if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = 'Enter an email address.'; $event.preventDefault(); }">sophie@example.com</textarea></div><p class="f-help">Enter or comma to add. Backspace in the empty field focuses the last remove button.</p><div class="f-row"><button class="f-button" type="button" @click="recipients = 'mia@example.com'">Set recipients externally</button><button class="f-button" type="reset">Reset recipients</button></div></form><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &#x27;sophie@example.com&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;&lt;div class=&quot;f-token-field&quot; x-data=&quot;fruitTokenField&quot;&gt;&lt;textarea class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot; @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &#x27;Enter an email address.&#x27;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/textarea&gt;&lt;/div&gt;&lt;p class=&quot;f-help&quot;&gt;Enter or comma to add. Backspace in the empty field focuses the last remove button.&lt;/p&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;recipients = &#x27;mia@example.com&#x27;&quot;&gt;Set recipients externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset recipients&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::token-field id=&quot;cc&quot; name=&quot;cc&quot; wire:model=&quot;cc&quot; maxlength=&quot;1000&quot;
-  :wrapper=&quot;[&#x27;data-fruit-remove-label&#x27; =&gt; __(&#x27;Remove {value}&#x27;)]&quot;
-  placeholder=&quot;Add a recipient&quot;&gt;{{ $cc }}&lt;/x-fruit::token-field&gt;</pre></details></section>
+<section id="component-alert" data-component="alert" class="f-card component-card"><h2>Alerts</h2><p>Persistent feedback. Tone changes presentation; use role="status" or role="alert" only for messages that need announcing.</p><!-- blade:alert --><div class="f-stack">
+    <div class="f-alert f-alert--info">
+        <div class="f-alert__body"><strong>A little context</strong><br>Messages are saved for this visit.</div>
+    </div>
+    <div class="f-alert f-alert--success">
+        <div class="f-alert__body"><strong>All set</strong><br>Your changes have been saved.</div>
+    </div>
+    <div class="f-alert f-alert--warning">
+        <div class="f-alert__body"><strong>Reconnect your mailbox</strong><br>Mail delivery is paused until you reconnect.</div>
+    </div>
+    <div class="f-alert f-alert--danger">
+        <div class="f-alert__body"><strong>Could not save</strong><br>Check your connection and try again.</div>
+    </div>
+</div><!-- /blade:alert --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-stack&quot;&gt;&lt;div class=&quot;f-alert f-alert--info&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;A little context&lt;/strong&gt;&lt;br&gt;Messages are saved for this visit.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--success&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;All set&lt;/strong&gt;&lt;br&gt;Your changes have been saved.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--warning&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;Reconnect your mailbox&lt;/strong&gt;&lt;br&gt;Mail delivery is paused until you reconnect.&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-alert f-alert--danger&quot;&gt;&lt;div class=&quot;f-alert__body&quot;&gt;&lt;strong&gt;Could not save&lt;/strong&gt;&lt;br&gt;Check your connection and try again.&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="alert">&lt;div class=&quot;f-stack&quot;&gt;
+    &lt;x-fruit::alert&gt;&lt;strong&gt;A little context&lt;/strong&gt;&lt;br&gt;Messages are saved for this visit.&lt;/x-fruit::alert&gt;
+    &lt;x-fruit::alert tone=&quot;success&quot;&gt;&lt;strong&gt;All set&lt;/strong&gt;&lt;br&gt;Your changes have been saved.&lt;/x-fruit::alert&gt;
+    &lt;x-fruit::alert tone=&quot;warning&quot;&gt;&lt;strong&gt;Reconnect your mailbox&lt;/strong&gt;&lt;br&gt;Mail delivery is paused until you reconnect.&lt;/x-fruit::alert&gt;
+    &lt;x-fruit::alert tone=&quot;danger&quot;&gt;&lt;strong&gt;Could not save&lt;/strong&gt;&lt;br&gt;Check your connection and try again.&lt;/x-fruit::alert&gt;
+&lt;/div&gt;</pre></details></section>
+<section id="component-menu" data-component="menu" class="f-card component-card"><h2>Action menu</h2><p>Arrow keys, Home/End, type-ahead, Escape, and outside dismissal through the existing Alpine instance.</p><!-- blade:menu --><div x-data="{ action: 'No action yet' }">
+    <details x-data="fruitMenu" class="f-menu">
+    <summary role="button" class="f-button" aria-haspopup="menu">More actions</summary>
+    <div class="f-menu__items" role="menu" aria-label="Message actions"><button type="button" role="menuitem" class="f-menu-item" @click="action = 'Archived'">Archive</button>
+        <button type="button" role="menuitem" class="f-menu-item" disabled="disabled">Forward</button>
+        <button type="button" role="menuitem" class="f-menu-item" @click="action = 'Marked unread'">Mark unread</button>
+        <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger" @click="action = 'Deleted'">Delete</button></div>
+</details>
+    <p class="f-help" role="status" x-text="action"></p>
+</div><!-- /blade:menu --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;{ action: &#x27;No action yet&#x27; }&quot;&gt;&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot; aria-haspopup=&quot;menu&quot;&gt;More actions&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Message actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Archived&#x27;&quot;&gt;Archive&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; disabled&gt;Forward&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Marked unread&#x27;&quot;&gt;Mark unread&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Deleted&#x27;&quot;&gt;Delete&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;&lt;p class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;action&quot;&gt;&lt;/p&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="menu">&lt;div x-data=&quot;{ action: &apos;No action yet&apos; }&quot;&gt;
+    &lt;x-fruit::menu title=&quot;Message actions&quot;&gt;
+        &lt;x-slot:trigger&gt;More actions&lt;/x-slot:trigger&gt;
+        &lt;x-fruit::menu-item @click=&quot;action = &apos;Archived&apos;&quot;&gt;Archive&lt;/x-fruit::menu-item&gt;
+        &lt;x-fruit::menu-item disabled&gt;Forward&lt;/x-fruit::menu-item&gt;
+        &lt;x-fruit::menu-item @click=&quot;action = &apos;Marked unread&apos;&quot;&gt;Mark unread&lt;/x-fruit::menu-item&gt;
+        &lt;x-fruit::menu-item variant=&quot;danger&quot; @click=&quot;action = &apos;Deleted&apos;&quot;&gt;Delete&lt;/x-fruit::menu-item&gt;
+    &lt;/x-fruit::menu&gt;
+    &lt;p class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;action&quot;&gt;&lt;/p&gt;
+&lt;/div&gt;</pre></details></section>
+<section id="component-menu-item" data-component="menu-item" class="f-card component-card"><h2>Menu item</h2><p>A command button in an action menu. No checkbox or radio mode.</p><!-- blade:menu-item --><details x-data="fruitMenu" class="f-menu">
+    <summary role="button" class="f-button" aria-haspopup="menu">Ticket actions</summary>
+    <div class="f-menu__items" role="menu" aria-label="Ticket actions"><button type="button" role="menuitem" class="f-menu-item" wire:click="resolve">Resolve</button>
+    <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger" wire:click="delete">Delete ticket</button></div>
+</details><!-- /blade:menu-item --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot;&gt;Ticket actions&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Ticket actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; role=&quot;menuitem&quot; type=&quot;button&quot;&gt;Resolve&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; role=&quot;menuitem&quot; type=&quot;button&quot;&gt;Delete ticket&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="menu-item">&lt;x-fruit::menu title=&quot;Ticket actions&quot;&gt;
+    &lt;x-fruit::menu-item wire:click=&quot;resolve&quot;&gt;Resolve&lt;/x-fruit::menu-item&gt;
+    &lt;x-fruit::menu-item variant=&quot;danger&quot; wire:click=&quot;delete&quot;&gt;Delete ticket&lt;/x-fruit::menu-item&gt;
+&lt;/x-fruit::menu&gt;</pre></details></section>
+<section id="component-tooltip" data-component="tooltip" class="f-card component-card"><h2>Tooltip</h2><p>Hover or focus for supplementary help; Escape dismisses it. The control keeps its accessible name.</p><!-- blade:tooltip --><span class="f-tooltip" x-data="fruitTooltip"><button type="button" class="f-button" aria-describedby="gallery-tooltip">Archive</button><span class="f-tooltip__text" role="tooltip" id="gallery-tooltip">Move this conversation to the archive.</span></span><!-- /blade:tooltip --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;span class=&quot;f-tooltip&quot; x-data=&quot;fruitTooltip&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-describedby=&quot;gallery-tooltip&quot;&gt;Archive&lt;/button&gt;&lt;span class=&quot;f-tooltip__text&quot; role=&quot;tooltip&quot; id=&quot;gallery-tooltip&quot;&gt;Move this conversation to the archive.&lt;/span&gt;&lt;/span&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="tooltip">&lt;x-fruit::tooltip text=&quot;Move this conversation to the archive.&quot; text-id=&quot;gallery-tooltip&quot;&gt;
+    &lt;x-fruit::button aria-describedby=&quot;gallery-tooltip&quot;&gt;Archive&lt;/x-fruit::button&gt;
+&lt;/x-fruit::tooltip&gt;</pre></details></section>
+<section id="component-combobox" data-component="combobox" class="f-card component-card"><h2>Searchable choice</h2><p>A single native select value, enhanced with a searchable listbox. Without JavaScript the select remains usable.</p><!-- blade:combobox --><form class="f-stack" id="combobox-example" x-data="{ choice: 'support' }" @submit.prevent>
+    <label class="f-label" for="gallery-assignee">Assign conversation</label>
+    <div class="f-combobox" data-fruit-no-matches="No matches" x-data="fruitCombobox">
+    <select data-fruit-control class="f-input" id="gallery-assignee" name="assignee" x-model="choice" required="required"><option value="support" selected>Support team</option>
+        <option value="alex">Alex Morgan</option>
+        <option value="mia">Mia Patel</option>
+        <optgroup label="Unavailable" disabled><option value="noah">Noah Williams</option></optgroup></select>
+    <div data-fruit-ui wire:ignore></div>
+</div>
+    <div class="f-row">
+        <button type="button" class="f-button" @click="choice = 'mia'">Assign Mia externally</button>
+        <button type="reset" class="f-button">Reset choice</button>
+    </div>
+</form><!-- /blade:combobox --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;combobox-example&quot; x-data=&quot;{ choice: &#x27;support&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-assignee&quot;&gt;Assign conversation&lt;/label&gt;&lt;div class=&quot;f-combobox&quot; x-data=&quot;fruitCombobox&quot;&gt;&lt;select class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-assignee&quot; name=&quot;assignee&quot; x-model=&quot;choice&quot; required&gt;&lt;option value=&quot;support&quot; selected&gt;Support team&lt;/option&gt;&lt;option value=&quot;alex&quot;&gt;Alex Morgan&lt;/option&gt;&lt;option value=&quot;mia&quot;&gt;Mia Patel&lt;/option&gt;&lt;optgroup label=&quot;Unavailable&quot; disabled&gt;&lt;option value=&quot;noah&quot;&gt;Noah Williams&lt;/option&gt;&lt;/optgroup&gt;&lt;/select&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;choice = &#x27;mia&#x27;&quot;&gt;Assign Mia externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset choice&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="combobox">&lt;form class=&quot;f-stack&quot; id=&quot;combobox-example&quot; x-data=&quot;{ choice: &apos;support&apos; }&quot; @submit.prevent&gt;
+    &lt;label class=&quot;f-label&quot; for=&quot;gallery-assignee&quot;&gt;Assign conversation&lt;/label&gt;
+    &lt;x-fruit::combobox id=&quot;gallery-assignee&quot; name=&quot;assignee&quot; x-model=&quot;choice&quot; required&gt;
+        &lt;option value=&quot;support&quot; selected&gt;Support team&lt;/option&gt;
+        &lt;option value=&quot;alex&quot;&gt;Alex Morgan&lt;/option&gt;
+        &lt;option value=&quot;mia&quot;&gt;Mia Patel&lt;/option&gt;
+        &lt;optgroup label=&quot;Unavailable&quot; disabled&gt;&lt;option value=&quot;noah&quot;&gt;Noah Williams&lt;/option&gt;&lt;/optgroup&gt;
+    &lt;/x-fruit::combobox&gt;
+    &lt;div class=&quot;f-row&quot;&gt;
+        &lt;x-fruit::button @click=&quot;choice = &apos;mia&apos;&quot;&gt;Assign Mia externally&lt;/x-fruit::button&gt;
+        &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset choice&lt;/x-fruit::button&gt;
+    &lt;/div&gt;
+&lt;/form&gt;</pre></details></section>
+<section id="component-token-field" data-component="token-field" class="f-card component-card"><h2>Token entry</h2><p>One item per line in the native textarea. Enter/comma adds an item; remove buttons own removal. Applications validate tokens.</p><!-- blade:token-field --><form class="f-stack" id="token-example" x-data="{ recipients: 'sophie@example.com' }" @submit.prevent>
+    <label class="f-label" for="gallery-recipients">Recipients</label>
+    <div class="f-token-field" data-fruit-placeholder="Add an item" data-fruit-remove-label="Remove {value}" data-fruit-removed-message="Removed {value}" data-fruit-count-message="{count} items" data-fruit-invalid-message="Check this value before adding it." data-fruit-length-message="Use at most {count} characters." x-data="fruitTokenField">
+    <textarea data-fruit-control class="f-input" id="gallery-recipients" name="recipients" x-model="recipients" required="required" placeholder="Add a recipient" @fruit-token-add="if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = 'Enter an email address.'; $event.preventDefault(); }">sophie@example.com</textarea>
+    <div data-fruit-ui wire:ignore></div>
+</div>
+    <p class="f-help">Enter or comma to add. Backspace in the empty field focuses the last remove button.</p>
+    <div class="f-row">
+        <button type="button" class="f-button" @click="recipients = 'mia@example.com'">Set recipients externally</button>
+        <button type="reset" class="f-button">Reset recipients</button>
+    </div>
+</form><!-- /blade:token-field --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &#x27;sophie@example.com&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;&lt;div class=&quot;f-token-field&quot; x-data=&quot;fruitTokenField&quot;&gt;&lt;textarea class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot; @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &#x27;Enter an email address.&#x27;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/textarea&gt;&lt;/div&gt;&lt;p class=&quot;f-help&quot;&gt;Enter or comma to add. Backspace in the empty field focuses the last remove button.&lt;/p&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;recipients = &#x27;mia@example.com&#x27;&quot;&gt;Set recipients externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset recipients&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="token-field">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &apos;sophie@example.com&apos; }&quot; @submit.prevent&gt;
+    &lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;
+    &lt;x-fruit::token-field id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot;
+        @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &apos;Enter an email address.&apos;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/x-fruit::token-field&gt;
+    &lt;p class=&quot;f-help&quot;&gt;Enter or comma to add. Backspace in the empty field focuses the last remove button.&lt;/p&gt;
+    &lt;div class=&quot;f-row&quot;&gt;
+        &lt;x-fruit::button @click=&quot;recipients = &apos;mia@example.com&apos;&quot;&gt;Set recipients externally&lt;/x-fruit::button&gt;
+        &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset recipients&lt;/x-fruit::button&gt;
+    &lt;/div&gt;
+&lt;/form&gt;</pre></details></section>
 <section id="component-chip" data-component="chip" class="f-card component-card"><h2>Chips</h2><p>Compact values with independent remove actions. A chip does not own a checkbox or selection state.</p><div class="f-row" x-data="{ visible: true }"><span class="f-chip" x-show="visible"><span>Billing</span><button class="f-chip__remove" type="button" aria-label="Remove Billing" @click="visible = false">×</button></span><span class="f-chip">Team plan</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-row&quot; x-data=&quot;{ visible: true }&quot;&gt;&lt;span class=&quot;f-chip&quot; x-show=&quot;visible&quot;&gt;&lt;span&gt;Billing&lt;/span&gt;&lt;button class=&quot;f-chip__remove&quot; type=&quot;button&quot; aria-label=&quot;Remove Billing&quot; @click=&quot;visible = false&quot;&gt;×&lt;/button&gt;&lt;/span&gt;&lt;span class=&quot;f-chip&quot;&gt;Team plan&lt;/span&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-chip&quot;&gt;&lt;span&gt;{{ $tag }}&lt;/span&gt;&lt;x-fruit::button class=&quot;f-chip__remove&quot; wire:click=&quot;removeTag&quot; aria-label=&quot;Remove tag&quot;&gt;×&lt;/x-fruit::button&gt;&lt;/span&gt;</pre></details></section>
 <section id="component-button-group" data-component="button-group" class="f-card component-card"><h2>Joined and split buttons</h2><p>Independent buttons share an edge. A split action combines Button with Menu.</p><div class="f-button-group" x-data="{ action: '' }"><button class="f-button" type="button" @click="action = 'Sent'">Send reply</button><details class="f-menu" x-data="fruitMenu"><summary role="button" class="f-button" aria-haspopup="menu">Send options</summary><div class="f-menu__items" role="menu" aria-label="Message actions"><button class="f-menu-item" type="button" role="menuitem" @click="action = 'Archived'">Archive</button><button class="f-menu-item" type="button" role="menuitem" disabled>Forward</button><button class="f-menu-item" type="button" role="menuitem" @click="action = 'Marked unread'">Mark unread</button><button class="f-menu-item f-menu-item--danger" type="button" role="menuitem" @click="action = 'Deleted'">Delete</button></div></details></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-button-group&quot; x-data=&quot;{ action: &#x27;&#x27; }&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;action = &#x27;Sent&#x27;&quot;&gt;Send reply&lt;/button&gt;&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot; aria-haspopup=&quot;menu&quot;&gt;Send options&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Message actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Archived&#x27;&quot;&gt;Archive&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; disabled&gt;Forward&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Marked unread&#x27;&quot;&gt;Mark unread&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Deleted&#x27;&quot;&gt;Delete&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-button-group&quot;&gt;&lt;x-fruit::button wire:click=&quot;send&quot;&gt;Send reply&lt;/x-fruit::button&gt;&lt;x-fruit::menu title=&quot;Send options&quot;&gt;&lt;x-slot:trigger&gt;Options&lt;/x-slot:trigger&gt;&lt;x-fruit::menu-item wire:click=&quot;sendAndClose&quot;&gt;Send and close&lt;/x-fruit::menu-item&gt;&lt;/x-fruit::menu&gt;&lt;/div&gt;</pre></details></section>
 <section id="component-input-group" data-component="input-group" class="f-card component-card"><h2>Joined fields</h2><p>Units and actions stay beside a native field. Labels, names, and values belong to the input.</p><div class="f-field"><label class="f-label" for="gallery-seats">Seats</label><div class="f-input-group"><input class="f-input" id="gallery-seats" type="number" name="seats" min="1" value="12" aria-describedby="gallery-seat-unit"><span class="f-input-group__addon" id="gallery-seat-unit">people</span></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-field&quot;&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-seats&quot;&gt;Seats&lt;/label&gt;&lt;div class=&quot;f-input-group&quot;&gt;&lt;input class=&quot;f-input&quot; id=&quot;gallery-seats&quot; type=&quot;number&quot; name=&quot;seats&quot; min=&quot;1&quot; value=&quot;12&quot; aria-describedby=&quot;gallery-seat-unit&quot;&gt;&lt;span class=&quot;f-input-group__addon&quot; id=&quot;gallery-seat-unit&quot;&gt;people&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;label for=&quot;seats&quot;&gt;Seats&lt;/label&gt;&lt;div class=&quot;f-input-group&quot;&gt;&lt;x-fruit::number id=&quot;seats&quot; name=&quot;seats&quot; wire:model=&quot;seats&quot; aria-describedby=&quot;seat-unit&quot;/&gt;&lt;span class=&quot;f-input-group__addon&quot; id=&quot;seat-unit&quot;&gt;people&lt;/span&gt;&lt;/div&gt;</pre></details></section>
-<section id="component-tabs" data-component="tabs" class="f-card component-card"><h2>In-page tabs</h2><p>Related panels in one page; arrows/Home/End change the focused and selected tab.</p><div x-data="fruitTabs"><div class="f-tabs" role="tablist" aria-label="Conversation information"><button class="f-tab" id="gallery-profile-tab" type="button" role="tab" aria-selected="true" aria-controls="gallery-profile-panel">Profile</button><button class="f-tab" id="gallery-history-tab" type="button" role="tab" aria-selected="false" aria-controls="gallery-history-panel" tabindex="-1">History</button></div><div id="gallery-profile-panel" role="tabpanel" aria-labelledby="gallery-profile-tab" tabindex="0"><p>Sophie Chen · Studio North</p></div><div id="gallery-history-panel" role="tabpanel" aria-labelledby="gallery-history-tab" tabindex="0" hidden><p>Two conversations this month.</p></div></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;fruitTabs&quot;&gt;&lt;div class=&quot;f-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;Conversation information&quot;&gt;&lt;button class=&quot;f-tab&quot; id=&quot;gallery-profile-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;true&quot; aria-controls=&quot;gallery-profile-panel&quot;&gt;Profile&lt;/button&gt;&lt;button class=&quot;f-tab&quot; id=&quot;gallery-history-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; aria-controls=&quot;gallery-history-panel&quot; tabindex=&quot;-1&quot;&gt;History&lt;/button&gt;&lt;/div&gt;&lt;div id=&quot;gallery-profile-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-profile-tab&quot; tabindex=&quot;0&quot;&gt;&lt;p&gt;Sophie Chen · Studio North&lt;/p&gt;&lt;/div&gt;&lt;div id=&quot;gallery-history-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-history-tab&quot; tabindex=&quot;0&quot; hidden&gt;&lt;p&gt;Two conversations this month.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div x-data=&quot;fruitTabs&quot;&gt;&lt;x-fruit::tabs aria-label=&quot;Details&quot;&gt;&lt;x-fruit::tab id=&quot;profile-tab&quot; aria-controls=&quot;profile-panel&quot; aria-selected=&quot;true&quot;&gt;Profile&lt;/x-fruit::tab&gt;&lt;/x-fruit::tabs&gt;&lt;div role=&quot;tabpanel&quot; id=&quot;profile-panel&quot; aria-labelledby=&quot;profile-tab&quot; tabindex=&quot;0&quot;&gt;Profile content&lt;/div&gt;&lt;/div&gt;</pre></details></section>
-<section id="component-section-nav" data-component="section-nav" class="f-card component-card"><h2>Section navigation</h2><p>Page links retain standard link behavior and aria-current; they do not acquire tab roles.</p><nav class="f-section-nav" aria-label="Workspace sections"><a href="/admin.html#/settings" aria-current="page">Workspace</a><a href="/admin.html#/customers">Customers</a><a href="/admin.html#/revenue">Reports</a></nav><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-section-nav&quot; aria-label=&quot;Workspace sections&quot;&gt;&lt;a href=&quot;/admin.html#/settings&quot; aria-current=&quot;page&quot;&gt;Workspace&lt;/a&gt;&lt;a href=&quot;/admin.html#/customers&quot;&gt;Customers&lt;/a&gt;&lt;a href=&quot;/admin.html#/revenue&quot;&gt;Reports&lt;/a&gt;&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::section-nav aria-label=&quot;Settings&quot;&gt;&lt;a href=&quot;/settings&quot; aria-current=&quot;page&quot;&gt;General&lt;/a&gt;&lt;a href=&quot;/settings/team&quot;&gt;Team&lt;/a&gt;&lt;/x-fruit::section-nav&gt;</pre></details></section>
-<section id="component-pagination" data-component="pagination" class="f-card component-card"><h2>Pagination</h2><p>The application owns page data. Links or native buttons own navigation and disabled state.</p><nav class="f-pagination" aria-label="Sample pagination"><span>1–10 of 24</span><div class="f-pagination__controls"><button class="f-button" type="button" disabled>Previous</button><a class="f-button" href="/admin.html#/customers" aria-current="page" aria-label="Page 1">1</a><a class="f-button" href="/admin.html#/customers" aria-label="Page 2">2</a><a class="f-button" href="/admin.html#/customers">Next</a></div></nav><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-pagination&quot; aria-label=&quot;Sample pagination&quot;&gt;&lt;span&gt;1–10 of 24&lt;/span&gt;&lt;div class=&quot;f-pagination__controls&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; disabled&gt;Previous&lt;/button&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot; aria-current=&quot;page&quot; aria-label=&quot;Page 1&quot;&gt;1&lt;/a&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot; aria-label=&quot;Page 2&quot;&gt;2&lt;/a&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot;&gt;Next&lt;/a&gt;&lt;/div&gt;&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::pagination&gt;&lt;span&gt;{{ $records-&gt;firstItem() }}–{{ $records-&gt;lastItem() }}&lt;/span&gt;&lt;a class=&quot;f-button&quot; href=&quot;{{ $records-&gt;nextPageUrl() }}&quot;&gt;Next&lt;/a&gt;&lt;/x-fruit::pagination&gt;</pre></details></section>
+<section id="component-tabs" data-component="tabs" class="f-card component-card"><h2>In-page tabs</h2><p>Related panels in one page; arrows/Home/End change the focused and selected tab.</p><!-- blade:tabs --><div x-data="fruitTabs">
+    <div role="tablist" class="f-tabs" aria-label="Conversation information"><button type="button" role="tab" class="f-tab" id="gallery-profile-tab" aria-selected="true" aria-controls="gallery-profile-panel">Profile</button>
+        <button type="button" role="tab" class="f-tab" id="gallery-history-tab" aria-selected="false" aria-controls="gallery-history-panel" tabindex="-1">History</button></div>
+    <div id="gallery-profile-panel" role="tabpanel" aria-labelledby="gallery-profile-tab" tabindex="0"><p>Sophie Chen · Studio North</p></div>
+    <div id="gallery-history-panel" role="tabpanel" aria-labelledby="gallery-history-tab" tabindex="0" hidden><p>Two conversations this month.</p></div>
+</div><!-- /blade:tabs --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;fruitTabs&quot;&gt;&lt;div class=&quot;f-tabs&quot; role=&quot;tablist&quot; aria-label=&quot;Conversation information&quot;&gt;&lt;button class=&quot;f-tab&quot; id=&quot;gallery-profile-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;true&quot; aria-controls=&quot;gallery-profile-panel&quot;&gt;Profile&lt;/button&gt;&lt;button class=&quot;f-tab&quot; id=&quot;gallery-history-tab&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; aria-controls=&quot;gallery-history-panel&quot; tabindex=&quot;-1&quot;&gt;History&lt;/button&gt;&lt;/div&gt;&lt;div id=&quot;gallery-profile-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-profile-tab&quot; tabindex=&quot;0&quot;&gt;&lt;p&gt;Sophie Chen · Studio North&lt;/p&gt;&lt;/div&gt;&lt;div id=&quot;gallery-history-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-history-tab&quot; tabindex=&quot;0&quot; hidden&gt;&lt;p&gt;Two conversations this month.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="tabs">&lt;div x-data=&quot;fruitTabs&quot;&gt;
+    &lt;x-fruit::tabs aria-label=&quot;Conversation information&quot;&gt;
+        &lt;x-fruit::tab id=&quot;gallery-profile-tab&quot; aria-selected=&quot;true&quot; aria-controls=&quot;gallery-profile-panel&quot;&gt;Profile&lt;/x-fruit::tab&gt;
+        &lt;x-fruit::tab id=&quot;gallery-history-tab&quot; aria-selected=&quot;false&quot; aria-controls=&quot;gallery-history-panel&quot; tabindex=&quot;-1&quot;&gt;History&lt;/x-fruit::tab&gt;
+    &lt;/x-fruit::tabs&gt;
+    &lt;div id=&quot;gallery-profile-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-profile-tab&quot; tabindex=&quot;0&quot;&gt;&lt;p&gt;Sophie Chen · Studio North&lt;/p&gt;&lt;/div&gt;
+    &lt;div id=&quot;gallery-history-panel&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;gallery-history-tab&quot; tabindex=&quot;0&quot; hidden&gt;&lt;p&gt;Two conversations this month.&lt;/p&gt;&lt;/div&gt;
+&lt;/div&gt;</pre></details></section>
+<section id="component-section-nav" data-component="section-nav" class="f-card component-card"><h2>Section navigation</h2><p>Page links retain standard link behavior and aria-current; they do not acquire tab roles.</p><!-- blade:section-nav --><nav class="f-section-nav" aria-label="Workspace sections"><a href="/admin.html#/settings" aria-current="page">Workspace</a>
+    <a href="/admin.html#/customers">Customers</a>
+    <a href="/admin.html#/revenue">Reports</a></nav><!-- /blade:section-nav --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-section-nav&quot; aria-label=&quot;Workspace sections&quot;&gt;&lt;a href=&quot;/admin.html#/settings&quot; aria-current=&quot;page&quot;&gt;Workspace&lt;/a&gt;&lt;a href=&quot;/admin.html#/customers&quot;&gt;Customers&lt;/a&gt;&lt;a href=&quot;/admin.html#/revenue&quot;&gt;Reports&lt;/a&gt;&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="section-nav">&lt;x-fruit::section-nav aria-label=&quot;Workspace sections&quot;&gt;
+    &lt;a href=&quot;/admin.html#/settings&quot; aria-current=&quot;page&quot;&gt;Workspace&lt;/a&gt;
+    &lt;a href=&quot;/admin.html#/customers&quot;&gt;Customers&lt;/a&gt;
+    &lt;a href=&quot;/admin.html#/revenue&quot;&gt;Reports&lt;/a&gt;
+&lt;/x-fruit::section-nav&gt;</pre></details></section>
+<section id="component-pagination" data-component="pagination" class="f-card component-card"><h2>Pagination</h2><p>The application owns page data. Links or native buttons own navigation and disabled state.</p><!-- blade:pagination --><nav aria-label="Pagination" class="f-pagination"><span>1–10 of 24</span>
+                <div class="f-pagination__controls">
+                            <button class="f-button" type="button" disabled>Previous</button>
+                                                                                                                <a class="f-button" href="/admin.html?page=1#/customers" aria-label="Page 1"  aria-current="page" >1</a>
+                                                                                                <a class="f-button" href="/admin.html?page=2#/customers" aria-label="Page 2" >2</a>
+                                                                                                <a class="f-button" href="/admin.html?page=3#/customers" aria-label="Page 3" >3</a>
+                                                                                                    <a class="f-button" href="/admin.html?page=2#/customers" rel="next">Next</a>
+                    </div></nav>
+
+
+
+<nav aria-label="Activity pages" class="f-pagination"><span>Newest activity</span>
+    <div class="f-pagination__controls"><a class="f-button" href="/admin.html#/customers">Older activity</a></div></nav><!-- /blade:pagination --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;nav class=&quot;f-pagination&quot; aria-label=&quot;Sample pagination&quot;&gt;&lt;span&gt;1–10 of 24&lt;/span&gt;&lt;div class=&quot;f-pagination__controls&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; disabled&gt;Previous&lt;/button&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot; aria-current=&quot;page&quot; aria-label=&quot;Page 1&quot;&gt;1&lt;/a&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot; aria-label=&quot;Page 2&quot;&gt;2&lt;/a&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot;&gt;Next&lt;/a&gt;&lt;/div&gt;&lt;/nav&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="pagination">{{-- Laravel paginators render this view; inside Livewire it calls Livewire&apos;s page actions. --}}
+@php($customers = new Illuminate\Pagination\LengthAwarePaginator(range(1, 10), 24, 10, 1, [&apos;path&apos; =&gt; &apos;/admin.html&apos;]))
+{{ $customers-&gt;fragment(&apos;/customers&apos;)-&gt;links(&apos;fruit::pagination.default&apos;) }}
+
+{{-- Or compose your own page controls. --}}
+&lt;x-fruit::pagination aria-label=&quot;Activity pages&quot;&gt;
+    &lt;span&gt;Newest activity&lt;/span&gt;
+    &lt;div class=&quot;f-pagination__controls&quot;&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot;&gt;Older activity&lt;/a&gt;&lt;/div&gt;
+&lt;/x-fruit::pagination&gt;</pre></details></section>
 <section id="component-spinner" data-component="spinner" class="f-card component-card"><h2>Busy actions</h2><p>Keep a readable action name; aria-busy describes activity and native disabled blocks repeated actions.</p><button class="f-button" type="button" aria-busy="true" disabled><span class="f-spinner" aria-hidden="true"></span>Saving changes…</button><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-busy=&quot;true&quot; disabled&gt;&lt;span class=&quot;f-spinner&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Saving changes…&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::button wire:click=&quot;save&quot; wire:loading.attr=&quot;disabled&quot; wire:loading.attr=&quot;aria-busy&quot;&gt;&lt;span class=&quot;f-spinner&quot; wire:loading aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Save changes&lt;/x-fruit::button&gt;</pre></details></section>
 <section id="component-upload" data-component="upload" class="f-card component-card"><h2>Upload rows</h2><p>File, Progress, links, and action buttons compose uploading, complete, error, and cancelled states. The application owns the upload.</p><div x-data="uploadDemo" class="f-stack"><label class="f-label" for="gallery-files">Attachments</label><input class="f-input f-file" type="file" id="gallery-files" multiple @change="addFiles($event.target.files)"><p class="f-help">Local upload simulation. Files stay in your browser.</p><ul class="f-upload" aria-label="Attachments"><template x-for="file in files" :key="file.id"><li class="f-upload__row" :data-state="file.state"><div class="f-upload__body"><strong x-text="file.name"></strong><span class="f-help" role="status" x-text="file.state === 'error' ? 'Upload failed. Retry or remove the file.' : file.state"></span><progress class="f-progress" max="100" :value="file.progress" :aria-label="'Upload ' + file.name" x-show="file.state === 'uploading'"></progress><a x-show="file.state === 'complete'" :href="file.url" :download="file.name">Download local file</a></div><div class="f-upload__actions"><button class="f-button" type="button" @click="fail(file)" x-show="file.state === 'uploading'">Simulate error</button><button class="f-button" type="button" @click="cancel(file)" x-show="file.state === 'uploading'" :aria-label="'Cancel ' + file.name">Cancel</button><button class="f-button" type="button" @click="retry(file)" x-show="file.state === 'error' || file.state === 'cancelled'">Retry</button><button class="f-button" type="button" @click="remove(file)" :aria-label="'Remove ' + file.name">Remove</button></div></li></template></ul></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;uploadDemo&quot; class=&quot;f-stack&quot;&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-files&quot;&gt;Attachments&lt;/label&gt;&lt;input class=&quot;f-input f-file&quot; type=&quot;file&quot; id=&quot;gallery-files&quot; multiple @change=&quot;addFiles($event.target.files)&quot;&gt;&lt;p class=&quot;f-help&quot;&gt;Local upload simulation. Files stay in your browser.&lt;/p&gt;&lt;ul class=&quot;f-upload&quot; aria-label=&quot;Attachments&quot;&gt;&lt;template x-for=&quot;file in files&quot; :key=&quot;file.id&quot;&gt;&lt;li class=&quot;f-upload__row&quot; :data-state=&quot;file.state&quot;&gt;&lt;div class=&quot;f-upload__body&quot;&gt;&lt;strong x-text=&quot;file.name&quot;&gt;&lt;/strong&gt;&lt;span class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;file.state === &#x27;error&#x27; ? &#x27;Upload failed. Retry or remove the file.&#x27; : file.state&quot;&gt;&lt;/span&gt;&lt;progress class=&quot;f-progress&quot; max=&quot;100&quot; :value=&quot;file.progress&quot; :aria-label=&quot;&#x27;Upload &#x27; + file.name&quot; x-show=&quot;file.state === &#x27;uploading&#x27;&quot;&gt;&lt;/progress&gt;&lt;a x-show=&quot;file.state === &#x27;complete&#x27;&quot; :href=&quot;file.url&quot; :download=&quot;file.name&quot;&gt;Download local file&lt;/a&gt;&lt;/div&gt;&lt;div class=&quot;f-upload__actions&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;fail(file)&quot; x-show=&quot;file.state === &#x27;uploading&#x27;&quot;&gt;Simulate error&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;cancel(file)&quot; x-show=&quot;file.state === &#x27;uploading&#x27;&quot; :aria-label=&quot;&#x27;Cancel &#x27; + file.name&quot;&gt;Cancel&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;retry(file)&quot; x-show=&quot;file.state === &#x27;error&#x27; || file.state === &#x27;cancelled&#x27;&quot;&gt;Retry&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;remove(file)&quot; :aria-label=&quot;&#x27;Remove &#x27; + file.name&quot;&gt;Remove&lt;/button&gt;&lt;/div&gt;&lt;/li&gt;&lt;/template&gt;&lt;/ul&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;ul class=&quot;f-upload&quot;&gt;&lt;li class=&quot;f-upload__row&quot; data-state=&quot;error&quot;&gt;&lt;div class=&quot;f-upload__body&quot;&gt;brief.pdf&lt;p class=&quot;f-error&quot;&gt;Upload failed.&lt;/p&gt;&lt;/div&gt;&lt;div class=&quot;f-upload__actions&quot;&gt;&lt;x-fruit::button wire:click=&quot;retry&quot;&gt;Retry&lt;/x-fruit::button&gt;&lt;x-fruit::button wire:click=&quot;remove&quot;&gt;Remove&lt;/x-fruit::button&gt;&lt;/div&gt;&lt;/li&gt;&lt;/ul&gt;</pre></details></section>
 <section id="component-avatar-group" data-component="avatar-group" class="f-card component-card"><h2>Identity groups</h2><p>Initials or photographs share the same Avatar. Grouping changes arrangement only.</p><div class="f-avatar-group" role="group" aria-label="Conversation participants"><span class="f-avatar" role="img" aria-label="Sophie Chen">SC</span><span class="f-avatar" role="img" aria-label="Mia Patel">MP</span><span class="f-avatar" role="img" aria-label="Alex Morgan">AM</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-avatar-group&quot; role=&quot;group&quot; aria-label=&quot;Conversation participants&quot;&gt;&lt;span class=&quot;f-avatar&quot; role=&quot;img&quot; aria-label=&quot;Sophie Chen&quot;&gt;SC&lt;/span&gt;&lt;span class=&quot;f-avatar&quot; role=&quot;img&quot; aria-label=&quot;Mia Patel&quot;&gt;MP&lt;/span&gt;&lt;span class=&quot;f-avatar&quot; role=&quot;img&quot; aria-label=&quot;Alex Morgan&quot;&gt;AM&lt;/span&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-avatar-group&quot; role=&quot;group&quot; aria-label=&quot;Participants&quot;&gt;&lt;span class=&quot;f-avatar&quot;&gt;&lt;img src=&quot;{{ $user-&gt;photo }}&quot; alt=&quot;{{ $user-&gt;name }}&quot;&gt;&lt;/span&gt;&lt;span class=&quot;f-avatar&quot; role=&quot;img&quot; aria-label=&quot;Mia Patel&quot;&gt;MP&lt;/span&gt;&lt;/div&gt;</pre></details></section>
 <section id="component-presence" data-component="presence" class="f-card component-card"><h2>Presence</h2><p>Availability is accompanied by readable text, not color alone.</p><div class="f-row"><span class="f-presence" data-available="true" aria-hidden="true"></span><span>Alex Morgan · Available</span><span class="f-presence" data-available="false" aria-hidden="true"></span><span>Mia Patel · Away</span></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-row&quot;&gt;&lt;span class=&quot;f-presence&quot; data-available=&quot;true&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Alex Morgan · Available&lt;/span&gt;&lt;span class=&quot;f-presence&quot; data-available=&quot;false&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Mia Patel · Away&lt;/span&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;span class=&quot;f-presence&quot; data-available=&quot;true&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;span&gt;Available&lt;/span&gt;</pre></details></section>
 <section id="component-notifications" data-component="notifications" class="f-card component-card"><h2>Grouped notifications</h2><p>Native grouped lists of destination links; read status and actions belong to the application.</p><div><h3 class="f-notifications__heading">Today</h3><ol class="f-notifications"><li class="f-notifications__item"><span class="f-avatar" aria-hidden="true">SC</span><a href="/support.html">Sophie replied to your conversation<small>Studio North · 10 minutes ago</small></a><span class="f-badge">New</span></li></ol><h3 class="f-notifications__heading">Yesterday</h3><ol class="f-notifications"><li class="f-notifications__item"><a href="/admin.html#/customers">Your customer export is ready<small>4:15 PM</small></a></li></ol></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div&gt;&lt;h3 class=&quot;f-notifications__heading&quot;&gt;Today&lt;/h3&gt;&lt;ol class=&quot;f-notifications&quot;&gt;&lt;li class=&quot;f-notifications__item&quot;&gt;&lt;span class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/span&gt;&lt;a href=&quot;/support.html&quot;&gt;Sophie replied to your conversation&lt;small&gt;Studio North · 10 minutes ago&lt;/small&gt;&lt;/a&gt;&lt;span class=&quot;f-badge&quot;&gt;New&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;&lt;h3 class=&quot;f-notifications__heading&quot;&gt;Yesterday&lt;/h3&gt;&lt;ol class=&quot;f-notifications&quot;&gt;&lt;li class=&quot;f-notifications__item&quot;&gt;&lt;a href=&quot;/admin.html#/customers&quot;&gt;Your customer export is ready&lt;small&gt;4:15 PM&lt;/small&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;h3 class=&quot;f-notifications__heading&quot;&gt;Today&lt;/h3&gt;&lt;ol class=&quot;f-notifications&quot;&gt;&lt;li class=&quot;f-notifications__item&quot;&gt;&lt;a href=&quot;/conversations/42&quot;&gt;Sophie replied&lt;small&gt;10 minutes ago&lt;/small&gt;&lt;/a&gt;&lt;span class=&quot;f-badge&quot;&gt;New&lt;/span&gt;&lt;/li&gt;&lt;/ol&gt;</pre></details></section>
 <section id="component-prose" data-component="prose" class="f-card component-card"><h2>Message content</h2><p>Scoped paragraphs, lists, quotes, images, and tables. Applications sanitize supplied HTML before rendering it.</p><div class="f-prose"><p>Hello Sophie,</p><p>Here is what’s included in your <strong>Team plan</strong>:</p><ul><li>Shared projects</li><li>Annual billing</li></ul><blockquote><p>Your existing projects stay right where they are.</p></blockquote><div class="f-prose__scroll" role="region" tabindex="0" aria-label="Plan comparison"><table><caption>Plan comparison</caption><thead><tr><th scope="col">Plan</th><th scope="col">Members</th></tr></thead><tbody><tr><th scope="row">Team</th><td>12</td></tr></tbody></table></div><p>Thanks,<br>Alex</p></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-prose&quot;&gt;&lt;p&gt;Hello Sophie,&lt;/p&gt;&lt;p&gt;Here is what’s included in your &lt;strong&gt;Team plan&lt;/strong&gt;:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Shared projects&lt;/li&gt;&lt;li&gt;Annual billing&lt;/li&gt;&lt;/ul&gt;&lt;blockquote&gt;&lt;p&gt;Your existing projects stay right where they are.&lt;/p&gt;&lt;/blockquote&gt;&lt;div class=&quot;f-prose__scroll&quot; role=&quot;region&quot; tabindex=&quot;0&quot; aria-label=&quot;Plan comparison&quot;&gt;&lt;table&gt;&lt;caption&gt;Plan comparison&lt;/caption&gt;&lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Plan&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Members&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;Team&lt;/th&gt;&lt;td&gt;12&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;p&gt;Thanks,&lt;br&gt;Alex&lt;/p&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-prose&quot;&gt;{!! $sanitizedMessageHtml !!}&lt;/div&gt;</pre></details></section>
-<section id="component-editor" data-component="editor" class="f-card component-card"><h2>Rich text editor</h2><p>Optional Tiptap integration, loaded separately. The native textarea stores HTML and remains editable without JavaScript.</p><form class="f-stack" id="editor-example" x-data="{ signature: '&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;' }" @submit.prevent><label class="f-label" for="gallery-editor">Reply signature</label><div class="f-editor" x-data="fruitEditor"><div class="f-editor__toolbar" hidden aria-label="Text formatting"><button class="f-button f-button--ghost" type="button" data-fruit-command="bold">Bold</button><button class="f-button f-button--ghost" type="button" data-fruit-command="italic">Italic</button><button class="f-button f-button--ghost" type="button" data-fruit-command="bulletList">Bullets</button><button class="f-button f-button--ghost" type="button" data-fruit-command="orderedList">Numbered list</button><button class="f-button f-button--ghost" type="button" data-fruit-command="blockquote">Quote</button><button class="f-button f-button--ghost" type="button" data-fruit-command="undo">Undo</button><button class="f-button f-button--ghost" type="button" data-fruit-command="redo">Redo</button></div><textarea class="f-input" id="gallery-editor" data-fruit-control name="signature" x-model="signature" required>&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;</textarea><div class="f-editor__surface" hidden></div></div><div class="f-row"><button class="f-button" type="button" @click="signature = '&lt;p&gt;Mia Patel&lt;/p&gt;'">Set signature externally</button><button class="f-button" type="reset">Reset signature</button></div></form><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &#x27;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;&lt;div class=&quot;f-editor&quot; x-data=&quot;fruitEditor&quot;&gt;&lt;div class=&quot;f-editor__toolbar&quot; hidden aria-label=&quot;Text formatting&quot;&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bold&quot;&gt;Bold&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;italic&quot;&gt;Italic&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bulletList&quot;&gt;Bullets&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;orderedList&quot;&gt;Numbered list&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;blockquote&quot;&gt;Quote&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;undo&quot;&gt;Undo&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;redo&quot;&gt;Redo&lt;/button&gt;&lt;/div&gt;&lt;textarea class=&quot;f-input&quot; id=&quot;gallery-editor&quot; data-fruit-control name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&lt;/textarea&gt;&lt;div class=&quot;f-editor__surface&quot; hidden&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;signature = &#x27;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&#x27;&quot;&gt;Set signature externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset signature&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;x-fruit::editor id=&quot;signature&quot; name=&quot;signature&quot; wire:model=&quot;signature&quot;
-  :wrapper=&quot;[&#x27;style&#x27; =&gt; &#x27;--f-editor-min-height:160px&#x27;]&quot;&gt;
-  &lt;x-slot:toolbar&gt;
-    &lt;x-fruit::button variant=&quot;ghost&quot; data-fruit-command=&quot;bold&quot;&gt;{{ __(&#x27;Bold&#x27;) }}&lt;/x-fruit::button&gt;
-    &lt;x-fruit::button variant=&quot;ghost&quot; data-fruit-command=&quot;italic&quot;&gt;{{ __(&#x27;Italic&#x27;) }}&lt;/x-fruit::button&gt;
-  &lt;/x-slot:toolbar&gt;
-  {{ $signature }}
-&lt;/x-fruit::editor&gt;</pre></details></section>
+<section id="component-editor" data-component="editor" class="f-card component-card"><h2>Rich text editor</h2><p>Optional Tiptap integration, loaded separately. The native textarea stores HTML and remains editable without JavaScript.</p><!-- blade:editor --><form class="f-stack" id="editor-example" x-data="{ signature: '&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;' }" @submit.prevent>
+    <label class="f-label" for="gallery-editor">Reply signature</label>
+    <div class="f-editor" x-data="fruitEditor">
+    <div class="f-editor__toolbar" wire:ignore hidden aria-label="Text formatting">
+                            <button class="f-button f-button--ghost" type="button" data-fruit-command="bold">Bold</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="italic">Italic</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="bulletList">Bullets</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="orderedList">Numbered list</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="blockquote">Quote</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="undo">Undo</button>
+                    <button class="f-button f-button--ghost" type="button" data-fruit-command="redo">Redo</button>
+                    </div>
+    <textarea data-fruit-control class="f-input" id="gallery-editor" name="signature" x-model="signature" required="required">&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;</textarea>
+    <div class="f-editor__surface" wire:ignore hidden></div>
+</div>
+    <div class="f-row">
+        <button type="button" class="f-button" @click="signature = '&lt;p&gt;Mia Patel&lt;/p&gt;'">Set signature externally</button>
+        <button type="reset" class="f-button">Reset signature</button>
+    </div>
+</form><!-- /blade:editor --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &#x27;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;&lt;div class=&quot;f-editor&quot; x-data=&quot;fruitEditor&quot;&gt;&lt;div class=&quot;f-editor__toolbar&quot; hidden aria-label=&quot;Text formatting&quot;&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bold&quot;&gt;Bold&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;italic&quot;&gt;Italic&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bulletList&quot;&gt;Bullets&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;orderedList&quot;&gt;Numbered list&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;blockquote&quot;&gt;Quote&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;undo&quot;&gt;Undo&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;redo&quot;&gt;Redo&lt;/button&gt;&lt;/div&gt;&lt;textarea class=&quot;f-input&quot; id=&quot;gallery-editor&quot; data-fruit-control name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&lt;/textarea&gt;&lt;div class=&quot;f-editor__surface&quot; hidden&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;signature = &#x27;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&#x27;&quot;&gt;Set signature externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset signature&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="editor">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &apos;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&apos; }&quot; @submit.prevent&gt;
+    &lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;
+    &lt;x-fruit::editor id=&quot;gallery-editor&quot; name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;{{ &apos;&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;&apos; }}&lt;/x-fruit::editor&gt;
+    &lt;div class=&quot;f-row&quot;&gt;
+        &lt;x-fruit::button @click=&quot;signature = &apos;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&apos;&quot;&gt;Set signature externally&lt;/x-fruit::button&gt;
+        &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset signature&lt;/x-fruit::button&gt;
+    &lt;/div&gt;
+&lt;/form&gt;</pre></details></section>
       </div>
       <section class="gallery-boundary"><h2>Example compositions</h2><p>Charts, breadcrumbs, full Support inspectors, and Chat message arrangements remain example compositions. Tabs, pagination, selection, menus, and rich message content use shared components. Their frames, panes, composers, facts, floating disclosures, and native tables now use the cataloged shared styles. Application data and navigation stay local. See the <a href="/admin.html">Admin</a>, <a href="/support.html">Support</a>, and <a href="/chat.html">Chat</a> examples for those arrangements.</p></section>
       <section id="integration" class="integration"><h2>Fits the way you build.</h2><p>Use the CSS on its own, add Alpine for local behavior, or let Laravel and Livewire handle your data.</p><div class="integration-grid">

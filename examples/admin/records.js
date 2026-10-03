@@ -27,7 +27,13 @@ export const customers = [
   ['Abigail Harris', 'abigail@wild.example', 'Wildflower', 'studio', 'active', '2026-06-08'],
   ['Daniel Clark', 'daniel@new.example', 'New Chapter', 'starter', 'active', '2026-06-02'],
 ].map(([name, email, company, plan, status, joined], index) => ({
-  id: `cus_${1001 + index}`, name, email, company, plan, status, joined,
+  id: `cus_${1001 + index}`,
+  name,
+  email,
+  company,
+  plan,
+  status,
+  joined,
   notes: index === 0 ? 'Annual review scheduled for October. Prefers email updates.' : '',
   updates: index === 0,
 }));

@@ -45,13 +45,17 @@ async function openFixture(page) {
 test.describe('CSS-only native forms', () => {
   test.use({ javaScriptEnabled: false });
 
-  test('styled choices retain keyboard, mixed state, group values, disabled inheritance and reset', async ({ page }) => {
+  test('styled choices retain keyboard, mixed state, group values, disabled inheritance and reset', async ({
+    page,
+  }) => {
     await openFixture(page);
     const sound = page.getByRole('checkbox', { name: 'Sound', exact: true });
     await sound.focus();
     await page.keyboard.press('Space');
     await expect(sound).not.toBeChecked();
-    await sound.evaluate(element => { element.indeterminate = true; });
+    await sound.evaluate(element => {
+      element.indeterminate = true;
+    });
     expect(await sound.evaluate(element => element.matches(':indeterminate'))).toBe(true);
     await expect(sound).toHaveCSS('background-color', 'rgb(0, 100, 208)');
     await page.keyboard.press('Space');
@@ -88,7 +92,9 @@ test.describe('CSS-only native forms', () => {
     await expect(seats).toBeFocused();
     await seats.fill('5');
     const range = page.getByRole('slider', { name: 'Scale', exact: true });
-    await range.evaluate(element => { element.setAttribute('aria-invalid', 'true'); });
+    await range.evaluate(element => {
+      element.setAttribute('aria-invalid', 'true');
+    });
     await range.focus();
     await page.keyboard.press('ArrowRight');
     await expect(range).toHaveValue('50');
@@ -124,8 +130,12 @@ test.describe('CSS-only native forms', () => {
     await expect(page.getByRole('heading', { name: 'Saved' })).toBeVisible();
     // Read what PHP actually receives; WebKit's protocol omits file bytes from postDataBuffer.
     const received = JSON.parse(await page.locator('#received').textContent());
-    expect(received.files).toEqual([{ name: 'first.txt', content: 'first attachment' }, { name: 'second.txt', content: 'second attachment' }]);
-    for (const value of ['2026-10-12', '2026-10-02T09:30', '2026-10', '2026-W40', '09:45', '#ff8800', 'forma']) expect(Object.values(received.values)).toContain(value);
+    expect(received.files).toEqual([
+      { name: 'first.txt', content: 'first attachment' },
+      { name: 'second.txt', content: 'second attachment' },
+    ]);
+    for (const value of ['2026-10-12', '2026-10-02T09:30', '2026-10', '2026-W40', '09:45', '#ff8800', 'forma'])
+      expect(Object.values(received.values)).toContain(value);
     expect(received.values).not.toHaveProperty('excluded');
   });
 
@@ -136,15 +146,29 @@ test.describe('CSS-only native forms', () => {
       for (const appearance of [theme, theme === 'light' ? 'dark' : 'light']) {
         await page.emulateMedia({ colorScheme: appearance });
         const dark = appearance === 'dark';
-        await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS('background-color', dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)');
-        await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS('color', dark ? 'rgb(176, 176, 184)' : 'rgb(101, 101, 108)');
+        await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS(
+          'background-color',
+          dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)',
+        );
+        await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS(
+          'color',
+          dark ? 'rgb(176, 176, 184)' : 'rgb(101, 101, 108)',
+        );
         for (const name of ['Files', 'Seats', 'Date', 'Time', 'Color']) {
           await expect(page.getByLabel(name, { exact: true })).toHaveCSS('color-scheme', appearance);
-          await expect(page.getByLabel(name, { exact: true })).toHaveCSS('background-color', dark ? 'rgb(57, 57, 62)' : 'rgb(255, 255, 255)');
+          await expect(page.getByLabel(name, { exact: true })).toHaveCSS(
+            'background-color',
+            dark ? 'rgb(57, 57, 62)' : 'rgb(255, 255, 255)',
+          );
         }
-        await expect(page.locator('pre')).toHaveCSS('background-color', dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)');
+        await expect(page.locator('pre')).toHaveCSS(
+          'background-color',
+          dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)',
+        );
         await expect(page.locator('blockquote')).toHaveCSS('color', dark ? 'rgb(176, 176, 184)' : 'rgb(101, 101, 108)');
-        const fileButton = await page.getByLabel('Files', { exact: true }).evaluate(element => getComputedStyle(element, '::file-selector-button').color);
+        const fileButton = await page
+          .getByLabel('Files', { exact: true })
+          .evaluate(element => getComputedStyle(element, '::file-selector-button').color);
         expect(fileButton).toBe(dark ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)');
         const sound = page.getByRole('checkbox', { name: 'Sound', exact: true });
         await expect(sound).toHaveCSS('background-color', 'rgb(0, 100, 208)');
@@ -154,13 +178,20 @@ test.describe('CSS-only native forms', () => {
         await expect(page.getByRole('checkbox', { name: 'Disabled choice', exact: true })).toHaveCSS('opacity', '0.45');
         for (const name of ['Color', 'Scale']) {
           const control = page.getByLabel(name, { exact: true });
-          await control.evaluate(element => { element.disabled = true; });
+          await control.evaluate(element => {
+            element.disabled = true;
+          });
           await expect(control).toHaveCSS('cursor', 'not-allowed');
           await expect(control).toHaveCSS('opacity', '0.45');
-          await control.evaluate(element => { element.disabled = false; });
+          await control.evaluate(element => {
+            element.disabled = false;
+          });
         }
         await page.getByRole('checkbox', { name: 'Preview', exact: true }).focus();
-        await expect(page.getByRole('checkbox', { name: 'Preview', exact: true })).toHaveCSS('border-color', dark ? 'rgb(255, 129, 121)' : 'rgb(197, 47, 39)');
+        await expect(page.getByRole('checkbox', { name: 'Preview', exact: true })).toHaveCSS(
+          'border-color',
+          dark ? 'rgb(255, 129, 121)' : 'rgb(197, 47, 39)',
+        );
       }
     });
   }
@@ -168,7 +199,7 @@ test.describe('CSS-only native forms', () => {
   test('progress and meter preserve their native measurement and indeterminate contracts', async ({ page }) => {
     await openFixture(page);
     const progress = page.getByRole('progressbar', { name: 'Import progress', exact: true });
-    expect(await progress.evaluate(element => element.position)).toBe(.4);
+    expect(await progress.evaluate(element => element.position)).toBe(0.4);
     const connecting = page.getByRole('progressbar', { name: 'Connecting', exact: true });
     expect(await connecting.evaluate(element => element.position)).toBe(-1);
     expect(await connecting.evaluate(element => element.matches(':indeterminate'))).toBe(true);
@@ -176,8 +207,19 @@ test.describe('CSS-only native forms', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(connecting).toHaveCSS('animation-name', 'none');
     const meter = page.getByRole('meter', { name: 'Storage', exact: true });
-    expect(await meter.evaluate(element => ({ value: element.value, min: element.min, max: element.max, low: element.low, high: element.high, optimum: element.optimum }))).toEqual({ value: 35, min: 0, max: 100, low: 60, high: 85, optimum: 20 });
-    await meter.evaluate(element => { element.value = 150; });
+    expect(
+      await meter.evaluate(element => ({
+        value: element.value,
+        min: element.min,
+        max: element.max,
+        low: element.low,
+        high: element.high,
+        optimum: element.optimum,
+      })),
+    ).toEqual({ value: 35, min: 0, max: 100, low: 60, high: 85, optimum: 20 });
+    await meter.evaluate(element => {
+      element.value = 150;
+    });
     expect(await meter.evaluate(element => element.value)).toBe(100); // Native clamping, no synthetic ARIA value.
   });
 
@@ -191,7 +233,9 @@ test.describe('CSS-only native forms', () => {
     await expect(choice).not.toBeChecked();
     const progress = page.getByRole('progressbar', { name: 'Import progress', exact: true });
     await expect(progress).toHaveCSS('outline-style', 'solid');
-    expect(await progress.evaluate(element => getComputedStyle(element).outlineColor)).not.toBe(await progress.evaluate(element => getComputedStyle(element).backgroundColor));
+    expect(await progress.evaluate(element => getComputedStyle(element).outlineColor)).not.toBe(
+      await progress.evaluate(element => getComputedStyle(element).backgroundColor),
+    );
   });
 });
 
@@ -203,7 +247,18 @@ for (const theme of ['light', 'dark']) {
     const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
     expect(violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    for (const name of ['file', 'number', 'date', 'time', 'color', 'range', 'progress', 'meter', 'fieldset', 'typography']) {
+    for (const name of [
+      'file',
+      'number',
+      'date',
+      'time',
+      'color',
+      'range',
+      'progress',
+      'meter',
+      'fieldset',
+      'typography',
+    ]) {
       const card = page.locator(`#component-${name}`);
       await card.scrollIntoViewIfNeeded();
       const box = await card.boundingBox();
@@ -214,7 +269,10 @@ for (const theme of ['light', 'dark']) {
 }
 
 test('autofill keeps the shared palette and remains editable', async ({ page, browserName }) => {
-  test.skip(browserName !== 'chromium', 'Autofill injection requires Chromium CDP; native editing is covered on all engines');
+  test.skip(
+    browserName !== 'chromium',
+    'Autofill injection requires Chromium CDP; native editing is covered on all engines',
+  );
   await openFixture(page);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
@@ -226,8 +284,14 @@ test('autofill keeps the shared palette and remains editable', async ({ page, br
   expect(await email.evaluate(element => element.matches(':autofill'))).toBe(true);
   for (const theme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: theme });
-    await expect(email).toHaveCSS('-webkit-text-fill-color', theme === 'dark' ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)');
-    await expect(email).toHaveCSS('box-shadow', `rgb(${theme === 'dark' ? '57, 57, 62' : '255, 255, 255'}) 0px 0px 0px 1000px inset`);
+    await expect(email).toHaveCSS(
+      '-webkit-text-fill-color',
+      theme === 'dark' ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)',
+    );
+    await expect(email).toHaveCSS(
+      'box-shadow',
+      `rgb(${theme === 'dark' ? '57, 57, 62' : '255, 255, 255'}) 0px 0px 0px 1000px inset`,
+    );
   }
   await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
   await email.fill('morgan@example.com');
@@ -236,7 +300,10 @@ test('autofill keeps the shared palette and remains editable', async ({ page, br
 
 test('styled search cancellation updates the existing Alpine search', async ({ page }) => {
   await page.goto('/admin.html');
-  test.skip(!await page.evaluate(() => CSS.supports('selector(input::-webkit-search-cancel-button)')), 'This browser retains its own search editing controls');
+  test.skip(
+    !(await page.evaluate(() => CSS.supports('selector(input::-webkit-search-cancel-button)'))),
+    'This browser retains its own search editing controls',
+  );
   const search = page.getByRole('searchbox', { name: 'Search customers', exact: true });
   await search.fill('Sophie');
   await expect(page.locator('tr[data-customer]')).toHaveCount(1);

@@ -2,23 +2,28 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test('Mail and Support consume the same conversation styles and preserve their variants', async ({ page }) => {
-  for (const [path, listName, variant] of [['/', 'Messages', 'filled'], ['/support.html', 'Conversations', 'quiet']]) {
+  for (const [path, listName, variant] of [
+    ['/', 'Messages', 'filled'],
+    ['/support.html', 'Conversations', 'quiet'],
+  ]) {
     await page.goto(path);
     const list = page.getByRole('list', { name: listName, exact: true });
-    await expect(list).toHaveClass(/f-conversation-list/);
+    await expect(list).toHaveClass(/f-item-list/);
     const rows = list.getByRole('button');
-    await expect(rows.first()).toHaveClass(/f-conversation-row/);
-    expect(await rows.evaluateAll(elements => elements.every(element => element.parentElement.tagName === 'LI'))).toBe(true);
-    if (variant === 'filled') await expect(rows.first()).toHaveClass(/f-conversation-row--filled/);
-    else await expect(rows.first()).not.toHaveClass(/f-conversation-row--filled/);
-    await page.addStyleTag({ content: '.f-conversation-row { --f-conversation-row-radius: 17px; }' });
+    await expect(rows.first()).toHaveClass(/f-item-row/);
+    expect(await rows.evaluateAll(elements => elements.every(element => element.parentElement.tagName === 'LI'))).toBe(
+      true,
+    );
+    if (variant === 'filled') await expect(rows.first()).toHaveClass(/f-item-row--filled/);
+    else await expect(rows.first()).not.toHaveClass(/f-item-row--filled/);
+    await page.addStyleTag({ content: '.f-item-row { --f-item-row-radius: 17px; }' });
     await expect(rows.first()).toHaveCSS('border-radius', '17px');
   }
 });
 
 test('conversation activation keeps its native button contract and independent checkbox value', async ({ page }) => {
   await page.goto('/components.html');
-  const specimen = page.locator('#component-conversation-row');
+  const specimen = page.locator('#component-item-row');
   const row = specimen.getByRole('button', { name: /Sophie Chen/ });
   const selection = specimen.getByRole('checkbox');
   await selection.check();
@@ -53,8 +58,8 @@ test.describe('standalone CSS patterns', () => {
       await page.emulateMedia({ colorScheme: appearance });
       await loadStandalone(page);
       await expect(page.locator('html')).toHaveCSS('color-scheme', appearance);
-      await expect(page.locator('.f-conversation-row__preview').first()).toHaveCSS('-webkit-line-clamp', '2');
-      await expect(page.locator('.f-conversation-row__title').first()).toHaveCSS('text-overflow', 'ellipsis');
+      await expect(page.locator('.f-item-row__preview').first()).toHaveCSS('-webkit-line-clamp', '2');
+      await expect(page.locator('.f-item-row__title').first()).toHaveCSS('text-overflow', 'ellipsis');
       const row = page.getByRole('button', { name: /Sophie/ });
       await row.focus();
       await expect(row).toBeFocused();
@@ -86,17 +91,38 @@ async function loadStandalone(page) {
   // Serve a fresh document with only package CSS: no showcase stylesheet,
   // Alpine, or other application scripts. Axe scans use a JS-enabled browser;
   // the separate CSS-only checks explicitly disable browser JavaScript.
-  await page.route('**/patterns-fixture', route => route.fulfill({ contentType: 'text/html', body: `<!doctype html><html lang="en" class="fruit-ui"><head><title>Patterns</title><link rel="stylesheet" href="/src/fruitui.css"></head><body><main style="padding:16px">
-        <h1>Conversations</h1><ul class="f-conversation-list" role="list" aria-label="Conversations">
-        <li><button class="f-conversation-row f-conversation-row--filled" type="button" aria-current="true">
-          <span class="f-avatar f-conversation-row__leading" aria-hidden="true">SC</span>
-          <span class="f-conversation-row__top"><span class="f-conversation-row__title">Sophie with a very long sender name that should truncate</span><span class="f-conversation-row__time">10:42</span></span>
-          <span class="f-conversation-row__subtitle">A long conversation subject that should stay on one line</span>
-          <span class="f-conversation-row__preview">A long preview that explains a conversation across multiple lines and remains within the available space on a small screen.</span>
-          <span class="f-conversation-row__meta">Work mailbox</span>
-        </button></li><li><button class="f-conversation-row" type="button" aria-current="true"><span class="f-conversation-row__title">Quiet current row</span><span class="f-conversation-row__preview">A softer current state.</span></button></li></ul>
+  await page.route('**/patterns-fixture', route =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: `<!doctype html><html lang="en" class="fruit-ui"><head><title>Patterns</title><link rel="stylesheet" href="/src/fruitui.css"></head><body><main style="padding:16px">
+        <h1>Conversations</h1><ul class="f-item-list" role="list" aria-label="Conversations">
+        <li><button class="f-item-row f-item-row--filled" type="button" aria-current="true">
+          <span class="f-avatar f-item-row__leading" aria-hidden="true">SC</span>
+          <span class="f-item-row__top"><span class="f-item-row__title">Sophie with a very long sender name that should truncate</span><span class="f-item-row__time">10:42</span></span>
+          <span class="f-item-row__subtitle">A long conversation subject that should stay on one line</span>
+          <span class="f-item-row__preview">A long preview that explains a conversation across multiple lines and remains within the available space on a small screen.</span>
+          <span class="f-item-row__meta">Work mailbox</span>
+        </button></li><li><button class="f-item-row" type="button" aria-current="true"><span class="f-item-row__title">Quiet current row</span><span class="f-item-row__preview">A softer current state.</span></button></li></ul>
         <a class="f-attachment" href="/attachments/fruitui-design-notes.txt" download><span class="f-attachment__body">design-notes-with-a-very-long-filename-that-must-wrap.txt<small class="f-attachment__detail">Text document</small></span></a>
         <div class="f-empty-state"><h2 class="f-empty-state__title">No results</h2><p class="f-empty-state__description">Try another search.</p><div class="f-empty-state__actions"><button class="f-button" type="button">Clear filters</button></div></div>
-        </main></body></html>` }));
+        </main></body></html>`,
+    }),
+  );
   await page.goto('/patterns-fixture');
 }
+
+test('named dialogs and the toaster respond to browser events without Livewire', async ({ page }) => {
+  await page.goto('/components.html');
+  await page.getByRole('button', { name: 'Open named dialog' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Archive this conversation?' });
+  await expect(dialog).toBeVisible();
+  expect(await dialog.evaluate(element => element.matches(':modal'))).toBe(true);
+  await dialog.getByRole('button', { name: 'Done' }).click();
+  await expect(dialog).toBeHidden();
+  await page.getByRole('button', { name: 'Dispatch a toast event' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Sent with a fruit-toast event.' })).toBeVisible();
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('fruit-dialog-open', { detail: { name: 'missing' } })),
+  );
+  await expect(page.locator('dialog[open]')).toHaveCount(0);
+});

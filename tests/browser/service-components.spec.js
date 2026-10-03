@@ -7,9 +7,12 @@ const signature = page => page.getByRole('textbox', { name: 'Reply signature', e
 const value = (page, form, name) => page.locator(form).evaluate((form, name) => new FormData(form).get(name), name);
 
 const runtimeErrors = new WeakMap();
-test.afterEach(async ({ page }) => { expect(runtimeErrors.get(page) || []).toEqual([]); });
+test.afterEach(async ({ page }) => {
+  expect(runtimeErrors.get(page) || []).toEqual([]);
+});
 test.beforeEach(async ({ page }) => {
-  const errors = []; runtimeErrors.set(page, errors);
+  const errors = [];
+  runtimeErrors.set(page, errors);
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/components.html');
   await expect(combo(page)).toBeVisible();
@@ -42,17 +45,26 @@ test('choice Escape cancels pending search; external model changes and reset upd
   expect(await value(page, '#combobox-example', 'assignee')).toBe('support');
 });
 
-test('enhanced required validation focuses the visible query; disabled values stay out of submission', async ({ page }) => {
-  await page.locator('#gallery-assignee').evaluate(select => { select.value = ''; select.dispatchEvent(new Event('change', { bubbles: true })); });
+test('enhanced required validation focuses the visible query; disabled values stay out of submission', async ({
+  page,
+}) => {
+  await page.locator('#gallery-assignee').evaluate(select => {
+    select.value = '';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  });
   await page.locator('#combobox-example').evaluate(form => form.requestSubmit());
   await expect(combo(page)).toBeFocused();
   await expect(combo(page)).toHaveAttribute('aria-invalid', 'true');
-  await page.locator('#gallery-assignee').evaluate(select => { select.disabled = true; });
+  await page.locator('#gallery-assignee').evaluate(select => {
+    select.disabled = true;
+  });
   await expect(combo(page)).toBeDisabled();
   expect(await value(page, '#combobox-example', 'assignee')).toBeNull();
 });
 
-test('token entry publishes a newline string, rejects invalid entries, and supports keyboard removal', async ({ page }) => {
+test('token entry publishes a newline string, rejects invalid entries, and supports keyboard removal', async ({
+  page,
+}) => {
   await tokens(page).fill('mia@example.com');
   await tokens(page).press('Enter');
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com\nmia@example.com');
@@ -72,17 +84,22 @@ test('token entry publishes a newline string, rejects invalid entries, and suppo
 
 test('pasted tokens deduplicate and external updates, readonly, and resets preserve native state', async ({ page }) => {
   await tokens(page).evaluate(input => {
-    const clipboardData = new DataTransfer(); clipboardData.setData('text/plain', 'sophie@example.com,mia@example.com\nnoah@example.com');
+    const clipboardData = new DataTransfer();
+    clipboardData.setData('text/plain', 'sophie@example.com,mia@example.com\nnoah@example.com');
     const event = new ClipboardEvent('paste', { bubbles: true, cancelable: true });
     // Firefox discards clipboardData in synthetic constructors. Supply the native event interface.
     Object.defineProperty(event, 'clipboardData', { value: clipboardData });
     input.dispatchEvent(event);
   });
-  expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com\nmia@example.com\nnoah@example.com');
+  expect(await value(page, '#token-example', 'recipients')).toBe(
+    'sophie@example.com\nmia@example.com\nnoah@example.com',
+  );
   await page.getByRole('button', { name: 'Set recipients externally' }).click();
   await expect(page.locator('#component-token-field .f-chip')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeVisible();
-  await page.locator('#gallery-recipients').evaluate(textarea => { textarea.readOnly = true; });
+  await page.locator('#gallery-recipients').evaluate(textarea => {
+    textarea.readOnly = true;
+  });
   await expect(tokens(page)).toHaveAttribute('readonly');
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeDisabled();
   await page.getByRole('button', { name: 'Reset recipients' }).click();
@@ -92,7 +109,8 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
 test('menu opens with arrows, skips disabled commands, supports typeahead and restores focus', async ({ page }) => {
   const root = page.locator('#component-menu');
   const trigger = root.getByText('More actions', { exact: true });
-  await trigger.focus(); await trigger.press('ArrowDown');
+  await trigger.focus();
+  await trigger.press('ArrowDown');
   await expect(root.getByRole('menuitem', { name: 'Archive', exact: true })).toBeFocused();
   await page.keyboard.press('ArrowDown');
   await expect(root.getByRole('menuitem', { name: 'Mark unread' })).toBeFocused();
@@ -112,22 +130,32 @@ test('menu opens with arrows, skips disabled commands, supports typeahead and re
 test('menu Tab leaves and outside dismissal closes; tooltip responds to focus and Escape', async ({ page }) => {
   const root = page.locator('#component-menu');
   const trigger = root.getByText('More actions', { exact: true });
-  await trigger.click(); await page.keyboard.press('Tab');
+  await trigger.click();
+  await page.keyboard.press('Tab');
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
-  await trigger.click(); await page.locator('#component-menu h2').click();
+  await trigger.click();
+  await page.locator('#component-menu h2').click();
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   const tooltip = page.getByRole('tooltip');
   const button = page.locator('#component-tooltip button');
-  await button.focus(); await expect(tooltip).toBeVisible();
-  await button.press('Escape'); await expect(tooltip).toBeHidden();
-  await button.press('Tab'); await button.focus(); await expect(tooltip).toBeVisible();
-  await button.press('Tab'); await button.hover(); await expect(tooltip).toBeVisible();
-  await page.keyboard.press('Escape'); await expect(tooltip).toBeHidden();
+  await button.focus();
+  await expect(tooltip).toBeVisible();
+  await button.press('Escape');
+  await expect(tooltip).toBeHidden();
+  await button.press('Tab');
+  await button.focus();
+  await expect(tooltip).toBeVisible();
+  await button.press('Tab');
+  await button.hover();
+  await expect(tooltip).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(tooltip).toBeHidden();
 });
 
 test('in-page tabs change panels with keyboard while section links stay links', async ({ page }) => {
   const profile = page.getByRole('tab', { name: 'Profile', exact: true });
-  await profile.focus(); await profile.press('ArrowRight');
+  await profile.focus();
+  await profile.press('ArrowRight');
   await expect(page.getByRole('tab', { name: 'History' })).toBeFocused();
   await expect(page.getByRole('tabpanel')).toContainText('Two conversations');
   await page.keyboard.press('Home');
@@ -147,17 +175,23 @@ test('rich editing submits HTML and supports formatting, external updates, reset
   await expect(signature(page)).toHaveText('Mia Patel');
   await page.getByRole('button', { name: 'Reset signature' }).click();
   await expect(signature(page)).toContainText('Alex Morgan');
-  await page.locator('#gallery-editor').evaluate(textarea => { textarea.readOnly = true; });
+  await page.locator('#gallery-editor').evaluate(textarea => {
+    textarea.readOnly = true;
+  });
   await expect(signature(page)).toHaveAttribute('contenteditable', 'false');
   await expect(page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
-  await page.locator('#gallery-editor').evaluate(textarea => { textarea.disabled = true; });
+  await page.locator('#gallery-editor').evaluate(textarea => {
+    textarea.disabled = true;
+  });
   await expect(signature(page)).toHaveAttribute('tabindex', '-1');
   expect(await value(page, '#editor-example', 'signature')).toBeNull();
 });
 
 test('upload composition reads real files and supports cancel, retry, error and removal', async ({ page }) => {
   const root = page.locator('#component-upload');
-  await root.locator('input[type=file]').setInputFiles({ name: 'brief.txt', mimeType: 'text/plain', buffer: Buffer.from('FruitUI brief') });
+  await root
+    .locator('input[type=file]')
+    .setInputFiles({ name: 'brief.txt', mimeType: 'text/plain', buffer: Buffer.from('FruitUI brief') });
   await expect(root.locator('.f-upload__row')).toContainText('brief.txt');
   await root.getByRole('button', { name: 'Cancel brief.txt' }).click();
   await expect(root.locator('.f-upload__row')).toHaveAttribute('data-state', 'cancelled');
@@ -173,20 +207,32 @@ test('upload composition reads real files and supports cancel, retry, error and 
 
 for (const scheme of ['light', 'dark']) {
   test(`new controls remain accessible and fit a small phone in ${scheme}`, async ({ page }) => {
-    await page.emulateMedia({ colorScheme: scheme }); await page.setViewportSize({ width: 320, height: 800 });
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.setViewportSize({ width: 320, height: 800 });
     await combo(page).click();
     await expect(page.locator('#component-combobox').getByRole('listbox')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-    const result = await new AxeBuilder({ page }).include('#component-combobox').include('#component-token-field').include('#component-editor').include('#component-tabs').include('#component-alert').include('#component-pagination').include('#component-prose').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+    const result = await new AxeBuilder({ page })
+      .include('#component-combobox')
+      .include('#component-token-field')
+      .include('#component-editor')
+      .include('#component-tabs')
+      .include('#component-alert')
+      .include('#component-pagination')
+      .include('#component-prose')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+      .analyze();
     expect(result.violations).toEqual([]);
   });
 }
 
 test('helper destruction restores the native controls and removes generated UI', async ({ page }) => {
-  await page.locator('#component-combobox .f-combobox, #component-token-field .f-token-field, #component-editor .f-editor').evaluateAll(async roots => {
-    const { default: Alpine } = await import('/node_modules/alpinejs/dist/module.esm.js');
-    for (const root of roots) Alpine.destroyTree(root);
-  });
+  await page
+    .locator('#component-combobox .f-combobox, #component-token-field .f-token-field, #component-editor .f-editor')
+    .evaluateAll(async roots => {
+      const { default: Alpine } = await import('/node_modules/alpinejs/dist/module.esm.js');
+      for (const root of roots) Alpine.destroyTree(root);
+    });
   await expect(page.locator('#gallery-assignee')).toBeVisible();
   await expect(page.locator('#component-combobox input[role=combobox]')).toHaveCount(0);
   await expect(page.locator('#gallery-recipients')).toBeVisible();
@@ -197,7 +243,8 @@ test('helper destruction restores the native controls and removes generated UI',
 
 test('forced colors preserve choice focus and reduced motion stops activity animation', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-  await combo(page).focus(); await combo(page).press('ArrowDown');
+  await combo(page).focus();
+  await combo(page).press('ArrowDown');
   const active = await combo(page).getAttribute('aria-activedescendant');
   await expect(page.locator(`[id="${active}"]`)).toBeVisible();
   await expect(combo(page)).toBeFocused();
@@ -211,7 +258,8 @@ test.describe('CSS-only fallbacks', () => {
   // A separate context checks the same serialized controls without enhancement.
   test('single choice and serialized token/HTML values remain native editable controls', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
-    const page = await context.newPage(); await page.goto('http://127.0.0.1:5173/components.html');
+    const page = await context.newPage();
+    await page.goto('http://127.0.0.1:5173/components.html');
     await expect(page.locator('#gallery-assignee')).toBeVisible();
     await page.locator('#gallery-assignee').selectOption('mia');
     expect(await value(page, '#combobox-example', 'assignee')).toBe('mia');

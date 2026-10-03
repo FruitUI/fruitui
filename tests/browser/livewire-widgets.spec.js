@@ -2,7 +2,21 @@ import { test, expect } from '@playwright/test';
 
 // Real installed Livewire/Alpine client; intercepted transport keeps this fixture
 // independent of a Laravel web server. PHP tests cover server value validation.
-const snapshot = data => ({ data, memo: { id: 'fruit-widgets', name: 'fruit-widgets', path: 'widgets', method: 'GET', children: {}, scripts: [], assets: [], errors: [], locale: 'en' }, checksum: 'fixture' });
+const snapshot = data => ({
+  data,
+  memo: {
+    id: 'fruit-widgets',
+    name: 'fruit-widgets',
+    path: 'widgets',
+    method: 'GET',
+    children: {},
+    scripts: [],
+    assets: [],
+    errors: [],
+    locale: 'en',
+  },
+  checksum: 'fixture',
+});
 const escape = value => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
 function markup(data, changed = false) {
   return `<main wire:id="fruit-widgets" wire:snapshot="${escape(JSON.stringify(snapshot(data)))}" wire:effects="{}">
@@ -16,7 +30,8 @@ function markup(data, changed = false) {
 }
 
 test('Livewire model events and server morphs preserve widgets while updating native controls', async ({ page }) => {
-  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
   const data = { assignee: 'alex', recipients: 'sophie@example.com', signature: '<p>Thanks, Alex</p>' };
   const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head><title>Livewire widgets</title><link rel="stylesheet" href="/src/fruitui.css"><script>window.livewireScriptConfig = { csrf: 'fixture', uri: '/livewire-widget-update' };</script></head><body>${markup(data)}<script type="module">
     import { Livewire, Alpine } from '/vendor/livewire/livewire/dist/livewire.esm.js';
@@ -28,15 +43,24 @@ test('Livewire model events and server morphs preserve widgets while updating na
   await page.route('**/livewire-widget-update', route => {
     submitted = route.request().postDataJSON().components[0].updates;
     const server = { assignee: 'alex', recipients: 'noah@example.com', signature: '<p>Server signature</p>' };
-    return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ components: [{ snapshot: JSON.stringify(snapshot(server)), effects: { html: markup(server, true) } }], assets: [] }) });
+    return route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        components: [{ snapshot: JSON.stringify(snapshot(server)), effects: { html: markup(server, true) } }],
+        assets: [],
+      }),
+    });
   });
   await page.goto('/livewire-widget-fixture');
   const choice = page.getByRole('combobox', { name: 'Assigned to', exact: true });
   await expect(choice).toHaveValue('Alex Morgan');
-  await choice.fill('Mia'); await choice.press('Enter');
+  await choice.fill('Mia');
+  await choice.press('Enter');
   const recipients = page.getByRole('textbox', { name: 'Recipients', exact: true });
-  await recipients.fill('mia@example.com'); await recipients.press('Enter');
-  const editor = page.getByRole('textbox', { name: 'Signature', exact: true }); await editor.fill('Client signature');
+  await recipients.fill('mia@example.com');
+  await recipients.press('Enter');
+  const editor = page.getByRole('textbox', { name: 'Signature', exact: true });
+  await editor.fill('Client signature');
   await page.getByRole('button', { name: 'Refresh from server' }).click();
   await expect(page.getByRole('combobox', { name: 'Conversation owner' })).toHaveValue('Alex Morgan');
   await expect(page.getByRole('button', { name: 'Remove noah@example.com' })).toBeDisabled();
@@ -45,7 +69,11 @@ test('Livewire model events and server morphs preserve widgets while updating na
   await expect(page.locator('#wire-choice')).toBeHidden();
   await expect(page.locator('#wire-tokens')).toBeHidden();
   await expect(page.locator('#wire-editor')).toBeHidden();
-  expect(submitted).toEqual({ assignee: 'mia', recipients: 'sophie@example.com\nmia@example.com', signature: '<p>Client signature</p>' });
+  expect(submitted).toEqual({
+    assignee: 'mia',
+    recipients: 'sophie@example.com\nmia@example.com',
+    signature: '<p>Client signature</p>',
+  });
   await page.getByText('Conversation owner', { exact: true }).click();
   await expect(page.getByRole('combobox', { name: 'Conversation owner' })).toBeFocused();
   expect(errors).toEqual([]);

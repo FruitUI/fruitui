@@ -1,5 +1,5 @@
 @props(['variant' => 'default', 'type' => 'button'])
-@php(\FruitUI\Support\ComponentContract::button($variant, $type, $attributes))
+@php(\FruitUI\Support\ComponentContract::validate('button', $attributes, ['variant' => $variant, 'type' => $type]))
 <button type="{{ $type }}" {{ $attributes->class([
     'f-button',
     'f-button--primary' => $variant === 'primary',

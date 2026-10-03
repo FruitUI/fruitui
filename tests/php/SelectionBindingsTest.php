@@ -43,7 +43,9 @@ class SelectionBindingsTest extends TestCase
 class SelectionBindingsFixture extends Component
 {
     public bool $sounds = false;
+
     public string $density = 'comfortable';
+
     public array $saved = [];
 
     public function save(): void

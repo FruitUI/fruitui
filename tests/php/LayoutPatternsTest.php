@@ -101,18 +101,24 @@ class LayoutPatternsTest extends TestCase
         $this->assertStringContainsString('fruitSplitter({', $splitter->getAttribute('x-data'));
         $this->assertStringContainsString('"min":160', $splitter->getAttribute('x-data'));
         $this->assertStringContainsString('"variable":"--f-navigation-width"', $splitter->getAttribute('x-data'));
-        foreach (['role', 'tabindex', 'aria-orientation', 'aria-controls', 'x-data'] as $attribute) $this->assertSame(1, preg_match_all('/\b'.preg_quote($attribute, '/').'="/', $html));
+        foreach (['role', 'tabindex', 'aria-orientation', 'aria-controls', 'x-data'] as $attribute) {
+            $this->assertSame(1, preg_match_all('/\b'.preg_quote($attribute, '/').'="/', $html));
+        }
         $this->assertFalse($splitter->hasAttribute('data-ready'), 'Without Alpine the CSS hides the inert divider.');
     }
 
     #[DataProvider('invalidLayouts')]
     public function test_new_adapters_reject_semantic_overrides_and_invalid_width_options(string $template): void
     {
-        try { Blade::render($template); }
-        catch (ViewException $exception) {
+        try {
+            Blade::render($template);
+        } catch (ViewException $exception) {
             $cause = $exception;
-            while ($cause->getPrevious()) $cause = $cause->getPrevious();
+            while ($cause->getPrevious()) {
+                $cause = $cause->getPrevious();
+            }
             $this->assertInstanceOf(InvalidArgumentException::class, $cause);
+
             return;
         }
         $this->fail('Invalid layout options rendered.');
@@ -121,6 +127,7 @@ class LayoutPatternsTest extends TestCase
     public static function invalidLayouts(): array
     {
         $splitter = '<x-fruit::splitter pane="nav" flexible="content" variable="--f-width" ';
+
         return array_map(fn ($template) => [$template], [
             '<x-fruit::workspace role="listbox" />', '<x-fruit::pane as="button" />',
             '<x-fruit::composer role="textbox" />', '<x-fruit::description-list role="listbox" />',
@@ -137,6 +144,7 @@ class LayoutPatternsTest extends TestCase
     {
         $document = new DOMDocument;
         @$document->loadHTML('<?xml encoding="utf-8" ?>'.$html);
+
         return $document;
     }
 }

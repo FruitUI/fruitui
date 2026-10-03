@@ -79,8 +79,14 @@ Use `f-prose` around sanitized message content to scope paragraph, list, quote, 
 
 `f-upload` rows combine File, Progress, text/links, and independent cancel/retry/remove buttons. The application owns FileList handling and transport. The Mail and Support examples simulate upload progress locally and provide downloadable browser blobs; they send no files to a server. `f-spinner` is decorative activity: keep a readable action name, set `aria-busy`, and use native disabled when repeated activation must be blocked. Reduced motion stops spinning.
 
-`f-avatar` also accepts an `img` with meaningful alt text, or empty alt when an adjacent name supplies identity. `f-avatar-group` overlaps independent avatars; `f-presence` must have adjacent readable status or equivalent accessible text. `f-notifications` arranges grouped native lists of destination links, badges, and independent actions; unread counts and read state stay in the application.
+`f-avatar` also accepts an `img` with meaningful alt text, or empty alt when an adjacent name supplies identity. `<x-fruit::avatar>` is decorative by default; `label` gives it an accessible identity and `src` renders a photo. `f-avatar-group` overlaps independent avatars; `f-presence` must have adjacent readable status or equivalent accessible text. `f-notifications` arranges grouped native lists of destination links, badges, and independent actions; unread counts and read state stay in the application.
 
-Tooltips use `f-tooltip` with `x-data="fruitTooltip"`, a focusable control referencing a noninteractive `f-tooltip__text[role="tooltip"]` through `aria-describedby`. CSS reveals help on hover/focus; the helper dismisses on Escape, including hover-only disclosure. Keep essential labels and instructions visible. Alerts do not automatically acquire a live role based on tone; add `role="status"` or `role="alert"` when new feedback should be announced.
+Tooltips use `f-tooltip` with `x-data="fruitTooltip"`, a focusable control referencing a noninteractive `f-tooltip__text[role="tooltip"]` through `aria-describedby`. CSS reveals help on hover/focus; the helper dismisses on Escape, including hover-only disclosure. Keep essential labels and instructions visible. In Blade, `text-id` names the tooltip text and the trigger references it, so the association is rendered by the server and survives Livewire morphs:
+
+```blade
+<x-fruit::tooltip text="Move this conversation to the archive." text-id="archive-help">
+    <x-fruit::button aria-describedby="archive-help" wire:click="archive">Archive</x-fruit::button>
+</x-fruit::tooltip>
+``` Alerts do not automatically acquire a live role based on tone; add `role="status"` or `role="alert"` when new feedback should be announced.
 
 All new CSS uses existing semantic appearance tokens, follows system light/dark changes, and supports explicit theme overrides. The examples keep routing, recipient rules, upload state, and record data outside the framework.

@@ -7,7 +7,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('support sits beside Mail and queue search and priority filters work', async ({ page }) => {
-  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Mail', exact: true })).toHaveAttribute('href', '/');
+  await expect(
+    page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Mail', exact: true }),
+  ).toHaveAttribute('href', '/');
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
   const search = page.getByRole('searchbox', { name: 'Search conversations' });
   await search.fill('sso');
@@ -31,7 +33,9 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await reply.fill('Hi Sophie, your projects will stay in place.');
   await page.getByRole('radio', { name: 'Note', exact: true }).check();
   await expect(page.getByRole('textbox', { name: 'Internal note', exact: true })).toHaveValue('');
-  await page.getByRole('textbox', { name: 'Internal note', exact: true }).fill('Private handoff: Mia will handle annual billing.');
+  await page
+    .getByRole('textbox', { name: 'Internal note', exact: true })
+    .fill('Private handoff: Mia will handle annual billing.');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await ticket(page, 1040).click();
@@ -41,14 +45,18 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('radio', { name: 'Note', exact: true }).check();
   await page.getByRole('button', { name: 'Add note', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText('Private handoff: Mia will handle annual billing.');
+  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText(
+    'Private handoff: Mia will handle annual billing.',
+  );
   await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText('Only your team');
   await expect(page.getByLabel('Conversation status')).toHaveValue('open');
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText('Hi Sophie, your projects will stay in place.');
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText(
+    'Hi Sophie, your projects will stay in place.',
+  );
   await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).not.toContainText('Private handoff');
   await expect(reply).toHaveValue('');
   await ticket(page, 1040).click();
@@ -148,7 +156,9 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await page.getByRole('combobox', { name: 'Assigned to', exact: true }).fill('Mia');
   await page.getByRole('combobox', { name: 'Assigned to', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Back to conversation', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue('Draft across all layouts.');
+  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+    'Draft across all layouts.',
+  );
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
   await expect(ticket(page, 1042)).toBeFocused();
   await page.getByRole('button', { name: 'Show support views', exact: true }).click();
@@ -162,18 +172,29 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.support-customer')).toBeVisible();
   await expect(page.locator('#support-assignee')).toHaveValue('mia');
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue('Draft across all layouts.');
+  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+    'Draft across all layouts.',
+  );
 });
 
 test('small screens and a narrow container fit without losing actions', async ({ page }) => {
   for (const width of [320, 390, 720, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px overflow`).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px overflow`).toBe(
+      true,
+    );
   }
-  await page.locator('.support-container').evaluate(element => { element.style.maxWidth = '320px'; element.style.marginInline = 'auto'; });
+  await page.locator('.support-container').evaluate(element => {
+    element.style.maxWidth = '320px';
+    element.style.marginInline = 'auto';
+  });
   await ticket(page, 1042).click();
   const box = await page.locator('#support').boundingBox();
-  for (const control of [page.getByLabel('Conversation status'), page.getByRole('button', { name: 'Show customer details' }), page.getByRole('button', { name: 'Send reply', exact: true })]) {
+  for (const control of [
+    page.getByLabel('Conversation status'),
+    page.getByRole('button', { name: 'Show customer details' }),
+    page.getByRole('button', { name: 'Send reply', exact: true }),
+  ]) {
     const rect = await control.boundingBox();
     expect(rect.x).toBeGreaterThanOrEqual(box.x);
     expect(rect.x + rect.width).toBeLessThanOrEqual(box.x + box.width);
@@ -192,7 +213,8 @@ for (const theme of ['light', 'dark']) {
     await page.setViewportSize({ width: 390, height: 844 });
     await assertAccessible(page);
     await page.getByRole('button', { name: 'Show support views', exact: true }).click();
-    for (const mailbox of ['support', 'billing', 'feedback']) await page.locator(`#support-queues [data-scope="${mailbox}"] > summary`).click();
+    for (const mailbox of ['support', 'billing', 'feedback'])
+      await page.locator(`#support-queues [data-scope="${mailbox}"] > summary`).click();
     await assertAccessible(page);
     await queue(page, 'Open').click();
     await ticket(page, 1042).click();
@@ -216,11 +238,19 @@ test('read-only Support retains automatic CSS dark mode without JavaScript', asy
     await page.emulateMedia({ colorScheme: 'dark' });
     await expect(page.locator('#support')).toHaveCSS('background-color', 'rgb(37, 37, 40)');
     await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark');
-  } finally { await context.close(); }
+  } finally {
+    await context.close();
+  }
 });
 
-function ticket(page, id) { return page.locator(`button.support-ticket[data-ticket-id="${id}"]`); }
-function queue(page, name) { return page.getByRole('navigation', { name: 'Support views', exact: true }).getByRole('button', { name: new RegExp(`^${name === 'Open' ? 'All Inboxes' : name}`) }); }
+function ticket(page, id) {
+  return page.locator(`button.support-ticket[data-ticket-id="${id}"]`);
+}
+function queue(page, name) {
+  return page
+    .getByRole('navigation', { name: 'Support views', exact: true })
+    .getByRole('button', { name: new RegExp(`^${name === 'Open' ? 'All Inboxes' : name}`) });
+}
 async function assertAccessible(page) {
   const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   expect(violations).toEqual([]);

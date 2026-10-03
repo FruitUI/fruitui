@@ -1,88 +1,400 @@
 @layer fruit.components {
   /* Native controls retain their value, focus, validation and form behavior. */
-  .f-input:is(input, textarea)[readonly] { background: var(--f-input-background, var(--f-surface-secondary)); color: var(--f-input-color, var(--f-secondary)); box-shadow: none; }
-  .f-input:is(:autofill, :-webkit-autofill) { --f-autofill-shadow: inset 0 0 0 1000px var(--f-input-background, var(--f-control)); box-shadow: var(--f-autofill-shadow); -webkit-text-fill-color: var(--f-input-color, var(--f-text)); caret-color: var(--f-input-color, var(--f-text)); }
-  .f-input[type='search']::-webkit-search-cancel-button { appearance: none; width: 16px; height: 16px; margin-inline-start: 6px; cursor: pointer; background: var(--f-secondary); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='black'/%3E%3Cpath d='m5 5 6 6m0-6-6 6' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E") center / contain; }
-  .f-input[type='search']:disabled::-webkit-search-cancel-button { cursor: not-allowed; }
-  .f-input:is([type='date'], [type='datetime-local'], [type='month'], [type='week'], [type='time'])::-webkit-calendar-picker-indicator { cursor: pointer; padding: 2px; border-radius: 3px; }
-  .f-input:is([type='date'], [type='datetime-local'], [type='month'], [type='week'], [type='time']):disabled::-webkit-calendar-picker-indicator { cursor: not-allowed; }
-  .f-input[type='number']::-webkit-inner-spin-button { opacity: 1; }
+  .f-input:is(input, textarea)[readonly] {
+    background: var(--f-input-background, var(--f-surface-secondary));
+    color: var(--f-input-color, var(--f-secondary));
+    box-shadow: none;
+  }
+  .f-input:is(:autofill, :-webkit-autofill) {
+    --f-autofill-shadow: inset 0 0 0 1000px var(--f-input-background, var(--f-control));
+    box-shadow: var(--f-autofill-shadow);
+    -webkit-text-fill-color: var(--f-input-color, var(--f-text));
+    caret-color: var(--f-input-color, var(--f-text));
+  }
+  .f-input[type='search']::-webkit-search-cancel-button {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-inline-start: 6px;
+    cursor: pointer;
+    background: var(--f-secondary);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='black'/%3E%3Cpath d='m5 5 6 6m0-6-6 6' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E")
+      center / contain;
+  }
+  .f-input[type='search']:disabled::-webkit-search-cancel-button {
+    cursor: not-allowed;
+  }
+  .f-input:is(
+      [type='date'],
+      [type='datetime-local'],
+      [type='month'],
+      [type='week'],
+      [type='time']
+    )::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 3px;
+  }
+  .f-input:is(
+      [type='date'],
+      [type='datetime-local'],
+      [type='month'],
+      [type='week'],
+      [type='time']
+    ):disabled::-webkit-calendar-picker-indicator {
+    cursor: not-allowed;
+  }
+  .f-input[type='number']::-webkit-inner-spin-button {
+    opacity: 1;
+  }
 
-  :where(label.f-check) { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
-  :is(.f-check > input, input.f-check):is([type='checkbox'], [type='radio']) { appearance: none; display: inline-grid; place-content: center; vertical-align: middle; flex-shrink: 0; width: var(--f-check-size, 16px); height: var(--f-check-size, 16px); margin: 0; padding: 0; border: 1px solid var(--f-tertiary); border-radius: 4px; background: var(--f-control); color: var(--f-on-accent); box-shadow: var(--f-control-shadow); cursor: pointer; }
-  :is(.f-check > input, input.f-check)[type='radio'] { border-radius: 50%; }
-  :is(.f-check > input, input.f-check):enabled:hover { border-color: var(--f-accent); }
-  :is(.f-check > input, input.f-check):is(:checked, :indeterminate) { border-color: var(--f-accent-fill); background: var(--f-accent-fill); }
-  :is(.f-check > input, input.f-check)::before { content: ''; visibility: hidden; }
-  :is(.f-check > input, input.f-check)[type='checkbox']:checked::before { visibility: visible; width: calc(var(--f-check-size, 16px) * .3); height: calc(var(--f-check-size, 16px) * .55); border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
-  :is(.f-check > input, input.f-check)[type='checkbox']:indeterminate::before { visibility: visible; width: calc(var(--f-check-size, 16px) * .55); height: 2px; background: currentColor; border: 0; transform: none; }
-  :is(.f-check > input, input.f-check)[type='radio']:checked::before { visibility: visible; width: calc(var(--f-check-size, 16px) * .4); height: calc(var(--f-check-size, 16px) * .4); border-radius: 50%; background: currentColor; }
-  :is(.f-check > input, input.f-check)[aria-invalid='true'] { border-color: var(--f-danger); }
-  :is(.f-check > input, input.f-check):disabled { cursor: not-allowed; }
+  :where(label.f-check) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  :is(.f-check > input, input.f-check):is([type='checkbox'], [type='radio']) {
+    appearance: none;
+    display: inline-grid;
+    place-content: center;
+    vertical-align: middle;
+    flex-shrink: 0;
+    width: var(--f-check-size, 16px);
+    height: var(--f-check-size, 16px);
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--f-tertiary);
+    border-radius: 4px;
+    background: var(--f-control);
+    color: var(--f-on-accent);
+    box-shadow: var(--f-control-shadow);
+    cursor: pointer;
+  }
+  :is(.f-check > input, input.f-check)[type='radio'] {
+    border-radius: 50%;
+  }
+  :is(.f-check > input, input.f-check):enabled:hover {
+    border-color: var(--f-accent);
+  }
+  :is(.f-check > input, input.f-check):is(:checked, :indeterminate) {
+    border-color: var(--f-accent-fill);
+    background: var(--f-accent-fill);
+  }
+  :is(.f-check > input, input.f-check)::before {
+    content: '';
+    visibility: hidden;
+  }
+  :is(.f-check > input, input.f-check)[type='checkbox']:checked::before {
+    visibility: visible;
+    width: calc(var(--f-check-size, 16px) * 0.3);
+    height: calc(var(--f-check-size, 16px) * 0.55);
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-1px) rotate(45deg);
+  }
+  :is(.f-check > input, input.f-check)[type='checkbox']:indeterminate::before {
+    visibility: visible;
+    width: calc(var(--f-check-size, 16px) * 0.55);
+    height: 2px;
+    background: currentColor;
+    border: 0;
+    transform: none;
+  }
+  :is(.f-check > input, input.f-check)[type='radio']:checked::before {
+    visibility: visible;
+    width: calc(var(--f-check-size, 16px) * 0.4);
+    height: calc(var(--f-check-size, 16px) * 0.4);
+    border-radius: 50%;
+    background: currentColor;
+  }
+  :is(.f-check > input, input.f-check)[aria-invalid='true'] {
+    border-color: var(--f-danger);
+  }
+  :is(.f-check > input, input.f-check):disabled {
+    cursor: not-allowed;
+  }
 
-  .f-fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
-  .f-fieldset > legend:not(.f-sr-only) { padding: 0; margin-block-end: var(--f-space-2); font-size: 13px; font-weight: 600; }
+  .f-fieldset {
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .f-fieldset > legend:not(.f-sr-only) {
+    padding: 0;
+    margin-block-end: var(--f-space-2);
+    font-size: var(--f-text-base);
+    font-weight: 600;
+  }
 
-  .f-file { padding: 4px; overflow: hidden; text-overflow: ellipsis; }
-  .f-file::file-selector-button { min-height: 26px; margin-inline-end: 10px; padding: 3px 10px; border: 1px solid var(--f-border); border-radius: 4px; background: var(--f-surface-secondary); color: var(--f-text); font: inherit; font-weight: 500; cursor: pointer; }
-  .f-file:enabled:hover::file-selector-button { background: var(--f-hover); }
-  .f-file:disabled::file-selector-button { cursor: not-allowed; }
+  .f-file {
+    padding: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .f-file::file-selector-button {
+    min-height: 26px;
+    margin-inline-end: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--f-border);
+    border-radius: 4px;
+    background: var(--f-surface-secondary);
+    color: var(--f-text);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .f-file:enabled:hover::file-selector-button {
+    background: var(--f-hover);
+  }
+  .f-file:disabled::file-selector-button {
+    cursor: not-allowed;
+  }
 
-  .f-color { width: var(--f-color-width, 48px); height: 34px; padding: 4px; cursor: pointer; }
-  .f-color:disabled, .f-range:disabled { cursor: not-allowed; }
-  .f-color::-webkit-color-swatch-wrapper { padding: 0; }
-  .f-color::-webkit-color-swatch { border: 1px solid var(--f-border); border-radius: 3px; }
-  .f-color::-moz-color-swatch { border: 1px solid var(--f-border); border-radius: 3px; }
+  .f-color {
+    width: var(--f-color-width, 48px);
+    height: 34px;
+    padding: 4px;
+    cursor: pointer;
+  }
+  .f-color:disabled,
+  .f-range:disabled {
+    cursor: not-allowed;
+  }
+  .f-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .f-color::-webkit-color-swatch {
+    border: 1px solid var(--f-border);
+    border-radius: 3px;
+  }
+  .f-color::-moz-color-swatch {
+    border: 1px solid var(--f-border);
+    border-radius: 3px;
+  }
 
-  .f-range { appearance: none; display: block; width: 100%; min-width: 0; height: 34px; margin: 0; padding: 0; background: transparent; accent-color: var(--f-accent-fill); cursor: pointer; }
-  .f-range::-webkit-slider-runnable-track { height: 6px; border: 1px solid var(--f-border); border-radius: 6px; background: var(--f-surface-secondary); }
-  .f-range::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; margin-top: -8px; border: 1px solid var(--f-tertiary); border-radius: 50%; background: var(--f-switch-thumb); box-shadow: var(--f-switch-shadow); }
-  .f-range::-moz-range-track { height: 4px; border: 1px solid var(--f-border); border-radius: 6px; background: var(--f-surface-secondary); }
-  .f-range::-moz-range-thumb { width: 18px; height: 18px; border: 1px solid var(--f-tertiary); border-radius: 50%; background: var(--f-switch-thumb); box-shadow: var(--f-switch-shadow); }
-  .f-range::-moz-range-progress { height: 6px; border-radius: 6px; background: var(--f-accent-fill); }
-  .f-range[aria-invalid='true']::-webkit-slider-runnable-track { border-color: var(--f-danger); }
-  .f-range[aria-invalid='true']::-moz-range-track { border-color: var(--f-danger); }
+  .f-range {
+    appearance: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 34px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    accent-color: var(--f-accent-fill);
+    cursor: pointer;
+  }
+  .f-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border: 1px solid var(--f-border);
+    border-radius: 6px;
+    background: var(--f-surface-secondary);
+  }
+  .f-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -8px;
+    border: 1px solid var(--f-tertiary);
+    border-radius: 50%;
+    background: var(--f-switch-thumb);
+    box-shadow: var(--f-switch-shadow);
+  }
+  .f-range::-moz-range-track {
+    height: 4px;
+    border: 1px solid var(--f-border);
+    border-radius: 6px;
+    background: var(--f-surface-secondary);
+  }
+  .f-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--f-tertiary);
+    border-radius: 50%;
+    background: var(--f-switch-thumb);
+    box-shadow: var(--f-switch-shadow);
+  }
+  .f-range::-moz-range-progress {
+    height: 6px;
+    border-radius: 6px;
+    background: var(--f-accent-fill);
+  }
+  .f-range[aria-invalid='true']::-webkit-slider-runnable-track {
+    border-color: var(--f-danger);
+  }
+  .f-range[aria-invalid='true']::-moz-range-track {
+    border-color: var(--f-danger);
+  }
 
-  .f-progress, .f-meter { appearance: none; display: block; width: 100%; min-width: 0; height: var(--f-indicator-height, 8px); overflow: hidden; border: 0; border-radius: 8px; background: var(--f-surface-secondary); }
-  .f-progress::-webkit-progress-bar { border-radius: 8px; background: var(--f-surface-secondary); }
-  .f-progress::-webkit-progress-value { border-radius: 8px; background: var(--f-accent-fill); }
-  .f-progress::-moz-progress-bar { border-radius: 8px; background: var(--f-accent-fill); }
-  .f-progress:indeterminate { --f-progress-pulse: linear-gradient(90deg, transparent 0%, var(--f-accent-fill) 40%, var(--f-accent-fill) 60%, transparent 100%); background-image: var(--f-progress-pulse); background-size: 40% 100%; background-repeat: no-repeat; animation: f-progress-pulse 1.6s ease-in-out infinite alternate; }
-  .f-progress:indeterminate::-webkit-progress-bar { background: transparent; }
-  .f-progress:indeterminate::-moz-progress-bar { background: transparent; }
-  @keyframes f-progress-pulse { from { background-position: 0% 0; } to { background-position: 100% 0; } }
-  .f-meter::-webkit-meter-bar { height: 100%; border: 0; border-radius: 8px; background: var(--f-surface-secondary); box-shadow: none; }
-  .f-meter::-webkit-meter-optimum-value { border-radius: 8px; background: var(--f-success); }
-  .f-meter::-webkit-meter-suboptimum-value { border-radius: 8px; background: var(--f-warning); }
-  .f-meter::-webkit-meter-even-less-good-value { border-radius: 8px; background: var(--f-danger); }
-  .f-meter::-moz-meter-bar { border-radius: 8px; background: var(--f-success); }
-  .f-meter:-moz-meter-sub-optimum::-moz-meter-bar { background: var(--f-warning); }
-  .f-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar { background: var(--f-danger); }
+  .f-progress,
+  .f-meter {
+    appearance: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: var(--f-indicator-height, 8px);
+    overflow: hidden;
+    border: 0;
+    border-radius: 8px;
+    background: var(--f-surface-secondary);
+  }
+  .f-progress::-webkit-progress-bar {
+    border-radius: 8px;
+    background: var(--f-surface-secondary);
+  }
+  .f-progress::-webkit-progress-value {
+    border-radius: 8px;
+    background: var(--f-accent-fill);
+  }
+  .f-progress::-moz-progress-bar {
+    border-radius: 8px;
+    background: var(--f-accent-fill);
+  }
+  .f-progress:indeterminate {
+    --f-progress-pulse: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--f-accent-fill) 40%,
+      var(--f-accent-fill) 60%,
+      transparent 100%
+    );
+    background-image: var(--f-progress-pulse);
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+    animation: f-progress-pulse 1.6s ease-in-out infinite alternate;
+  }
+  .f-progress:indeterminate::-webkit-progress-bar {
+    background: transparent;
+  }
+  .f-progress:indeterminate::-moz-progress-bar {
+    background: transparent;
+  }
+  @keyframes f-progress-pulse {
+    from {
+      background-position: 0% 0;
+    }
+    to {
+      background-position: 100% 0;
+    }
+  }
+  .f-meter::-webkit-meter-bar {
+    height: 100%;
+    border: 0;
+    border-radius: 8px;
+    background: var(--f-surface-secondary);
+    box-shadow: none;
+  }
+  .f-meter::-webkit-meter-optimum-value {
+    border-radius: 8px;
+    background: var(--f-success);
+  }
+  .f-meter::-webkit-meter-suboptimum-value {
+    border-radius: 8px;
+    background: var(--f-warning);
+  }
+  .f-meter::-webkit-meter-even-less-good-value {
+    border-radius: 8px;
+    background: var(--f-danger);
+  }
+  .f-meter::-moz-meter-bar {
+    border-radius: 8px;
+    background: var(--f-success);
+  }
+  .f-meter:-moz-meter-sub-optimum::-moz-meter-bar {
+    background: var(--f-warning);
+  }
+  .f-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+    background: var(--f-danger);
+  }
 
-  @media (prefers-reduced-motion: reduce) { .f-progress:indeterminate { animation: none; background-position: 50% 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .f-progress:indeterminate {
+      animation: none;
+      background-position: 50% 0;
+    }
+  }
   @media (forced-colors: active) {
-    .f-input:is(:autofill, :-webkit-autofill) { box-shadow: none; -webkit-text-fill-color: CanvasText; }
-    .f-input[type='search']::-webkit-search-cancel-button { background: ButtonText; }
-    :is(.f-check > input, input.f-check):is([type='checkbox'], [type='radio']) { appearance: auto; box-shadow: none; }
-    :is(.f-check > input, input.f-check)::before { display: none; }
-    .f-range::-webkit-slider-runnable-track { background: Canvas; border-color: CanvasText; }
-    .f-range::-webkit-slider-thumb { background: ButtonText; border-color: ButtonText; box-shadow: none; }
-    .f-range::-moz-range-track { background: Canvas; border-color: CanvasText; }
-    .f-range::-moz-range-thumb { background: ButtonText; border-color: ButtonText; box-shadow: none; }
-    .f-range::-moz-range-progress { background: Highlight; }
-    .f-progress, .f-meter { forced-color-adjust: none; background: Canvas; outline: 1px solid CanvasText; }
-    .f-progress:indeterminate { --f-progress-pulse: linear-gradient(90deg, transparent 0%, Highlight 40%, Highlight 60%, transparent 100%); }
-    .f-progress::-webkit-progress-bar { background: Canvas; }
-    .f-progress:indeterminate::-webkit-progress-bar { background: transparent; }
-    .f-progress::-webkit-progress-value { background: Highlight; }
-    .f-progress::-moz-progress-bar { background: Highlight; }
-    .f-progress:indeterminate::-moz-progress-bar { background: transparent; }
-    .f-meter::-webkit-meter-bar { background: Canvas; }
-    .f-meter::-webkit-meter-optimum-value { background: Highlight; }
-    .f-meter::-webkit-meter-suboptimum-value { background: Highlight; }
-    .f-meter::-webkit-meter-even-less-good-value { background: Highlight; }
-    .f-meter::-moz-meter-bar { background: Highlight; }
-    .f-meter:-moz-meter-sub-optimum::-moz-meter-bar { background: Highlight; }
-    .f-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar { background: Highlight; }
+    .f-input:is(:autofill, :-webkit-autofill) {
+      box-shadow: none;
+      -webkit-text-fill-color: CanvasText;
+    }
+    .f-input[type='search']::-webkit-search-cancel-button {
+      background: ButtonText;
+    }
+    :is(.f-check > input, input.f-check):is([type='checkbox'], [type='radio']) {
+      appearance: auto;
+      box-shadow: none;
+    }
+    :is(.f-check > input, input.f-check)::before {
+      display: none;
+    }
+    .f-range::-webkit-slider-runnable-track {
+      background: Canvas;
+      border-color: CanvasText;
+    }
+    .f-range::-webkit-slider-thumb {
+      background: ButtonText;
+      border-color: ButtonText;
+      box-shadow: none;
+    }
+    .f-range::-moz-range-track {
+      background: Canvas;
+      border-color: CanvasText;
+    }
+    .f-range::-moz-range-thumb {
+      background: ButtonText;
+      border-color: ButtonText;
+      box-shadow: none;
+    }
+    .f-range::-moz-range-progress {
+      background: Highlight;
+    }
+    .f-progress,
+    .f-meter {
+      forced-color-adjust: none;
+      background: Canvas;
+      outline: 1px solid CanvasText;
+    }
+    .f-progress:indeterminate {
+      --f-progress-pulse: linear-gradient(90deg, transparent 0%, Highlight 40%, Highlight 60%, transparent 100%);
+    }
+    .f-progress::-webkit-progress-bar {
+      background: Canvas;
+    }
+    .f-progress:indeterminate::-webkit-progress-bar {
+      background: transparent;
+    }
+    .f-progress::-webkit-progress-value {
+      background: Highlight;
+    }
+    .f-progress::-moz-progress-bar {
+      background: Highlight;
+    }
+    .f-progress:indeterminate::-moz-progress-bar {
+      background: transparent;
+    }
+    .f-meter::-webkit-meter-bar {
+      background: Canvas;
+    }
+    .f-meter::-webkit-meter-optimum-value {
+      background: Highlight;
+    }
+    .f-meter::-webkit-meter-suboptimum-value {
+      background: Highlight;
+    }
+    .f-meter::-webkit-meter-even-less-good-value {
+      background: Highlight;
+    }
+    .f-meter::-moz-meter-bar {
+      background: Highlight;
+    }
+    .f-meter:-moz-meter-sub-optimum::-moz-meter-bar {
+      background: Highlight;
+    }
+    .f-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+      background: Highlight;
+    }
   }
 }

@@ -147,16 +147,16 @@ class ComponentContractsTest extends TestCase
             }
         }
 
-        $policy = file_get_contents($root.'/docs/component-policy.md');
-        preg_match_all('/^\| `([a-z][a-z0-9.-]*)` \|(.+)\|$/m', $policy, $rows, PREG_SET_ORDER);
+        $catalog = json_decode(file_get_contents($root.'/docs/component-catalog.json'), true, flags: JSON_THROW_ON_ERROR);
         $documented = [];
-        foreach ($rows as $row) {
-            $cells = array_map('trim', explode('|', trim($row[2])));
-            $this->assertCount(5, $cells, 'Document purpose, element/role, state, keyboard, and options/slots for '.$row[1]);
-            foreach ($cells as $cell) {
-                $this->assertNotSame('', $cell, 'Incomplete contract for '.$row[1]);
+        foreach ($catalog as $entry) {
+            foreach ($entry['contracts'] ?? [] as $name => $contract) {
+                foreach (['purpose', 'element', 'state', 'keyboard', 'options'] as $field) {
+                    $this->assertNotSame('', trim($contract[$field] ?? ''), "Document {$field} for {$name}");
+                }
+                $this->assertContains($name, $entry['blade'], "{$name}'s contract belongs to the entry that lists its adapter");
+                $documented[] = $name;
             }
-            $documented[] = $row[1];
         }
         sort($components);
         sort($documented);

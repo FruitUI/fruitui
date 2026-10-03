@@ -4,11 +4,16 @@ namespace FruitUI\Tests;
 
 use FruitUI\FruitUIServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\View\Component;
+use Illuminate\View\ViewException;
 use Orchestra\Testbench\TestCase;
 
 class AdoptionContractsTest extends TestCase
 {
-    protected function getPackageProviders($app): array { return [FruitUIServiceProvider::class]; }
+    protected function getPackageProviders($app): array
+    {
+        return [FruitUIServiceProvider::class];
+    }
 
     public function test_field_associates_label_description_error_and_preserves_native_models(): void
     {
@@ -48,19 +53,23 @@ class AdoptionContractsTest extends TestCase
 
     public function test_wrapper_cannot_steal_native_bindings(): void
     {
-        $this->expectException(\Illuminate\View\ViewException::class);
+        $this->expectException(ViewException::class);
         Blade::render('<x-fruit::combobox :wrapper="[\'wire:model\' => \'owner\']"><option>Alex</option></x-fruit::combobox>');
     }
 
     public function test_field_rejects_mismatched_control_identity(): void
     {
-        $this->expectException(\Illuminate\View\ViewException::class);
+        $this->expectException(ViewException::class);
         Blade::render('<x-fruit::field control-id="email" label="Email"><x-fruit::input id="other" /></x-fruit::field>');
     }
 }
 
-class DescriptionScope extends \Illuminate\View\Component
+class DescriptionScope extends Component
 {
     public function __construct(public string $description) {}
-    public function render() { return '<div>{{ $slot }}</div>'; }
+
+    public function render()
+    {
+        return '<div>{{ $slot }}</div>';
+    }
 }

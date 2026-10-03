@@ -41,6 +41,20 @@
     --f-space-6: 24px;
     --f-space-8: 32px;
     --f-motion: 140ms;
+    /* Text follows the reader's browser text size through rem. A host that fixes a
+       pixel size on html (Bootstrap 3 uses 10px) sets --f-text-root: 16px on its scope. */
+    --f-text-root: 1rem;
+    --f-text-2xs: calc(var(--f-text-root) * 0.625);
+    --f-text-xs: calc(var(--f-text-root) * 0.6875);
+    --f-text-sm: calc(var(--f-text-root) * 0.75);
+    --f-text-base: calc(var(--f-text-root) * 0.8125);
+    --f-text-md: calc(var(--f-text-root) * 0.875);
+    --f-text-lg: calc(var(--f-text-root) * 0.9375);
+    --f-text-xl: var(--f-text-root);
+    --f-text-2xl: calc(var(--f-text-root) * 1.0625);
+    --f-text-3xl: calc(var(--f-text-root) * 1.3125);
+    --f-text-4xl: calc(var(--f-text-root) * 1.5);
+    --f-text-5xl: calc(var(--f-text-root) * 2);
   }
 
   :where(.fruit-ui[data-theme='dark']) {

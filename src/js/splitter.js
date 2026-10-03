@@ -2,9 +2,20 @@ import { fruitMessage } from './messages.js';
 
 /** A bounded, vertical window splitter. No application navigation or persistence. */
 export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 280, flexible, edge = 'end' }) {
-  if (!pane || !flexible || pane === flexible || !/^--f-[\w-]+$/.test(variable) || !['start', 'end'].includes(edge)
-    || ![min, max, reserve].every(Number.isFinite) || min <= 0 || max < min || reserve <= 0) {
-    throw new Error('FruitUI splitter requires pane/flexible IDs, a --f- variable, positive bounds and start/end edge.');
+  if (
+    !pane ||
+    !flexible ||
+    pane === flexible ||
+    !/^--f-[\w-]+$/.test(variable) ||
+    !['start', 'end'].includes(edge) ||
+    ![min, max, reserve].every(Number.isFinite) ||
+    min <= 0 ||
+    max < min ||
+    reserve <= 0
+  ) {
+    throw new Error(
+      'FruitUI splitter requires pane/flexible IDs, a --f- variable, positive bounds and start/end edge.',
+    );
   }
   let handle, frame, primary, remaining, observer, mutation, animation, drag, initial, handlers;
   const visible = element => !!element?.getClientRects().length && getComputedStyle(element).display !== 'none';
@@ -19,7 +30,17 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       handle.setAttribute('data-ready', '');
       handle.setAttribute('data-edge', edge);
       handle.setAttribute('aria-controls', pane);
-      handlers = Object.fromEntries(Object.entries({ pointerdown: this.start, pointermove: this.move, pointerup: this.end, pointercancel: this.cancel, lostpointercapture: this.end, keydown: this.key, dblclick: this.reset }).map(([event, handler]) => [event, handler.bind(this)]));
+      handlers = Object.fromEntries(
+        Object.entries({
+          pointerdown: this.start,
+          pointermove: this.move,
+          pointerup: this.end,
+          pointercancel: this.cancel,
+          lostpointercapture: this.end,
+          keydown: this.key,
+          dblclick: this.reset,
+        }).map(([event, handler]) => [event, handler.bind(this)]),
+      );
       for (const [event, handler] of Object.entries(handlers)) handle.addEventListener(event, handler);
       observer = new ResizeObserver(() => this.schedule());
       observer.observe(frame);
@@ -51,7 +72,12 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       handle.setAttribute('aria-valuemin', Math.round(min));
       handle.setAttribute('aria-valuemax', Math.floor(upper));
       handle.setAttribute('aria-valuenow', Math.round(primary.getBoundingClientRect().width));
-      handle.setAttribute('aria-valuetext', fruitMessage(handle, 'value-text', '{count} pixels', { count: Math.round(primary.getBoundingClientRect().width) }));
+      handle.setAttribute(
+        'aria-valuetext',
+        fruitMessage(handle, 'value-text', '{count} pixels', {
+          count: Math.round(primary.getBoundingClientRect().width),
+        }),
+      );
     },
     set(width) {
       const { upper } = this.bounds();
@@ -65,7 +91,12 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       if (event.button !== 0 || !visible(primary) || !visible(remaining)) return;
       event.preventDefault();
       handle.focus({ preventScroll: true });
-      drag = { id: event.pointerId, x: event.clientX, width: primary.getBoundingClientRect().width, previous: frame.style.getPropertyValue(variable) };
+      drag = {
+        id: event.pointerId,
+        x: event.clientX,
+        width: primary.getBoundingClientRect().width,
+        previous: frame.style.getPropertyValue(variable),
+      };
       handle.setPointerCapture(event.pointerId);
       handle.setAttribute('data-resizing', '');
       frame.setAttribute('data-resizing', '');
@@ -91,17 +122,29 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       this.schedule();
     },
     key(event) {
-      if (event.key === 'Escape' && drag) { event.preventDefault(); event.stopPropagation(); this.cancel(); return; }
+      if (event.key === 'Escape' && drag) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.cancel();
+        return;
+      }
       const { width, upper } = this.bounds();
       const direction = (getComputedStyle(frame).direction === 'rtl' ? -1 : 1) * (edge === 'start' ? -1 : 1);
       const step = event.shiftKey ? 32 : 8;
-      const values = { ArrowLeft: width - step * direction, ArrowRight: width + step * direction, Home: min, End: upper };
+      const values = {
+        ArrowLeft: width - step * direction,
+        ArrowRight: width + step * direction,
+        Home: min,
+        End: upper,
+      };
       if (!(event.key in values)) return;
       event.preventDefault();
       event.stopPropagation();
       this.set(values[event.key]);
     },
-    reset() { this.set(initial); },
+    reset() {
+      this.set(initial);
+    },
     destroy() {
       this.end();
       observer?.disconnect();

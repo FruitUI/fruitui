@@ -5,3 +5,4 @@
 /vendor export-ignore
 /test-results export-ignore
 /playwright-report export-ignore
+/gallery export-ignore

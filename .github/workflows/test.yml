@@ -31,7 +31,9 @@ jobs:
           cache: npm
       - run: composer update --no-interaction --prefer-dist
       - run: composer test
+      - run: composer lint
       - run: npm ci
+      - run: npm run lint
       - run: npx playwright install --with-deps ${{ matrix.browsers }}
       - run: npm run build
       - run: npm run test:package

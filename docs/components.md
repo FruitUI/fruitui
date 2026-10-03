@@ -1,6 +1,6 @@
 # Public components and patterns
 
-The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#current-blade-contracts) defines the complete native contracts for the thirty Blade wrappers.
+The [component gallery](../components.html) is the visual catalog of the CSS shipped by `fruitui/css`. Every entry has a live specimen and HTML/Blade usage. [component-catalog.json](component-catalog.json) maps public CSS families to gallery anchors, Blade adapters, and actual consumers. The [component policy](component-policy.md#current-blade-contracts) defines the native contracts for every Blade adapter. Gallery specimens are rendered from the Blade sources in `gallery/specimens/` (`composer gallery`), so the live specimen and the Blade usage shown beside it are the same code.
 
 ## CSS compositions and utilities
 
@@ -11,16 +11,16 @@ These use native markup and existing controls. A CSS composition does not requir
 | Field | Arrange an input, its label, and supporting text with `f-field`, `f-label`, `f-help`, and `f-error`. | The input owns validation; use `aria-invalid` and `aria-describedby`. Native editing and focus. | Compose Input, Select, or Textarea with labels and messages. |
 | Search | Arrange a decorative SVG and `input type=search` in `f-search`. | Native text value/editing; application owns results. | Optional `f-icon`, accessible label, existing Input attributes. |
 | Segmented choices | Present related native radios in `f-segmented` labels. | Native checked value; Tab enters, arrows select, Space checks. | Same radio name; each input is followed by its label span. Use fieldset/legend. No tablist or behavior modes. |
-| Avatar | Present initials in a native span with `f-avatar`. | No interaction or keyboard behavior. | Decorative when a name is adjacent; otherwise supply an accessible identity. Scoped `--f-avatar-size`, `--f-avatar-radius`, `--f-avatar-border`, `--f-avatar-background`, `--f-avatar-color`, `--f-avatar-font-size`, and `--f-avatar-font-weight` customize presentation. |
-| Sidebar | Arrange navigation links/buttons and optional native disclosure groups with `f-sidebar`. | `details` owns open; links/buttons own actions and `aria-current=page`. Native Tab, Enter/Space. | Heading, item, nested item, identity text, count badge, decorative chevron. No navigation data model. |
+| Avatar | Present initials in a native span with `f-avatar`; Blade `x-fruit::avatar`. | No interaction or keyboard behavior. | Decorative when a name is adjacent; otherwise supply an accessible identity (`label` in Blade). Scoped `--f-avatar-size`, `--f-avatar-radius`, `--f-avatar-border`, `--f-avatar-background`, `--f-avatar-color`, `--f-avatar-font-size`, and `--f-avatar-font-weight` customize presentation. |
+| Sidebar | Arrange navigation links/buttons and optional native disclosure groups with `f-sidebar`; Blade `x-fruit::sidebar`, `sidebar-group` and `sidebar-item` (links). | `details` owns open; links/buttons own actions and `aria-current=page`. Native Tab, Enter/Space. | Heading, item, nested item (automatic inside a group), identity text, count badge, decorative chevron. No navigation data model. |
 | Toolbar | Arrange actions in a div/header with `f-toolbar`. | No added state or keyboard behavior. | Group independent controls with `f-toolbar__group`; flexible space with `f-toolbar__spacer`. |
-| Badge | Present a count or short label in `span.f-badge`. | No value, interaction, or added keyboard behavior. | Text content; scoped semantic tokens for appearance. |
-| Toast | Present a short status update in `div.f-toast`. | Application owns text and lifetime; use `role=status` for an appropriate announcement. No focus transfer. | Compose text or independent actions. No automatic timers or dismissal API. |
+| Badge | Present a count or short label in `span.f-badge`; Blade `x-fruit::badge`. | No value, interaction, or added keyboard behavior. | Text content; scoped semantic tokens for appearance. |
+| Toast | Present a short status update in `div.f-toast`. | Application owns text and lifetime; use `role=status` for an appropriate announcement. No focus transfer. | Compose text or independent actions. `x-fruit::toaster` adds a managed outlet for server-sent messages; see [server feedback](#server-feedback-dialogs-and-toasts). |
 | Row / Stack | Arrange independent children with `f-row` or `f-stack`. | No owned state or keyboard behavior. | Content and controls; shared spacing tokens. |
 | Muted text | Apply secondary text color with `f-muted`. | Native content semantics; no state or keyboard behavior. | Shared secondary token, automatically light/dark. |
 | Screen-reader text | Preserve accessible content while visually hiding it with `f-sr-only`. | Native label/text semantics. | Use on labels and descriptions; not on focusable controls. |
 | Icon | Size and stroke caller-owned SVG artwork with `f-icon`. | No added state or keyboard behavior. | Decorative artwork uses `aria-hidden=true`; the enclosing control supplies its label. No Apple artwork is distributed. |
-| Mail shell | Arrange toolbars, navigation, list, and reader using `f-mail-container` and `f-mail f-workspace`, with shared `f-pane` classes on its pane elements. | Application owns `data-view=list/message/mailboxes` and navigation. | Named container queries choose desktop, medium, and phone layouts; `--f-sidebar-width`, `--f-list-width`, and `--f-mail-mobile-height` adjust geometry. |
+| Mail shell | Opt-in: import `fruitui/mail.css` (or `mail.compat.css`) after the main stylesheet. Arrange toolbars, navigation, list, and reader using `f-mail-container` and `f-mail f-workspace`, with shared `f-pane` classes on its pane elements. | Application owns `data-view=list/message/mailboxes` and navigation. | Named container queries choose desktop, medium, and phone layouts; `--f-sidebar-width`, `--f-list-width`, and `--f-mail-mobile-height` adjust geometry. |
 
 ## Native forms and indicators
 
@@ -97,33 +97,33 @@ Touch devices keep their operating system's picker. Unsupported browsers retain 
 
 Use ordinary `option`/`optgroup` children and native attributes. Option content stays plain text for fallback compatibility; do not add a parallel hidden input, a synthetic listbox, or another Alpine instance. Light/dark, scoped theme overrides, and forced-colors selection states work through CSS.
 
-## Conversation lists and rows
+## Item lists and rows
 
-Mail and Support use the same native list and conversation-opening button. The list owns arrangement, the button owns activation, and the application owns which conversation is open. The `quiet` and `filled` variants change appearance while keeping the same button contract. The list is not a listbox and adds no required arrow-key behavior. The examples supply their own arrow-key navigation and responsive screen transitions.
+Mail messages and Support tickets use the same native list and item-opening button. The list owns arrangement, the button owns activation, and the application owns which item is open. The `quiet` and `filled` variants change appearance while keeping the same button contract. The list is not a listbox and adds no required arrow-key behavior. The examples supply their own arrow-key navigation and responsive screen transitions.
 
 ```html
-<ul class="f-conversation-list" role="list" aria-label="Conversations">
+<ul class="f-item-list" role="list" aria-label="Conversations">
   <li>
-    <button class="f-conversation-row f-conversation-row--filled"
+    <button class="f-item-row f-item-row--filled"
             type="button" aria-current="true">
-      <span class="f-avatar f-conversation-row__leading" aria-hidden="true">SC</span>
-      <span class="f-conversation-row__top">
-        <span class="f-conversation-row__title">Sophie Chen</span>
-        <span class="f-conversation-row__time">10:42</span>
+      <span class="f-avatar f-item-row__leading" aria-hidden="true">SC</span>
+      <span class="f-item-row__top">
+        <span class="f-item-row__title">Sophie Chen</span>
+        <span class="f-item-row__time">10:42</span>
       </span>
-      <span class="f-conversation-row__subtitle">A fresh start</span>
-      <span class="f-conversation-row__preview">A few thoughts on our next release.</span>
-      <span class="f-conversation-row__meta">Work mailbox</span>
+      <span class="f-item-row__subtitle">A fresh start</span>
+      <span class="f-item-row__preview">A few thoughts on our next release.</span>
+      <span class="f-item-row__meta">Work mailbox</span>
     </button>
   </li>
 </ul>
 ```
 
 ```blade
-<x-fruit::conversation-list aria-label="Conversations">
+<x-fruit::item-list aria-label="Conversations">
     @foreach ($conversations as $conversation)
         <li>
-            <x-fruit::conversation-row variant="filled"
+            <x-fruit::item-row variant="filled"
                 :aria-current="$openId === $conversation->id ? 'true' : null"
                 wire:click="open({{ $conversation->id }})">
                 {{ $conversation->sender }}
@@ -132,13 +132,13 @@ Mail and Support use the same native list and conversation-opening button. The l
                 <x-slot:subtitle>{{ $conversation->subject }}</x-slot:subtitle>
                 <x-slot:preview>{{ $conversation->preview }}</x-slot:preview>
                 <x-slot:meta>{{ $conversation->mailbox_name }}</x-slot:meta>
-            </x-fruit::conversation-row>
+            </x-fruit::item-row>
         </li>
     @endforeach
-</x-fruit::conversation-list>
+</x-fruit::item-list>
 ```
 
-The default slot supplies the title; an explicit `title` slot can replace it. `leading` is an optional decorative identity cue; `trailing` is time or similar short text; `subtitle`, `preview`, and `meta` are optional supporting content. Slot attributes reach their corresponding spans. All content inside the button must be noninteractive. For an unread cue, compose `span.f-conversation-row__unread` with `aria-hidden=true` and separate `f-sr-only` text explaining the unread state.
+The default slot supplies the title; an explicit `title` slot can replace it. `leading` is an optional decorative identity cue; `trailing` is time or similar short text; `subtitle`, `preview`, and `meta` are optional supporting content. Slot attributes reach their corresponding spans. All content inside the button must be noninteractive. For an unread cue, compose `span.f-item-row__unread` with `aria-hidden=true` and separate `f-sr-only` text explaining the unread state.
 
 Bulk selection is a separate control beside the opening button:
 
@@ -147,7 +147,7 @@ Bulk selection is a separate control beside the opening button:
     <x-fruit::checkbox name="selected[]" value="42" wire:model="selected">
         Select conversation
     </x-fruit::checkbox>
-    <x-fruit::conversation-row wire:click="open(42)">Sophie Chen</x-fruit::conversation-row>
+    <x-fruit::item-row wire:click="open(42)">Sophie Chen</x-fruit::item-row>
 </li>
 ```
 
@@ -155,13 +155,13 @@ Apply layout overrides for the available row width when composing side-by-side c
 
 | Property | Default / purpose |
 | --- | --- |
-| `--f-conversation-list-padding` | `0 8px 8px`; scroll-area padding. |
-| `--f-conversation-row-padding` | `14px 12px`; row padding. |
-| `--f-conversation-row-leading-inset` | `62px` when a leading cue exists, otherwise `12px`; content and separator start inset. |
-| `--f-conversation-row-radius` | `9px`; row corner radius. |
-| `--f-conversation-separator-end` | `12px`; trailing separator inset. |
-| `--f-conversation-current-background`, `--f-conversation-current-hover` | Current-row surface and hover appearance. |
-| `--f-conversation-current-color`, `--f-conversation-current-secondary`, `--f-conversation-current-unread`, `--f-conversation-current-border` | Current-row text, supporting text, unread cue, and separator appearance. |
+| `--f-item-list-padding` | `0 8px 8px`; scroll-area padding. |
+| `--f-item-row-padding` | `14px 12px`; row padding. |
+| `--f-item-row-leading-inset` | `62px` when a leading cue exists, otherwise `12px`; content and separator start inset. |
+| `--f-item-row-radius` | `9px`; row corner radius. |
+| `--f-item-separator-end` | `12px`; trailing separator inset. |
+| `--f-item-current-background`, `--f-item-current-hover` | Current-row surface and hover appearance. |
+| `--f-item-current-color`, `--f-item-current-secondary`, `--f-item-current-unread`, `--f-item-current-border` | Current-row text, supporting text, unread cue, and separator appearance. |
 
 Current-state appearance defaults are defined on the row; override them on the row rather than an ancestor. Use semantic `--f-` color tokens so overrides retain both appearances. Responsive Mail/Support aliases now specify only spacing, typography, identity placement, and presentation overrides; shared hover, current state, separators, truncation, and preview clamping live in `src/css/patterns.css`.
 
@@ -299,8 +299,60 @@ Tokens: `--f-table-min-width`, `--f-table-font-size`, `--f-table-heading-size`, 
 See [support interface components](support-components.md) for the new selection, menu, feedback, navigation, upload, and rich editor contracts. Their working gallery specimens include both HTML and Blade usage. The optional `fruitui/editor` module is separate from `fruitui/alpine`; application workflows remain in the examples.
 
 
-## Field associations and shared notices
+## Field associations and validation errors
 
-`x-fruit::field` composes one native control with its label, description and error. Give it `control-id` and `label`, plus optional text `description`/`error`; supported child form adapters inherit matching IDs and merged ARIA descriptions. The association is scoped to Field, with no value/model ownership. Use Fieldset for independent choice groups. Plain HTML retains explicit label/ARIA associations.
+`x-fruit::field` composes one native control with its label, description and error. Give it `control-id` and `label`, plus optional text `description`; supported child form adapters inherit matching IDs and merged ARIA descriptions. The association is scoped to Field, with no value/model ownership. Use Fieldset for independent choice groups. Plain HTML retains explicit label/ARIA associations.
 
-`x-fruit::toast` provides a native status container and content slot. The optional `fruitToast({duration:4000})` helper supplies `notify`, dismissal, pause/resume and cleanup; all four examples use it. Independent action and dismiss buttons stay in the slot. See the [adoption guide](adoption.md) and gallery for complete Field, Toast, wrapper, localization and Editor toolbar examples.
+The error comes from Laravel's shared `$errors` bag, the same one `@error` reads: Field shows the first message for its control's `wire:model` key, or for its `name` (`items[0][title]` becomes `items.0.title`; a trailing `[]` is dropped). That covers controller validation after a redirect and Livewire `validate()` alike. An explicit `error` string takes precedence, and `error=""` shows no error.
+
+```blade
+<x-fruit::field control-id="email" label="Email" description="Use your work address">
+    <x-fruit::input type="email" wire:model.blur="form.email" />
+</x-fruit::field>
+```
+
+## Server feedback: dialogs and toasts
+
+Give a dialog a `name` to open and close it with browser events. Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
+
+```blade
+<x-fruit::dialog name="close-ticket" aria-labelledby="close-ticket-title">…</x-fruit::dialog>
+
+{{-- From Alpine --}}
+<x-fruit::button x-on:click="$dispatch('fruit-dialog-open', { name: 'close-ticket' })">Close…</x-fruit::button>
+```
+
+Put one `<x-fruit::toaster />` in the layout. It announces `fruit-toast` events and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it.
+
+```php
+use FruitUI\Livewire\WithFruitUI;
+
+class Tickets extends Component
+{
+    use WithFruitUI;
+
+    public function close(): void
+    {
+        // …
+        $this->closeDialog('close-ticket');
+        $this->toast('Conversation closed.');         // shows now
+        // $this->flashToast('Closed.'); $this->redirect(...); // shows on the next page
+    }
+}
+```
+
+`openDialog()`, `closeDialog()`, `toast()` and `flashToast()` are protected, so they are not client-callable actions. Controllers can flash the same message with `->with('fruit-toast', 'Saved.')`. `x-fruit::toast` remains the plain status container for application-owned `fruitToast` scopes; all four examples use that helper directly.
+
+## Pagination
+
+`fruit::pagination.default` renders a Laravel paginator with `x-fruit::pagination`: a range summary, Previous/Next and page links. Inside a Livewire component the same view calls Livewire's `previousPage`, `nextPage`, `gotoPage` and `setPage` actions instead of links.
+
+```blade
+{{ $customers->links('fruit::pagination.default') }}
+```
+
+Make it the default with `Paginator::defaultView('fruit::pagination.default')` in a service provider, and return it from `paginationView()` in Livewire components that use `WithPagination`. Labels use Laravel translations: `Previous`, `Next`, `Page :page` and `:first–:last of :total`.
+
+## Text size
+
+Text sizes are `--f-text-*` tokens in rem (`--f-text-sm` is 12px, `--f-text-base` 13px and `--f-text-md` 14px at the default browser size), so they follow the reader's browser text setting. An html scope sizes its body rather than html, which would redefine rem. A host that fixes a pixel font size on html (Bootstrap 3 uses 10px) pins the scale with `--f-text-root: 16px` on its `.fruit-ui` scope. Spacing and control heights remain in pixels.

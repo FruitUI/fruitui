@@ -18,6 +18,7 @@ Import the CSS in your application's Vite entry:
 
 ```js
 import 'fruitui/css';
+import 'fruitui/mail.css'; // only for the Mail reference layout
 ```
 
 Wrap your layout in `fruit-ui` and use the Blade components:
@@ -26,6 +27,7 @@ Wrap your layout in `fruit-ui` and use the Blade components:
 <main class="fruit-ui">
     <x-fruit::card class="f-stack">
         <x-fruit::field control-id="email" label="Email">
+            {{-- Shows the validation error for "email" from $errors automatically --}}
             <x-fruit::input type="email" name="email" required />
         </x-fruit::field>
         <x-fruit::button variant="primary">Continue</x-fruit::button>
@@ -62,7 +64,28 @@ composer require "livewire/livewire:^4.0"
 </main>
 ```
 
-These example preferences are stored in the current session. For interactive helpers such as searchable choices, dialogs, and resizable panes, register `fruitui/alpine` on your application's existing Alpine instance. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
+These example preferences are stored in the current session.
+
+Components can send feedback from the server. Put `<x-fruit::toaster />` in your layout, then:
+
+```php
+use FruitUI\Livewire\WithFruitUI;
+
+class Tickets extends Component
+{
+    use WithFruitUI;
+
+    public function archive(): void
+    {
+        $this->closeDialog('confirm-archive'); // <x-fruit::dialog name="confirm-archive">
+        $this->toast('Conversation archived.');
+    }
+}
+```
+
+Laravel paginators render with `$items->links('fruit::pagination.default')`, which also works inside Livewire components that use `WithPagination`.
+
+For interactive helpers such as searchable choices, dialogs, and resizable panes, register `fruitui/alpine` on your application's existing Alpine instance. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
 
 ## Explore the examples
 
@@ -74,6 +97,8 @@ npm run dev
 ```
 
 Open [Mail](http://127.0.0.1:5173/), [Support](http://127.0.0.1:5173/support.html), [Chat](http://127.0.0.1:5173/chat.html), [Admin](http://127.0.0.1:5173/admin.html), or the [component gallery](http://127.0.0.1:5173/components.html). These are interactive frontend examples using sample data.
+
+The Support interface also exists as a Livewire 4 single-file component in [examples/laravel](examples/laravel/support-desk.blade.php). With `npm run dev` running, start the bundled Laravel host with `composer install && node scripts/serve-host.mjs` and open [the Livewire Support desk](http://127.0.0.1:5180/support).
 
 ## Documentation
 

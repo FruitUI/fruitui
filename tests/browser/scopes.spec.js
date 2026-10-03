@@ -7,14 +7,25 @@ test.beforeEach(({ page }) => {
   pageErrors.set(page, errors);
   page.on('pageerror', error => errors.push(error.message));
 });
-test.afterEach(({ page }) => { expect(pageErrors.get(page)).toEqual([]); });
+test.afterEach(({ page }) => {
+  expect(pageErrors.get(page)).toEqual([]);
+});
 
 test('Mail combines real accounts and scopes search, unread counts, flags, and moves', async ({ page }) => {
   await page.goto('/');
   const rows = page.locator('button.f-mail__message');
   const nav = page.locator('#mailboxes');
   await expect(rows).toHaveCount(8);
-  await expect(rows.locator('.f-mail__origin')).toHaveText(['Work', 'Work', 'Personal', 'Personal', 'Personal', 'Work', 'Work', 'Personal']);
+  await expect(rows.locator('.f-mail__origin')).toHaveText([
+    'Work',
+    'Work',
+    'Personal',
+    'Personal',
+    'Personal',
+    'Work',
+    'Work',
+    'Personal',
+  ]);
   await expect(nav.getByRole('button', { name: 'All Inboxes', exact: true }).locator('.f-badge')).toHaveText('3');
   await expand(page, '#mailboxes', 'work');
   await nav.getByRole('button', { name: 'Work Inbox', exact: true }).click();
@@ -75,7 +86,9 @@ test('Mail replies use the source account and new mail is filed under the chosen
   await expect(page.locator('.f-mail__account-detail')).toHaveText('Work · alex@studio.example');
 });
 
-test('Mail account scope survives medium, phone, and desktop layouts and mark-all-read stays scoped', async ({ page }) => {
+test('Mail account scope survives medium, phone, and desktop layouts and mark-all-read stays scoped', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 820, height: 1100 });
   await page.goto('/');
   await page.getByLabel('Mailbox', { exact: true }).selectOption('personal:inbox');
@@ -86,8 +99,12 @@ test('Mail account scope survives medium, phone, and desktop layouts and mark-al
   await page.getByRole('button', { name: 'Mark all as read' }).click();
   await page.getByRole('button', { name: 'Show mailboxes' }).click();
   await expect(page.locator('#mailboxes [data-scope="personal"]')).toHaveAttribute('open', '');
-  await expect(page.locator('#mailboxes').getByRole('button', { name: 'Personal Inbox', exact: true }).locator('.f-badge')).toHaveText('0');
-  await expect(page.locator('#mailboxes').getByRole('button', { name: 'All Inboxes', exact: true }).locator('.f-badge')).toHaveText('2');
+  await expect(
+    page.locator('#mailboxes').getByRole('button', { name: 'Personal Inbox', exact: true }).locator('.f-badge'),
+  ).toHaveText('0');
+  await expect(
+    page.locator('#mailboxes').getByRole('button', { name: 'All Inboxes', exact: true }).locator('.f-badge'),
+  ).toHaveText('2');
   await page.locator('#mailboxes').getByRole('button', { name: 'Personal Inbox', exact: true }).click();
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.f-mail__title h1')).toHaveText('Personal Inbox');
@@ -100,7 +117,14 @@ test('Support combines team mailboxes while local views, searches, and status co
   const rows = page.locator('button.support-ticket');
   const nav = page.locator('#support-queues');
   await expect(rows).toHaveCount(6);
-  await expect(rows.locator('.support-ticket-origin')).toHaveText(['Billing', 'Support', 'Support', 'Support', 'Feedback', 'Feedback']);
+  await expect(rows.locator('.support-ticket-origin')).toHaveText([
+    'Billing',
+    'Support',
+    'Support',
+    'Support',
+    'Feedback',
+    'Feedback',
+  ]);
   await expand(page, '#support-queues', 'billing');
   await nav.getByRole('button', { name: 'Billing Open' }).click();
   await expect(rows).toHaveCount(1);
@@ -125,7 +149,9 @@ test('Support combines team mailboxes while local views, searches, and status co
   await expect(supportRow(page, 1041)).toBeVisible();
 });
 
-test('Support preserves drafts across mailboxes and replies and new conversations keep their real mailbox', async ({ page }) => {
+test('Support preserves drafts across mailboxes and replies and new conversations keep their real mailbox', async ({
+  page,
+}) => {
   await page.goto('/support.html');
   const nav = page.locator('#support-queues');
   const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });
@@ -139,7 +165,9 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   await expect(reply).toHaveValue('A billing reply for Sophie.');
   await expect(page.locator('#support-reply-help')).toHaveText('From billing@forma.example');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText('A billing reply for Sophie.');
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText(
+    'A billing reply for Sophie.',
+  );
   await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
   await expect(reply).toHaveValue('A support reply for Jordan.');
   await page.getByRole('button', { name: 'New conversation', exact: true }).click();
@@ -162,15 +190,22 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   await expect(supportRow(page, 1043)).toBeVisible();
 });
 
-test('Support customer history can cross mailboxes and responsive navigation follows the selected scope', async ({ page }) => {
+test('Support customer history can cross mailboxes and responsive navigation follows the selected scope', async ({
+  page,
+}) => {
   await page.goto('/support.html');
   await expand(page, '#support-queues', 'support');
   await page.locator('#support-queues').getByRole('button', { name: 'Support Waiting', exact: true }).click();
-  await page.locator('.support-customer').getByRole('button', { name: /A small idea for project templates/ }).click();
+  await page
+    .locator('.support-customer')
+    .getByRole('button', { name: /A small idea for project templates/ })
+    .click();
   await expect(supportRow(page, 1034)).toHaveAttribute('aria-current', 'true');
   await expect(page.locator('.support-list-footer')).toContainText('feedback@forma.example');
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  await expect(page.locator('#support-queues').getByRole('button', { name: 'Feedback Open', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(
+    page.locator('#support-queues').getByRole('button', { name: 'Feedback Open', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
   await page.getByRole('textbox', { name: 'Reply message', exact: true }).fill('A draft about templates.');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
@@ -180,7 +215,9 @@ test('Support customer history can cross mailboxes and responsive navigation fol
   await selected.click();
   await supportRow(page, 1034).click();
   await page.setViewportSize({ width: 820, height: 1100 });
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue('A draft about templates.');
+  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+    'A draft about templates.',
+  );
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.support-list-footer')).toContainText('feedback@forma.example');
 });
@@ -188,7 +225,10 @@ test('Support customer history can cross mailboxes and responsive navigation fol
 for (const appearance of ['light', 'dark']) {
   test(`expanded navigation and scoped lists remain accessible in ${appearance} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: appearance });
-    for (const [url, nav, scope, label] of [['/', '#mailboxes', 'personal', 'Personal Inbox'], ['/support.html', '#support-queues', 'billing', 'Billing Open']]) {
+    for (const [url, nav, scope, label] of [
+      ['/', '#mailboxes', 'personal', 'Personal Inbox'],
+      ['/support.html', '#support-queues', 'billing', 'Billing Open'],
+    ]) {
       await page.goto(url);
       await expand(page, nav, scope);
       await page.locator(nav).getByRole('button', { name: label, exact: true }).click();
@@ -198,7 +238,9 @@ for (const appearance of ['light', 'dark']) {
   });
 }
 
-test('grouped navigation uses native keyboard disclosure and automatic themes without JavaScript', async ({ browser }) => {
+test('grouped navigation uses native keyboard disclosure and automatic themes without JavaScript', async ({
+  browser,
+}) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   try {
     const page = await context.newPage();
@@ -215,15 +257,21 @@ test('grouped navigation uses native keyboard disclosure and automatic themes wi
     }
     await page.keyboard.press('Space');
     await expect(nav.getByRole('link', { name: 'Mail', exact: true })).not.toBeVisible();
-  } finally { await context.close(); }
+  } finally {
+    await context.close();
+  }
 });
 
 async function expand(page, nav, scope) {
   const group = page.locator(`${nav} [data-scope="${scope}"]`);
-  if (await group.getAttribute('open') === null) await group.locator('summary').click();
+  if ((await group.getAttribute('open')) === null) await group.locator('summary').click();
 }
-function mailRow(page, id) { return page.locator(`button.f-mail__message[data-message-id="${id}"]`); }
-function supportRow(page, id) { return page.locator(`button.support-ticket[data-ticket-id="${id}"]`); }
+function mailRow(page, id) {
+  return page.locator(`button.f-mail__message[data-message-id="${id}"]`);
+}
+function supportRow(page, id) {
+  return page.locator(`button.support-ticket[data-ticket-id="${id}"]`);
+}
 async function assertAccessible(page) {
   const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   expect(violations).toEqual([]);

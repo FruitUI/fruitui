@@ -6,6 +6,7 @@
   <meta name="description" content="FruitUI — thoughtful, Apple-inspired interfaces built with HTML and CSS. Explore our Mail example.">
   <title>Mail · FruitUI</title>
   <link rel="stylesheet" href="/src/fruitui.css">
+  <link rel="stylesheet" href="/src/mail.css">
   <link rel="stylesheet" href="/examples/shared/showcase.css">
   <script type="module" src="/examples/main.js"></script>
 </head>
@@ -87,18 +88,18 @@
         </nav>
         <section id="mail-list-pane" class="f-pane f-pane--column f-pane--border-end f-mail__list-pane" aria-label="Message list">
           <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
-          <ul class="f-conversation-list f-mail__list" role="list" aria-label="Messages" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
+          <ul class="f-item-list f-mail__list" role="list" aria-label="Messages" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
             <template x-for="item in filtered" :key="item.id">
-              <li><button class="f-conversation-row f-conversation-row--filled f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
-                <span class="f-conversation-row__leading f-avatar f-mail__list-avatar" x-text="item.initials" aria-hidden="true"></span>
-                <span class="f-conversation-row__unread f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
-                <span class="f-conversation-row__top f-mail__message-top"><span class="f-conversation-row__title f-mail__sender" x-text="item.sender"></span><span class="f-conversation-row__time f-mail__time" x-text="item.time"></span><svg class="f-icon f-mail__message-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span>
-                <span class="f-conversation-row__subtitle f-mail__subject" x-text="item.subject"></span><span class="f-conversation-row__preview f-mail__preview" x-text="item.preview"></span>
-                <span class="f-conversation-row__meta f-mail__origin" x-show="accountId === 'all'" x-text="account(item.accountId).name"></span><span class="f-sr-only" x-show="item.flagged">Flagged</span>
+              <li><button class="f-item-row f-item-row--filled f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
+                <span class="f-item-row__leading f-avatar f-mail__list-avatar" x-text="item.initials" aria-hidden="true"></span>
+                <span class="f-item-row__unread f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
+                <span class="f-item-row__top f-mail__message-top"><span class="f-item-row__title f-mail__sender" x-text="item.sender"></span><span class="f-item-row__time f-mail__time" x-text="item.time"></span><svg class="f-icon f-mail__message-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span>
+                <span class="f-item-row__subtitle f-mail__subject" x-text="item.subject"></span><span class="f-item-row__preview f-mail__preview" x-text="item.preview"></span>
+                <span class="f-item-row__meta f-mail__origin" x-show="accountId === 'all'" x-text="account(item.accountId).name"></span><span class="f-sr-only" x-show="item.flagged">Flagged</span>
               </button></li>
             </template>
             <li x-show="filtered.length === 0" x-cloak><div class="f-empty-state f-mail__empty"><h2 class="f-empty-state__title">No messages</h2><p class="f-empty-state__description" x-text="query ? 'Try another search.' : 'You’re all caught up.'"></p></div></li>
-            <noscript><li><button class="f-conversation-row f-conversation-row--filled f-mail__message" type="button" disabled aria-current="true"><span class="f-conversation-row__title f-mail__sender">Sophie Chen</span><span class="f-conversation-row__subtitle f-mail__subject">A fresh start for FruitUI</span><span class="f-conversation-row__preview f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></li></noscript>
+            <noscript><li><button class="f-item-row f-item-row--filled f-mail__message" type="button" disabled aria-current="true"><span class="f-item-row__title f-mail__sender">Sophie Chen</span><span class="f-item-row__subtitle f-mail__subject">A fresh start for FruitUI</span><span class="f-item-row__preview f-mail__preview">A few thoughts on making everyday interfaces feel a little more human.</span></button></li><li><p class="f-help" style="padding: 16px">Enable JavaScript to try the interactive demo.</p></li></noscript>
           </ul>
         </section>
         <article id="mail-reader" class="f-pane f-pane--scroll f-mail__reader" aria-label="Reading pane" aria-live="polite">

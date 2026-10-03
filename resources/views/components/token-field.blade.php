@@ -1,7 +1,7 @@
 @props(['wrapper' => []])
 @aware(['fruitField' => null])
 @php($attributes = \FruitUI\Support\ComponentContract::fieldControl($attributes, $fruitField))
-@php(\FruitUI\Support\ComponentContract::enhancedControl('token-field', $attributes))
+@php(\FruitUI\Support\ComponentContract::validate('token-field', $attributes))
 <div {{ \FruitUI\Support\ComponentContract::wrapper($wrapper)->merge([
     'data-fruit-placeholder' => __('Add an item'),
     'data-fruit-remove-label' => __('Remove {value}'),

@@ -1,4 +1,4 @@
-@php(\FruitUI\Support\ComponentContract::semantics('table', $attributes, 'table'))
+@php(\FruitUI\Support\ComponentContract::validate('table', $attributes))
 <table {{ $attributes->class(['f-table']) }}>
     {{ $slot }}
 </table>

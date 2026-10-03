@@ -11,9 +11,17 @@ test('every color/effect token has matching automatic and explicit dark palettes
   );
   expect(palettes).toHaveLength(3);
   const [light, explicitDark, automaticDark] = palettes;
-  const appearanceTokens = await page.evaluate(palette => Object.entries(palette)
-    .filter(([, value]) => CSS.supports('color', value) || CSS.supports('box-shadow', value))
-    .map(([name]) => name), light);
+  // CSS.supports accepts any value containing var(), so classify tokens by their resolved values.
+  const resolve = value =>
+    value.replace(/var\((--f-[\w-]+)\)/g, (reference, name) => (name in light ? resolve(light[name]) : reference));
+  const resolved = Object.fromEntries(Object.entries(light).map(([name, value]) => [name, resolve(value)]));
+  const appearanceTokens = await page.evaluate(
+    palette =>
+      Object.entries(palette)
+        .filter(([, value]) => CSS.supports('color', value) || CSS.supports('box-shadow', value))
+        .map(([name]) => name),
+    resolved,
+  );
   expect(appearanceTokens.length).toBeGreaterThan(0);
   for (const name of appearanceTokens) {
     expect(explicitDark, `${name} needs a dark value`).toHaveProperty(name);
@@ -23,16 +31,21 @@ test('every color/effect token has matching automatic and explicit dark palettes
 });
 
 test('core appearance declarations use shared tokens or native/system colors', () => {
-  const appearanceProperty = /^(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left|inline-start|inline-end|block-start|block-end))?(?:-color)?|outline(?:-color)?|(?:box|text)-shadow|fill|stroke|accent-color|caret-color|text-decoration-color)$/;
+  const appearanceProperty =
+    /^(?:color|background(?:-color)?|border(?:-(?:top|right|bottom|left|inline-start|inline-end|block-start|block-end))?(?:-color)?|outline(?:-color)?|(?:box|text)-shadow|fill|stroke|accent-color|caret-color|text-decoration-color)$/;
   for (const file of readdirSync(cssDirectory).filter(name => name.endsWith('.css') && name !== 'tokens.css')) {
     const source = readFileSync(new URL(file, cssDirectory), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
     for (const [, property, value] of source.matchAll(/(?:^|[;{])\s*([\w-]+)\s*:\s*([^;{}]+)(?=;|})/g)) {
       if (!appearanceProperty.test(property)) continue;
       let resolved = value;
       // Validate fallback literals too, resolving nested token references from the inside.
-      while (/var\(--f-[\w-]+(?:,[^()]*)?\)/.test(resolved)) resolved = resolved.replace(/var\(--f-[\w-]+(?:,([^()]*))?\)/g, (_, fallback) => fallback || '');
+      while (/var\(--f-[\w-]+(?:,[^()]*)?\)/.test(resolved))
+        resolved = resolved.replace(/var\(--f-[\w-]+(?:,([^()]*))?\)/g, (_, fallback) => fallback || '');
       const literal = resolved
-        .replace(/\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|HighlightText|GrayText|Canvas|CanvasText)\b/g, '')
+        .replace(
+          /\b(?:none|transparent|currentColor|inherit|initial|unset|revert|inset|solid|dashed|dotted|double|ButtonText|Highlight|HighlightText|GrayText|Canvas|CanvasText)\b/g,
+          '',
+        )
         .replace(/-?(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em|%)?/g, '')
         .replace(/[\s,]/g, '');
       expect(literal, `${file}: ${property}: ${value.trim()} must use an appearance token`).toBe('');
@@ -67,11 +80,15 @@ test.describe('CSS appearance with JavaScript disabled', () => {
       await expect(page.locator('.f-card').first()).toHaveCSS('background-color', 'rgb(37, 37, 40)');
       await expect(page.getByLabel('Your name')).toHaveCSS('background-color', 'rgb(57, 57, 62)');
       await expect(page.getByLabel('Default mailbox')).toHaveCSS('color-scheme', 'dark');
-      await expect(page.locator('dialog')).toHaveCSS('background-color', 'rgb(37, 37, 40)');
-      expect(await page.locator('dialog').evaluate(element => getComputedStyle(element, '::backdrop').backgroundColor)).toBe('rgba(0, 0, 0, 0.5)');
+      await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(37, 37, 40)');
+      expect(
+        await page.locator('dialog[open]').evaluate(element => getComputedStyle(element, '::backdrop').backgroundColor),
+      ).toBe('rgba(0, 0, 0, 0.5)');
       const automatic = await appearanceSnapshot(page);
 
-      await root.evaluate(element => { element.dataset.theme = 'dark'; });
+      await root.evaluate(element => {
+        element.dataset.theme = 'dark';
+      });
       await page.emulateMedia({ colorScheme: 'light' });
       await expect(root).toHaveCSS('color-scheme', 'dark');
       expect(await appearanceSnapshot(page)).toEqual(automatic);
@@ -104,7 +121,10 @@ test.describe('CSS appearance with JavaScript disabled', () => {
         const scope = page.locator(`#theme-${theme}`);
         await expect(scope).toHaveCSS('color-scheme', expected);
         await expect(scope.locator('select')).toHaveCSS('color-scheme', expected);
-        await expect(scope).toHaveCSS('background-color', expected === 'dark' ? 'rgb(25, 25, 28)' : 'rgb(246, 245, 243)');
+        await expect(scope).toHaveCSS(
+          'background-color',
+          expected === 'dark' ? 'rgb(25, 25, 28)' : 'rgb(246, 245, 243)',
+        );
       }
     }
   });
@@ -123,10 +143,37 @@ for (const theme of ['light', 'dark']) {
 }
 
 async function appearanceSnapshot(page) {
-  return page.locator('[class*="f-"]').evaluateAll(elements => elements.flatMap(element => {
-    const styles = [getComputedStyle(element)];
-    if (element.matches('.f-switch > input')) styles.push(getComputedStyle(element, '::before'));
-    if (element.matches('dialog')) styles.push(getComputedStyle(element, '::backdrop'));
-    return styles.map(style => [style.color, style.backgroundColor, style.borderColor, style.boxShadow, style.colorScheme, style.accentColor]);
-  }));
+  return page.locator('[class*="f-"]').evaluateAll(elements =>
+    elements.flatMap(element => {
+      const styles = [getComputedStyle(element)];
+      if (element.matches('.f-switch > input')) styles.push(getComputedStyle(element, '::before'));
+      if (element.matches('dialog')) styles.push(getComputedStyle(element, '::backdrop'));
+      return styles.map(style => [
+        style.color,
+        style.backgroundColor,
+        style.borderColor,
+        style.boxShadow,
+        style.colorScheme,
+        style.accentColor,
+      ]);
+    }),
+  );
 }
+
+test('text follows the reader’s browser text size and a pixel-root host can pin it', async ({ page }) => {
+  await page.goto('/components.html');
+  const input = page.getByLabel('Your name');
+  // An html scope must not redefine rem through its own font size.
+  await expect(page.locator('html')).toHaveCSS('font-size', '16px');
+  await expect(page.locator('body')).toHaveCSS('font-size', '14px');
+  await expect(input).toHaveCSS('font-size', '13px');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '20px';
+  });
+  await expect(input).toHaveCSS('font-size', '16.25px');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '10px';
+    document.documentElement.style.setProperty('--f-text-root', '16px');
+  });
+  await expect(input).toHaveCSS('font-size', '13px');
+});
