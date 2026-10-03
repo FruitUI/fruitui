@@ -194,10 +194,15 @@ test('text follows the reader’s browser text size and a pixel-root host can pi
 test('Increase Contrast strengthens boundaries and secondary text in both appearances', async ({ page }) => {
   await page.goto('/components.html');
   const input = page.getByLabel('Your name');
+  // Firefox applies contrast emulation only to newly loaded documents.
+  const emulate = async media => {
+    await page.emulateMedia(media);
+    await page.reload();
+  };
   for (const colorScheme of ['light', 'dark']) {
-    await page.emulateMedia({ colorScheme, contrast: 'no-preference' });
+    await emulate({ colorScheme, contrast: 'no-preference' });
     const normal = await input.evaluate(element => getComputedStyle(element).borderTopColor);
-    await page.emulateMedia({ colorScheme, contrast: 'more' });
+    await emulate({ colorScheme, contrast: 'more' });
     const more = await input.evaluate(element => getComputedStyle(element).borderTopColor);
     expect(more, `${colorScheme} border`).not.toBe(normal);
     const alpha = value => Number(value.match(/[\d.]+(?=\)$)/)?.[0] ?? 1);
