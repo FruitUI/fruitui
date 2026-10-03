@@ -6,11 +6,14 @@
  * It composes FruitUI's Blade adapters with server state: mailbox links use
  * wire:navigate, ticket rows and pagination call actions, enhanced controls
  * bind with wire:model, validation errors reach Field, and the server opens
- * dialogs and sends toasts through FruitUI\Fruit. Sample tickets live in the
- * session so each visitor can change them.
+ * dialogs and sends toasts through FruitUI\Fruit. The customer's earlier
+ * conversations are a lazy island: a Skeleton placeholder until the pane
+ * scrolls into view, then re-rendered on its own when another ticket opens.
+ * Sample tickets live in the session so each visitor can change them.
  */
 
 use FruitUI\Fruit;
+use FruitUI\Rules\Tokens;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -24,6 +27,13 @@ new class extends Component
     public const AGENTS = ['alex' => 'Alex Morgan', 'mia' => 'Mia Patel', 'noah' => 'Noah Williams'];
     public const REASONS = ['resolved' => 'Resolved', 'duplicate' => 'Duplicate', 'spam' => 'Spam'];
     private const PER_PAGE = 4;
+
+    /** Earlier conversations per customer email, standing in for a slower CRM or billing lookup. */
+    private const HISTORY = [
+        'sophie@example.com' => [['Moving to annual billing', 'Resolved by Mia Patel', '2026-08-14'], ['Adding a second workspace', 'Resolved by Alex Morgan', '2026-05-02']],
+        'emma@example.com' => [['Exporting last year’s projects', 'Resolved by Noah Williams', '2026-07-21']],
+        'maya@example.com' => [['A missing invoice', 'Resolved by Alex Morgan', '2026-09-03']],
+    ];
 
     public string $mailbox = 'all';
     public string $search = '';
@@ -63,6 +73,8 @@ new class extends Component
         $this->cc = $ticket['cc'];
         $this->reply = '';
         $this->resetValidation();
+        // Islands are skipped on ordinary updates; this one follows the open ticket.
+        $this->renderIsland('history');
     }
 
     public function updatedAssignee(string $assignee): void
@@ -76,14 +88,8 @@ new class extends Component
     {
         $this->validate([
             'reply' => ['required', 'string', 'min:3'],
-            'cc' => [function (string $attribute, string $value, \Closure $fail) {
-                foreach (preg_split('/\R/', $value, -1, PREG_SPLIT_NO_EMPTY) as $address) {
-                    if (! filter_var($address, FILTER_VALIDATE_EMAIL)) {
-                        $fail("“{$address}” is not an email address.");
-                    }
-                }
-            }],
-        ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.']);
+            'cc' => ['nullable', new Tokens('email')],
+        ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.'], ['cc' => 'Cc']);
         $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply]]]);
         $this->reply = '';
         Fruit::toast('Reply sent to '.$this->ticket['name'].'.');
@@ -132,6 +138,12 @@ new class extends Component
         $tickets = $this->filtered();
 
         return new LengthAwarePaginator($tickets->forPage($this->getPage(), self::PER_PAGE)->values(), $tickets->count(), self::PER_PAGE, $this->getPage());
+    }
+
+    #[Computed]
+    public function history(): array
+    {
+        return self::HISTORY[$this->ticket['email'] ?? ''] ?? [];
     }
 
     #[Computed]
@@ -256,57 +268,84 @@ new class extends Component
                         </x-fruit::tooltip>
                     @endif
                 </header>
-                <div class="f-pane__scroll f-stack" style="--f-pane-scroll-padding: var(--f-space-4)" wire:key="conversation-{{ $ticket['id'] }}">
+                <div class="f-pane__scroll f-stack" style="--f-pane-scroll-padding: var(--f-space-4)">
                     <x-fruit::description-list>
                         <div><dt>Customer</dt><dd>{{ $ticket['name'] }}</dd></div>
                         <div><dt>Email</dt><dd>{{ $ticket['email'] }}</dd></div>
                         <div><dt>Company</dt><dd>{{ $ticket['company'] }}</dd></div>
                     </x-fruit::description-list>
 
-                    <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
-                        @foreach ($ticket['messages'] as $message)
-                            <li>
-                                <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
-                                    <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
-                                    <x-slot:author>{{ $message['author'] }}</x-slot:author>
-                                    <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
-                                    {{ $message['body'] }}
-                                </x-fruit::message>
-                            </li>
-                        @endforeach
-                    </ol>
+                    @island(name: 'history', lazy: true)
+                        @placeholder
+                            <section class="f-stack" aria-label="Earlier conversations" aria-busy="true">
+                                <x-fruit::skeleton :lines="2" />
+                            </section>
+                        @endplaceholder
+                        <section class="f-stack" aria-labelledby="history-title">
+                            <h2 id="history-title" style="font-size: var(--f-text-md)">Earlier conversations</h2>
+                            @if ($this->history === [])
+                                <p class="f-help">No earlier conversations with {{ $this->ticket['name'] ?? 'this customer' }}.</p>
+                            @else
+                                <x-fruit::timeline aria-labelledby="history-title">
+                                    @foreach ($this->history as [$subject, $outcome, $date])
+                                        <x-fruit::timeline-item :datetime="$date">
+                                            {{ $subject }}
+                                            <x-slot:detail>{{ $outcome }}</x-slot:detail>
+                                            <x-slot:time>{{ \Illuminate\Support\Carbon::parse($date)->format('M j') }}</x-slot:time>
+                                        </x-fruit::timeline-item>
+                                    @endforeach
+                                </x-fruit::timeline>
+                            @endif
+                        </section>
+                    @endisland
 
-                    @if ($ticket['status'] === 'open')
-                        <x-fruit::field control-id="support-assignee" label="Assigned to">
-                            <x-fruit::combobox name="assignee" wire:model.live="assignee">
-                                <option value="">Unassigned</option>
-                                @foreach ($this::AGENTS as $agent => $name)
-                                    <option value="{{ $agent }}">{{ $name }}</option>
-                                @endforeach
-                            </x-fruit::combobox>
-                        </x-fruit::field>
+                    {{-- Keyed per ticket so enhanced controls start fresh; islands stay outside a changing key. --}}
+                    <div class="f-stack" wire:key="conversation-{{ $ticket['id'] }}">
+                        <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
+                            @foreach ($ticket['messages'] as $message)
+                                <li>
+                                    <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
+                                        <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
+                                        <x-slot:author>{{ $message['author'] }}</x-slot:author>
+                                        <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
+                                        {{ $message['body'] }}
+                                    </x-fruit::message>
+                                </li>
+                            @endforeach
+                        </ol>
 
-                        <x-fruit::composer wire:submit="send" aria-label="Reply">
-                            <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">
-                                <x-fruit::token-field name="cc" wire:model="cc">{{ $cc }}</x-fruit::token-field>
+                        @if ($ticket['status'] === 'open')
+                            <x-fruit::field control-id="support-assignee" label="Assigned to">
+                                <x-fruit::combobox name="assignee" wire:model.live="assignee">
+                                    <option value="">Unassigned</option>
+                                    @foreach ($this::AGENTS as $agent => $name)
+                                        <option value="{{ $agent }}">{{ $name }}</option>
+                                    @endforeach
+                                </x-fruit::combobox>
                             </x-fruit::field>
-                            <x-fruit::field control-id="support-reply" label="Reply to {{ $ticket['name'] }}">
-                                <x-fruit::autocomplete trigger="@">
-                                    <x-fruit::textarea name="reply" class="f-composer__input" rows="4" wire:model="reply" />
-                                    <x-slot:options>
-                                        @foreach ($this::AGENTS as $agent => $name)
-                                            <option value="{{ '@'.$agent }}">{{ $name }}</option>
-                                        @endforeach
-                                    </x-slot:options>
-                                </x-fruit::autocomplete>
-                            </x-fruit::field>
-                            <footer class="f-composer__footer">
-                                <x-fruit::button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="send">Send reply</x-fruit::button>
-                            </footer>
-                        </x-fruit::composer>
-                    @else
-                        <x-fruit::alert tone="success">This conversation was closed as {{ strtolower($this::REASONS[$ticket['reason']] ?? 'resolved') }}.</x-fruit::alert>
-                    @endif
+
+                            <x-fruit::composer wire:submit="send" aria-label="Reply">
+                                <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">
+                                    <x-fruit::token-field name="cc" wire:model="cc">{{ $cc }}</x-fruit::token-field>
+                                </x-fruit::field>
+                                <x-fruit::field control-id="support-reply" label="Reply to {{ $ticket['name'] }}">
+                                    <x-fruit::autocomplete trigger="@">
+                                        <x-fruit::textarea name="reply" class="f-composer__input" rows="4" wire:model="reply" />
+                                        <x-slot:options>
+                                            @foreach ($this::AGENTS as $agent => $name)
+                                                <option value="{{ '@'.$agent }}">{{ $name }}</option>
+                                            @endforeach
+                                        </x-slot:options>
+                                    </x-fruit::autocomplete>
+                                </x-fruit::field>
+                                <footer class="f-composer__footer">
+                                    <x-fruit::button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="send">Send reply</x-fruit::button>
+                                </footer>
+                            </x-fruit::composer>
+                        @else
+                            <x-fruit::alert tone="success">This conversation was closed as {{ strtolower($this::REASONS[$ticket['reason']] ?? 'resolved') }}.</x-fruit::alert>
+                        @endif
+                    </div>
                 </div>
             @else
                 <x-fruit::empty-state>

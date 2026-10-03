@@ -71,7 +71,7 @@ test('server validation errors reach Field associations and clear after a valid 
   await page.getByRole('button', { name: 'Send reply' }).click();
   await expect(cc).toHaveAttribute('aria-invalid', 'true');
   await expect(cc).toHaveAccessibleDescription(
-    /Enter or comma adds an address\. “not-an-address” is not an email address\./,
+    /Enter or comma adds an address\. The Cc field contains an invalid entry: not-an-address\./,
   );
   await expect(reply).not.toHaveAttribute('aria-invalid');
   await expect(reply).toHaveValue('Thanks, we will move you over today.');
@@ -323,5 +323,32 @@ test('a persisted sidebar keeps its element across wire:navigate and follows the
   await expect(preferences).toHaveAttribute('data-current', '');
   await expect(inbox).not.toHaveAttribute('data-current');
   await expect(preferences).toHaveCSS('background-color', current);
+  expect(errors).toEqual([]);
+});
+
+test('the lazy history island loads behind a skeleton, follows the open ticket and skips other updates', async ({
+  page,
+}) => {
+  const errors = await openDesk(page);
+  const history = conversation(page).getByRole('region', { name: 'Earlier conversations' });
+  await expect(history.getByRole('list', { name: 'Earlier conversations' })).toContainText('Moving to annual billing');
+  await expect(history).not.toHaveAttribute('aria-busy');
+  await expect(conversation(page).locator('.f-skeleton')).toHaveCount(0);
+
+  await list(page)
+    .getByRole('button', { name: /Jordan Lee/ })
+    .click();
+  await expect(history).toContainText('No earlier conversations with Jordan Lee.');
+  await list(page)
+    .getByRole('button', { name: /Emma Thompson/ })
+    .click();
+  await expect(history).toContainText('Exporting last year’s projects');
+
+  // An unrelated update re-renders the component but leaves the island's DOM alone.
+  await history.evaluate(element => (element.dataset.probe = 'kept'));
+  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('Emma');
+  await expect(list(page).getByRole('button')).toHaveCount(1);
+  await expect(history).toHaveAttribute('data-probe', 'kept');
+  await expect(history).toContainText('Exporting last year’s projects');
   expect(errors).toEqual([]);
 });

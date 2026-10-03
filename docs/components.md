@@ -510,6 +510,22 @@ These cover the core screens of helpdesks, mail and chat. Contracts are in the [
 @endif
 ```
 
+**Islands and lazy placeholders.** A Livewire island renders part of a component on its own, so slow or secondary content (customer history, stats, related records) neither delays the first paint nor re-renders on every update. Give a lazy island a placeholder in the same shape: a busy container with a Skeleton. Livewire loads the island when its placeholder scrolls into view. Ordinary updates skip it; an action marked `wire:island="history"`, or `$this->renderIsland('history')` in PHP, re-renders it. The Support desk example renders the open customer's earlier conversations this way and re-renders the island from `open()`.
+
+```blade
+@island(name: 'history', lazy: true)
+    @placeholder
+        <section aria-label="Earlier conversations" aria-busy="true"><x-fruit::skeleton :lines="2" /></section>
+    @endplaceholder
+    <section aria-labelledby="history-title">
+        <h2 id="history-title">Earlier conversations</h2>
+        <x-fruit::timeline aria-labelledby="history-title">…</x-fruit::timeline>
+    </section>
+@endisland
+```
+
+Keep islands outside elements whose `wire:key` changes, such as a pane keyed per record: replacing the keyed element detaches the island and its next render is lost. Key an inner wrapper instead. A lazy component works the same way: return the busy Skeleton container from its `placeholder()` method.
+
 ## Field associations and validation errors
 
 `x-fruit::field` composes one native control with its `label`, an optional `description` and its error. Child form adapters, including Checkbox, Radio and Switch, inherit the id and merged ARIA descriptions. The id is `control-id` when given, otherwise the child's own `id`, otherwise one derived from its `wire:model` or `name` (`form.email` becomes `field-form-email`). Plain HTML children need `control-id` and their own associations. Field associates exactly one control and owns no value, rule or model; use Fieldset for choice groups.
