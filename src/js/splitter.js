@@ -43,12 +43,17 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
         }).map(([event, handler]) => [event, handler.bind(this)]),
       );
       for (const [event, handler] of Object.entries(handlers)) handle.addEventListener(event, handler);
-      observer = new ResizeObserver(() => this.schedule());
+      // ARIA values change no layout, so they update at once; clamping waits for the next frame.
+      observer = new ResizeObserver(() => {
+        this.describe();
+        this.schedule();
+      });
       observer.observe(frame);
       observer.observe(primary);
       observer.observe(remaining);
       mutation = new MutationObserver(() => this.schedule());
       mutation.observe(frame, { attributes: true });
+      this.describe();
       this.schedule();
     },
     bounds() {
@@ -70,14 +75,17 @@ export function fruitSplitter({ pane, variable, min = 160, max = 420, reserve = 
       const { width, upper } = this.bounds();
       initial ??= width;
       if (width > upper + 1 || width < min - 1) this.set(width);
+      this.describe();
+    },
+    describe() {
+      if (!visible(primary) || !visible(remaining)) return;
+      const { width, upper } = this.bounds();
       handle.setAttribute('aria-valuemin', Math.round(min));
       handle.setAttribute('aria-valuemax', Math.floor(upper));
-      handle.setAttribute('aria-valuenow', Math.round(primary.getBoundingClientRect().width));
+      handle.setAttribute('aria-valuenow', Math.round(width));
       handle.setAttribute(
         'aria-valuetext',
-        fruitMessage(handle, 'value-text', '{count} pixels', {
-          count: Math.round(primary.getBoundingClientRect().width),
-        }),
+        fruitMessage(handle, 'value-text', '{count} pixels', { count: Math.round(width) }),
       );
     },
     set(width) {

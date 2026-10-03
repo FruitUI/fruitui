@@ -67,6 +67,18 @@ for (const appearance of ['light', 'dark']) {
   }
 }
 
+test('visible splitters expose their value without waiting for an animation frame', async ({ page }) => {
+  // Some engines audit or read the page before the first frame; ARIA values must already be present.
+  await page.addInitScript(() => (window.requestAnimationFrame = () => 0));
+  await page.goto('/chat.html');
+  const splitters = page.locator('#chat .f-splitter[role="separator"]:visible');
+  await expect(splitters.first()).toHaveAttribute('data-ready', '');
+  for (const handle of await splitters.all()) {
+    await expect(handle).toHaveAttribute('aria-valuenow', /^\d+$/);
+    await expect(handle).toHaveAttribute('aria-valuemax', /^\d+$/);
+  }
+});
+
 test('splitter cancellation restores width and RTL follows physical divider movement', async ({ page }) => {
   await page.goto('/components.html');
   const fixture = page.locator('#component-splitter');
