@@ -151,3 +151,25 @@ test('print keeps the conversation and leaves application chrome off paper', asy
   await expect(page.getByText('Beginning of this conversation')).toBeAttached();
   await expect(page.locator('.support-thread')).toBeVisible();
 });
+
+for (const [name, url, frame] of [
+  ['Mail', '/', '#mail'],
+  ['Support', '/support.html', '#support'],
+  ['Chat', '/chat.html', '#chat'],
+  ['Admin', '/admin.html', '#admin'],
+]) {
+  test(`${name} switches between its responsive layout and an iPhone-sized preview`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(url);
+    const workspace = page.locator(frame);
+    expect((await workspace.boundingBox()).width).toBeGreaterThan(900);
+    await page.getByRole('radio', { name: 'iPhone', exact: true }).check();
+    await expect.poll(async () => Math.round((await workspace.boundingBox()).width)).toBe(390);
+    expect((await workspace.boundingBox()).height).toBeLessThanOrEqual(820);
+    expect(await workspace.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    await page.getByRole('radio', { name: 'Responsive', exact: true }).check();
+    await expect.poll(async () => (await workspace.boundingBox()).width).toBeGreaterThan(900);
+    expect(errors).toEqual([]);
+  });
+}

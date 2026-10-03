@@ -28,7 +28,7 @@
     <main x-data="mailDemo">
       <div class="page-intro">
         <div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>A little more human.</h1><p>The Mail experience. Reimagined in HTML &amp; CSS.</p></div>
-        <div class="preview-controls"><span class="example-tag">Interactive example · 01</span><fieldset class="f-segmented" style="margin: 0" aria-label="Mail preview size"><legend class="f-sr-only">Mail preview size</legend><label><input type="radio" name="mail-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="mail-preview" value="phone" x-model="preview"><span>iPhone</span></label></fieldset></div>
+        <div class="preview-controls"><span class="example-tag">Interactive example · 01</span><fieldset class="f-segmented" aria-label="Mail preview size"><legend class="f-sr-only">Mail preview size</legend><label><input type="radio" name="mail-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="mail-preview" value="phone" x-model="preview"><span>iPhone</span></label></fieldset></div>
       </div>
       <div class="f-mail-container" :data-preview="preview">
       <section id="mail" class="f-workspace f-mail" aria-label="Mail example" data-view="list" :data-view="view" :data-sidebar="sidebarVisible ? 'visible' : 'hidden'">

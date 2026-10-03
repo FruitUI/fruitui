@@ -11,7 +11,6 @@ export function mailDemo() {
     unreadOnly: false,
     selectedId: 1,
     view: 'list',
-    preview: 'responsive',
     sidebarVisible: true,
     composeAccountId: 'work',
     composeTo: '',

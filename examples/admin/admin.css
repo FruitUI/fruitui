@@ -1269,3 +1269,10 @@
     display: none;
   }
 }
+
+/* In the iPhone preview the dashboard scrolls inside a phone-height frame, like the other examples. */
+.admin-container[data-preview='phone'] .admin-workspace {
+  height: 800px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}

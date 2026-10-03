@@ -99,7 +99,11 @@
   align-items: center;
   gap: 18px;
 }
-.f-mail-container[data-preview='phone'] {
+.preview-controls .f-segmented {
+  margin: 0;
+}
+/* Every example lays out by its container width, so a 390px frame shows its iPhone layout. */
+[data-preview='phone'] {
   max-width: 390px;
   margin-inline: auto;
 }
