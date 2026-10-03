@@ -66,7 +66,7 @@
     padding: var(--f-floating-padding, 5px);
     border: 1px solid var(--f-border);
     border-radius: var(--f-floating-radius, 10px);
-    background: var(--f-floating-background, var(--f-surface));
+    background: var(--f-floating-background, var(--f-surface-elevated));
     backdrop-filter: var(--f-floating-backdrop, none);
     box-shadow: var(--f-floating-shadow, var(--f-shadow));
   }
@@ -147,6 +147,13 @@
     --f-internal-item-current-color: var(--f-on-accent);
     --f-internal-item-current-secondary: var(--f-on-accent);
     --f-internal-item-current-unread: var(--f-on-accent);
+  }
+  /* A filled current row is emphasized while its list has focus and unemphasized otherwise. */
+  :where(.f-item-list:not(:focus-within)) .f-item-row--filled {
+    --f-internal-item-current-background: var(--f-selection-inactive);
+    --f-internal-item-current-color: var(--f-text);
+    --f-internal-item-current-secondary: var(--f-secondary);
+    --f-internal-item-current-unread: var(--f-accent);
   }
   .f-item-row:focus-visible {
     outline-offset: calc(var(--f-focus-ring-width) * -1);

@@ -54,6 +54,9 @@
     background: var(--f-hover);
   }
   .f-table tbody tr[data-selected='true'] {
+    background: var(--f-selection-inactive);
+  }
+  .f-table:focus-within tbody tr[data-selected='true'] {
     background: var(--f-selection);
   }
   @media (forced-colors: active) {

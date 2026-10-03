@@ -240,7 +240,7 @@ test('helper destruction restores the native controls and removes generated UI',
   await expect(page.locator('#component-editor .tiptap')).toHaveCount(0);
 });
 
-test('forced colors preserve choice focus and reduced motion stops activity animation', async ({ page }) => {
+test('forced colors preserve choice focus and reduced motion slows activity animation', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await combo(page).focus();
   await combo(page).press('ArrowDown');
@@ -248,7 +248,8 @@ test('forced colors preserve choice focus and reduced motion stops activity anim
   await expect(page.locator(`[id="${active}"]`)).toBeVisible();
   await expect(combo(page)).toBeFocused();
   const spinner = page.locator('#component-spinner .f-spinner');
-  expect(await spinner.evaluate(el => getComputedStyle(el).animationName)).toBe('none');
+  // Activity indicators keep showing progress under reduced motion, more slowly.
+  expect(await spinner.evaluate(el => getComputedStyle(el).animationDuration)).toBe('2.4s');
   await combo(page).press('Enter');
   expect(await value(page, '#combobox-example', 'assignee')).not.toBeNull();
 });

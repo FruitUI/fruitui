@@ -55,12 +55,18 @@
     margin-inline-start: auto;
   }
   .f-sidebar__item:is([aria-current='page'], [data-current]) {
-    background: var(--f-selection);
-    color: var(--f-selection-text);
-    font-weight: 600;
+    background: var(--f-selection-inactive);
+    color: var(--f-text);
+  }
+  .f-sidebar:focus-within .f-sidebar__item:is([aria-current='page'], [data-current]) {
+    background: var(--f-accent-fill);
+    color: var(--f-on-accent);
+  }
+  .f-sidebar:focus-within .f-sidebar__item:is([aria-current='page'], [data-current]) > .f-icon {
+    color: var(--f-on-accent);
   }
   .f-sidebar__item:is([aria-current='page'], [data-current]) > .f-badge {
-    color: var(--f-selection-text);
+    color: inherit;
     background: transparent;
   }
   .f-sidebar__group {
@@ -115,6 +121,9 @@
     flex-shrink: 0;
     --f-icon-size: 12px;
     color: var(--f-secondary);
+  }
+  .f-sidebar__group:not([open]) > summary > .f-sidebar__chevron:dir(rtl) {
+    transform: scaleX(-1);
   }
   .f-sidebar__group[open] > summary > .f-sidebar__chevron {
     transform: rotate(90deg);

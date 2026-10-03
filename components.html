@@ -21,6 +21,11 @@
     <button type="button" class="f-button" disabled="disabled">Disabled</button>
     <button type="button" class="f-button f-button--icon" aria-label="Add an item"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
     <button type="button" class="f-button" aria-pressed="true">Pinned</button>
+</div>
+<div class="f-row">
+    <button type="button" class="f-button f-button--small">Small</button>
+    <button type="button" class="f-button">Regular</button>
+    <button type="button" class="f-button f-button--primary f-button--large">Large</button>
 </div><!-- /blade:button --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;button&quot;&gt;Continue&lt;/button&gt;
 &lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-pressed=&quot;true&quot;&gt;Pinned&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="button">&lt;div class=&quot;f-row&quot;&gt;
     &lt;x-fruit::button variant=&quot;primary&quot;&gt;Primary&lt;/x-fruit::button&gt;
@@ -30,6 +35,11 @@
     &lt;x-fruit::button disabled&gt;Disabled&lt;/x-fruit::button&gt;
     &lt;x-fruit::button class=&quot;f-button--icon&quot; aria-label=&quot;Add an item&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-plus&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
     &lt;x-fruit::button aria-pressed=&quot;true&quot;&gt;Pinned&lt;/x-fruit::button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;f-row&quot;&gt;
+    &lt;x-fruit::button size=&quot;small&quot;&gt;Small&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button&gt;Regular&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button size=&quot;large&quot; variant=&quot;primary&quot;&gt;Large&lt;/x-fruit::button&gt;
 &lt;/div&gt;</pre></details></section>
         <section id="component-input" data-component="input" class="f-card component-card"><h2>Text fields</h2><p>Single-line text entry; email, password, search, tel, and url retain native editing.</p><!-- blade:input --><label class="f-field">
     <span class="f-label">Your name</span>

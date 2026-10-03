@@ -16,6 +16,8 @@ final class ComponentContract
 
     public const BUTTON_TYPES = ['button', 'submit', 'reset'];
 
+    public const BUTTON_SIZES = ['small', 'regular', 'large'];
+
     public const ITEM_ROW_VARIANTS = ['quiet', 'filled'];
 
     private const ENHANCED = ['data-fruit-control', 'hidden'];
@@ -33,7 +35,7 @@ final class ComponentContract
         'attachment' => ['roles' => ['link'], 'requires' => 'href'],
         'avatar' => [],
         'badge' => ['roles' => ['status']],
-        'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES]],
+        'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES, 'size' => self::BUTTON_SIZES]],
         'card' => ['roles' => ['group', 'region']],
         'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
         'color' => ['type' => 'color', 'emits' => ['type']],

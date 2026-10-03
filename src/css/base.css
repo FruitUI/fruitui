@@ -96,10 +96,15 @@
     :where(.fruit-ui) {
       --f-motion: 0ms;
     }
-    :where(.fruit-ui) *,
+    /* Activity indicators keep moving (more slowly) so progress stays visible. */
+    :where(.fruit-ui) :not(.f-spinner),
     :where(.fruit-ui) *::before,
     :where(.fruit-ui) *::after {
       animation-duration: 0.01ms !important;
+    }
+    :where(.fruit-ui) *,
+    :where(.fruit-ui) *::before,
+    :where(.fruit-ui) *::after {
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }

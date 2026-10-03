@@ -103,14 +103,23 @@ export function fruitMenu() {
 }
 
 export function fruitTooltip() {
-  let root, keydown, leave, enter, overlay;
+  let root, keydown, leave, enter, focus, overlay, timer;
   return {
     init() {
       root = this.$el;
       const text = root.querySelector('[role="tooltip"]');
       if (text) overlay = fruitPopup(text, root.firstElementChild);
-      enter = () => {
+      // Like help tags, hover waits before showing; keyboard focus shows the text at once.
+      const show = () => {
         if (!root.hasAttribute('data-dismissed')) overlay?.show();
+      };
+      enter = () => {
+        clearTimeout(timer);
+        timer = setTimeout(show, 600);
+      };
+      focus = () => {
+        clearTimeout(timer);
+        show();
       };
       keydown = event => {
         if (event.key === 'Escape' && (root.matches(':hover') || root.contains(document.activeElement))) {
@@ -121,6 +130,7 @@ export function fruitTooltip() {
       };
       leave = event => {
         if (!root.contains(event.relatedTarget)) {
+          clearTimeout(timer);
           root.removeAttribute('data-dismissed');
           if (!root.matches(':hover') && !root.contains(document.activeElement)) overlay?.hide();
         }
@@ -129,15 +139,16 @@ export function fruitTooltip() {
       root.addEventListener('mouseleave', leave);
       root.addEventListener('focusout', leave);
       root.addEventListener('mouseenter', enter);
-      root.addEventListener('focusin', enter);
+      root.addEventListener('focusin', focus);
     },
     destroy() {
+      clearTimeout(timer);
       overlay?.destroy();
       document.removeEventListener('keydown', keydown);
       root.removeEventListener('mouseleave', leave);
       root.removeEventListener('focusout', leave);
       root.removeEventListener('mouseenter', enter);
-      root.removeEventListener('focusin', enter);
+      root.removeEventListener('focusin', focus);
     },
   };
 }

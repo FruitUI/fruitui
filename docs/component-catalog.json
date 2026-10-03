@@ -11,7 +11,7 @@
         "element": "`button`, button role; native `aria-pressed` can describe a toggle action.",
         "state": "Native disabled state; explicit form button type.",
         "keyboard": "Tab focuses; Enter/Space invokes.",
-        "options": "`variant`: default, primary, ghost, danger. `type`: button (default), submit, reset. Slot: action label and optional decorative icon."
+        "options": "`variant`: default, primary, ghost, danger. `size`: small (26px), regular (32px, default), large (40px). `type`: button (default), submit, reset. Slot: action label and optional decorative icon."
       }
     }
   },

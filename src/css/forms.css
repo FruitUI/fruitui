@@ -154,7 +154,7 @@
 
   .f-color {
     width: var(--f-color-width, 48px);
-    height: 34px;
+    height: var(--f-control-height, 32px);
     padding: 4px;
     cursor: pointer;
   }
@@ -179,7 +179,7 @@
     display: block;
     width: 100%;
     min-width: 0;
-    height: 34px;
+    height: var(--f-control-height, 32px);
     margin: 0;
     padding: 0;
     background: transparent;

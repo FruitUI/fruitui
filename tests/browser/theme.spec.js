@@ -88,7 +88,8 @@ test.describe('CSS appearance with JavaScript disabled', () => {
       await expect(page.locator('.f-card').first()).toHaveCSS('background-color', 'rgb(37, 37, 40)');
       await expect(page.getByLabel('Your name')).toHaveCSS('background-color', 'rgb(57, 57, 62)');
       await expect(page.getByLabel('Default mailbox')).toHaveCSS('color-scheme', 'dark');
-      await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(37, 37, 40)');
+      // Dialogs use the elevated surface, lighter than content in dark mode.
+      await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(44, 44, 48)');
       expect(
         await page.locator('dialog[open]').evaluate(element => getComputedStyle(element, '::backdrop').backgroundColor),
       ).toBe('rgba(0, 0, 0, 0.5)');

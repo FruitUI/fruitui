@@ -58,7 +58,8 @@
     padding: 5px;
     border: 1px solid var(--f-border);
     border-radius: var(--f-radius);
-    background: var(--f-surface);
+    background: var(--f-material-popup);
+    backdrop-filter: blur(24px) saturate(1.8);
     box-shadow: var(--f-shadow);
   }
   .f-menu--above > .f-menu__items {
@@ -79,11 +80,10 @@
     text-align: start;
     font-size: var(--f-text-base);
   }
-  .f-menu-item:hover,
-  .f-menu-item:focus-visible {
-    background: var(--f-selection);
-    color: var(--f-selection-text);
-    outline-offset: -2px;
+  .f-menu-item:is(:hover, :focus-visible):not(:disabled) {
+    background: var(--f-accent-fill);
+    color: var(--f-on-accent);
+    outline: none;
   }
   .f-menu-item--danger {
     color: var(--f-danger);
@@ -107,15 +107,20 @@
     padding: 7px 10px;
     border: 1px solid var(--f-border);
     border-radius: var(--f-radius-sm);
-    background: var(--f-surface);
+    background: var(--f-surface-elevated);
     color: var(--f-text);
     box-shadow: var(--f-shadow);
     font-size: var(--f-text-sm);
     line-height: 1.4;
     visibility: hidden;
+    transition: visibility 0s;
   }
   .f-tooltip:is(:hover, :focus-within):not([data-dismissed]) > .f-tooltip__text {
     visibility: visible;
+  }
+  /* Like help tags, hover waits before showing; keyboard focus shows it at once. */
+  .f-tooltip:hover:not(:focus-within) > .f-tooltip__text {
+    transition-delay: 0.6s;
   }
 
   .f-combobox {
@@ -160,7 +165,8 @@
     list-style: none;
     border: 1px solid var(--f-border);
     border-radius: 8px;
-    background: var(--f-surface);
+    background: var(--f-material-popup);
+    backdrop-filter: blur(24px) saturate(1.8);
     box-shadow: var(--f-shadow);
   }
   .f-combobox__option {
@@ -171,8 +177,8 @@
     overflow-wrap: anywhere;
   }
   .f-combobox__option[aria-selected='true'] {
-    background: var(--f-selection);
-    color: var(--f-selection-text);
+    background: var(--f-accent-fill);
+    color: var(--f-on-accent);
   }
   .f-combobox__empty {
     padding: 7px 10px;
@@ -260,8 +266,9 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    /* Activity stays visible, more slowly. */
     .f-spinner {
-      animation: none;
+      animation-duration: 2.4s;
     }
   }
   @media (pointer: coarse) {
@@ -361,7 +368,6 @@
   }
   .f-tab[aria-selected='true'] {
     color: var(--f-selection-text);
-    font-weight: 600;
   }
   .f-tab[aria-selected='true']::after {
     content: '';
@@ -537,6 +543,15 @@
     .f-combobox__option[aria-selected='true'] {
       background: Highlight;
       color: HighlightText;
+    }
+  }
+}
+
+@layer fruit.components {
+  @media (prefers-reduced-transparency: reduce) {
+    :is(.f-menu__items, .f-combobox__options) {
+      background: var(--f-surface-elevated);
+      backdrop-filter: none;
     }
   }
 }
