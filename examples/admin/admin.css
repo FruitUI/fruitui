@@ -16,7 +16,7 @@
 }
 .admin-toolbar-label {
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-toolbar {
   position: relative;
@@ -31,7 +31,7 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--f-text-sm);
 }
 .admin-toolbar-heading > span {
   color: var(--f-secondary);
@@ -58,7 +58,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   white-space: nowrap;
 }
 .admin-notifications {
@@ -88,7 +88,7 @@
 }
 .admin-team strong {
   display: block;
-  font-size: 14px;
+  font-size: var(--f-text-md);
   font-weight: 650;
   overflow: hidden;
   white-space: nowrap;
@@ -97,14 +97,14 @@
 .admin-team small {
   display: block;
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   margin-top: 3px;
 }
 .admin-sidebar .f-sidebar__heading {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-sidebar .f-sidebar__item {
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   margin-bottom: 4px;
   min-height: 35px;
 }
@@ -119,7 +119,7 @@
 }
 .admin-navigation-group .f-sidebar__item--nested {
   --f-sidebar-item-indent: 37px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-sidebar-bottom {
   display: flex;
@@ -131,16 +131,16 @@
 .admin-sidebar-bottom .f-avatar {
   width: 29px;
   height: 29px;
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
 }
 .admin-sidebar-bottom strong {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   font-weight: 600;
 }
 .admin-sidebar-bottom small {
   display: block;
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   margin-top: 3px;
 }
 .admin-sidebar-bottom > .f-icon {
@@ -157,7 +157,7 @@
 }
 .admin-breadcrumbs {
   margin-bottom: 18px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
 }
 .admin-breadcrumbs ol {
@@ -203,14 +203,14 @@
   margin-bottom: 24px;
 }
 .admin-overline {
-  font-size: 8px;
+  font-size: calc(var(--f-text-root) * 0.5);
   letter-spacing: 1.4px;
   font-weight: 600;
   color: var(--f-secondary);
   margin-bottom: 7px;
 }
 .admin-page-heading h2 {
-  font-size: 26px;
+  font-size: calc(var(--f-text-root) * 1.625);
   font-weight: 650;
   letter-spacing: -0.8px;
   overflow-wrap: anywhere;
@@ -220,18 +220,18 @@
 }
 .admin-page-heading > .admin-back-link {
   color: var(--f-selection-text);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   text-decoration: none;
   flex-shrink: 0;
 }
 .admin-page-heading > div > p:last-child {
   color: var(--f-secondary);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   margin-top: 5px;
   overflow-wrap: anywhere;
 }
 .admin-page-heading > .f-button {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   min-height: 32px;
 }
 .admin-page-heading > .f-button .f-icon {
@@ -253,7 +253,7 @@
   gap: 6px;
   align-items: flex-start;
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   line-height: 1.5;
 }
 .admin-stat dt .f-icon {
@@ -267,13 +267,13 @@
   margin: 10px 0 0;
 }
 .admin-stat dd > strong {
-  font-size: 28px;
+  font-size: calc(var(--f-text-root) * 1.75);
   font-weight: 650;
   letter-spacing: -0.8px;
   font-variant-numeric: tabular-nums;
 }
 .admin-stat p {
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   line-height: 1.5;
   color: var(--f-secondary);
   margin-top: 6px;
@@ -301,14 +301,14 @@
 }
 .admin-card-heading h3,
 .admin-records-heading h3 {
-  font-size: 13px;
+  font-size: var(--f-text-base);
   font-weight: 600;
   letter-spacing: -0.1px;
 }
 .admin-card-heading p,
 .admin-records-heading p {
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   line-height: 1.5;
   margin-top: 4px;
 }
@@ -321,7 +321,7 @@
 .admin-card-heading > .f-input {
   width: 92px;
   min-height: 28px;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   padding: 4px 6px;
   flex-shrink: 0;
 }
@@ -332,14 +332,14 @@
   margin-top: 20px;
 }
 .admin-chart-value strong {
-  font-size: 24px;
+  font-size: var(--f-text-4xl);
   letter-spacing: -0.6px;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
 .admin-chart-value span {
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-line-chart {
   display: block;
@@ -356,7 +356,7 @@
 }
 .admin-chart-axis {
   fill: var(--f-secondary);
-  font-size: 12px;
+  font-size: var(--f-text-sm);
 }
 .admin-chart-area {
   fill: var(--f-selection);
@@ -382,7 +382,7 @@
 }
 .admin-chart-months .f-button {
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   padding: 4px 6px;
   min-height: 26px;
 }
@@ -393,12 +393,12 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   color: var(--f-secondary);
 }
 .admin-chart-data {
   margin-top: 10px;
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   color: var(--f-secondary);
 }
 .admin-chart-data > summary {
@@ -432,12 +432,12 @@
   margin-top: 25px;
 }
 .admin-plan-total > strong {
-  font-size: 32px;
+  font-size: var(--f-text-5xl);
   font-weight: 650;
   letter-spacing: -0.8px;
 }
 .admin-plan-total > span {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   color: var(--f-secondary);
 }
 .admin-plan-bars {
@@ -451,7 +451,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-plan-bars strong {
   display: flex;
@@ -461,7 +461,7 @@
   font-variant-numeric: tabular-nums;
 }
 .admin-plan-bars small {
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   font-weight: 400;
   width: 28px;
   text-align: right;
@@ -482,7 +482,7 @@
 }
 .admin-chart-footnote {
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   line-height: 1.5;
   margin-top: 25px;
 }
@@ -499,7 +499,7 @@
 }
 .admin-records-heading .f-button {
   min-height: 29px;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   padding: 5px 10px;
 }
 .admin-records-heading .f-icon {
@@ -520,7 +520,7 @@
   min-width: 0;
 }
 .admin-table-filters .f-input {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   min-height: 32px;
 }
 .admin-table-filters .f-search .f-icon {
@@ -533,7 +533,7 @@
   gap: 8px;
 }
 .admin-filter label {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   color: var(--f-secondary);
 }
 .admin-filter .f-input {
@@ -548,13 +548,13 @@
   background: var(--f-selection);
   color: var(--f-selection-text);
   border-top: 1px solid var(--f-border);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-bulk-actions > span {
   margin-right: auto;
 }
 .admin-bulk-actions > .f-button {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-bulk-actions > .f-button--ghost {
   color: var(--f-selection-text);
@@ -562,8 +562,8 @@
 
 .admin-table {
   --f-table-min-width: 730px;
-  --f-table-font-size: 11px;
-  --f-table-heading-size: 10px;
+  --f-table-font-size: var(--f-text-xs);
+  --f-table-heading-size: var(--f-text-2xs);
 }
 .admin-table th,
 .admin-table td {
@@ -585,7 +585,7 @@
 .admin-customer .f-avatar {
   width: 30px;
   height: 30px;
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   flex-shrink: 0;
 }
 .admin-customer > div {
@@ -597,7 +597,7 @@
   border: 0;
   background: transparent;
   color: var(--f-text);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   font-weight: 600;
   cursor: pointer;
   text-align: left;
@@ -625,25 +625,25 @@
 }
 .admin-subscription-table td > strong {
   font-weight: 500;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-subscription-table td > small {
   display: block;
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   margin-top: 4px;
 }
 .admin-customer-name:hover {
   text-decoration: underline;
 }
 .admin-customer > div > strong {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   font-weight: 600;
 }
 .admin-customer > div > span {
   display: block;
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   margin-top: 3px;
   max-width: 200px;
   overflow: hidden;
@@ -661,7 +661,7 @@
   border-radius: 5px;
   background: var(--f-surface-secondary);
   color: var(--f-secondary);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
 }
 .admin-status > span:first-child {
   width: 4px;
@@ -681,7 +681,7 @@
   font-variant-numeric: tabular-nums;
 }
 .admin-table time {
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   color: var(--f-secondary);
 }
 .admin-delete-row {
@@ -700,11 +700,11 @@
 .admin-pagination {
   --f-pagination-padding: 12px 20px;
   border-top: 1px solid var(--f-border);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-page-controls > .f-input {
   width: 100px;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   min-height: 28px;
 }
 .admin-page-controls > .f-button {
@@ -723,7 +723,7 @@
 }
 .admin-empty .f-button {
   margin-top: 5px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-activity,
 .admin-settings {
@@ -761,19 +761,19 @@
   min-width: 0;
 }
 .admin-activity-list strong {
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 .admin-activity-list p {
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   line-height: 1.6;
   margin-top: 4px;
   overflow-wrap: anywhere;
 }
 .admin-activity-list time {
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
   color: var(--f-secondary);
   white-space: nowrap;
   margin-left: auto;
@@ -803,12 +803,12 @@
   padding-bottom: 20px;
 }
 .admin-setting-row strong {
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   font-weight: 500;
 }
 .admin-setting-row small {
   display: block;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   color: var(--f-secondary);
   margin-top: 4px;
   line-height: 1.5;
@@ -827,10 +827,10 @@
 .admin-settings-footer > p {
   margin-right: auto;
   align-self: center;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .admin-settings-footer > .f-button {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-dialog {
   width: min(520px, calc(100% - 32px));
@@ -840,7 +840,7 @@
 .admin-dialog .f-dialog__header p {
   margin-top: 4px;
   color: var(--f-secondary);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-form-grid {
   display: grid;
@@ -849,11 +849,11 @@
 }
 .admin-delete-dialog p {
   line-height: 1.6;
-  font-size: 13px;
+  font-size: var(--f-text-base);
   overflow-wrap: anywhere;
 }
 .admin-delete-dialog .f-help {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-navigation-toggle {
   display: none;
@@ -872,30 +872,30 @@
   padding: 24px;
 }
 .admin-summary-card h3 {
-  font-size: 16px;
+  font-size: var(--f-text-xl);
   font-weight: 600;
 }
 .admin-summary-card h3 > strong {
-  font-size: 30px;
+  font-size: calc(var(--f-text-root) * 1.875);
   font-weight: 650;
   letter-spacing: -0.6px;
   margin-right: 4px;
 }
 .admin-summary-card p {
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   color: var(--f-secondary);
   line-height: 1.7;
 }
 .admin-summary-card > .f-button {
   margin-top: auto;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-summary-card .f-icon {
   width: 14px;
   height: 14px;
 }
 .admin-summary-card .admin-plan-price > strong {
-  font-size: 28px;
+  font-size: calc(var(--f-text-root) * 1.75);
   font-weight: 650;
   color: var(--f-text);
 }
@@ -926,25 +926,25 @@
 .admin-detail-heading > .f-avatar {
   width: 44px;
   height: 44px;
-  font-size: 14px;
+  font-size: var(--f-text-md);
 }
 .admin-detail-heading > div {
   flex: 1;
   min-width: 0;
 }
 .admin-detail-heading strong {
-  font-size: 14px;
+  font-size: var(--f-text-md);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 .admin-detail-heading p {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
   overflow-wrap: anywhere;
   margin-top: 5px;
 }
 .admin-detail-heading > .f-button {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-detail-tabs {
   padding: 0 20px;
@@ -960,7 +960,7 @@
   outline-offset: -3px;
 }
 .admin-detail-panel h3 {
-  font-size: 14px;
+  font-size: var(--f-text-md);
   font-weight: 600;
 }
 .admin-detail-fields {
@@ -976,11 +976,11 @@
 }
 .admin-detail-notes h4 {
   margin: 0 0 9px;
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   font-weight: 600;
 }
 .admin-detail-notes p {
-  font-size: 13px;
+  font-size: var(--f-text-base);
   line-height: 1.8;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -989,11 +989,11 @@
   margin-top: 24px;
   color: var(--f-text);
   text-decoration: none;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .admin-joined-note {
   margin-top: 20px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
 }
 @container admin (max-width: 1100px) {
@@ -1049,10 +1049,10 @@
     margin-top: 20px;
   }
   .admin-chart-months .f-button {
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-chart-data {
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
 }
 @container admin (max-width: 700px) {
@@ -1072,7 +1072,7 @@
     gap: 8px;
   }
   .admin-toolbar-heading {
-    font-size: 13px;
+    font-size: var(--f-text-base);
     gap: 7px;
   }
   .admin-toolbar-heading > span,
@@ -1111,10 +1111,10 @@
   }
   .admin-sidebar .f-sidebar__item {
     min-height: 44px;
-    font-size: 14px;
+    font-size: var(--f-text-md);
   }
   .admin-navigation-group .f-sidebar__item--nested {
-    font-size: 13px;
+    font-size: var(--f-text-base);
   }
   .admin-sidebar-bottom {
     padding-top: 20px;
@@ -1131,10 +1131,10 @@
   }
   .admin-page-heading > .f-button {
     min-height: 44px;
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-breadcrumbs {
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-breadcrumbs a {
     display: inline-flex;
@@ -1142,37 +1142,37 @@
     min-height: 44px;
   }
   .admin-page-heading h2 {
-    font-size: 28px;
+    font-size: calc(var(--f-text-root) * 1.75);
   }
   .admin-page-heading > div > p:last-child {
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-stat {
     padding: 16px 12px;
   }
   .admin-stat dt {
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-stat dt .f-icon {
     display: none;
   }
   .admin-stat dd > strong {
-    font-size: 27px;
+    font-size: calc(var(--f-text-root) * 1.6875);
   }
   .admin-stat p {
-    font-size: 10px;
+    font-size: var(--f-text-2xs);
   }
   .admin-card-heading h3,
   .admin-records-heading h3 {
-    font-size: 14px;
+    font-size: var(--f-text-md);
   }
   .admin-card-heading p,
   .admin-records-heading p {
-    font-size: 10px;
+    font-size: var(--f-text-2xs);
   }
   .admin-card-heading > .f-input {
     min-height: 44px;
-    font-size: 12px;
+    font-size: var(--f-text-sm);
     width: 98px;
   }
   .admin-chart-value {
@@ -1181,11 +1181,11 @@
     gap: 7px;
   }
   .admin-chart-axis {
-    font-size: 24px;
+    font-size: var(--f-text-4xl);
   }
   .admin-chart-months .f-button {
     min-height: 44px;
-    font-size: 11px;
+    font-size: var(--f-text-xs);
     padding-inline: 4px;
   }
   .admin-chart-data > summary {
@@ -1199,10 +1199,10 @@
     margin-top: 20px;
   }
   .admin-plan-bars li > div:first-child {
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-chart-footnote {
-    font-size: 10px;
+    font-size: var(--f-text-2xs);
   }
   .admin-records-heading {
     padding: 17px 14px 14px;
@@ -1210,7 +1210,7 @@
   }
   .admin-records-heading .f-button {
     min-height: 44px;
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-table-filters {
     padding: 0 14px 16px;
@@ -1232,7 +1232,7 @@
     width: 100%;
   }
   .admin-filter label {
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-filter .f-input {
     width: 160px;
@@ -1242,24 +1242,24 @@
   }
   .admin-bulk-actions > .f-button {
     min-height: 44px;
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-table {
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-table thead th > button {
     min-height: 44px;
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-table thead th {
     padding-block: 2px;
   }
   .admin-customer-name {
     min-height: 30px;
-    font-size: 13px;
+    font-size: var(--f-text-base);
   }
   .admin-customer > div > span {
-    font-size: 10px;
+    font-size: var(--f-text-2xs);
   }
   .admin-table .admin-selection-cell {
     padding-inline: 14px 5px;
@@ -1273,14 +1273,14 @@
   }
   .admin-pagination {
     padding: 14px;
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-page-controls {
     width: 100%;
     justify-content: space-between;
   }
   .admin-page-controls > .f-input {
-    font-size: 14px;
+    font-size: var(--f-text-md);
     width: 116px;
     min-height: 44px;
   }
@@ -1314,10 +1314,10 @@
     font-size: 16px;
   }
   .admin-setting-row strong {
-    font-size: 13px;
+    font-size: var(--f-text-base);
   }
   .admin-setting-row small {
-    font-size: 11px;
+    font-size: var(--f-text-xs);
   }
   .admin-settings-footer > p {
     flex-basis: 100%;
@@ -1326,13 +1326,13 @@
   .admin-dialog .f-button,
   .admin-delete-dialog .f-button {
     min-height: 44px;
-    font-size: 13px;
+    font-size: var(--f-text-base);
   }
   .admin-summary-card > .f-button,
   .admin-detail-heading > .f-button,
   .admin-detail-plan-link {
     min-height: 44px;
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-detail-heading {
     padding: 20px 16px;
@@ -1348,7 +1348,7 @@
     flex: 1;
     min-height: 44px;
     padding: 10px 5px;
-    font-size: 12px;
+    font-size: var(--f-text-sm);
   }
   .admin-detail-panel {
     padding: 24px 16px;

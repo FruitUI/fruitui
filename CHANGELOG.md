@@ -6,7 +6,7 @@ Breaking changes in this pass, with migration:
 
 - **Conversation List/Row is now Item List/Row.** Rename `x-fruit::conversation-list`/`conversation-row` to `x-fruit::item-list`/`item-row`, `f-conversation-*` classes to `f-item-*`, and `--f-conversation-*` tokens to `--f-item-*`. Markup and behavior are unchanged.
 - **Mail CSS is opt-in.** `fruitui/css` (and `build/fruitui.css`) no longer include the Mail reference layout. Add `fruitui/mail.css` (or `mail.compat.css`) if you use `f-mail`.
-- **Text uses rem.** Font sizes are `--f-text-*` tokens that follow the reader's browser text size, identical at the default size. An html `.fruit-ui` scope now sizes its body instead of html. Hosts that set a pixel font size on html (Bootstrap 3) add `--f-text-root: 16px` to their scope.
+- **Text uses rem.** Font sizes are `--f-text-*` tokens that follow the reader's browser text size, identical at the default size. An html `.fruit-ui` scope now sizes its body instead of html. Hosts that set a pixel font size on html (Bootstrap 3) add `--f-text-root: 16px` to their scope. The reference examples use the same scale; only their 16px phone text-field sizes stay in pixels to prevent iOS input zoom.
 - **Field shows shared validation errors.** Without an `error` prop, Field shows the `$errors` message for its control's `wire:model` key or `name`. Pass `error=""` to opt out for a field.
 - `x-fruit::attachment download` now renders `download=""` and keeps the URL's filename (it previously named every file "download").
 - Dialogs rendered by `x-fruit::dialog` carry `wire:ignore.self`, so Livewire morphs no longer close an open dialog. Server-changed dialog attributes need a `wire:key` change to re-render.

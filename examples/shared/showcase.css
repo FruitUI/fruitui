@@ -17,7 +17,7 @@
   gap: 8px;
   color: var(--f-text);
   text-decoration: none;
-  font-size: 20px;
+  font-size: calc(var(--f-text-root) * 1.25);
   font-weight: 700;
   letter-spacing: -0.7px;
 }
@@ -33,7 +33,7 @@
 }
 .site-nav a {
   color: var(--f-secondary);
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   font-weight: 500;
   text-decoration: none;
 }
@@ -50,7 +50,7 @@
 .appearance-control select {
   width: 94px;
   min-height: 30px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   background: transparent;
 }
 .page-intro {
@@ -62,28 +62,28 @@
 }
 .eyebrow {
   color: var(--f-secondary);
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
   font-weight: 600;
   letter-spacing: 1.8px;
   text-transform: uppercase;
   margin-bottom: 9px;
 }
 .page-intro h1 {
-  font-size: 32px;
+  font-size: var(--f-text-5xl);
   font-weight: 650;
   letter-spacing: -1.2px;
   line-height: 1.2;
 }
 .page-intro p:not(.eyebrow) {
   margin-top: 8px;
-  font-size: 13px;
+  font-size: var(--f-text-base);
   color: var(--f-secondary);
 }
 .example-tag {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
   white-space: nowrap;
 }
@@ -128,7 +128,7 @@
   justify-content: space-between;
   gap: 20px;
   color: var(--f-secondary);
-  font-size: 11px;
+  font-size: var(--f-text-xs);
 }
 .mail-note span {
   display: flex;
@@ -146,7 +146,7 @@
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
 }
 .site-footer a {
@@ -165,10 +165,10 @@
 }
 .message-feature .eyebrow {
   color: var(--f-success);
-  font-size: 9px;
+  font-size: calc(var(--f-text-root) * 0.5625);
 }
 .message-feature h3 {
-  font-size: 23px;
+  font-size: calc(var(--f-text-root) * 1.4375);
   font-weight: 600;
   letter-spacing: -0.7px;
   line-height: 1.25;
@@ -176,7 +176,7 @@
 }
 .message-feature p {
   color: var(--f-secondary);
-  font-size: 12px;
+  font-size: var(--f-text-sm);
 }
 .message-feature .f-row {
   margin-top: 20px;
@@ -186,7 +186,7 @@
   border: 1px solid var(--f-border);
   background: var(--f-surface);
   padding: 3px 8px;
-  font-size: 10px;
+  font-size: var(--f-text-2xs);
 }
 .component-grid {
   display: grid;
@@ -199,12 +199,12 @@
   gap: 22px;
 }
 .component-card h2 {
-  font-size: 15px;
+  font-size: var(--f-text-lg);
   font-weight: 600;
 }
 .component-card > p {
   color: var(--f-secondary);
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   margin-top: -15px;
 }
 .component-card {
@@ -212,7 +212,7 @@
   scroll-margin-top: 24px;
 }
 .component-card h3 {
-  font-size: 13px;
+  font-size: var(--f-text-base);
 }
 .component-card--wide {
   grid-column: 1 / -1;
@@ -222,7 +222,7 @@
   flex-wrap: wrap;
   gap: 8px 18px;
   margin: 0 0 24px;
-  font-size: 12px;
+  font-size: var(--f-text-sm);
 }
 .gallery-index a {
   color: var(--f-selection-text);
@@ -233,7 +233,7 @@
 .gallery-source > summary {
   cursor: pointer;
   padding-block: 6px;
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   font-weight: 600;
 }
 .gallery-toast {
@@ -252,15 +252,15 @@
   margin-top: 28px;
 }
 .gallery-boundary h2 {
-  font-size: 16px;
+  font-size: var(--f-text-xl);
   margin-bottom: 8px;
 }
 .gallery-boundary p {
-  font-size: 12px;
+  font-size: var(--f-text-sm);
   color: var(--f-secondary);
 }
 .code {
-  font-size: 11px;
+  font-size: var(--f-text-xs);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -269,12 +269,12 @@
 }
 .integration h2 {
   margin-bottom: 10px;
-  font-size: 20px;
+  font-size: calc(var(--f-text-root) * 1.25);
   letter-spacing: -0.5px;
 }
 .integration > p {
   margin-bottom: 22px;
-  font-size: 13px;
+  font-size: var(--f-text-base);
   color: var(--f-secondary);
 }
 .integration-grid {
@@ -283,7 +283,7 @@
   gap: 16px;
 }
 .integration-grid h3 {
-  font-size: 13px;
+  font-size: var(--f-text-base);
   margin-bottom: 15px;
 }
 .skip-link {
@@ -335,7 +335,7 @@
     padding: 28px 0 24px;
   }
   .page-intro h1 {
-    font-size: 28px;
+    font-size: calc(var(--f-text-root) * 1.75);
   }
   .example-tag {
     display: none;
@@ -352,7 +352,7 @@
 }
 @media (max-width: 380px) {
   .brand {
-    font-size: 18px;
+    font-size: calc(var(--f-text-root) * 1.125);
   }
   .site-nav {
     gap: 10px;
@@ -396,6 +396,6 @@
   --f-avatar-border: 1px solid var(--f-border);
   --f-avatar-background: var(--f-surface);
   --f-avatar-color: var(--f-text);
-  --f-avatar-font-size: 18px;
+  --f-avatar-font-size: calc(var(--f-text-root) * 1.125);
   --f-avatar-font-weight: 700;
 }
