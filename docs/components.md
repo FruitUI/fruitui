@@ -417,6 +417,36 @@ Tooltips use `f-tooltip` with `x-data="fruitTooltip"`, a focusable control refer
 
 All new CSS uses existing semantic appearance tokens, follows system light/dark changes, and supports explicit theme overrides. The examples keep routing, recipient rules, upload state, and record data outside the framework.
 
+## Conversations, selection, loading and files
+
+These cover the core screens of helpdesks, mail and chat. Contracts are in the [policy](component-policy.md#blade-contracts); every one has a gallery specimen.
+
+- **Message** (`x-fruit::message`): one message's avatar, author, meta, time, body, attachments and footer. `layout="inline"` suits chat (Chat's channel); `layout="stacked"` suits email and helpdesk threads (Support, Chat threads); `variant="note"` marks internal notes. Reactions and reply buttons are independent controls in the footer.
+- **Divider** (`x-fruit::divider`): days, "New messages" (`tone="accent"`) or reply counts (`align="start"`).
+- **Timeline** (`x-fruit::timeline`, `timeline-item`): conversation history and audit logs, with a native `time`.
+- **Bulk selection**: put a Checkbox beside each Item Row in its list item; the list gets a checkbox column. `x-fruit::selection-bar :count="count($selected)"` shows the count and independent actions, and renders nothing at zero.
+- **Loading**: `x-fruit::skeleton :lines="3"` inside a container with `aria-busy="true"`, for example a Livewire lazy component's `placeholder()`. Busy buttons (Livewire `data-loading`, or `aria-busy`) show a progress cursor; compose `x-fruit::spinner` beside a readable label.
+- **Files**: `x-fruit::dropzone` wraps a native file input. Dropped files are filtered by `accept` and `multiple`, then assigned to the input with `input` and `change`, so `wire:model` uploads and change handlers work unchanged. Use Livewire's `temporaryUrl()` with Avatar or Attachment for previews.
+- **Badges** take `tone` (accent, success, warning, danger), `variant="outline"` and a `dot` slot for status labels.
+- **Menus** add Menu Checkbox, Menu Radio, Menu Link, Menu Separator, Menu Group and `shortcut` hints; checked state is the caller's (`checked` or `x-bind:aria-checked`).
+- **Breadcrumbs** (`x-fruit::breadcrumbs`, `crumb`): ancestors link, the current page uses `current`.
+
+```blade
+<x-fruit::item-list aria-label="Conversations">
+    @foreach ($conversations as $conversation)
+        <li wire:key="conversation-{{ $conversation->id }}">
+            <x-fruit::checkbox wire:model.live="selected" value="{{ $conversation->id }}">
+                <span class="f-sr-only">Select {{ $conversation->customer }}</span>
+            </x-fruit::checkbox>
+            <x-fruit::item-row wire:click="open({{ $conversation->id }})">{{ $conversation->customer }}</x-fruit::item-row>
+        </li>
+    @endforeach
+</x-fruit::item-list>
+<x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
+    <x-fruit::button size="small" wire:click="closeSelected">Close selected</x-fruit::button>
+</x-fruit::selection-bar>
+```
+
 ## Field associations and validation errors
 
 `x-fruit::field` composes one native control with its `label`, an optional `description` and its error. Child form adapters, including Checkbox, Radio and Switch, inherit the id and merged ARIA descriptions. The id is `control-id` when given, otherwise the child's own `id`, otherwise one derived from its `wire:model` or `name` (`form.email` becomes `field-form-email`). Plain HTML children need `control-id` and their own associations. Field associates exactly one control and owns no value, rule or model; use Fieldset for choice groups.

@@ -82,6 +82,7 @@ final class ComponentContract
         'chip' => [],
         'presence' => ['owns' => ['data-available'], 'message' => 'renders data-available from its available prop'],
         'toolbar' => ['roles' => ['group', 'region']],
+        'dropzone' => ['type' => 'file', 'emits' => ['type']],
         'command-palette' => ['roles' => ['dialog'], 'owns' => ['x-data'], 'message' => 'owns its fruitCommandPalette helper. Put application state on a parent'],
         'command' => ['roles' => ['option'], 'type' => 'button'],
         'command-link' => ['roles' => ['option'], 'requires' => 'href'],

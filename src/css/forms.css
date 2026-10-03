@@ -398,6 +398,57 @@
     }
   }
 
+  /* A drop target around a native file input; clicking or Space/Enter still opens the picker. */
+  .f-dropzone {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    padding: var(--f-dropzone-padding, 22px 16px);
+    border: 1.5px dashed color-mix(in srgb, var(--f-text) 30%, transparent);
+    border-radius: var(--f-radius);
+    background: var(--f-surface-secondary);
+    color: var(--f-secondary);
+    font-size: var(--f-text-sm);
+    text-align: center;
+    cursor: pointer;
+  }
+  .f-dropzone:focus-within {
+    outline: var(--f-focus-ring-width) solid var(--f-focus-ring-color);
+    outline-offset: var(--f-focus-ring-offset);
+  }
+  .f-dropzone[data-dragging] {
+    border-color: var(--f-accent);
+    background: color-mix(in srgb, var(--f-accent) 8%, var(--f-surface-secondary));
+    color: var(--f-text);
+  }
+  .f-dropzone:has(:disabled) {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .f-dropzone__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .f-dropzone__action {
+    color: var(--f-accent);
+    font-weight: 500;
+  }
+  .f-dropzone__hint {
+    font-size: var(--f-text-xs);
+  }
+  @media (forced-colors: active) {
+    .f-dropzone {
+      border-color: ButtonText;
+    }
+    .f-dropzone[data-dragging] {
+      border-color: Highlight;
+    }
+  }
+
   /* Pressed controls darken (or lighten in dark mode) over whatever surface they use. */
   :is(
       .f-button,

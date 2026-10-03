@@ -35,6 +35,7 @@ Added:
 - Bulk selection: Checkboxes beside Item Rows get a checkbox column, and `x-fruit::selection-bar` (`f-selection-bar`) counts the selection and holds its actions. Admin's bulk bar and the Livewire Support desk use it.
 - Text completions: `x-fruit::autocomplete` (`fruitAutocomplete`) suggests mentions, emoji, saved replies or words for a native input or textarea; the Livewire Support desk uses it for @mentions.
 - Command palette: `x-fruit::command-palette` with Command, Command Link and Command Group (`fruitCommandPalette`), opened by a Cmd/Ctrl shortcut or by name. The Livewire Support desk adds one for mailboxes and conversation actions.
+- File drop zone: `x-fruit::dropzone` (`fruitDropzone`) around a native file input; Mail compose and Support's new conversation use it.
 - Color tokens are declared once with `light-dark()` instead of three palette copies; appearance still follows the system or `data-theme`.
 - Sidebar `header` and `footer` slots (`f-sidebar__header`, `f-sidebar__footer`) replace the account and workspace lockups each example reimplemented. `--f-icon-size` sizes icons; group children indent without `f-sidebar__item--nested`.
 - Shared internals: one Blade `ComponentContract::control()` call per control adapter, one details-popup helper for Menu and Floating Disclosure, one marker reset, shared PHP and browser test helpers, and one component guide (`support-components.md` merged into `components.md`).

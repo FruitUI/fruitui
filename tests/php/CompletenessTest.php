@@ -185,6 +185,19 @@ class CompletenessTest extends TestCase
         $this->assertSame('Pages', $xpath->query('//div[@role="group"]')->item(0)->getAttribute('aria-label'));
     }
 
+    public function test_dropzone_wraps_a_native_file_input_that_keeps_its_bindings(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::field label="Attachments"><x-fruit::dropzone name="attachments[]" multiple accept="image/*" wire:model="attachments"><x-slot:hint>Images</x-slot:hint></x-fruit::dropzone></x-fruit::field>'));
+        $zone = $xpath->query('//label[@class="f-dropzone"]')->item(0);
+        $this->assertSame('fruitDropzone', $zone->getAttribute('x-data'));
+        $input = $xpath->query('.//input', $zone)->item(0);
+        $this->assertSame('file', $input->getAttribute('type'));
+        $this->assertSame('attachments', $input->getAttribute('wire:model'));
+        $this->assertSame('image/*', $input->getAttribute('accept'));
+        $this->assertSame('field-attachments', $input->getAttribute('id'));
+        $this->assertSame('Images', $xpath->query('.//span[@class="f-dropzone__hint"]', $zone)->item(0)->textContent);
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_completeness_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -222,6 +235,7 @@ class CompletenessTest extends TestCase
             ['<x-fruit::command-palette name="go" shortcut="cmd+k">Hi</x-fruit::command-palette>', 'shortcut must be one letter'],
             ['<x-fruit::command-link>Inbox</x-fruit::command-link>', 'requires href'],
             ['<x-fruit::command role="button">Go</x-fruit::command>', 'overriding role'],
+            ['<x-fruit::dropzone type="text" />', 'fixed native type'],
             ['<x-fruit::menu placement="left"><x-fruit::menu-item>Go</x-fruit::menu-item></x-fruit::menu>', 'menu placement must be one of'],
         ];
     }

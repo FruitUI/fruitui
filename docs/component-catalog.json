@@ -1131,5 +1131,21 @@
         "options": "`label`: required. Slot: Commands and Command Links."
       }
     }
+  },
+  {
+    "id": "dropzone",
+    "kind": "pattern",
+    "classes": ["f-dropzone"],
+    "blade": ["dropzone"],
+    "uses": ["index.html", "support.html"],
+    "contracts": {
+      "dropzone": {
+        "purpose": "Choose files by dropping them or with the system picker.",
+        "element": "`label` around a visually hidden native `input type=file`.",
+        "state": "Native FileList; a drop assigns files the input accepts and sends input and change.",
+        "keyboard": "Tab focuses the input; Space or Enter opens the picker.",
+        "options": "Native file input attributes and models (name, accept, multiple, wire:model) go to the input. Default slot: label text (default \"Drop files here or choose files\"); `hint` slot; `wrapper`: presentation attributes."
+      }
+    }
   }
 ]

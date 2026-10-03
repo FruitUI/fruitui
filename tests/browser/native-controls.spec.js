@@ -311,3 +311,40 @@ test('styled search cancellation updates the existing Alpine search', async ({ p
   await expect(search).toHaveValue('');
   await expect(page.locator('tr[data-customer]')).toHaveCount(5);
 });
+
+test('a drop zone assigns accepted dropped files to its native input and sends change', async ({ page }) => {
+  await page.goto('/components.html');
+  const zone = page.locator('#component-dropzone .f-dropzone');
+  const drop = async names =>
+    zone.evaluate((element, names) => {
+      const transfer = new DataTransfer();
+      for (const name of names)
+        transfer.items.add(
+          new File(['FruitUI'], name, {
+            type: name.endsWith('.png') ? 'image/png' : name.endsWith('.txt') ? 'text/plain' : 'application/zip',
+          }),
+        );
+      for (const type of ['dragenter', 'dragover', 'drop'])
+        element.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: transfer }));
+    }, names);
+  await drop(['notes.txt', 'archive.zip', 'photo.png']);
+  await expect(page.locator('#component-dropzone').getByRole('status')).toHaveText('notes.txt, photo.png');
+  expect(await zone.locator('input').evaluate(input => input.files.length)).toBe(2);
+  await expect(zone).not.toHaveAttribute('data-dragging');
+  await expect(page.getByLabel('Attachments', { exact: true }).first()).toHaveAttribute('type', 'file');
+});
+
+test('Mail compose accepts dropped attachments through its existing upload handler', async ({ page }) => {
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: /compose|new message/i })
+    .first()
+    .click();
+  const zone = page.locator('.f-dropzone').first();
+  await zone.evaluate(element => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['FruitUI'], 'brief.txt', { type: 'text/plain' }));
+    element.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }));
+  });
+  await expect(page.locator('.f-upload__row').first()).toContainText('brief.txt');
+});
