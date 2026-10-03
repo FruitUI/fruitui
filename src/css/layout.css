@@ -37,7 +37,7 @@
     padding: 6px 10px;
     padding-inline-start: var(--f-sidebar-item-indent, 10px);
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--f-radius-md);
     background: transparent;
     color: var(--f-text);
     font-size: var(--f-text-base);

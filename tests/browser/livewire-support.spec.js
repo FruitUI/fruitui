@@ -369,3 +369,14 @@ test('a ticket row context menu runs Livewire actions for that ticket', async ({
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A new home for our workspace');
   expect(errors).toEqual([]);
 });
+
+test('a message action quotes it into the Livewire reply', async ({ page }) => {
+  const errors = await openDesk(page);
+  const message = conversation(page).getByRole('article', { name: 'Message from Sophie Chen' });
+  await message.hover();
+  await message.getByRole('button', { name: 'Quote Sophie Chen in reply', exact: true }).click();
+  const reply = page.getByRole('textbox', { name: 'Reply to Sophie Chen' });
+  await expect(reply).toHaveValue(/^> We’re growing the studio/);
+  await expect(reply).toBeFocused();
+  expect(errors).toEqual([]);
+});

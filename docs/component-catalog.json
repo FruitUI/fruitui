@@ -1090,8 +1090,8 @@
         "purpose": "Present one message in a conversation.",
         "element": "`article` (or a listitem role) with a header, body, attachments and footer.",
         "state": "No state; the application owns message data and actions.",
-        "keyboard": "Child links and buttons keep their behavior; no added keyboard model.",
-        "options": "`layout`: inline (default), stacked. `variant`: default, note. `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta`, `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply). Give it an accessible name."
+        "keyboard": "Child links and buttons keep their behavior. The actions bar appears on hover and whenever focus is inside the message, so its buttons are reachable by Tab.",
+        "options": "`layout`: inline (default), stacked. `variant`: default, note. `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta`, `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply counts), `actions` (quick actions shown in the corner on hover or focus, and always on touch screens; a labelled group). Give it an accessible name. `--f-message-actions-top` and `--f-message-actions-end` place the actions (above the top edge by default)."
       }
     }
   },

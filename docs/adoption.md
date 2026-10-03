@@ -74,6 +74,14 @@ FruitUI ships Dutch, German, French and Spanish strings in `lang/{locale}.json`,
 
 ## Customization, direction and generated text
 
+**Brand color.** Set `--f-tint` on the `.fruit-ui` scope to your brand color; accents, button fills and hovers, selection and focus rings derive from it in both appearances. Set it where `.fruit-ui` is (the derived tokens are computed there); to brand a nested area, give that element the `fruit-ui` class too. Choose a tint dark enough for white text on filled buttons.
+
+```css
+.fruit-ui { --f-tint: #248a3d; }
+```
+
+**Corner radii** come from `--f-radius-xs` (4px), `--f-radius-sm` (6px, controls), `--f-radius-md` (8px, rows and panels), `--f-radius` (10px, popups and cards), `--f-radius-lg` (18px, dialogs) and `--f-radius-full` (pills and tracks). Nested shapes subtract their container's padding, so adjusting a token keeps curves concentric.
+
 Component customization tokens inherit from an application scope. `--f-internal-*` variables implement variant defaults and are private; application reference layouts may still assign their own geometry tokens locally. A component uses its documented fallback rather than resetting that token on itself. Color overrides must provide both appearances. The existing default dimensions are retained; scopes can adjust `--f-control-height`, `--f-control-font-size`, `--f-control-line-height`, `--f-control-padding-block`, `--f-control-padding-inline`, `--f-button-height`, `--f-button-padding-block`, `--f-button-padding-inline`, and `--f-field-gap`. Coarse-pointer controls retain a 44px target floor and 16px input text. Size tokens change presentation only. Text uses rem-based `--f-text-*` tokens and follows the reader's browser text size. Hosts that set a pixel font size on html, such as Bootstrap 3's 10px, add `--f-text-root: 16px` to their `.fruit-ui` scope.
 
 Set `dir="rtl"` on the application scope for logical shared spacing, search icons, pane borders, switch thumbs and popup alignment. Tab and token directional keys follow inline direction; splitters already account for RTL. Reference applications retain their own routing, language and column arrangements; product-level translation and mirroring still belong to the host.

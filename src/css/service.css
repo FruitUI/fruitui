@@ -98,7 +98,7 @@
     min-height: 36px;
     padding: 7px 12px;
     border: 0;
-    border-radius: 5px;
+    border-radius: calc(var(--f-radius) - 5px);
     background: transparent;
     color: var(--f-text);
     text-align: start;
@@ -235,14 +235,14 @@
     margin: 0;
     list-style: none;
     border: 1px solid var(--f-border);
-    border-radius: 8px;
+    border-radius: var(--f-radius);
     background: var(--f-material-popup);
     backdrop-filter: blur(24px) saturate(1.8);
     box-shadow: var(--f-shadow);
   }
   :is(.f-combobox__option, .f-autocomplete__option) {
     padding: 7px 10px;
-    border-radius: 4px;
+    border-radius: var(--f-radius-xs);
     font-size: var(--f-text-base);
     cursor: pointer;
     overflow-wrap: anywhere;
@@ -321,7 +321,7 @@
     height: 22px;
     padding: 0;
     border: 0;
-    border-radius: 4px;
+    border-radius: var(--f-radius-xs);
     background: transparent;
     color: inherit;
     font-size: var(--f-text-xl);
@@ -381,13 +381,13 @@
   }
   .f-button-group > :first-child,
   .f-button-group > :first-child > summary {
-    border-start-start-radius: 6px;
-    border-end-start-radius: 6px;
+    border-start-start-radius: var(--f-radius-sm);
+    border-end-start-radius: var(--f-radius-sm);
   }
   .f-button-group > :last-child,
   .f-button-group > :last-child > summary {
-    border-start-end-radius: 6px;
-    border-end-end-radius: 6px;
+    border-start-end-radius: var(--f-radius-sm);
+    border-end-end-radius: var(--f-radius-sm);
   }
   .f-button-group > :not(:first-child) {
     margin-inline-start: -1px;
@@ -413,12 +413,12 @@
     margin-inline-start: -1px;
   }
   .f-input-group > :first-child {
-    border-start-start-radius: 6px;
-    border-end-start-radius: 6px;
+    border-start-start-radius: var(--f-radius-sm);
+    border-end-start-radius: var(--f-radius-sm);
   }
   .f-input-group > :last-child {
-    border-start-end-radius: 6px;
-    border-end-end-radius: 6px;
+    border-start-end-radius: var(--f-radius-sm);
+    border-end-end-radius: var(--f-radius-sm);
   }
   .f-input-group > :focus {
     position: relative;
@@ -445,7 +445,7 @@
     min-height: 42px;
     padding: 10px 14px;
     border: 0;
-    border-radius: 6px 6px 0 0;
+    border-radius: var(--f-radius-sm) var(--f-radius-sm) 0 0;
     background: transparent;
     color: var(--f-secondary);
     font-size: var(--f-text-base);
@@ -476,7 +476,7 @@
   .f-section-nav a {
     display: block;
     padding: 10px 12px;
-    border-radius: 6px 6px 0 0;
+    border-radius: var(--f-radius-sm) var(--f-radius-sm) 0 0;
     color: var(--f-secondary);
     text-decoration: none;
     font-size: var(--f-text-base);
@@ -530,7 +530,7 @@
     gap: 10px;
     padding: 10px;
     border: 1px solid var(--f-border);
-    border-radius: 8px;
+    border-radius: var(--f-radius-md);
     background: var(--f-surface-secondary);
   }
   .f-upload__body {

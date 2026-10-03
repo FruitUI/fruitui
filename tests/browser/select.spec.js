@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,14 +44,12 @@ const palette = {
     text: 'rgb(34, 34, 37)',
     secondary: 'rgb(101, 101, 108)',
     disabled: 'rgb(118, 118, 125)',
-    selection: 'rgb(226, 237, 255)',
   },
   dark: {
     control: 'rgb(57, 57, 62)',
     text: 'rgb(243, 243, 245)',
     secondary: 'rgb(176, 176, 184)',
     disabled: 'rgb(161, 161, 171)',
-    selection: 'rgb(38, 62, 90)',
   },
 };
 
@@ -70,7 +68,10 @@ test.describe('CSS-only native selection', () => {
     await page.keyboard.press('Space');
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
-    await expect(select.locator('option[value="work"]')).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+    await expect(select.locator('option[value="work"]')).toHaveCSS(
+      'background-color',
+      await tokenColor(page, '--f-accent-fill'),
+    );
     await page.keyboard.press('Enter');
     await expect(select).toHaveValue('work');
     await expect(select).toBeFocused();
@@ -151,9 +152,12 @@ test.describe('CSS-only native selection', () => {
       const option = await work.boundingBox();
       expect(option.y + option.height).toBeGreaterThan(clipped.y + clipped.height);
       await work.hover();
-      await expect(work).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+      await expect(work).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
       await expect(work).toHaveCSS('color', 'rgb(255, 255, 255)');
-      await expect(select.locator('option:checked')).toHaveCSS('background-color', palette[appearance].selection);
+      await expect(select.locator('option:checked')).toHaveCSS(
+        'background-color',
+        await tokenColor(page, '--f-selection'),
+      );
       await offline.hover();
       expect(await offline.evaluate(element => element.matches(':disabled'))).toBe(true);
       for (const system of [appearance, appearance === 'light' ? 'dark' : 'light']) {

@@ -96,6 +96,18 @@ new class extends Component
         Fruit::toast('Reply sent to '.$this->ticket['name'].'.');
     }
 
+    /** Quote a customer message or reply into the reply draft; internal notes are never quoted. */
+    public function quote(int $index): void
+    {
+        $message = $this->ticket['messages'][$index] ?? null;
+        if (! $message) {
+            return;
+        }
+        $quoted = collect(preg_split('/\R/', $message['body']))->map(fn ($line) => "> {$line}")->implode("\n");
+        $this->reply = ltrim(rtrim($this->reply)."\n\n").$quoted."\n\n";
+        $this->js("document.getElementById('support-reply')?.focus()");
+    }
+
     public function confirmClose(): void
     {
         $this->closeReason = 'resolved';
@@ -321,13 +333,20 @@ new class extends Component
                     {{-- Keyed per ticket so enhanced controls start fresh; islands stay outside a changing key. --}}
                     <div class="f-stack" wire:key="conversation-{{ $ticket['id'] }}">
                         <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
-                            @foreach ($ticket['messages'] as $message)
+                            @foreach ($ticket['messages'] as $index => $message)
                                 <li>
                                     <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
                                         <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                         <x-slot:author>{{ $message['author'] }}</x-slot:author>
                                         <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
                                         {{ $message['body'] }}
+                                        @if ($ticket['status'] === 'open')
+                                            <x-slot:actions>
+                                                <x-fruit::button variant="ghost" class="f-button--icon" wire:click="quote({{ $index }})" aria-label="Quote {{ $message['author'] }} in reply">
+                                                    <svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v6"/></svg>
+                                                </x-fruit::button>
+                                            </x-slot:actions>
+                                        @endif
                                     </x-fruit::message>
                                 </li>
                             @endforeach

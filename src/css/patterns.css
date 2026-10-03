@@ -65,7 +65,7 @@
     max-width: calc(100vw - 32px);
     padding: var(--f-floating-padding, 5px);
     border: 1px solid var(--f-border);
-    border-radius: var(--f-floating-radius, 10px);
+    border-radius: var(--f-floating-radius, var(--f-radius));
     background: var(--f-floating-background, var(--f-surface-elevated));
     backdrop-filter: var(--f-floating-backdrop, none);
     box-shadow: var(--f-floating-shadow, var(--f-shadow));
@@ -104,7 +104,7 @@
     width: 100%;
     padding: var(--f-item-row-padding, 14px 12px);
     border: 0;
-    border-radius: var(--f-item-row-radius, 9px);
+    border-radius: var(--f-item-row-radius, var(--f-radius-md));
     background: transparent;
     color: var(--f-text);
     text-align: start;
@@ -313,7 +313,7 @@
   }
   .f-skeleton__line,
   .f-skeleton__block {
-    border-radius: 4px;
+    border-radius: var(--f-radius-xs);
     background: linear-gradient(90deg, var(--f-hover) 30%, var(--f-pressed) 50%, var(--f-hover) 70%) 0 0 / 300% 100%;
     animation: fruit-shimmer 1.6s ease-in-out infinite;
   }
@@ -391,6 +391,7 @@
   /* One message in a conversation: identity and time, the body, then attachments or actions.
      Inline puts the avatar beside everything; stacked puts the identity above a full-width body. */
   .f-message {
+    position: relative;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--f-message-gap, 10px);
@@ -440,14 +441,65 @@
     gap: 6px;
     margin-top: 8px;
   }
+  /* Quick actions appear at the message's top corner on hover or keyboard focus, as in Slack; they
+     rise above the edge so they never cover the text. Padded messages can set the offset inside.
+     Touch screens, which cannot hover, keep them visible after the content. */
+  .f-message__actions {
+    position: absolute;
+    inset-block-start: var(--f-message-actions-top, -14px);
+    inset-inline-end: var(--f-message-actions-end, 4px);
+    z-index: 1;
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--f-border);
+    border-radius: var(--f-radius-sm);
+    background: var(--f-surface-elevated);
+    box-shadow: var(--f-control-shadow);
+    /* Hidden, not inert: the bar is inside the message, so pointing at it already shows it. */
+    opacity: 0;
+    transition: opacity var(--f-motion) ease;
+  }
+  .f-message:is(:hover, :focus-within) > .f-message__actions,
+  .f-message__actions:has([open]) {
+    opacity: 1;
+  }
+  .f-message__actions .f-button {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px;
+  }
+  @media (hover: none) {
+    .f-message__actions {
+      position: static;
+      justify-self: end;
+      margin-top: 6px;
+      opacity: 1;
+    }
+  }
   .f-message--stacked {
     align-items: center;
   }
   .f-message--stacked > .f-message__avatar {
     grid-row: auto;
   }
-  .f-message--stacked > :not(.f-message__avatar, .f-message__header) {
+  .f-message--stacked > :not(.f-message__avatar, .f-message__header, .f-message__actions) {
     grid-column: 1 / -1;
+  }
+  /* Stacked messages show their time at the end of the header: the actions take their own column
+     beside it instead of covering it. */
+  .f-message--stacked:has(> .f-message__actions) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .f-message--stacked:has(> .f-message__actions) > .f-message__header {
+    grid-column: 2;
+  }
+  .f-message--stacked > .f-message__actions {
+    position: static;
+    grid-row: 1;
+    grid-column: 3;
+    align-self: start;
+    margin-inline-start: 8px;
   }
   .f-message--stacked .f-message__header {
     align-items: flex-start;

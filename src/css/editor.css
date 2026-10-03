@@ -1,7 +1,7 @@
 @layer fruit.components {
   .f-editor {
     border: 1px solid var(--f-border);
-    border-radius: 8px;
+    border-radius: var(--f-radius-md);
     background: var(--f-control);
   }
   .f-editor__toolbar {

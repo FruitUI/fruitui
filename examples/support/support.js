@@ -238,6 +238,21 @@ export function supportDemo() {
     removeTag(tag) {
       this.ticket.tags = this.ticket.tags.filter(value => value !== tag);
     },
+    // Internal notes never reach a customer reply, so only customer messages and replies can be quoted.
+    quote(entry) {
+      if (!this.ticket || entry.kind === 'note') return;
+      this.mode = 'reply';
+      const quoted = entry.body
+        .split('\n')
+        .map(line => `> ${line}`)
+        .join('\n');
+      this.draft = `${this.draft ? `${this.draft.trimEnd()}\n\n` : ''}${quoted}\n\n`;
+      this.$nextTick(() => {
+        const box = this.$refs.replyBody;
+        box.focus();
+        box.setSelectionRange(box.value.length, box.value.length);
+      });
+    },
     send() {
       if (!this.ticket) return;
       const body = this.draft.trim();

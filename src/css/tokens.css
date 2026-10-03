@@ -15,11 +15,19 @@
     --f-tertiary: light-dark(#76767d, #a1a1ab);
     --f-border: light-dark(rgb(60 60 67 / 15%), rgb(235 235 245 / 14%));
     --f-hover: light-dark(rgb(60 60 67 / 6%), rgb(235 235 245 / 7%));
-    --f-accent: light-dark(#006cde, #3995ff);
-    --f-accent-fill: #0064d0;
-    --f-accent-fill-hover: #0055b5;
-    --f-selection: light-dark(#e2edff, #263e5a);
-    --f-selection-text: light-dark(#0759b1, #9dcbff);
+    /* The one brand color. Every accent shade derives from it, so a scope can set just --f-tint. */
+    --f-tint: #006cde;
+    --f-accent: light-dark(var(--f-tint), oklch(from var(--f-tint) calc(l + 0.13) c h));
+    --f-accent-fill: color-mix(in srgb, var(--f-tint) 93%, black);
+    --f-accent-fill-hover: color-mix(in srgb, var(--f-tint) 81%, black);
+    --f-selection: light-dark(
+      color-mix(in srgb, var(--f-tint) 11%, white),
+      color-mix(in srgb, var(--f-tint) 25%, #2c2c2e)
+    );
+    --f-selection-text: light-dark(
+      color-mix(in srgb, var(--f-tint) 76%, #1c1c1e),
+      oklch(from var(--f-tint) calc(l + 0.29) calc(c * 0.55) h)
+    );
     --f-on-accent: #fff;
     --f-danger: light-dark(#c52f27, #ff8179);
     --f-success: light-dark(#25733e, #83d697);
@@ -41,9 +49,13 @@
     --f-switch-shadow: 0 1px 3px light-dark(rgb(0 0 0 / 20%), rgb(0 0 0 / 40%));
     --f-segmented-shadow: 0 1px 4px light-dark(rgb(0 0 0 / 12%), rgb(0 0 0 / 25%));
     --f-backdrop: light-dark(rgb(0 0 0 / 25%), rgb(0 0 0 / 50%));
+    /* Corner radii. Nested shapes subtract their container's padding so curves stay concentric. */
+    --f-radius-xs: 4px;
     --f-radius-sm: 6px;
+    --f-radius-md: 8px;
     --f-radius: 10px;
     --f-radius-lg: 18px;
+    --f-radius-full: 999px;
     --f-space-1: 4px;
     --f-space-2: 8px;
     --f-space-3: 12px;

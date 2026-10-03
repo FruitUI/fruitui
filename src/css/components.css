@@ -144,7 +144,7 @@
     height: 20px;
     margin: 0;
     border: 1px solid var(--f-border);
-    border-radius: 20px;
+    border-radius: var(--f-radius-full);
     background: var(--f-switch-off);
     box-shadow: inset 0 0 0 1px var(--f-switch-off-border);
     position: relative;
@@ -179,7 +179,7 @@
     display: inline-flex;
     gap: 2px;
     padding: 3px;
-    border-radius: 8px;
+    border-radius: var(--f-radius-md);
     background: var(--f-hover);
     border: 1px solid var(--f-border);
   }
@@ -200,7 +200,7 @@
   }
   .f-segmented > label > span {
     display: block;
-    border-radius: 5px;
+    border-radius: calc(var(--f-radius-md) - 3px);
     padding: 4px 13px;
     font-size: var(--f-text-sm);
   }
@@ -334,7 +334,7 @@
     max-width: calc(100% - 32px);
     padding: 11px 18px;
     border: 1px solid var(--f-border);
-    border-radius: 12px;
+    border-radius: var(--f-radius);
     background: var(--f-surface-elevated);
     box-shadow: var(--f-shadow);
     z-index: 10;

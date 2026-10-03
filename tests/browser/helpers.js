@@ -17,3 +17,15 @@ export async function expectNoOverflow(page, container) {
   if (container)
     expect(await page.locator(container).evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 }
+
+/** A color token resolved by the page, spelled the way this engine reports computed colors. */
+export function tokenColor(page, token) {
+  return page.evaluate(name => {
+    const probe = document.createElement('span');
+    (document.querySelector('.fruit-ui') ?? document.body).append(probe);
+    probe.style.color = `var(${name})`;
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  }, token);
+}

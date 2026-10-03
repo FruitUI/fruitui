@@ -5,6 +5,10 @@
         <x-slot:time>9:08 AM</x-slot:time>
         A little space for the things we’re making. Early ideas, tiny details, and anything that makes an interface feel more human.
         <x-slot:footer><x-fruit::button size="small" variant="ghost">Reply in thread</x-fruit::button></x-slot:footer>
+        <x-slot:actions>
+            <x-fruit::button variant="ghost" class="f-button--icon" aria-label="Add reaction"><svg class="f-icon" aria-hidden="true"><use href="#i-smile"/></svg></x-fruit::button>
+            <x-fruit::button variant="ghost" class="f-button--icon" aria-label="Reply in thread"><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg></x-fruit::button>
+        </x-slot:actions>
     </x-fruit::message>
     <x-fruit::message layout="stacked" aria-label="Customer message">
         <x-slot:avatar><x-fruit::avatar>SC</x-fruit::avatar></x-slot:avatar>

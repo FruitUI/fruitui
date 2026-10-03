@@ -217,6 +217,8 @@
 .chat-message {
   --f-message-gap: 11px;
   --f-message-body-gap: 5px;
+  /* The padding has room for the actions inside the message. */
+  --f-message-actions-top: 4px;
   padding: 12px;
   border-radius: 10px;
   scroll-margin-block: 10px;
@@ -318,8 +320,11 @@
 .chat-thread-link .f-icon {
   --f-icon-size: 13px;
 }
+/* Nothing to show beneath a message without reactions or replies. */
+.chat-message-footer:not(:has(.chat-reaction, .chat-thread-link:not([style*='none']))) {
+  display: none;
+}
 .chat-reaction-picker {
-  margin-left: auto;
   --f-floating-padding: 4px;
   --f-floating-shadow: var(--f-control-shadow);
 }
@@ -782,4 +787,15 @@
 .chat-typing {
   min-height: 28px;
   margin: 0 20px;
+}
+
+/* Stays at the bottom of the history while you read older messages. */
+.chat-jump {
+  position: sticky;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  margin: 8px auto 0;
+  border-radius: var(--f-radius-full);
+  box-shadow: var(--f-shadow);
 }

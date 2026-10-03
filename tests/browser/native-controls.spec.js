@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <meta name="viewport" content="width=device-width, initial-scale=1"><title>Native controls</title>
@@ -57,7 +57,7 @@ test.describe('CSS-only native forms', () => {
       element.indeterminate = true;
     });
     expect(await sound.evaluate(element => element.matches(':indeterminate'))).toBe(true);
-    await expect(sound).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+    await expect(sound).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
     await page.keyboard.press('Space');
     await expect(sound).toBeChecked();
     expect(await sound.evaluate(element => element.indeterminate)).toBe(false);
@@ -171,7 +171,7 @@ test.describe('CSS-only native forms', () => {
           .evaluate(element => getComputedStyle(element, '::file-selector-button').color);
         expect(fileButton).toBe(dark ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)');
         const sound = page.getByRole('checkbox', { name: 'Sound', exact: true });
-        await expect(sound).toHaveCSS('background-color', 'rgb(0, 100, 208)');
+        await expect(sound).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
         expect(await sound.evaluate(element => getComputedStyle(element, '::before').visibility)).toBe('visible');
         const radio = page.getByRole('radio', { name: 'Comfortable', exact: true });
         await expect(radio).toHaveCSS('border-radius', '50%');

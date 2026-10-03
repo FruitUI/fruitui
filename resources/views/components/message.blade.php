@@ -9,4 +9,5 @@
     <div class="f-message__body">{{ $slot }}</div>
     @isset($attachments)<div {{ $attachments->attributes->class(['f-message__attachments']) }}>{{ $attachments }}</div>@endisset
     @isset($footer)<footer {{ $footer->attributes->class(['f-message__footer']) }}>{{ $footer }}</footer>@endisset
+    @isset($actions)<div {{ $actions->attributes->merge(['aria-label' => __('Message actions')])->class(['f-message__actions']) }} role="group">{{ $actions }}</div>@endisset
 </article>

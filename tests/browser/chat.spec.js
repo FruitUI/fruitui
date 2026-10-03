@@ -83,7 +83,7 @@ test('threads preserve their drafts and add replies without posting to the chann
   await expect(page.locator('.chat-thread-reply').last()).toContainText('A reply draft for Sophie.');
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(5);
   await expect(page.getByRole('textbox', { name: 'Message #design', exact: true })).toHaveValue('A channel draft.');
-  await expect(threadButton(page, 202)).toContainText('3 replies');
+  await expect(page.locator('.chat-history [data-thread-count="202"]')).toContainText('3 replies');
   await page.getByRole('button', { name: 'Close thread', exact: true }).click();
   await navigation(page)
     .getByRole('button', { name: /^Threads/ })
@@ -348,4 +348,45 @@ test('a direct message shows the other person typing for a moment', async ({ pag
   const typing = page.locator('.chat-typing');
   await expect(typing).toHaveText('Sophie is typing…');
   await expect(typing).toHaveText('', { timeout: 5000 });
+});
+
+test('message actions appear on hover or focus and threads return focus to the control that opened them', async ({
+  page,
+}) => {
+  const message = page.locator('.chat-message[data-message-id="202"]');
+  const actions = message.getByRole('group', { name: 'Actions for Sophie Chen’s message' });
+  const opacity = () => actions.evaluate(element => getComputedStyle(element).opacity);
+  await page.mouse.move(0, 0);
+  await expect.poll(opacity).toBe('0');
+  await message.hover();
+  await expect.poll(opacity).toBe('1');
+  await page.mouse.move(0, 0);
+  await message.getByRole('button', { name: 'Reply in thread to Sophie Chen', exact: true }).focus();
+  await expect.poll(opacity).toBe('1');
+
+  // The reply count opens the thread too, and focus returns to it.
+  const count = message.getByRole('button', { name: '2 replies to Sophie Chen', exact: true });
+  await count.click();
+  await expect(page.locator('#chat-thread-title')).toBeFocused();
+  await page.getByRole('button', { name: 'Close thread', exact: true }).click();
+  await expect(count).toBeFocused();
+  // A message without replies shows no reply count, only the action.
+  await expect(page.locator('.chat-message[data-message-id="201"] [data-thread-count]')).toBeHidden();
+});
+
+test('jump to latest appears after scrolling back and returns to the newest message', async ({ page }) => {
+  const history = page.locator('#chat-history');
+  const jump = page.getByRole('button', { name: 'Jump to latest', exact: true });
+  await expect(jump).toBeHidden();
+  await page.setViewportSize({ width: 1440, height: 560 });
+  await history.evaluate(element => element.scrollTo({ top: element.scrollHeight }));
+  await expect(jump).toBeHidden();
+  await history.evaluate(element => element.scrollTo({ top: 0 }));
+  await expect(jump).toBeVisible();
+  await jump.click();
+  await expect(jump).toBeHidden();
+  await expect
+    .poll(() => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight))
+    .toBeLessThan(2);
+  await expect(page.locator('.chat-history .chat-message').last()).toBeFocused();
 });

@@ -8,6 +8,8 @@ export function chatDemo() {
     mode: 'room',
     view: 'conversation',
     threadId: 202,
+    threadOpenedFrom: 'action',
+    awayFromLatest: false,
     query: '',
     drafts: {},
     threadDrafts: {},
@@ -112,6 +114,7 @@ export function chatDemo() {
       this.error = '';
       this.threadError = '';
       this.highlightedId = null;
+      this.awayFromLatest = false;
       this.room.messages.forEach(message => {
         message.unread = false;
       });
@@ -171,10 +174,23 @@ export function chatDemo() {
           }),
         );
     },
-    openThread(id) {
+    // Scrolled back through history: offer a way down to the newest message.
+    trackLatest(history) {
+      this.awayFromLatest = history.scrollHeight - history.scrollTop - history.clientHeight > 160;
+    },
+    jumpToLatest() {
+      const history = this.$refs.history;
+      const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      history.scrollTo({ top: history.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+      this.awayFromLatest = false;
+      // The button hides; keep keyboard focus on the newest message.
+      [...history.querySelectorAll('.chat-message')].at(-1)?.focus({ preventScroll: true });
+    },
+    openThread(id, from = 'action') {
       if (!this.room.messages.some(message => message.id === id)) return;
       const heading = this.$refs.threadTitle;
       this.threadId = id;
+      this.threadOpenedFrom = from;
       this.view = 'thread';
       this.threadError = '';
       this.$nextTick(() => heading.focus());
@@ -185,7 +201,9 @@ export function chatDemo() {
       this.threadId = null;
       this.view = 'conversation';
       this.$nextTick(() => {
-        const trigger = refs.history.querySelector(`[data-thread-trigger="${id}"]`);
+        // Return focus to the control that opened the thread: the reply count or the message action.
+        const opener = this.threadOpenedFrom === 'count' ? 'data-thread-count' : 'data-thread-trigger';
+        const trigger = refs.history.querySelector(`[${opener}="${id}"]`);
         if (trigger?.getClientRects().length) trigger.focus();
         else refs.roomTitle.focus();
       });

@@ -1153,19 +1153,20 @@
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> </span>
         <time class="f-message__time"  datetime="2026-10-02T09:08" >9:08 AM</time>    </header>
     <div class="f-message__body">A little space for the things we’re making. Early ideas, tiny details, and anything that makes an interface feel more human.</div>
-        <footer class="f-message__footer"><button type="button" class="f-button f-button--ghost f-button--small">Reply in thread</button></footer></article>
+        <footer class="f-message__footer"><button type="button" class="f-button f-button--ghost f-button--small">Reply in thread</button></footer>    <div class="f-message__actions" aria-label="Message actions" role="group"><button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Add reaction"><svg class="f-icon" aria-hidden="true"><use href="#i-smile"/></svg></button>
+            <button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Reply in thread"><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg></button></div></article>
     <article class="f-message f-message--stacked" aria-label="Customer message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small></span>
         <time class="f-message__time" >Today, 10:42 AM</time>    </header>
     <div class="f-message__body">We’re growing the studio. Can we move to the Team plan without losing our projects?</div>
-        </article>
+            </article>
     <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Internal note · Only your team</small></span>
             </header>
     <div class="f-message__body">Existing projects stay in place when upgrading.</div>
-        </article>
+            </article>
 </div><!-- /blade:message --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;article class=&quot;f-message&quot; aria-label=&quot;Message from Mia Patel&quot;&gt;
   &lt;span class=&quot;f-avatar f-message__avatar&quot; aria-hidden=&quot;true&quot;&gt;MP&lt;/span&gt;
   &lt;header class=&quot;f-message__header&quot;&gt;
@@ -1181,6 +1182,10 @@
         &lt;x-slot:time&gt;9:08 AM&lt;/x-slot:time&gt;
         A little space for the things we’re making. Early ideas, tiny details, and anything that makes an interface feel more human.
         &lt;x-slot:footer&gt;&lt;x-fruit::button size=&quot;small&quot; variant=&quot;ghost&quot;&gt;Reply in thread&lt;/x-fruit::button&gt;&lt;/x-slot:footer&gt;
+        &lt;x-slot:actions&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; aria-label=&quot;Add reaction&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-smile&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; aria-label=&quot;Reply in thread&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-chat&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+        &lt;/x-slot:actions&gt;
     &lt;/x-fruit::message&gt;
     &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message&quot;&gt;
         &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;

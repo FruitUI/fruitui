@@ -262,3 +262,47 @@ test('data-theme="class" follows a Tailwind-style dark class instead of the syst
   });
   expect(nested).toBe('dark');
 });
+
+test('one brand tint recolors every accent shade in both appearances', async ({ page }) => {
+  await page.goto('/components.html');
+  const tokens = ['--f-accent', '--f-accent-fill', '--f-accent-fill-hover', '--f-selection', '--f-selection-text'];
+  // Resolve each token to sRGB bytes through a canvas, whatever color syntax the engine reports.
+  const shades = () =>
+    page.evaluate(names => {
+      const probe = document.createElement('div');
+      document.querySelector('.fruit-ui').append(probe);
+      const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+      const colors = Object.fromEntries(
+        names.map(token => {
+          probe.style.color = `var(${token})`;
+          context.clearRect(0, 0, 1, 1);
+          context.fillStyle = getComputedStyle(probe).color;
+          context.fillRect(0, 0, 1, 1);
+          return [token, [...context.getImageData(0, 0, 1, 1).data].slice(0, 3)];
+        }),
+      );
+      probe.remove();
+      return colors;
+    }, tokens);
+  const hex = value => [1, 3, 5].map(index => parseInt(value.slice(index, index + 2), 16));
+  // The default tint reproduces the previously hand-tuned shades.
+  const tuned = {
+    light: ['#006cde', '#0064d0', '#0055b5', '#e2edff', '#0759b1'],
+    dark: ['#3c96ff', '#0064d0', '#0055b5', '#263e5a', '#9dcbff'],
+  };
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    await page.evaluate(() => document.querySelector('.fruit-ui').style.removeProperty('--f-tint'));
+    const blue = await shades();
+    tokens.forEach((token, index) => {
+      const [r, g, b] = blue[token],
+        [tr, tg, tb] = hex(tuned[colorScheme][index]);
+      expect(Math.hypot(r - tr, g - tg, b - tb), `${colorScheme} ${token}`).toBeLessThan(8);
+    });
+    await page.evaluate(() => document.querySelector('.fruit-ui').style.setProperty('--f-tint', '#248a3d'));
+    const green = await shades();
+    for (const token of tokens) expect(green[token], `${colorScheme} ${token}`).not.toEqual(blue[token]);
+    // Green tints keep green fills, not blue ones.
+    expect(green['--f-accent-fill'][1]).toBeGreaterThan(green['--f-accent-fill'][2]);
+  }
+});

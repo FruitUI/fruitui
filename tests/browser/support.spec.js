@@ -251,3 +251,14 @@ function queue(page, name) {
     .getByRole('navigation', { name: 'Support views', exact: true })
     .getByRole('button', { name: new RegExp(`^${name === 'Open' ? 'All Inboxes' : name}`) });
 }
+
+test('quoting a message fills the reply and internal notes cannot be quoted', async ({ page }) => {
+  const customer = page.locator('.support-message[data-kind="customer"]').first();
+  await customer.hover();
+  await customer.getByRole('button', { name: 'Quote Sophie Chen in reply', exact: true }).click();
+  const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });
+  await expect(reply).toBeFocused();
+  // The quote follows the existing draft after a blank line.
+  await expect(reply).toHaveValue(/^Hi Sophie,[\s\S]*\S\n\n> Hi there,\n> \n> We’re growing the studio[\s\S]*\n\n$/);
+  await expect(page.locator('.support-message[data-kind="note"] .f-message__actions')).toBeHidden();
+});
