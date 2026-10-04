@@ -207,3 +207,24 @@ test('the selection bar follows a script-set count and hides at zero', async ({ 
   await page.locator('.f-selection-bar').evaluate(element => (element.dataset.count = '3'));
   await expect(bar.getByRole('status')).toHaveText('3 selected');
 });
+
+test('a message overflow menu opens from its actions and keeps them visible while open', async ({ page }) => {
+  await page.goto('/components.html');
+  const message = page.locator('#component-message').getByRole('article', { name: 'Customer message' });
+  const actions = message.locator('.f-message__actions');
+  const opacity = () => actions.evaluate(element => getComputedStyle(element).opacity);
+  await message.hover();
+  await message.getByRole('button', { name: 'More actions' }).click();
+  const menu = page.getByRole('menu', { name: 'More actions for Sophie Chen’s message' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Show original' })).toBeFocused();
+  await page.mouse.move(0, 0);
+  await expect.poll(opacity).toBe('1');
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  // Header lines and thread events read as text beside the messages.
+  await expect(message.locator('.f-message__headers')).toContainText('Cc: mia@studio-north.example');
+  await expect(page.locator('#component-message .f-message-event')).toContainText(
+    'Mia Patel assigned this to Alex Morgan',
+  );
+});

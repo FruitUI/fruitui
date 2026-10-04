@@ -88,11 +88,16 @@
                 <div class="f-pane__scroll support-thread" x-ref="thread" role="region" tabindex="0" aria-label="Conversation history">
                   <div class="f-divider support-thread-start" role="separator" aria-label="Beginning of this conversation"><span aria-hidden="true">Beginning of this conversation</span></div>
                   <template x-for="(entry, index) in ticket.threads" :key="ticket.id + '-' + index">
-                    <section class="f-message f-message--stacked support-message" :class="{ 'f-message--note': entry.kind === 'note' }" :data-kind="entry.kind" :aria-label="entry.kind === 'note' ? 'Internal note' : entry.kind === 'reply' ? 'Agent reply' : 'Customer message'">
-                      <span class="f-avatar f-message__avatar" aria-hidden="true" x-text="entry.kind === 'customer' ? ticket.customer.initials : entry.author.split(' ').map(word => word[0]).join('')"></span><header class="f-message__header"><span class="f-message__identity"><strong class="f-message__author" x-text="entry.kind === 'customer' ? ticket.customer.name : entry.author"></strong><small class="f-message__meta" x-text="entry.kind === 'note' ? 'Internal note · Only your team' : entry.kind === 'reply' ? 'Reply to customer' : 'Customer'"></small></span><time class="f-message__time" x-text="entry.time"></time><svg class="f-icon support-note-lock" x-show="entry.kind === 'note'" aria-hidden="true"><use href="#i-lock"/></svg></header>
-                      <div class="f-message__body f-prose"><p class="support-message-body" x-text="entry.body"></p></div>
-                      <div class="f-message__actions" role="group" aria-label="Message actions" x-show="entry.kind !== 'note'"><button class="f-button f-button--ghost f-button--icon" type="button" @click="quote(entry)" :aria-label="'Quote ' + (entry.kind === 'customer' ? ticket.customer.name : entry.author) + ' in reply'"><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg></button></div>
-                    </section>
+                    <div class="support-entry" :data-kind="entry.kind">
+                      <template x-if="entry.kind === 'event'"><p class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text" x-text="entry.body"></span><time class="f-message-event__time" x-text="entry.time"></time></p></template>
+                      <template x-if="entry.kind !== 'event'">
+                      <section class="f-message f-message--stacked support-message" :class="{ 'f-message--note': entry.kind === 'note' }" :data-kind="entry.kind" :aria-label="entry.kind === 'note' ? 'Internal note' : entry.kind === 'reply' ? 'Agent reply' : 'Customer message'">
+                        <span class="f-avatar f-message__avatar" aria-hidden="true" x-text="entry.kind === 'customer' ? ticket.customer.initials : entry.author.split(' ').map(word => word[0]).join('')"></span><header class="f-message__header"><span class="f-message__identity"><strong class="f-message__author" x-text="entry.kind === 'customer' ? ticket.customer.name : entry.author"></strong><small class="f-message__meta" x-text="entry.kind === 'note' ? 'Internal note · Only your team' : entry.kind === 'reply' ? 'Reply to customer' : 'Customer'"></small></span><time class="f-message__time" x-text="entry.time"></time><svg class="f-icon support-note-lock" x-show="entry.kind === 'note'" aria-hidden="true"><use href="#i-lock"/></svg></header>
+                        <div class="f-message__body f-prose"><p class="support-message-body" x-text="entry.body"></p></div>
+                        <div class="f-message__actions" role="group" aria-label="Message actions" x-show="entry.kind !== 'note'"><button class="f-button f-button--ghost f-button--icon" type="button" @click="quote(entry)" :aria-label="'Quote ' + (entry.kind === 'customer' ? ticket.customer.name : entry.author) + ' in reply'"><svg class="f-icon" aria-hidden="true"><use href="#i-reply"/></svg></button></div>
+                      </section>
+                      </template>
+                    </div>
                   </template>
                 </div>
                 <form class="f-composer support-composer" :data-mode="mode" @submit.prevent="send">

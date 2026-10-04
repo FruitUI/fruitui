@@ -277,8 +277,14 @@
   --f-message-avatar-size: 29px;
   --f-message-body-gap: 13px;
 }
-.support-message + .support-message {
+.support-entry + .support-entry {
   margin-top: 25px;
+}
+.support-entry:is([data-kind='event'], :has(+ [data-kind='event'])) + .support-entry {
+  margin-top: 14px;
+}
+.support-entry[data-kind='event'] {
+  --f-message-event-inset: 38px 0;
 }
 .support-message .f-message__author {
   font-size: var(--f-text-xs);

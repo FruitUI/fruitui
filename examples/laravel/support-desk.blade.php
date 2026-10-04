@@ -81,7 +81,9 @@ new class extends Component
     public function updatedAssignee(string $assignee): void
     {
         $this->assignee = array_key_exists($assignee, self::AGENTS) ? $assignee : '';
-        $this->change(fn (array $ticket) => [...$ticket, 'assignee' => $this->assignee]);
+        // The thread records the change as an event between messages.
+        $event = $this->assignee === '' ? 'Alex Morgan unassigned this' : 'Alex Morgan assigned this to '.self::AGENTS[$this->assignee];
+        $this->change(fn (array $ticket) => [...$ticket, 'assignee' => $this->assignee, 'messages' => [...$ticket['messages'], ['event' => $event, 'time' => now()->format('g:i A')]]]);
         Fruit::toast($this->assignee === '' ? 'Conversation unassigned.' : 'Assigned to '.self::AGENTS[$this->assignee].'.');
     }
 
@@ -100,7 +102,7 @@ new class extends Component
     public function quote(int $index): void
     {
         $message = $this->ticket['messages'][$index] ?? null;
-        if (! $message) {
+        if (! $message || isset($message['event'])) {
             return;
         }
         $quoted = collect(preg_split('/\R/', $message['body']))->map(fn ($line) => "> {$line}")->implode("\n");
@@ -335,6 +337,12 @@ new class extends Component
                         <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
                             @foreach ($ticket['messages'] as $index => $message)
                                 <li>
+                                    @if (isset($message['event']))
+                                        <x-fruit::message-event>
+                                            {{ $message['event'] }}
+                                            <x-slot:time>{{ $message['time'] }}</x-slot:time>
+                                        </x-fruit::message-event>
+                                    @else
                                     <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
                                         <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                         <x-slot:author>{{ $message['author'] }}</x-slot:author>
@@ -348,6 +356,7 @@ new class extends Component
                                             </x-slot:actions>
                                         @endif
                                     </x-fruit::message>
+                                    @endif
                                 </li>
                             @endforeach
                         </ol>

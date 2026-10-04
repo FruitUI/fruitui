@@ -46,6 +46,8 @@ test('a live combobox commit updates the server, the list and announces a toast'
   await expect(page.getByRole('status').filter({ hasText: 'Assigned to Mia Patel.' })).toBeVisible();
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toContainText('Mia Patel');
   await expect(assignee).toHaveValue('Mia Patel');
+  // The thread records the assignment as an event between messages.
+  await expect(conversation(page).locator('.f-message-event')).toContainText('Alex Morgan assigned this to Mia Patel');
   const unassigned = page.getByRole('link', { name: /Unassigned/ });
   await expect(unassigned.locator('.f-badge')).toHaveText('2');
   await page.reload();

@@ -73,7 +73,7 @@ export function supportDemo() {
                 ticket.customer.email,
                 ticket.subject,
                 ...ticket.tags,
-                ...ticket.threads.map(thread => thread.body),
+                ...ticket.threads.filter(thread => thread.kind !== 'event').map(thread => thread.body),
               ]
                 .join(' ')
                 .toLowerCase()
@@ -215,6 +215,16 @@ export function supportDemo() {
     assign(id) {
       if (!this.ticket || (id && !this.agents.some(agent => agent.id === id))) return;
       this.ticket.assignee = id;
+      // The thread records the change as an event between messages.
+      const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      this.ticket.threads.push({
+        kind: 'event',
+        author: '',
+        time: now,
+        body: id
+          ? `Alex Morgan assigned this to ${this.agents.find(agent => agent.id === id).name}`
+          : 'Alex Morgan unassigned this',
+      });
       this.$toast(id ? `Assigned to ${this.agents.find(agent => agent.id === id).name}` : 'Conversation unassigned');
       this.syncSelection();
       if (!this.ticket) this.backToList();

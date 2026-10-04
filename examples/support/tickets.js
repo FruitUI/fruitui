@@ -77,6 +77,9 @@ function customer(body, time = 'Today, 10:42 AM') {
 function note(body, time = 'Today, 10:48 AM') {
   return { kind: 'note', author: 'Mia Patel', time, body };
 }
+function event(body, time) {
+  return { kind: 'event', author: '', time, body };
+}
 
 export const tickets = [
   {
@@ -95,6 +98,7 @@ export const tickets = [
       customer(
         'Hi there,\n\nWe’re growing the studio and would love to bring all 12 of us into Forma. Can we move to the Team plan without losing our projects?\n\nAlso, is it possible to pay annually? Thanks for making a tool we love using.\n\nSophie',
       ),
+      event('Mia Patel assigned this to Alex Morgan', '10:45 AM'),
       note(
         'They’re bringing the whole studio over next week. Existing projects stay in place when upgrading. Annual billing is available on the Team plan.',
       ),
