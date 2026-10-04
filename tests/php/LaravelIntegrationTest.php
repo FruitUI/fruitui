@@ -257,6 +257,7 @@ class LaravelIntegrationTest extends TestCase
             ['<x-fruit::toaster role="alert" />', 'overriding role'],
             ['<x-fruit::toaster aria-live="off" />', 'owns its fruitToast helper'],
             ['<x-fruit::toaster tone="warning" />', 'toaster tone must be one of'],
+            ['<x-fruit::toaster data-tone="danger" />', 'Use the tone prop'],
             ['<x-fruit::confirmer role="dialog" />', 'overriding role'],
             ['<x-fruit::confirmer x-data="other" />', 'owns its fruitConfirmer helper'],
             ['<x-fruit::confirmer open />', 'owns its fruitConfirmer helper'],

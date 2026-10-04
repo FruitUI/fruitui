@@ -378,6 +378,18 @@ test('without a confirmer on the page, confirm() asks with the browser', async (
   await page.getByRole('button', { name: 'Leave' }).click();
   await expect(page.getByRole('button', { name: 'Leave' })).toHaveAttribute('data-answer', 'true');
   expect(asked).toEqual(['Leave this page?\n\nYour draft is kept.']);
+  // Code outside Alpine uses the same helpers through the global build.
+  page.once('dialog', dialog => dialog.dismiss());
+  expect(await page.evaluate(() => window.FruitUI.confirm({ title: 'Discard draft?', tone: 'danger' }))).toBe(false);
+  expect(
+    await page.evaluate(
+      () =>
+        new Promise(resolve => {
+          window.addEventListener('fruit-toast', event => resolve(event.detail), { once: true });
+          window.FruitUI.toast('Saved.', { tone: 'success' });
+        }),
+    ),
+  ).toEqual({ message: 'Saved.', tone: 'success' });
   // Invalid requests fail loudly; Alpine reports expression errors as page errors.
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));

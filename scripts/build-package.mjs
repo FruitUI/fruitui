@@ -39,7 +39,8 @@ for (const [name, file] of Object.entries({
 }
 // livewire.js registers itself on Livewire's injected Alpine; alpine and editor export plugins. The
 // editor's global file registers itself too, so pages without a bundler only add a script tag.
-const globals = { alpine: 'FruitUI', editor: 'FruitEditor', livewire: 'FruitLivewire' };
+// Both Alpine builds expose the same helpers as window.FruitUI for code outside Alpine.
+const globals = { alpine: 'FruitUI', editor: 'FruitEditor', livewire: 'FruitUI' };
 for (const [name, module, global] of [
   ['alpine', 'src/js/alpine.js', 'src/js/alpine.js'],
   ['editor', 'src/js/editor.js', 'src/js/editor-global.js'],
