@@ -406,3 +406,22 @@ test('components rendered as links need no host link reset in either build', asy
     }
   }
 });
+
+test('every form-section row spans the group, and a disclosure row has no box of its own', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-form-section" style="width: 600px"><div class="f-form-section__rows">
+      <label class="f-check"><input type="checkbox"><span>Short</span></label>
+      <div class="f-choice"><label class="f-check"><input type="checkbox" aria-describedby="d"><span>Tags</span></label>
+        <p class="f-help f-choice__description" id="d">Shown on conversations.</p></div>
+      <details class="f-disclosure"><summary>Advanced</summary><div>More settings</div></details>
+    </div></section></body></html>`);
+  const rows = page.locator('.f-form-section__rows > *');
+  const width = await page.locator('.f-form-section__rows').evaluate(element => element.clientWidth);
+  for (const row of await rows.all()) expect((await row.boundingBox()).width).toBeCloseTo(width, 0);
+  const disclosure = page.locator('.f-disclosure');
+  await expect(disclosure).toHaveCSS('border-left-width', '0px');
+  await expect(disclosure).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(disclosure).toHaveCSS('border-top-width', '1px');
+  await expect(page.locator('.f-choice')).toHaveCSS('border-top-width', '1px');
+});
