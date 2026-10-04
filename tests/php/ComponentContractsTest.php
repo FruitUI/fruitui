@@ -363,6 +363,8 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('true', $xpath->query('.//div[contains(@class, "f-suggestion__placeholder")]', $card)->item(0)->getAttribute('aria-hidden'));
         $this->assertSame('nl', $xpath->query('.//div[@class="f-suggestion__translation"]', $card)->item(0)->getAttribute('lang'));
         $this->assertSame('group', $xpath->query('.//div[@class="f-suggestion__actions"]', $card)->item(0)->getAttribute('role'));
+        // Meta can also be a slot, for markup bound from script.
+        $this->assertStringContainsString('<span class="f-suggestion__meta"><span x-text="meta"></span></span>', Blade::render('<x-fruit::suggestion title="AI draft">Draft<x-slot:meta><span x-text="meta"></span></x-slot:meta></x-fruit::suggestion>'));
         $this->assertRejected('<x-fruit::suggestion title=" ">Draft</x-fruit::suggestion>', 'needs a nonempty title');
         $this->assertRejected('<x-fruit::suggestion title="AI draft">Draft<x-slot:status tone="busy">…</x-slot:status></x-fruit::suggestion>', 'suggestion status tone must be one of');
     }

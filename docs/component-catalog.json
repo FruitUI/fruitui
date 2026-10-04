@@ -1398,7 +1398,7 @@
         "element": "`section` named by its title (`aria-label`), with a sparkles icon, the title and meta, an optional status line, the suggestion as prose, an optional translation, an actions group and quieter details.",
         "state": "The application owns the content and state. `aria-busy=\"true\"` (bindable) shows a skeleton in place of the suggestion, its translation, actions and details.",
         "keyboard": "No keyboard behavior of its own; actions, links and the dismiss button keep theirs.",
-        "options": "`title` (required), `meta` (for example language and confidence). Slots: default (the suggestion, rich text), `dismiss` (a close button), `status` (`tone`: neutral, working with a spinner, warning, danger; bindable `data-tone`), `translation` (with `lang`; announced as Translation), `actions` (Insert, Draft Again), `details` (sections with an `h4` and a list; `ul.f-suggestion__sources` for sources: the linked title, then a muted site, both shortened)."
+        "options": "`title` (required), `meta` (for example language and confidence; a prop or a slot, for markup bound from script). Slots: default (the suggestion, rich text), `dismiss` (a close button), `status` (`tone`: neutral, working with a spinner, warning, danger; bindable `data-tone`), `translation` (with `lang`; announced as Translation), `actions` (Insert, Draft Again), `details` (sections with an `h4` and a list; `ul.f-suggestion__sources` for sources: the linked title, then a muted site, both shortened)."
       }
     }
   }

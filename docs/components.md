@@ -856,7 +856,7 @@ Livewire::test(Inbox::class)->call('confirm')->assertDialogOpened('confirm-archi
 
 ### Suggestions
 
-An AI reply draft, or any generated suggestion the reader reviews and uses, is `x-fruit::suggestion`: an indigo-outlined card with a sparkles icon, a `title` and `meta` (language, confidence), the suggestion as readable prose rather than a boxed field, and its actions. While it is being made, set `aria-busy="true"` (bind it with Alpine or Livewire) and a skeleton stands in for the draft; the `status` slot says what is happening with `tone="working"` (a spinner), `warning` for a slow request or `danger` for a failure. A `translation` slot shows the draft in the agent's language, and `details` holds quieter sections such as notes and the sources used (`ul.f-suggestion__sources`: the linked title, then a muted site).
+An AI reply draft, or any generated suggestion the reader reviews and uses, is `x-fruit::suggestion`: an indigo card with a sparkles icon, a `title` and `meta` (language, confidence), the suggestion as readable prose rather than a boxed field, and its actions. While it is being made, set `aria-busy="true"` (bind it with Alpine or Livewire) and a skeleton stands in for the draft; the `status` slot says what is happening with `tone="working"` (a spinner), `warning` for a slow request or `danger` for a failure. A `translation` slot shows the draft in the agent's language, and `details` holds quieter sections such as notes and the sources used (`ul.f-suggestion__sources`: the linked title, then a muted site).
 
 ```blade
 <x-fruit::suggestion title="AI draft" meta="English · High confidence" x-bind:aria-busy="drafting">
