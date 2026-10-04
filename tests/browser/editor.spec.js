@@ -125,7 +125,7 @@ test('app buttons and menus follow the default toolbar and insert at the cursor'
   const toolbar = root.locator('.f-editor__toolbar');
   // The defaults stay; the extras follow a separator.
   await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
-  await expect(toolbar.getByRole('separator')).toBeVisible();
+  await expect(toolbar.getByRole('separator').last()).toBeVisible();
   await surface.click();
   await page.keyboard.press('ControlOrMeta+End');
   await toolbar.getByRole('button', { name: 'Insert variable' }).click();

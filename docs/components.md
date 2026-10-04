@@ -482,7 +482,7 @@ fruitEditor(Alpine); // before this same Alpine instance starts
 
 Without a bundler, link the prebuilt `editor.global.js` (published with the other assets); it registers itself on the page's Alpine, including the one Livewire injects, whether it loads before or after `livewire.global.js`.
 
-**Links, images and formatting.** The default toolbar adds Link, Image and Remove formatting (`data-fruit-command` `link`, `image` and `clear` in a custom toolbar). Link opens a small popover for the address: it links the selected text, edits the link the cursor is in, or removes it. Image inserts a picture by address. Images are accepted only by address; pasted `data:` images are refused, so files go through the upload hook below.
+**Links, images and formatting.** The default toolbar is compact icon buttons in groups (bold and italic; lists and quote; link, image and remove formatting; undo and redo), each named by its accessible label and tooltip. It adds Link, Image and Remove formatting (`data-fruit-command` `link`, `image` and `clear` in a custom toolbar). Link opens a small popover for the address: it links the selected text, edits the link the cursor is in, or removes it. Image inserts a picture by address. Images are accepted only by address; pasted `data:` images are refused, so files go through the upload hook below.
 
 **Application buttons.** The `extras` slot adds buttons or Menus after the default toolbar, behind a separator, without replacing it: Insert variable, Attach file, Saved replies. They act through `$dispatch('fruit-editor-insert', { html })`; a Menu's popup opens in the top layer.
 
