@@ -25,7 +25,7 @@ test('conversation activation keeps its native button contract and independent c
   await page.goto('/components.html');
   const specimen = page.locator('#component-item-row');
   const row = specimen.getByRole('button', { name: /Sophie Chen/ });
-  const selection = specimen.getByRole('checkbox');
+  const selection = specimen.getByRole('checkbox', { name: 'Select this conversation for a bulk action' });
   await selection.check();
   await row.focus();
   await page.keyboard.press('Enter');
@@ -173,3 +173,37 @@ for (const [name, url, frame] of [
     expect(errors).toEqual([]);
   });
 }
+
+test('item links are real links with current state, and list items carry a checkbox and a trailing toggle', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const list = page.getByRole('list', { name: 'Linked conversations' });
+  const link = list.getByRole('link', { name: /Jordan Lee/ });
+  await expect(link).toHaveAttribute('href', '#component-item-row');
+  await expect(link).toHaveAttribute('aria-current', 'page');
+  await expect(link).toHaveCSS('text-decoration-line', 'none');
+  // The list item draws the current background across the checkbox, the row and the toggle.
+  const item = list.locator('li');
+  await expect(item).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(link).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  const star = list.getByRole('button', { name: 'Star Jordan Lee' });
+  const [title, toggle] = await Promise.all([link.locator('.f-item-row__title').boundingBox(), star.boundingBox()]);
+  expect(Math.abs(title.y + title.height / 2 - (toggle.y + toggle.height / 2))).toBeLessThan(2);
+  await star.click();
+  await expect(star).toHaveAttribute('aria-pressed', 'true');
+  await expect(list.getByRole('checkbox', { name: 'Select Jordan Lee' })).not.toBeChecked();
+});
+
+test('the selection bar follows a script-set count and hides at zero', async ({ page }) => {
+  await page.goto('/components.html');
+  const bar = page.getByRole('region', { name: 'Selected conversations' });
+  await expect(bar.getByRole('status')).toHaveText('1 selected');
+  await page.getByRole('checkbox', { name: 'Select Sophie Chen' }).check();
+  await expect(bar.getByRole('status')).toHaveText('2 selected');
+  await bar.getByRole('button', { name: 'Clear selection' }).click();
+  await expect(bar).toBeHidden();
+  // Plain DOM scripts (jQuery included) set the attribute directly.
+  await page.locator('.f-selection-bar').evaluate(element => (element.dataset.count = '3'));
+  await expect(bar.getByRole('status')).toHaveText('3 selected');
+});

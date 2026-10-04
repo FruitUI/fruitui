@@ -132,7 +132,15 @@ class CompletenessTest extends TestCase
 
     public function test_selection_bar_counts_selected_items_and_hides_at_zero(): void
     {
-        $this->assertSame('', trim(Blade::render('<x-fruit::selection-bar :count="0"><button>Clear</button></x-fruit::selection-bar>')));
+        // At zero the bar renders hidden, ready for script to set data-count.
+        $empty = $this->xpath(Blade::render('<x-fruit::selection-bar :count="0" x-bind:data-count="selected.length"><button>Clear</button></x-fruit::selection-bar>'));
+        $hidden = $empty->query('//div[@role="region"]')->item(0);
+        $this->assertTrue($hidden->hasAttribute('hidden'));
+        $this->assertSame('0', $hidden->getAttribute('data-count'));
+        $this->assertSame(':count selected', $hidden->getAttribute('data-fruit-template'));
+        $this->assertSame('fruitSelectionBar', $hidden->getAttribute('x-data'));
+        $this->assertSame('selected.length', $hidden->getAttribute('x-bind:data-count'));
+        $this->assertRejected('<x-fruit::selection-bar x-data="{}" />', 'owns its fruitSelectionBar helper');
         $xpath = $this->xpath(Blade::render('<x-fruit::selection-bar :count="3" aria-label="Selected conversations"><x-fruit::button>Close selected</x-fruit::button></x-fruit::selection-bar>'));
         $bar = $xpath->query('//div[@role="region"]')->item(0);
         $this->assertSame('Selected conversations', $bar->getAttribute('aria-label'));

@@ -214,6 +214,22 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::field label="A" layout="inline"><x-fruit::input name="a" /></x-fruit::field>', 'Field layout must be one of');
     }
 
+    public function test_item_links_and_fill_workspaces_keep_their_contracts(): void
+    {
+        $link = $this->xpath(Blade::render('<x-fruit::item-link href="/conversations/41" target="_blank" current wire:navigate>Jordan Lee<x-slot:subtitle>Sign-in</x-slot:subtitle></x-fruit::item-link>'))->query('//a')->item(0);
+        $this->assertSame('/conversations/41', $link->getAttribute('href'));
+        $this->assertSame('_blank', $link->getAttribute('target'));
+        $this->assertSame('page', $link->getAttribute('aria-current'));
+        $this->assertSame('f-item-row', $link->getAttribute('class'));
+        $this->assertFalse($this->xpath(Blade::render('<x-fruit::item-link href="/a">A</x-fruit::item-link>'))->query('//a')->item(0)->hasAttribute('aria-current'));
+        $this->assertRejected('<x-fruit::item-link>Missing</x-fruit::item-link>', 'requires href');
+        $this->assertRejected('<x-fruit::item-link href="/a" role="button">A</x-fruit::item-link>', 'overriding role');
+
+        $this->assertStringContainsString('class="f-workspace f-workspace--fill"', Blade::render('<x-fruit::workspace frame="fill" aria-label="App">Panes</x-fruit::workspace>'));
+        $this->assertStringContainsString('class="f-workspace"', Blade::render('<x-fruit::workspace aria-label="App">Panes</x-fruit::workspace>'));
+        $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

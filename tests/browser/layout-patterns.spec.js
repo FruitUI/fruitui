@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { expectAccessible } from './helpers.js';
+import { readFileSync } from 'node:fs';
 
 const examples = [
   ['Mail', '/', '#mail', 280],
@@ -202,3 +203,19 @@ for (const appearance of ['light', 'dark']) {
     await expectAccessible(page);
   });
 }
+
+test('a fill workspace is the whole window and its panes scroll on their own', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setViewportSize({ width: 1200, height: 700 });
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-workspace f-workspace--fill" style="--f-workspace-columns: 200px minmax(0, 1fr)">
+      <nav class="f-pane f-pane--scroll"><div style="height: 2000px">Mailboxes</div></nav>
+      <div class="f-pane f-pane--scroll"><div style="height: 3000px">Conversation</div></div>
+    </section></body></html>`);
+  const workspace = page.locator('.f-workspace');
+  expect((await workspace.boundingBox()).height).toBe(700);
+  await expect(workspace).toHaveCSS('border-top-width', '0px');
+  await expect(workspace).toHaveCSS('border-top-left-radius', '0px');
+  await expect(workspace).toHaveCSS('box-shadow', 'none');
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(700);
+});
