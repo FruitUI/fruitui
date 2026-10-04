@@ -482,6 +482,23 @@ fruitEditor(Alpine); // before this same Alpine instance starts
 
 Without a bundler, link the prebuilt `editor.global.js` (published with the other assets); it registers itself on the page's Alpine, including the one Livewire injects, whether it loads before or after `livewire.global.js`.
 
+**Links, images and formatting.** The default toolbar adds Link, Image and Remove formatting (`data-fruit-command` `link`, `image` and `clear` in a custom toolbar). Link opens a small popover for the address: it links the selected text, edits the link the cursor is in, or removes it. Image inserts a picture by address. Images are accepted only by address; pasted `data:` images are refused, so files go through the upload hook below.
+
+**Pasted and dropped images.** When someone pastes or drops image files, the textarea dispatches a bubbling `fruit-editor-upload` event whose `detail` holds the `files` and an `insert(url, alt)` function. Upload the files, then call `insert` with each address; the image goes where it was pasted or dropped.
+
+```blade
+<x-fruit::editor wire:model="body"
+    x-on:fruit-editor-upload="
+        const body = new FormData();
+        body.append('file', $event.detail.files[0]);
+        fetch('{{ route('uploads.store') }}', { method: 'POST', body, headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } })
+            .then(response => response.json())
+            .then(({ url }) => $event.detail.insert(url))
+    " />
+```
+
+With Livewire, `$wire.upload('image', file, () => $wire.storeImage().then(url => insert(url)))` uploads through the component instead.
+
 **Inserting and replacing content.** Saved replies, drafts and signatures go through two events. `fruit-editor-insert` puts `{ html }` at the cursor and `fruit-editor-set` replaces the content with `{ html }`. Dispatch them from a button inside the editor (`$dispatch('fruit-editor-insert', { html })` in an app toolbar button), on the `.f-editor` element, or on `window` with `target` naming the editor's textarea `id` or `name`, as Livewire's `$this->dispatch('fruit-editor-set', target: 'reply', html: $draft)` does. Each request updates the native textarea with `input` and `change`, so `wire:model`, autosave listeners and form posts see it. Without the editor plugin the plain textarea answers the same requests.
 
 ```blade
