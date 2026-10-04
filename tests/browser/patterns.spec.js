@@ -683,3 +683,32 @@ test('a segmented control in a toolbar is named for assistive technology only', 
   await expect(group.locator('legend')).toHaveCSS('position', 'absolute');
   await expect(group.getByRole('radio', { name: 'Email' })).toBeChecked();
 });
+
+test('a suggestion shows a skeleton while it is made, then the draft, its translation and actions', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.goto('/components.html');
+  const card = page.locator('#component-suggestion').getByRole('region', { name: 'AI draft' });
+  await expect(card.getByRole('button', { name: 'Insert into Reply' })).toBeVisible();
+  await expect(card.locator('.f-suggestion__placeholder')).toBeHidden();
+  await expect(card.locator('.f-suggestion__translation')).toHaveAttribute('lang', 'nl');
+  await expect(card.locator('.f-suggestion__sources small').first()).toHaveText('forma.example/help');
+
+  await card.getByRole('button', { name: 'Draft Again' }).click();
+  await expect(card).toHaveAttribute('aria-busy', 'true');
+  await expect(card.getByRole('status')).toHaveText('Waiting in the queue…');
+  await expect(card.locator('.f-suggestion__placeholder')).toBeVisible();
+  await expect(card.locator('.f-suggestion__body')).toBeHidden();
+  await expect(card.locator('.f-suggestion__details')).toBeHidden();
+  await expect(card.locator('.f-suggestion__status-spinner')).toBeVisible();
+  await page.clock.runFor(1000);
+  await expect(card.getByRole('status')).toHaveText('Drafting…');
+  await page.clock.runFor(1600);
+  await expect(card).toHaveAttribute('aria-busy', 'false');
+  await expect(card.locator('.f-suggestion__body')).toBeVisible();
+  await expect(card.getByRole('status')).toBeHidden();
+
+  await card.getByRole('button', { name: 'Dismiss draft' }).click();
+  await expect(card).toBeHidden();
+});

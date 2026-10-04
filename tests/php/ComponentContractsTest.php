@@ -350,6 +350,23 @@ class ComponentContractsTest extends TestCase
         $this->assertSame(0, $this->xpath(Blade::render('<x-fruit::attachment href="/a.txt">a.txt</x-fruit::attachment>'))->query('//span[@class="f-attachment__frame"]')->length);
     }
 
+    public function test_a_suggestion_is_a_named_region_with_status_translation_and_actions(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::suggestion title="AI draft" meta="English · High" aria-busy="true"><p>Hi</p><x-slot:status tone="working">Drafting…</x-slot:status><x-slot:translation lang="nl"><p>Hoi</p></x-slot:translation><x-slot:actions><button type="button">Insert into Reply</button></x-slot:actions></x-fruit::suggestion>'));
+        $card = $xpath->query('//section[contains(@class, "f-suggestion")]')->item(0);
+        $this->assertSame('AI draft', $card->getAttribute('aria-label'));
+        $this->assertSame('true', $card->getAttribute('aria-busy'));
+        $this->assertSame('English · High', $xpath->query('.//span[@class="f-suggestion__meta"]', $card)->item(0)->textContent);
+        $status = $xpath->query('.//div[contains(@class, "f-suggestion__status")]', $card)->item(0);
+        $this->assertSame('working', $status->getAttribute('data-tone'));
+        $this->assertFalse($status->hasAttribute('tone'));
+        $this->assertSame('true', $xpath->query('.//div[contains(@class, "f-suggestion__placeholder")]', $card)->item(0)->getAttribute('aria-hidden'));
+        $this->assertSame('nl', $xpath->query('.//div[@class="f-suggestion__translation"]', $card)->item(0)->getAttribute('lang'));
+        $this->assertSame('group', $xpath->query('.//div[@class="f-suggestion__actions"]', $card)->item(0)->getAttribute('role'));
+        $this->assertRejected('<x-fruit::suggestion title=" ">Draft</x-fruit::suggestion>', 'needs a nonempty title');
+        $this->assertRejected('<x-fruit::suggestion title="AI draft">Draft<x-slot:status tone="busy">…</x-slot:status></x-fruit::suggestion>', 'suggestion status tone must be one of');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');
