@@ -108,6 +108,61 @@ test('splitter cancellation restores width and RTL follows physical divider move
   await expect.poll(() => width(pane)).toBeCloseTo(original, 0);
 });
 
+test('a splitter reports committed widths and starts from a width the server rendered', async ({ page }) => {
+  await page.goto('/components.html');
+  const fixture = page.locator('#component-splitter');
+  const handle = fixture.getByRole('separator');
+  const pane = fixture.locator('#gallery-resize-pane');
+  await expect(handle).toHaveAttribute('data-ready', '');
+  await handle.scrollIntoViewIfNeeded();
+  const resizes = [];
+  await page.exposeFunction('resized', detail => resizes.push(detail));
+  await fixture.evaluate(element => element.addEventListener('fruit-resize', event => window.resized(event.detail)));
+  const original = Math.round(await width(pane));
+
+  // A drag commits once, at its end.
+  let box = await handle.boundingBox();
+  await page.mouse.move(box.x + 5, box.y + 40);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 45, box.y + 40, { steps: 4 });
+  await page.mouse.up();
+  await expect.poll(() => resizes.length).toBe(1);
+  expect(resizes[0]).toEqual({ pane: 'gallery-resize-pane', variable: '--f-preview-width', value: original + 40 });
+
+  // A cancelled drag commits nothing; keyboard steps commit once after a pause.
+  box = await handle.boundingBox();
+  await page.mouse.move(box.x + 5, box.y + 40);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 25, box.y + 40, { steps: 2 });
+  await page.keyboard.press('Escape');
+  await page.mouse.up();
+  await handle.focus();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => resizes.length).toBe(2);
+  expect(resizes[1].value).toBe(original + 56);
+
+  // A double-click returns to the stylesheet's width and reports it.
+  box = await handle.boundingBox();
+  await page.mouse.dblclick(box.x + 5, box.y + 40);
+  await expect.poll(() => resizes.length).toBe(3);
+  expect(resizes[2].value).toBe(original);
+
+  // A width rendered by the server (say from a cookie) holds from the first paint.
+  await page.route('**/support.html', async route => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace(
+      'class="f-workspace support-workspace"',
+      'class="f-workspace support-workspace" style="--f-list-width: 300px"',
+    );
+    await route.fulfill({ response, body });
+  });
+  await page.goto('/support.html');
+  const list = page.locator('#support-list-pane');
+  await expect(page.getByRole('separator', { name: 'Conversations' })).toHaveAttribute('aria-valuenow', '300');
+  expect(Math.round(await width(list))).toBe(300);
+});
+
 test('floating disclosure uses native toggle, optional outside/Escape dismissal and focus return', async ({ page }) => {
   await page.goto('/components.html');
   const specimen = page.locator('#component-floating-disclosure');

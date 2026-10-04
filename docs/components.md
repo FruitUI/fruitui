@@ -251,7 +251,16 @@ Workspace tokens: `--f-workspace-columns`, `--f-workspace-rows`, `--f-workspace-
 
 Resize is optional. Register `fruitUI` on the existing Alpine/Livewire Alpine instance; each Splitter enhances only its own divider. It updates the declared `--f-` width variable on the nearest workspace. IDs must be unique and refer to distinct panes inside that frame; the flexible pane reserves `reserve` pixels while other visible tracks retain their widths. `min`/`max` are positive pixel limits. Bounds and accessible values update when the frame or other pane widths change. `--f-splitter-column` selects the pane’s grid track (default 1). Each splitter overlays its existing grid edge; it adds no extra track. `edge="start"` places it at a trailing inspector's leading edge and reverses its width adjustment.
 
-Left/Right move the divider by 8px; Shift uses 32px. Home/End select the bounds. Escape or pointer cancellation restores the width from before a drag; double-click restores the initial width. RTL reverses physical movement correctly. Pane collapse stays with application navigation; resizing does not close a pane. No widths are persisted automatically.
+**Remembering widths.** FruitUI keeps no state, but tells you when a width is committed: a bubbling `fruit-resize` event with `{ pane, variable, value }` (pixels) after a drag ends, after keyboard steps pause, and after a double-click resets to the stylesheet's width. Store it (a cookie, the user's profile) and render it on the workspace, so the first paint is already right; the splitter starts from the rendered width.
+
+```blade
+<x-fruit::workspace style="--f-list-width: {{ (int) request()->cookie('list-width', 320) }}px"
+    x-on:fruit-resize="document.cookie = `list-width=${$event.detail.value}; path=/; max-age=31536000; samesite=lax`">
+    …
+</x-fruit::workspace>
+```
+
+Left/Right move the divider by 8px; Shift uses 32px. Home/End select the bounds. Escape or pointer cancellation restores the width from before a drag; double-click returns to the stylesheet's width. RTL reverses physical movement correctly. Pane collapse stays with application navigation; resizing does not close a pane. No widths are persisted automatically.
 
 Without Alpine, handles stay hidden and the CSS layout remains usable. **Applications must hide handles in compact container queries when panes stack, disappear, or are replaced by another screen.** Keep enough width for the declared minimums before enabling resizing. The four examples demonstrate this with their existing navigation attributes and breakpoints; narrowing the workspace removes inspectors first, then switches to one visible phone pane.
 
