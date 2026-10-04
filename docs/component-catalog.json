@@ -1098,7 +1098,7 @@
         "element": "`article` (or a listitem role) with a header, body, attachments and footer.",
         "state": "No state; the application owns message data and actions.",
         "keyboard": "Child links and buttons keep their behavior. The actions bar appears on hover and whenever focus is inside the message, so its buttons are reachable by Tab.",
-        "options": "`layout`: inline (default), stacked. `variant`: default, note. `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta` (inline, may hold state badges), `headers` (further lines such as From, To, Cc or an assignment), `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply counts), `actions` (quick actions shown in the corner on hover or focus, and always on touch screens; a labelled group). Give it an accessible name. `--f-message-actions-top` and `--f-message-actions-end` place the actions (above the top edge by default)."
+        "options": "`layout`: inline (default), stacked. `variant`: default, note. `direction`: incoming (default), outgoing (`f-message--outgoing`, a bar on the leading edge for messages the team sent; say who wrote it in `meta` too). `datetime`: machine-readable time. Slots: `avatar`, `author`, `meta` (inline, may hold state badges), `headers` (further lines such as From, To, Cc or an assignment), `time`, default body, `attachments`, `footer` (independent actions such as reactions or reply counts), `actions` (quick actions shown in the corner on hover or focus, and always on touch screens; a labelled group). Give it an accessible name. `--f-message-actions-top` and `--f-message-actions-end` place the actions (above the top edge by default)."
       }
     }
   },
@@ -1287,6 +1287,22 @@
         "state": "No state; the application owns the history.",
         "keyboard": "Actions keep their own keyboard behavior; they show while focus is inside the event.",
         "options": "Default slot: the event text. `icon` slot: decorative. `time` slot with `datetime` for the machine-readable time. `actions` slot: controls such as a \"…\" Menu after the time, shown on hover, focus or while open, and always on touch screens. Place it in the thread's list between messages."
+      }
+    }
+  },
+  {
+    "id": "thread",
+    "kind": "pattern",
+    "classes": ["f-thread"],
+    "blade": ["thread"],
+    "uses": ["support.html", "examples/laravel/support-desk.blade.php"],
+    "contracts": {
+      "thread": {
+        "purpose": "List a conversation's messages and events in order, set apart from each other.",
+        "element": "`ol` with list semantics; each `li` holds one Message or Message event.",
+        "state": "No state; the application owns the history and its order.",
+        "keyboard": "No keyboard behavior of its own; entries keep theirs.",
+        "options": "Default slot: `li` entries. Messages are separated by a hairline, events sit closer without lines and notes keep their box. `--f-thread-gap` sets the space on each side of the line and `--f-thread-event-gap` the space around events. Give it an accessible name when the page has more than one list."
       }
     }
   }

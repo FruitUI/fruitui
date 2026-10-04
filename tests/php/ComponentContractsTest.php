@@ -237,6 +237,19 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::editor name="body" paste="markdown" />', 'editor paste must be one of');
     }
 
+    public function test_threads_list_messages_that_name_their_direction(): void
+    {
+        $list = $this->xpath(Blade::render('<x-fruit::thread aria-label="Messages"><li>A</li></x-fruit::thread>'))->query('//ol')->item(0);
+        $this->assertSame('list', $list->getAttribute('role'));
+        $this->assertSame('f-thread', $list->getAttribute('class'));
+        $this->assertSame('Messages', $list->getAttribute('aria-label'));
+        $this->assertRejected('<x-fruit::thread role="feed">A</x-fruit::thread>', 'overriding role');
+
+        $this->assertStringContainsString('class="f-message f-message--stacked f-message--outgoing"', Blade::render('<x-fruit::message layout="stacked" direction="outgoing" aria-label="Reply">Yes</x-fruit::message>'));
+        $this->assertStringContainsString('class="f-message"', Blade::render('<x-fruit::message direction="incoming" aria-label="Question">Hi</x-fruit::message>'));
+        $this->assertRejected('<x-fruit::message direction="sent">Yes</x-fruit::message>', 'message direction must be one of');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

@@ -54,10 +54,12 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText(
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).last()).toContainText(
     'Hi Sophie, your projects will stay in place.',
   );
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).not.toContainText('Private handoff');
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).last()).not.toContainText(
+    'Private handoff',
+  );
   await expect(reply).toHaveValue('');
   await ticket(page, 1040).click();
   await expect(reply).toHaveValue('A separate reply for Emma.');

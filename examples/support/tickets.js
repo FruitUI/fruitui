@@ -80,6 +80,9 @@ function note(body, time = 'Today, 10:48 AM') {
 function event(body, time) {
   return { kind: 'event', author: '', time, body };
 }
+function reply(body, time, author = 'Alex Morgan') {
+  return { kind: 'reply', author, time, body };
+}
 
 export const tickets = [
   {
@@ -93,14 +96,32 @@ export const tickets = [
     unread: false,
     time: '12m',
     tags: ['Billing', 'Team plan'],
-    preview: 'We’re growing the studio. What’s the best way to bring everyone along?',
+    preview: 'One of our freelancers says her invite link has expired.',
     threads: [
       customer(
         'Hi there,\n\nWe’re growing the studio and would love to bring all 12 of us into Forma. Can we move to the Team plan without losing our projects?\n\nAlso, is it possible to pay annually? Thanks for making a tool we love using.\n\nSophie',
+        'Yesterday, 4:12 PM',
       ),
-      event('Mia Patel assigned this to Alex Morgan', '10:45 AM'),
+      event('Mia Patel assigned this to Alex Morgan', 'Yesterday, 4:20 PM'),
       note(
         'They’re bringing the whole studio over next week. Existing projects stay in place when upgrading. Annual billing is available on the Team plan.',
+        'Yesterday, 4:26 PM',
+      ),
+      reply(
+        'Hi Sophie,\n\nWelcome to the Team plan, all twelve of you! Upgrading keeps every project, comment and file exactly where it is.\n\nAnnual billing is available and saves two months compared with paying monthly. You can switch in Settings › Billing, or I can make the change for you.\n\nAlex',
+        'Yesterday, 4:51 PM',
+      ),
+      customer(
+        'Thanks Alex, that’s great news.\n\nCould you make the switch for us? And one more question: three of our freelancers only need to comment on projects. Do they need full seats?\n\nSophie',
+        'Today, 9:58 AM',
+      ),
+      event('Alex Morgan upgraded the plan to Team', '10:20 AM'),
+      reply(
+        'All done. Studio North is on the Team plan with annual billing, and the new invoice is in Settings › Billing.\n\nFreelancers who only comment can join as guests. Guests are free, and they can view and comment on the projects you share with them.\n\nAlex',
+        'Today, 10:24 AM',
+      ),
+      customer(
+        'Perfect, thank you! I’ve invited the freelancers as guests, but Ana says her invite link has expired. Could you send her a fresh one?\n\nSophie',
       ),
     ],
   },

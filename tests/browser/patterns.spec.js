@@ -229,6 +229,42 @@ test('a message overflow menu opens from its actions and keeps them visible whil
   );
 });
 
+test('a thread separates messages with a line, keeps events and notes close, and marks outgoing replies', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const entries = page.locator('#component-thread .f-thread > li');
+  await expect(entries).toHaveCount(5);
+  const lines = await entries.evaluateAll(items => items.map(item => getComputedStyle(item).borderTopWidth));
+  // Only the two plain messages at the end meet without an event or note between them.
+  expect(lines).toEqual(['0px', '0px', '0px', '0px', '1px']);
+  // The space between messages is larger than a blank line between paragraphs.
+  const [reply, answer] = await entries.evaluateAll(items =>
+    items.slice(3).map(item => item.querySelector('.f-message').getBoundingClientRect()),
+  );
+  expect(answer.top - reply.bottom).toBeGreaterThanOrEqual(40);
+
+  const bar = name =>
+    page
+      .locator('#component-thread')
+      .getByRole('article', { name })
+      .first()
+      .evaluate(element => getComputedStyle(element, '::before').borderInlineStartWidth);
+  expect(await bar('Agent reply')).toBe('3px');
+  expect(await bar('Customer message')).toBe('0px');
+  await expect(page.getByRole('article', { name: 'Agent reply' })).toContainText('Reply to customer');
+});
+
+test('the Support thread lists its entries without a line before the first', async ({ page }) => {
+  await page.goto('/support.html');
+  const first = page.locator('.support-thread .f-thread > li').first();
+  await expect(first).toBeVisible();
+  expect(await first.evaluate(element => getComputedStyle(element).borderTopWidth)).toBe('0px');
+  await page.locator('#support-reply').fill('Happy to help.');
+  await page.getByRole('button', { name: 'Send reply' }).click();
+  await expect(page.locator('.support-thread .f-message--outgoing').last()).toContainText('Happy to help.');
+});
+
 test('a thread event shows its actions on hover or focus and keeps them while their menu is open', async ({ page }) => {
   await page.goto('/components.html');
   const event = page.locator('#component-message-event .f-message-event').first();

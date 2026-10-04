@@ -62,7 +62,8 @@ test('Support pagination and split send action operate on the selected conversat
     .click();
   await page.getByRole('button', { name: /A little help with our team plan/ }).click();
   await expect(page.getByRole('combobox', { name: 'Conversation status' })).toHaveValue('closed');
-  await expect(page.locator('.support-message[data-kind=reply]')).toHaveCount(1);
+  // The conversation's two earlier replies, then the one just sent.
+  await expect(page.locator('.support-message[data-kind=reply]')).toHaveCount(3);
 });
 
 test('Admin rich signatures and native joined numeric fields save and reset together', async ({ page }) => {

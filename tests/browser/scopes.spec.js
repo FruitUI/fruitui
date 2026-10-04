@@ -165,7 +165,7 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   await expect(reply).toHaveValue('A billing reply for Sophie.');
   await expect(page.locator('#support-reply-help')).toHaveText('From billing@forma.example');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true })).toContainText(
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).last()).toContainText(
     'A billing reply for Sophie.',
   );
   await nav.getByRole('button', { name: 'Support Open', exact: true }).click();

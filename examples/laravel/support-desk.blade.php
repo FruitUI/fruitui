@@ -334,7 +334,7 @@ new class extends Component
 
                     {{-- Keyed per ticket so enhanced controls start fresh; islands stay outside a changing key. --}}
                     <div class="f-stack" wire:key="conversation-{{ $ticket['id'] }}">
-                        <ol class="f-stack" aria-label="Messages" style="list-style: none; padding: 0">
+                        <x-fruit::thread aria-label="Messages">
                             @foreach ($ticket['messages'] as $index => $message)
                                 <li>
                                     @if (isset($message['event']))
@@ -343,7 +343,7 @@ new class extends Component
                                             <x-slot:time>{{ $message['time'] }}</x-slot:time>
                                         </x-fruit::message-event>
                                     @else
-                                    <x-fruit::message layout="stacked" aria-label="Message from {{ $message['author'] }}">
+                                    <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" aria-label="Message from {{ $message['author'] }}">
                                         <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                         <x-slot:author>{{ $message['author'] }}</x-slot:author>
                                         <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
@@ -359,7 +359,7 @@ new class extends Component
                                     @endif
                                 </li>
                             @endforeach
-                        </ol>
+                        </x-fruit::thread>
 
                         @if ($ticket['status'] === 'open')
                             <x-fruit::field control-id="support-assignee" label="Assigned to">
