@@ -1207,7 +1207,7 @@
                 <div role="separator" class="f-menu__separator"></div>
                 <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger">Delete</button></div>
 </details></div></article>
-    <p class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time></p>
+    <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> </div>
     <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Internal note · Only your team <span class="f-badge f-badge--warning">Draft</span></small> </span>
@@ -1576,10 +1576,13 @@
 &lt;/x-fruit::card&gt;</pre></details></section>
 <section id="component-message-event" data-component="message-event" class="f-card component-card"><h2>Thread events</h2><p>One quiet line between messages for what happened in a conversation: assignments, status changes and merges.</p><!-- blade:message-event --><ol class="f-stack" aria-label="Conversation history" style="list-style: none; padding: 0">
     <li>
-        <p class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time></p>
+        <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> <div class="f-message-event__actions" aria-label="Event actions" role="group"><details x-data="fruitMenu" class="f-menu">
+    <summary role="button" class="f-button f-button--ghost f-button--icon" aria-label="More actions" aria-haspopup="menu"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></summary>
+    <div class="f-menu__items" role="menu" aria-label="More actions for this event"><button type="button" role="menuitem" class="f-menu-item">Outgoing emails</button></div>
+</details></div></div>
     </li>
     <li>
-        <p class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-clock"/></svg></span><span class="f-message-event__text">Alex Morgan changed the status to Pending</span><time class="f-message-event__time"  datetime="2026-10-02T11:02" >11:02 AM</time></p>
+        <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-clock"/></svg></span><span class="f-message-event__text">Alex Morgan changed the status to Pending</span><time class="f-message-event__time"  datetime="2026-10-02T11:02" >11:02 AM</time> </div>
     </li>
 </ol><!-- /blade:message-event --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;p class=&quot;f-message-event&quot;&gt;&lt;span class=&quot;f-message-event__icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;svg class=&quot;f-icon&quot;&gt;&lt;use href=&quot;#i-person&quot;/&gt;&lt;/svg&gt;&lt;/span&gt;&lt;span class=&quot;f-message-event__text&quot;&gt;Mia Patel assigned this to Alex Morgan&lt;/span&gt;&lt;time class=&quot;f-message-event__time&quot; datetime=&quot;2026-10-02T10:45&quot;&gt;10:45 AM&lt;/time&gt;&lt;/p&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="message-event">&lt;ol class=&quot;f-stack&quot; aria-label=&quot;Conversation history&quot; style=&quot;list-style: none; padding: 0&quot;&gt;
     &lt;li&gt;
@@ -1587,6 +1590,12 @@
             Mia Patel assigned this to Alex Morgan
             &lt;x-slot:icon&gt;&lt;svg class=&quot;f-icon&quot;&gt;&lt;use href=&quot;#i-person&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:icon&gt;
             &lt;x-slot:time&gt;10:45 AM&lt;/x-slot:time&gt;
+            &lt;x-slot:actions&gt;
+                &lt;x-fruit::menu title=&quot;More actions for this event&quot;&gt;
+                    &lt;x-slot:trigger class=&quot;f-button--ghost f-button--icon&quot; aria-label=&quot;More actions&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-more&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:trigger&gt;
+                    &lt;x-fruit::menu-item&gt;Outgoing emails&lt;/x-fruit::menu-item&gt;
+                &lt;/x-fruit::menu&gt;
+            &lt;/x-slot:actions&gt;
         &lt;/x-fruit::message-event&gt;
     &lt;/li&gt;
     &lt;li&gt;

@@ -228,3 +228,22 @@ test('a message overflow menu opens from its actions and keeps them visible whil
     'Mia Patel assigned this to Alex Morgan',
   );
 });
+
+test('a thread event shows its actions on hover or focus and keeps them while their menu is open', async ({ page }) => {
+  await page.goto('/components.html');
+  const event = page.locator('#component-message-event .f-message-event').first();
+  const actions = event.getByRole('group', { name: 'Event actions' });
+  const opacity = () => actions.evaluate(element => getComputedStyle(element).opacity);
+  await page.mouse.move(0, 0);
+  await expect.poll(opacity).toBe('0');
+  // The actions keep the line its own height.
+  const plain = await page.locator('#component-message-event .f-message-event').nth(1).boundingBox();
+  expect((await event.boundingBox()).height).toBeLessThanOrEqual(plain.height + 1);
+  await event.hover();
+  await expect.poll(opacity).toBe('1');
+  await event.getByRole('button', { name: 'More actions' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Outgoing emails' })).toBeFocused();
+  await page.mouse.move(0, 0);
+  await expect.poll(opacity).toBe('1');
+  await page.keyboard.press('Escape');
+});
