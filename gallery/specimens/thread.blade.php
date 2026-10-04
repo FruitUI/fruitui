@@ -1,5 +1,5 @@
 {{-- Sent messages carry a bar: the accent for your own (mine), neutral for a teammate's. Notes and
-     generated text are not sent: yellow and indigo cards. --}}
+     generated summaries are not sent: a yellow card and a compact indigo one. --}}
 <x-fruit::thread aria-label="Conversation history">
     <li>
         <x-fruit::message layout="stacked" aria-label="Customer message" datetime="2026-10-02T10:42">
@@ -52,11 +52,6 @@
         </x-fruit::message>
     </li>
     <li>
-        <x-fruit::message layout="stacked" variant="generated" aria-label="Generated summary">
-            <x-slot:avatar><x-fruit::avatar>AI</x-fruit::avatar></x-slot:avatar>
-            <x-slot:author>Assistant</x-slot:author>
-            <x-slot:meta>Summary · Generated, not sent</x-slot:meta>
-            Studio North moved to the Team plan with annual billing.
-        </x-fruit::message>
+        <x-fruit::generated label="Summary">Studio North moved to the Team plan with annual billing.</x-fruit::generated>
     </li>
 </x-fruit::thread>

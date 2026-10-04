@@ -315,6 +315,19 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::segmented legend="Type" legend-hidden="yes">A</x-fruit::segmented>', 'legend-hidden must be a boolean');
     }
 
+    public function test_generated_text_is_compact_and_named_for_assistive_technology(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::generated label="Summary">Moved to the Team plan.</x-fruit::generated>'));
+        $root = $xpath->query('//div[@class="f-generated"]')->item(0);
+        $this->assertSame('Summary', $xpath->query('.//span[@class="f-sr-only"]', $root)->item(0)->textContent);
+        $this->assertSame('true', $xpath->query('.//svg', $root)->item(0)->getAttribute('aria-hidden'));
+        $this->assertSame('Moved to the Team plan.', trim($xpath->query('.//div[@class="f-generated__text"]', $root)->item(0)->textContent));
+        app()->setLocale('nl');
+        $this->assertStringContainsString('<span class="f-sr-only">Gegenereerd</span>', Blade::render('<x-fruit::generated>Tekst</x-fruit::generated>'));
+        $this->assertRejected('<x-fruit::generated label=" ">Text</x-fruit::generated>', 'needs a nonempty label');
+        $this->assertRejected('<x-fruit::generated role="article">Text</x-fruit::generated>', 'overriding role');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

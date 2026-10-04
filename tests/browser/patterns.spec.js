@@ -268,10 +268,13 @@ test('a thread separates messages, and sent, own, note and generated messages ea
   // Not sent: a yellow note and an indigo generated card, each named in its meta text.
   const background = element => getComputedStyle(element).backgroundColor;
   const note = await style('Internal note', background);
-  const generated = await style('Generated summary', background);
+  // A generated summary is compact: an icon and its text on the generated tint, named for screen readers.
+  const summary = card.locator('.f-generated');
+  const generated = await summary.evaluate(background);
   expect(new Set([note, generated, 'rgba(0, 0, 0, 0)']).size).toBe(3);
-  await expect(card.getByRole('article', { name: 'Generated summary' })).toContainText('Generated, not sent');
-  expect((await style('Generated summary', bar))[0]).toBe('0px');
+  await expect(summary).toContainText('Studio North moved to the Team plan with annual billing.');
+  await expect(summary.locator('.f-sr-only')).toHaveText('Summary');
+  await expect(summary.locator('svg')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('the Support thread lists its entries newest first without a line before the first', async ({ page }) => {
@@ -279,7 +282,7 @@ test('the Support thread lists its entries newest first without a line before th
   const first = page.locator('.support-thread .f-thread > li').first();
   await expect(first).toBeVisible();
   // The newest entry leads and the opening message ends the thread, above the start divider.
-  await expect(first).toContainText('Studio North moved to the Team plan');
+  await expect(first.locator('.f-generated')).toContainText('Studio North moved to the Team plan');
   await expect(page.locator('.support-thread .f-thread > li').last()).toContainText('Hi there');
   expect(
     await page.locator('.support-thread').evaluate(thread => thread.lastElementChild.matches('.support-thread-start')),
