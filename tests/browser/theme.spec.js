@@ -353,3 +353,21 @@ test('the compat build keeps choice groups and legends intact under Bootstrap 3 
   await expect(legend).toHaveCSS('border-bottom-style', 'none');
   expect((await legend.boundingBox()).width).toBeLessThan(300);
 });
+
+test('the compat build keeps code, keyboard keys and code blocks in the text color under Bootstrap 3', async ({
+  page,
+}) => {
+  const css = readFileSync(new URL('../../build/core.compat.css', import.meta.url), 'utf8');
+  const bootstrap = `code { padding: 2px 4px; font-size: 90%; color: #c7254e; background-color: #f9f2f4; border-radius: 4px }
+    kbd { padding: 2px 4px; font-size: 90%; color: #fff; background-color: #333; border-radius: 3px }
+    pre { display: block; padding: 9.5px; margin: 0 0 10px; color: #333; word-break: break-all; word-wrap: break-word;
+      background-color: #f5f5f5; border: 1px solid #ccc; border-radius: 4px }`;
+  await page.setContent(`<!doctype html><html><head><style>${bootstrap}</style><style>${css}</style></head>
+    <body><main class="fruit-ui" data-theme="dark"><p>Key <code>npub1abc</code> <kbd>⌘</kbd></p>
+    <pre><code>const ready = true;</code></pre></main></body></html>`);
+  const text = await page.locator('main').evaluate(element => getComputedStyle(element).color);
+  for (const selector of ['p code', 'kbd', 'pre', 'pre code'])
+    await expect(page.locator(selector)).toHaveCSS('color', text);
+  await expect(page.locator('pre')).toHaveCSS('word-break', 'normal');
+  await expect(page.locator('pre')).not.toHaveCSS('background-color', 'rgb(245, 245, 245)');
+});
