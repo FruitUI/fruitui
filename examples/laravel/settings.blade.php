@@ -15,6 +15,9 @@ new class extends Component
 {
     public const TABS = ['general' => 'General', 'connection' => 'Connection', 'auto-reply' => 'Auto reply'];
 
+    /** The address that receives this mailbox's forwarded email. */
+    public const FORWARDING = 'support-7f3a@inbound.forma.example';
+
     #[Url]
     public string $tab = 'general';
 
@@ -95,6 +98,14 @@ new class extends Component
             </div>
         </x-fruit::form-section>
     @elseif ($tab === 'connection')
+        <x-fruit::form-section title="Receiving">
+            <x-fruit::field label="Forwarding address" layout="row" description="Forward this mailbox’s email here.">
+                <div class="f-input-group">
+                    <x-fruit::input id="settings-forwarding" value="{{ self::FORWARDING }}" readonly />
+                    <x-fruit::copy-button value="{{ self::FORWARDING }}" aria-label="Copy forwarding address" />
+                </div>
+            </x-fruit::field>
+        </x-fruit::form-section>
         <x-fruit::form-section title="Sending" footer="Use port 587 with STARTTLS, or 465 with TLS.">
             <x-fruit::fieldset>
                 <legend>Send email with</legend>

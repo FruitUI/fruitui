@@ -160,6 +160,7 @@ for (const theme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: theme });
     await page.goto('/components.html');
     await page.locator('#component-toast').getByRole('button', { name: 'Error' }).click();
+    await page.locator('#component-copy-button').getByRole('button', { name: 'Copy invite link' }).click();
     await page.locator('#component-confirm').getByRole('button', { name: 'Delete conversation…' }).click();
     await expect(page.getByRole('alertdialog')).toHaveCSS('color-scheme', theme);
     await expectAccessible(page);

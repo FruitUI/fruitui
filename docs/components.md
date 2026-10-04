@@ -564,6 +564,17 @@ Use `f-prose` around sanitized message content to scope paragraph, list, quote, 
 
 `f-button-group` joins independent Buttons and Menus for split actions. `f-input-group` joins native inputs, `f-input-group__addon` units, and action buttons; use `aria-describedby` for a meaningful unit. `f-chip` holds a value and an independent `f-chip__remove` button. None owns the surrounding form's value.
 
+**Copy button** (`x-fruit::copy-button value="…"`) copies its value to the clipboard: API keys, webhook secrets, forwarding addresses, invite links. For a moment its icon becomes a check and its label reads Copied; a polite status announces Copied, or Could not copy when the browser refuses. Without a label it is an icon button named Copy, so give it a specific `aria-label` ("Copy webhook secret"). It takes Button's `variant` (default, primary, ghost) and `size`, joins an `f-input-group` beside a read-only input, and sends a bubbling `fruit-copied` event with `detail.value`. In HTML, bind `data-fruit-copy` on the button inside `span.f-copy[x-data="fruitCopy"]` (see the gallery); pages without HTTPS fall back to the selection copy command.
+
+```blade
+<x-fruit::field label="Webhook secret">
+    <div class="f-input-group">
+        <x-fruit::input id="webhook-secret" value="{{ $secret }}" readonly />
+        <x-fruit::copy-button value="{{ $secret }}" aria-label="Copy webhook secret" />
+    </div>
+</x-fruit::field>
+```
+
 `f-upload` rows combine File, Progress, text/links, and independent cancel/retry/remove buttons. The application owns FileList handling and transport. The Mail and Support examples simulate upload progress locally and provide downloadable browser blobs; they send no files to a server. `f-spinner` is decorative activity: keep a readable action name, set `aria-busy`, and use native disabled when repeated activation must be blocked. Reduced motion stops spinning.
 
 `f-avatar` also accepts an `img` with meaningful alt text, or empty alt when an adjacent name supplies identity. `<x-fruit::avatar>` is decorative by default; `label` gives it an accessible identity and `src` renders a photo. `f-avatar-group` overlaps independent avatars; `f-presence` must have adjacent readable status or equivalent accessible text. `f-notifications` arranges grouped native lists of destination links, badges, and independent actions; unread counts and read state stay in the application.

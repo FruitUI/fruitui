@@ -862,6 +862,22 @@
     "uses": ["support.html", "admin.html"]
   },
   {
+    "id": "copy-button",
+    "kind": "primitive",
+    "classes": ["f-copy"],
+    "blade": ["copy-button"],
+    "uses": [],
+    "contracts": {
+      "copy-button": {
+        "purpose": "Copy a value to the clipboard and confirm it in place.",
+        "element": "`button type=button` with `data-fruit-copy` inside `span.f-copy`, beside a polite status.",
+        "state": "fruitCopy marks `data-copied` for two seconds after a copy; the status announces Copied, or Could not copy.",
+        "keyboard": "Native button: Enter and Space copy.",
+        "options": "`value`: the text to copy (or bind `data-fruit-copy` from script). `variant`: default, primary, ghost. `size`: small, regular, large. Slot: the label; without one, an icon button labelled Copy (give it a specific `aria-label`). A bubbling `fruit-copied` event with `detail.value` follows a copy. Pages without HTTPS fall back to the selection copy command. In an Input Group it joins the field."
+      }
+    }
+  },
+  {
     "id": "tabs",
     "kind": "primitive",
     "classes": ["f-tabs", "f-tab"],

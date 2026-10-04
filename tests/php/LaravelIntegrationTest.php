@@ -219,6 +219,25 @@ class LaravelIntegrationTest extends TestCase
         $this->assertRejected('<x-fruit::combobox name="customer" search="remote" />', 'combobox search must be one of');
     }
 
+    public function test_a_copy_button_carries_its_value_and_translated_feedback(): void
+    {
+        app()->setLocale('nl');
+        $xpath = $this->xpath(Blade::render('<x-fruit::copy-button value="whsec_1" aria-label="Copy secret" /><x-fruit::copy-button value="#1042" variant="ghost" size="small">Copy number</x-fruit::copy-button>'));
+        [$icon, $text] = [$xpath->query('//button')->item(0), $xpath->query('//button')->item(1)];
+        $this->assertSame('button', $icon->getAttribute('type'));
+        $this->assertSame('whsec_1', $icon->getAttribute('data-fruit-copy'));
+        $this->assertSame('Copy secret', $icon->getAttribute('aria-label'));
+        $this->assertSame('f-button f-button--icon', $icon->getAttribute('class'));
+        $this->assertSame('f-button f-button--ghost f-button--small', $text->getAttribute('class'));
+        $this->assertFalse($text->hasAttribute('aria-label'));
+        $this->assertSame('Copy number', $xpath->query('.//span[@class="f-copy__label"]', $text)->item(0)->textContent);
+        $root = $xpath->query('//span[@class="f-copy"]')->item(0);
+        $this->assertSame('fruitCopy', $root->getAttribute('x-data'));
+        $this->assertSame('Gekopieerd', $root->getAttribute('data-fruit-copied-message'));
+        $this->assertSame('status', $xpath->query('.//span[@role="status"]', $root)->item(0)->getAttribute('role'));
+        $this->assertSame('Kopieer', $this->xpath(Blade::render('<x-fruit::copy-button value="x" />'))->query('//button')->item(0)->getAttribute('aria-label'));
+    }
+
     public function test_toasts_carry_a_tone_from_the_server_and_the_session(): void
     {
         Fruit::flashToast('Could not connect to the IMAP server.', tone: 'danger');
@@ -286,6 +305,9 @@ class LaravelIntegrationTest extends TestCase
             ['<x-fruit::toaster tone="warning" />', 'toaster tone must be one of'],
             ['<x-fruit::toaster data-tone="danger" />', 'Use the tone prop'],
             ['<x-fruit::confirmer role="dialog" />', 'overriding role'],
+            ['<x-fruit::copy-button value="x" type="submit" />', 'fixed native type'],
+            ['<x-fruit::copy-button value="x" role="link" />', 'overriding role'],
+            ['<x-fruit::copy-button value="x" variant="danger" />', 'copy-button variant must be one of'],
             ['<x-fruit::confirmer x-data="other" />', 'owns its fruitConfirmer helper'],
             ['<x-fruit::confirmer open />', 'owns its fruitConfirmer helper'],
             ['<x-fruit::dialog name="two words">Hi</x-fruit::dialog>', 'dialog name must be'],

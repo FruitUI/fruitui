@@ -405,3 +405,49 @@ test('without a confirmer on the page, confirm() asks with the browser', async (
     .poll(() => errors.join(' '))
     .toMatch(/confirm tone must be one of[\s\S]*needs a title[\s\S]*toast tone must be one of/);
 });
+
+test('a copy button copies its value, confirms in place and reports failures', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.copied = [];
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async text => {
+          if (window.failCopy) throw new Error('Denied');
+          window.copied.push(text);
+        },
+      },
+    });
+  });
+  await page.clock.install();
+  await page.goto('/components.html');
+  const card = page.locator('#component-copy-button');
+  const invite = card.getByRole('button', { name: 'Copy invite link' });
+  const status = value => card.locator(`.f-copy:has([data-fruit-copy="${value}"])`).getByRole('status');
+  const events = [];
+  await page.exposeFunction('copiedEvent', value => events.push(value));
+  await card.evaluate(element =>
+    element.addEventListener('fruit-copied', event => window.copiedEvent(event.detail.value)),
+  );
+
+  await invite.click();
+  expect(await page.evaluate(() => window.copied)).toEqual(['https://forma.example/invite/7f3a']);
+  await expect(card.getByRole('button', { name: 'Copied' })).toBeVisible();
+  await expect(status('https://forma.example/invite/7f3a')).toHaveText('Copied');
+  await expect.poll(() => events).toEqual(['https://forma.example/invite/7f3a']);
+  await page.clock.runFor(2100);
+  await expect(invite).toBeVisible();
+  await expect(status('https://forma.example/invite/7f3a')).toHaveText('');
+
+  // An icon button keeps its name and swaps its icon.
+  const secret = card.getByRole('button', { name: 'Copy webhook secret' });
+  await secret.press('Enter');
+  expect(await page.evaluate(() => window.copied.at(-1))).toBe('whsec_7f3a91c2b8');
+  await expect(secret.locator('.f-copy__done-icon')).toBeVisible();
+  await expect(secret.locator('.f-copy__icon')).toBeHidden();
+
+  await page.evaluate(() => (window.failCopy = true));
+  await card.getByRole('button', { name: 'Copy number' }).click();
+  await expect(status('#1042')).toHaveText('Could not copy');
+  await expect(card.getByRole('button', { name: 'Copy number' })).toBeVisible();
+});

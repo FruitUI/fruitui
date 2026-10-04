@@ -88,3 +88,16 @@ test('Delete Mailbox asks with the layout confirmer before calling Livewire', as
   await expect(page.locator('.f-toast')).toHaveText('This sample mailbox stays.');
   expect(errors).toEqual([]);
 });
+
+test('the forwarding address copies from its joined field', async ({ page, context, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Clipboard permissions are a Chromium feature.');
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  const errors = await openSettings(page, '?tab=connection');
+  await expect(page.getByLabel('Forwarding address', { exact: true })).toHaveValue(
+    'support-7f3a@inbound.forma.example',
+  );
+  await page.getByRole('button', { name: 'Copy forwarding address' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Copied' })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('support-7f3a@inbound.forma.example');
+  expect(errors).toEqual([]);
+});

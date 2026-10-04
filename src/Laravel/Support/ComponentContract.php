@@ -42,6 +42,7 @@ final class ComponentContract
         'avatar' => [],
         'badge' => ['roles' => ['status'], 'options' => ['tone' => ['neutral', 'accent', 'success', 'warning', 'danger'], 'variant' => ['filled', 'outline']]],
         'button' => ['roles' => ['button'], 'options' => ['variant' => self::BUTTON_VARIANTS, 'type' => self::BUTTON_TYPES, 'size' => self::BUTTON_SIZES]],
+        'copy-button' => ['roles' => ['button'], 'type' => 'button', 'options' => ['variant' => ['default', 'primary', 'ghost'], 'size' => self::BUTTON_SIZES]],
         'card' => ['roles' => ['group', 'region']],
         'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
         'color' => ['type' => 'color', 'emits' => ['type'], 'owns' => self::PICKER, 'message' => 'owns its picker popup association'],
