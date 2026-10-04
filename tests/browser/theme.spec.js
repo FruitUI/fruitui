@@ -425,3 +425,25 @@ test('every form-section row spans the group, and a disclosure row has no box of
   await expect(disclosure).toHaveCSS('border-top-width', '1px');
   await expect(page.locator('.f-choice')).toHaveCSS('border-top-width', '1px');
 });
+
+test('links in a message author and time keep the header text style until hovered', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <article class="f-message"><header class="f-message__header"><span class="f-message__identity">
+      <strong class="f-message__author"><a href="#customer">Sophie Chen</a></strong></span>
+      <time class="f-message__time"><a href="#thread-123" title="2 October 2026, 10:42">10:42 AM</a></time></header>
+      <div class="f-message__body">Hello</div></article>
+    <div class="f-message-event"><span class="f-message-event__text">Assigned</span><time class="f-message-event__time"><a href="#event-9">10:45 AM</a></time></div>
+    </body></html>`);
+  for (const [link, holder] of [
+    ['.f-message__author a', '.f-message__author'],
+    ['.f-message__time a', '.f-message__time'],
+    ['.f-message-event__time a', '.f-message-event__time'],
+  ]) {
+    const color = await page.locator(holder).evaluate(element => getComputedStyle(element).color);
+    await expect(page.locator(link)).toHaveCSS('color', color);
+    await expect(page.locator(link)).toHaveCSS('text-decoration-line', 'none');
+    await page.locator(link).hover();
+    await expect(page.locator(link)).toHaveCSS('text-decoration-line', 'underline');
+  }
+});
