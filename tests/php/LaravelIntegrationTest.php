@@ -13,6 +13,7 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\View\ViewException;
+use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -191,6 +192,45 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('notice', $toaster->getAttribute('x-show'));
     }
 
+    public function test_toasts_carry_a_tone_from_the_server_and_the_session(): void
+    {
+        Fruit::flashToast('Could not connect to the IMAP server.', tone: 'danger');
+        $this->assertSame('danger', session('fruit-toast-tone'));
+        $toaster = $this->xpath(Blade::render('<x-fruit::toaster />'))->query('//div[@role="status"]')->item(0);
+        $this->assertSame('polite', $toaster->getAttribute('aria-live'));
+        $this->assertStringContainsString('"tone":"danger"', $toaster->getAttribute('x-data'));
+        // A host that flashes only the message keeps the neutral tone.
+        session()->forget('fruit-toast-tone');
+        $state = fn (string $template) => $this->xpath(Blade::render($template))->query('//div[@role="status"]')->item(0)->getAttribute('x-data');
+        $this->assertStringContainsString('"tone":"neutral"', $state('<x-fruit::toaster />'));
+        $this->assertStringContainsString('"tone":"success"', $state('<x-fruit::toaster message="Saved." tone="success" />'));
+
+        Livewire::test(FeedbackFixture::class)
+            ->call('fail')
+            ->assertDispatched('fruit-toast', message: 'Could not connect.', tone: 'danger')
+            ->assertToasted('Could not connect.', 'danger')
+            ->assertToasted(tone: 'danger');
+        $this->expectException(InvalidArgumentException::class);
+        Fruit::toast('Loud.', tone: 'warning');
+    }
+
+    public function test_the_confirmer_is_one_translated_alert_dialog_outside_livewire_morphs(): void
+    {
+        app()->setLocale('nl');
+        $html = Blade::render('<x-fruit::confirmer />');
+        $dialog = $this->xpath($html)->query('//dialog')->item(0);
+        $this->assertSame('alertdialog', $dialog->getAttribute('role'));
+        $this->assertSame('f-dialog f-confirm', $dialog->getAttribute('class'));
+        $this->assertSame('fruitConfirmer', $dialog->getAttribute('x-data'));
+        $this->assertSame('fruit-confirm-title', $dialog->getAttribute('aria-labelledby'));
+        $this->assertSame('fruit-confirm-message', $dialog->getAttribute('aria-describedby'));
+        $this->assertSame('Annuleer', $dialog->getAttribute('data-fruit-cancel-label'));
+        $this->assertSame('OK', $dialog->getAttribute('data-fruit-confirm-label'));
+        $this->assertTrue($dialog->hasAttribute('wire:ignore'));
+        $this->assertStringContainsString('id="fruit-confirm-title"', $html);
+        $this->assertSame('ask-title', $this->xpath(Blade::render('<x-fruit::confirmer id="ask" />'))->query('//dialog')->item(0)->getAttribute('aria-labelledby'));
+    }
+
     #[DataProvider('invalidAdapters')]
     public function test_new_adapters_reject_unsupported_contracts(string $template, string $message): void
     {
@@ -215,6 +255,11 @@ class LaravelIntegrationTest extends TestCase
             ['<x-fruit::toaster x-show="open" />', 'owns its fruitToast helper'],
             ['<x-fruit::toaster duration="soon" />', 'nonnegative number'],
             ['<x-fruit::toaster role="alert" />', 'overriding role'],
+            ['<x-fruit::toaster aria-live="off" />', 'owns its fruitToast helper'],
+            ['<x-fruit::toaster tone="warning" />', 'toaster tone must be one of'],
+            ['<x-fruit::confirmer role="dialog" />', 'overriding role'],
+            ['<x-fruit::confirmer x-data="other" />', 'owns its fruitConfirmer helper'],
+            ['<x-fruit::confirmer open />', 'owns its fruitConfirmer helper'],
             ['<x-fruit::dialog name="two words">Hi</x-fruit::dialog>', 'dialog name must be'],
         ];
     }
@@ -424,6 +469,11 @@ class FeedbackFixture extends Component
     public function confirm(): void
     {
         Fruit::openDialog('confirm-archive');
+    }
+
+    public function fail(): void
+    {
+        Fruit::toast('Could not connect.', tone: 'danger');
     }
 
     public function leave(): void

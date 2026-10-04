@@ -155,6 +155,17 @@ for (const theme of ['light', 'dark']) {
   });
 }
 
+for (const theme of ['light', 'dark']) {
+  test(`confirmations and toast tones are accessible in automatic ${theme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: theme });
+    await page.goto('/components.html');
+    await page.locator('#component-toast').getByRole('button', { name: 'Error' }).click();
+    await page.locator('#component-confirm').getByRole('button', { name: 'Delete conversation…' }).click();
+    await expect(page.getByRole('alertdialog')).toHaveCSS('color-scheme', theme);
+    await expectAccessible(page);
+  });
+}
+
 async function appearanceSnapshot(page) {
   return page.locator('[class*="f-"]').evaluateAll(elements =>
     elements.flatMap(element => {

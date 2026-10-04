@@ -74,3 +74,17 @@ for (const colorScheme of ['light', 'dark']) {
     }
   });
 }
+
+test('Delete Mailbox asks with the layout confirmer before calling Livewire', async ({ page }) => {
+  const errors = await openSettings(page);
+  const dialog = page.getByRole('alertdialog', { name: 'Delete this mailbox?' });
+  await page.getByRole('button', { name: 'Delete Mailbox…' }).click();
+  await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('.f-toast')).toBeHidden();
+  await page.getByRole('button', { name: 'Delete Mailbox…' }).click();
+  await dialog.getByRole('button', { name: 'Delete Mailbox' }).click();
+  await expect(page.locator('.f-toast')).toHaveText('This sample mailbox stays.');
+  expect(errors).toEqual([]);
+});

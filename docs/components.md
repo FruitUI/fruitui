@@ -15,7 +15,8 @@ These use native markup and existing controls. A CSS composition does not requir
 | Sidebar | Arrange navigation links/buttons and optional native disclosure groups with `f-sidebar`; Blade `x-fruit::sidebar`, `sidebar-group` and `sidebar-item` (links). | `details` owns open; links/buttons own actions and `aria-current=page`. Native Tab, Enter/Space. | Header (workspace) and footer (account) identity lockups, heading, item, nested item (automatic inside a group), identity text, count badge, decorative chevron. Tokens: `--f-sidebar-identity-gap`, `--f-sidebar-header-padding`, `--f-sidebar-footer-padding`, `--f-sidebar-item-indent`. No navigation data model. |
 | Toolbar | Arrange actions in a div/header with `f-toolbar`. | No added state or keyboard behavior. | Group independent controls with `f-toolbar__group`; flexible space with `f-toolbar__spacer`. |
 | Badge | Present a count or short label in `span.f-badge`; Blade `x-fruit::badge`. | No value, interaction, or added keyboard behavior. | Text content; scoped semantic tokens for appearance. |
-| Toast | Announce a short result on one `div.f-toast` outlet: `x-fruit::toaster` in Blade, or `x-data="fruitToast"` with `x-show`/`x-text="notice"` in HTML. | The outlet owns one message and its timing; hover and focus pause it. Announced through `role=status`; no focus transfer. | Send messages with `Fruit::toast()` on the server, `$toast()` in Alpine, or `toast()` from `fruitui/alpine`; see [server feedback](#server-feedback-dialogs-and-toasts). |
+| Toast | Announce a short result on one `div.f-toast` outlet: `x-fruit::toaster` in Blade, or `x-data="fruitToast"` with `x-show`/`x-text="notice"` in HTML. | The outlet owns one message and its timing; hover and focus pause it. Announced through `role=status`; no focus transfer. | Send messages with `Fruit::toast()` on the server, `$toast()` in Alpine, or `toast()` from `fruitui/alpine`, with an optional `tone` (success, danger); see [server feedback](#server-feedback-dialogs-toasts-and-confirmations). |
+| Confirmation | Ask before an action from script on one `dialog.f-confirm` outlet: `x-fruit::confirmer` in Blade, or `x-data="fruitConfirmer"` in HTML. | The outlet owns the question and its open state; requests wait their turn. `role=alertdialog`; a danger question focuses Cancel, others the action; Escape cancels. | Ask with `$confirm({ title, message, confirm, tone })` or `confirm()` from `fruitui/alpine`; it resolves true or false. See [asking before an action](#asking-before-an-action). |
 | Row / Stack | Arrange independent children with `f-row` or `f-stack`. | No owned state or keyboard behavior. | Content and controls; shared spacing tokens. |
 | Muted text | Apply secondary text color with `f-muted`. | Native content semantics; no state or keyboard behavior. | Shared secondary token, automatically light/dark. |
 | Screen-reader text | Preserve accessible content while visually hiding it with `f-sr-only`. | Native label/text semantics. | Use on labels and descriptions; not on focusable controls. |
@@ -684,9 +685,26 @@ Input's type is fixed at render time, with one exception: a password input may b
 </x-fruit::field>
 ```
 
-## Server feedback: dialogs and toasts
+## Server feedback: dialogs, toasts and confirmations
 
 Put one `<x-fruit::toaster />` in the layout (in HTML, one element with `x-data="fruitToast"`). It announces `fruit-toast` window events, sent by `Fruit::toast()`, the `$toast()` Alpine magic or `toast()` from `fruitui/alpine`, and, on page load, a `fruit-toast` value flashed to the session. `duration` (default 4000 ms, 0 keeps it) controls dismissal; hover and focus pause it. It uses the top layer where supported, so an open modal dialog does not cover it; a modal makes the rest of the page inert, though, so report results of a dialog's task after it closes, or inside the dialog. It shows one message at a time and does not queue or route notifications.
+
+A toast has a `tone`: neutral (default), `success` or `danger`. Success and danger lead with an icon, so the tone never depends on color alone; a danger toast is announced assertively and stays twice as long. Pass it as `Fruit::toast($message, tone: 'danger')`, `$toast('Could not connect.', { tone: 'danger' })` or the event's `tone`. For an error the reader must act on, use an Alert in place or a Dialog instead.
+
+### Asking before an action
+
+Put one `<x-fruit::confirmer />` in the layout too (in HTML, one `dialog.f-dialog.f-confirm` with `x-data="fruitConfirmer"`; see the gallery). Then ask from script; the answer is a promise of true or false:
+
+```blade
+<x-fruit::button variant="danger" x-on:click="$confirm({
+    title: 'Delete this conversation?',
+    message: 'It moves to Trash, where it stays for 30 days.',
+    confirm: 'Delete',
+    tone: 'danger',
+}).then(confirmed => confirmed && $wire.delete({{ $id }}))">Delete…</x-fruit::button>
+```
+
+`title` is required; `message` is optional. Name the action on the confirm button ("Delete", "Empty Trash") rather than leaving the translated default OK. `tone: 'danger'` styles that button as destructive and focuses Cancel first, so Enter never destroys by accident; other questions focus the action. Escape and Cancel answer false. Requests made while one is open wait their turn. `confirm()` from `fruitui/alpine` (and `FruitUI.confirm` in the global build) works outside Alpine expressions; without a confirmer on the page, it falls back to the browser's `confirm()`. Livewire's own `wire:confirm` still uses the browser dialog; use `$confirm(…).then(…)` as above for the styled one.
 
 `FruitUI\Fruit` sends feedback from Livewire components, form objects, actions and controllers:
 
@@ -694,6 +712,7 @@ Put one `<x-fruit::toaster />` in the layout (in HTML, one element with `x-data=
 use FruitUI\Fruit;
 
 Fruit::toast('Conversation closed.');   // now; outside a Livewire request, on the next page
+Fruit::toast('Could not connect to the IMAP server.', tone: 'danger');
 Fruit::flashToast('Closed.');           // on the next page, e.g. before $this->redirect(...)
 Fruit::openDialog('close-ticket');      // Livewire requests only
 Fruit::closeDialog('close-ticket');
@@ -710,7 +729,7 @@ A dialog opens in one of two ways. Bind its open state when the server owns it; 
 
 Or give it a `name` and open or close it with events, from the server (`Fruit::openDialog`) or the browser (`$dispatch('fruit-dialog-open', { name: 'close-ticket' })`). Either way, Livewire morphs leave the dialog's own attributes alone, so an open dialog stays open while its content re-renders.
 
-In tests, `Livewire::test()` gains matching assertions. `assertToasted()` accepts a toast dispatched in the request or flashed for the next page, optionally with its exact message:
+In tests, `Livewire::test()` gains matching assertions. `assertToasted()` accepts a toast dispatched in the request or flashed for the next page, optionally with its exact message and tone (`assertToasted('Could not connect.', 'danger')`, or `assertToasted(tone: 'danger')`):
 
 ```php
 Livewire::test(Inbox::class)

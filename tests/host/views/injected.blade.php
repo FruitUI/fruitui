@@ -3,4 +3,5 @@
 <script type="module" src="http://127.0.0.1:5173/src/js/livewire.js"></script></head><body>
 <livewire:fruit-support-desk :mailbox="$mailbox" />
 <x-fruit::toaster />
+<x-fruit::confirmer />
 </body></html>

@@ -18,4 +18,5 @@
     </x-fruit::pane>
 </x-fruit::workspace>
 <x-fruit::toaster />
+<x-fruit::confirmer />
 </body></html>

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { fileURLToPath } from 'node:url';
 import { expectAccessible } from './helpers.js';
 
 test('Mail and Support consume the same conversation styles and preserve their variants', async ({ page }) => {
@@ -282,4 +283,113 @@ test('a thread event shows its actions on hover or focus and keeps them while th
   await page.mouse.move(0, 0);
   await expect.poll(opacity).toBe('1');
   await page.keyboard.press('Escape');
+});
+
+test('toast tones lead with an icon, announce errors assertively and keep them twice as long', async ({ page }) => {
+  await page.clock.install();
+  await page.goto('/components.html');
+  const toast = page.locator('#component-toast .f-toast[x-data]');
+  const card = page.locator('#component-toast');
+  const icon = () => toast.evaluate(element => getComputedStyle(element, '::before').content);
+
+  await card.getByRole('button', { name: 'Error' }).click();
+  await expect(toast).toHaveText('Could not connect to the IMAP server.');
+  await expect(toast).toHaveAttribute('data-tone', 'danger');
+  await expect(toast).toHaveAttribute('aria-live', 'assertive');
+  expect(await icon()).toBe('""');
+  // The default 4 seconds have passed; an error is still showing until 8.
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(6000);
+  await expect(toast).toBeVisible();
+  await page.clock.runFor(2500);
+  await expect(toast).toBeHidden();
+
+  await card.getByRole('button', { name: 'Success' }).click();
+  await expect(toast).toHaveAttribute('data-tone', 'success');
+  await expect(toast).toHaveAttribute('aria-live', 'polite');
+  await card.getByRole('button', { name: 'Show toast' }).click();
+  await expect(toast).toHaveText('Conversation archived.');
+  await expect(toast).not.toHaveAttribute('data-tone');
+  expect(await icon()).toBe('none');
+});
+
+test('the confirmer asks once per request and answers each in turn', async ({ page }) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-confirm');
+  const answer = card.getByRole('status');
+  const dialog = page.getByRole('alertdialog');
+
+  await card.getByRole('button', { name: 'Delete conversation…' }).click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName('Delete this conversation?');
+  await expect(dialog).toHaveAccessibleDescription('It moves to Trash, where it stays for 30 days.');
+  // A destructive question starts on Cancel, so Enter never deletes by accident.
+  await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  await expect(dialog.getByRole('button', { name: 'Delete' })).toHaveClass(/f-button--danger/);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(answer).toHaveText('Kept.');
+
+  await card.getByRole('button', { name: 'Delete conversation…' }).click();
+  await dialog.getByRole('button', { name: 'Delete' }).click();
+  await expect(answer).toHaveText('Deleted.');
+
+  // Any other question starts on its action; without a message there is no description.
+  await card.getByRole('button', { name: 'Mark all as read…' }).click();
+  await expect(dialog.getByRole('button', { name: 'Mark as Read' })).toBeFocused();
+  await expect(dialog.getByRole('button', { name: 'Mark as Read' })).toHaveClass(/f-button--primary/);
+  await expect(dialog.locator('.f-confirm__message')).toBeHidden();
+  await page.keyboard.press('Enter');
+  await expect(answer).toHaveText('All read.');
+
+  // Requests made together (here through the outlet's own event) wait their turn and resolve in order.
+  const answers = page.evaluate(() => {
+    const ask = title =>
+      new Promise(resolve =>
+        window.dispatchEvent(
+          new CustomEvent('fruit-confirm', { detail: { title, message: '', tone: 'default', resolve } }),
+        ),
+      );
+    return Promise.all([ask('First?'), ask('Second?')]);
+  });
+  await expect(dialog).toHaveAccessibleName('First?');
+  await dialog.getByRole('button', { name: 'OK' }).click();
+  await expect(dialog).toHaveAccessibleName('Second?');
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  expect(await answers).toEqual([true, false]);
+});
+
+test('without a confirmer on the page, confirm() asks with the browser', async ({ page }) => {
+  await page.route('**/confirm-fixture', route =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: `<!doctype html><html lang="en" class="fruit-ui"><body><button x-data
+        @click="$confirm({ title: 'Leave this page?', message: 'Your draft is kept.' }).then(confirmed => $el.dataset.answer = confirmed)">Leave</button></body></html>`,
+    }),
+  );
+  await page.goto('/confirm-fixture');
+  for (const path of ['build/livewire.global.js', 'node_modules/alpinejs/dist/cdn.min.js'])
+    await page.addScriptTag({ path: fileURLToPath(new URL(`../../${path}`, import.meta.url)) });
+  const asked = [];
+  page.once('dialog', dialog => {
+    asked.push(dialog.message());
+    dialog.accept();
+  });
+  await page.getByRole('button', { name: 'Leave' }).click();
+  await expect(page.getByRole('button', { name: 'Leave' })).toHaveAttribute('data-answer', 'true');
+  expect(asked).toEqual(['Leave this page?\n\nYour draft is kept.']);
+  // Invalid requests fail loudly; Alpine reports expression errors as page errors.
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.evaluate(() => {
+    for (const expression of [
+      "$confirm({ title: 'Go?', tone: 'loud' })",
+      "$confirm({ message: 'No title' })",
+      "$toast('Hi', { tone: 'loud' })",
+    ])
+      window.Alpine.evaluate(document.body, expression);
+  });
+  await expect
+    .poll(() => errors.join(' '))
+    .toMatch(/confirm tone must be one of[\s\S]*needs a title[\s\S]*toast tone must be one of/);
 });

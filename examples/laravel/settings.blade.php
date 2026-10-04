@@ -3,7 +3,8 @@
 /*
  * Mailbox settings as a Livewire 4 single-file component, in grouped sections: Section Nav links for the mailbox's pages, form sections of Field rows, and a save bar.
  * wire:dirty shows unsaved changes; Save validates on the server and confirms with a toast through
- * the page layout's single <x-fruit::toaster />.
+ * the page layout's single <x-fruit::toaster />. Delete Mailbox asks first through the layout's
+ * <x-fruit::confirmer />.
  */
 
 use FruitUI\Fruit;
@@ -90,7 +91,7 @@ new class extends Component
                     <strong class="f-headline">Delete mailbox</strong>
                     <p class="f-help">Removes the mailbox and its conversations for everyone.</p>
                 </div>
-                <x-fruit::button variant="danger" wire:click="deleteMailbox" wire:confirm="Delete this mailbox and its conversations?">Delete Mailbox…</x-fruit::button>
+                <x-fruit::button variant="danger" x-on:click="$confirm({ title: 'Delete this mailbox?', message: 'Its conversations are removed for everyone.', confirm: 'Delete Mailbox', tone: 'danger' }).then(confirmed => confirmed && $wire.deleteMailbox())">Delete Mailbox…</x-fruit::button>
             </div>
         </x-fruit::form-section>
     @elseif ($tab === 'connection')
