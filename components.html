@@ -371,7 +371,7 @@
     &lt;x-fruit::textarea name=&quot;note&quot; rows=&quot;4&quot; placeholder=&quot;A little context for your team.&quot; /&gt;
 &lt;/x-fruit::field&gt;</pre></details></section>
         <section id="component-search" data-component="search" class="f-card component-card"><h2>Search field</h2><p>An icon and a native search input. Search results belong to the application.</p><!-- blade:search --><div class="f-search">
-    <svg class="f-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.75" /><path d="m10.5 10.5 3.5 3.5" /></svg>
+    <svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
     <input type="search"  aria-label="Search the workspace"  class="f-input" id="gallery-search" name="query" placeholder="Search the workspace" wire:model.live.debounce.300ms="query">
 </div><!-- /blade:search --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-search&quot;&gt;
   &lt;!-- Optional decorative SVG with class=&quot;f-icon&quot; --&gt;
@@ -480,7 +480,7 @@
     <details class="f-sidebar__group">
     <summary class="f-sidebar__item">
         <svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg>                    <span class="f-sidebar__identity"><strong>Examples</strong><small>Reference interfaces</small></span>
-                <svg class="f-icon f-sidebar__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3.5 4.5 4.5L6 12.5"/></svg>
+                <svg class="f-icon f-sidebar__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
     </summary>
     <a class="f-sidebar__item" href="/">
         <span class="f-sidebar__identity">Mail</span>
@@ -1210,8 +1210,8 @@
             <input type="text" class="f-input" id="gallery-webhook-secret" aria-describedby="gallery-webhook-secret-description" value="whsec_7f3a91c2b8" readonly="readonly">
             <span class="f-copy" x-data="fruitCopy" data-fruit-copied-message="Copied" data-fruit-failed-message="Could not copy">
     <button type="button" class="f-button f-button--icon" data-fruit-copy="whsec_7f3a91c2b8" aria-label="Copy webhook secret">
-        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a1 1 0 0 1 1-1h9" /></svg>
-        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
             </button>
     <span class="f-sr-only" role="status"></span>
 </span>
@@ -1221,15 +1221,15 @@
     <div class="f-row">
         <span class="f-copy" x-data="fruitCopy" data-fruit-copied-message="Copied" data-fruit-failed-message="Could not copy">
     <button type="button" class="f-button" data-fruit-copy="https://forma.example/invite/7f3a">
-        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a1 1 0 0 1 1-1h9" /></svg>
-        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
         <span class="f-copy__label">Copy invite link</span><span class="f-copy__done">Copied</span>    </button>
     <span class="f-sr-only" role="status"></span>
 </span>
         <span class="f-copy" x-data="fruitCopy" data-fruit-copied-message="Copied" data-fruit-failed-message="Could not copy">
     <button type="button" class="f-button f-button--ghost f-button--small" data-fruit-copy="#1042">
-        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a1 1 0 0 1 1-1h9" /></svg>
-        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+        <svg class="f-icon f-copy__icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg class="f-icon f-copy__done-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
         <span class="f-copy__label">Copy number</span><span class="f-copy__done">Copied</span>    </button>
     <span class="f-sr-only" role="status"></span>
 </span>
@@ -1375,16 +1375,16 @@
     <div class="f-editor" data-fruit-link-label="Link address" data-fruit-image-label="Image address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove link" data-fruit-paste="rich" x-data="fruitEditor">
     <div class="f-editor__toolbar" wire:ignore hidden aria-label="Text formatting">
                 
-                                                <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h6a3.5 3.5 0 0 1 0 7H7zM7 12h7a3.5 3.5 0 0 1 0 7H7z" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5h-8M13 19H5M15 5 9 19" /></svg></button>
-                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bulletList" aria-label="Bullets" title="Bullets"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="orderedList" aria-label="Numbered list" title="Numbered list"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10M4 4.5l1-.5v4M3.5 14.5c.4-.6 2-.8 2 .3 0 .8-2 1.6-2 2.7h2" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="blockquote" aria-label="Quote" title="Quote"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 7c-2.5 1-4 3-4 6v4h4v-4H7M18 7c-2.5 1-4 3-4 6v4h4v-4h-3" /></svg></button>
-                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="image" aria-label="Image" title="Image"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 16l5-5 4 4 2-2 5 5M15.5 9h.01" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove formatting" title="Remove formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M12 5l-3 14M4 4l16 16" /></svg></button>
-                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4 12h11a5 5 0 0 1 0 10h-2" /></svg></button>
-                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 7 5 5-5 5M20 12H9a5 5 0 0 0 0 10h2" /></svg></button>
+                                                <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg></button>
+                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bulletList" aria-label="Bullets" title="Bullets"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="orderedList" aria-label="Numbered list" title="Numbered list"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="blockquote" aria-label="Quote" title="Quote"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5H3"/><path d="M21 12H8"/><path d="M21 19H8"/><path d="M3 12v7"/></svg></button>
+                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="image" aria-label="Image" title="Image"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove formatting" title="Remove formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/></svg></button>
+                                <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
                                                 
             <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>
             <details x-data="fruitMenu" class="f-menu">
@@ -1498,7 +1498,7 @@
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >ET</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Emma Thompson</strong> <small class="f-message__meta">Customer</small> </span>
         <time class="f-message__time" >10:08 AM</time>    </header>
-    <div class="f-message__translation" lang="en"><svg class="f-icon f-message__translation-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M11 5c-.7 3.6-3 6.5-6.5 8M6.5 8.5c1.2 2 3 3.6 5 4.5M13 21l4-9 4 9M14.4 18h5.2" /></svg><span class="f-sr-only">Translation</span><div class="f-message__translation-text">What’s the easiest way to move our projects so the comments come along?</div></div>    <div class="f-message__body">Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?</div>
+    <div class="f-message__translation" lang="en"><svg class="f-icon f-message__translation-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span class="f-sr-only">Translation</span><div class="f-message__translation-text">What’s the easiest way to move our projects so the comments come along?</div></div>    <div class="f-message__body">Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?</div>
             </article>
     <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> </div>
     <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
@@ -1768,7 +1768,7 @@
 </div>
 <dialog aria-label="Go to" class="f-dialog f-command-palette" data-fruit-dialog="gallery-commands"  data-fruit-shortcut="k"  x-data="fruitCommandPalette" wire:ignore.self>
     <div class="f-command-palette__search">
-        <svg class="f-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.75" /><path d="m10.5 10.5 3.5 3.5" /></svg>
+        <svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
         <input class="f-input" type="text" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-controls="gallery-commands-commands" aria-label="Go to" placeholder="Search" autocomplete="off" spellcheck="false">
     </div>
     <div class="f-command-palette__list" role="listbox" id="gallery-commands-commands" aria-label="Go to"><div role="group" aria-label="Examples" class="f-command-palette__group">
@@ -1827,8 +1827,8 @@
 &lt;/div&gt;</pre></details></section>
 <section id="component-typing" data-component="typing" class="f-card component-card"><h2>Typing indicator</h2><p>Shows who is writing. The status region stays in place, so new text is announced; reduced motion holds the dots still.</p><!-- blade:typing --><p role="status" class="f-typing"><span class="f-typing__dots" aria-hidden="true"><span></span><span></span><span></span></span>Mia is typing…</p><!-- /blade:typing --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;p class=&quot;f-typing&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;f-typing__dots&quot; aria-hidden=&quot;true&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;Mia is typing…&lt;/p&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="typing">{{-- Livewire: render the text while someone types; keep the empty status in place otherwise. --}}
 &lt;x-fruit::typing&gt;Mia is typing…&lt;/x-fruit::typing&gt;</pre></details></section>
-<section id="component-back" data-component="back" class="f-card component-card"><h2>Back navigation</h2><p>Return to the parent screen in compact layouts, with a chevron and the parent’s title. Long titles truncate.</p><!-- blade:back --><a class="f-button f-button--ghost f-back" href="/support.html" wire:navigate=""><svg class="f-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg><span>All Inboxes</span></a>
-<a class="f-button f-button--ghost f-back" href="/admin.html#/customers"><svg class="f-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg><span>Customers with a much longer mailbox title</span></a><!-- /blade:back --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-button f-button--ghost f-back&quot; href=&quot;/support/all&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;…&lt;/svg&gt;&lt;span&gt;All Inboxes&lt;/span&gt;&lt;/a&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="back">&lt;x-fruit::back-link href=&quot;/support.html&quot; wire:navigate&gt;All Inboxes&lt;/x-fruit::back-link&gt;
+<section id="component-back" data-component="back" class="f-card component-card"><h2>Back navigation</h2><p>Return to the parent screen in compact layouts, with a chevron and the parent’s title. Long titles truncate.</p><!-- blade:back --><a class="f-button f-button--ghost f-back" href="/support.html" wire:navigate=""><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>All Inboxes</span></a>
+<a class="f-button f-button--ghost f-back" href="/admin.html#/customers"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span>Customers with a much longer mailbox title</span></a><!-- /blade:back --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-button f-button--ghost f-back&quot; href=&quot;/support/all&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;…&lt;/svg&gt;&lt;span&gt;All Inboxes&lt;/span&gt;&lt;/a&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="back">&lt;x-fruit::back-link href=&quot;/support.html&quot; wire:navigate&gt;All Inboxes&lt;/x-fruit::back-link&gt;
 &lt;x-fruit::back-link href=&quot;/admin.html#/customers&quot;&gt;Customers with a much longer mailbox title&lt;/x-fruit::back-link&gt;</pre></details></section>
 <section id="component-context-menu" data-component="context-menu" class="f-card component-card"><h2>Context menu</h2><p>Commands for the item under the pointer. Right-click, Shift+F10 or the context-menu key opens it; Escape returns focus. Offer the same commands elsewhere too.</p><!-- blade:context-menu --><ul role="list" class="f-item-list" aria-label="Conversations with context menus"><li x-data>
             <button type="button" class="f-item-row" @click="$toast('Opened Sophie Chen.')">
@@ -2051,7 +2051,7 @@
     </li>
     <li>
         <div class="f-generated">
-    <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5 11 8l4.5 1.5L11 11l-1.5 4.5L8 11 3.5 9.5 8 8zM17.5 13.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8zM17 3.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" /></svg>
+    <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
     <span class="f-sr-only">Summary</span>
     <div class="f-generated__text">Studio North moved to the Team plan with annual billing.</div>
 </div>
@@ -2118,7 +2118,7 @@
 &lt;/x-fruit::thread&gt;</pre></details></section>
         <section id="component-generated" data-component="generated" class="f-card component-card"><h2>Generated summary</h2><p>Generated text that stands on its own in a thread, such as a summary: a sparkles icon and the text, on the generated tint, named for assistive technology. Translations go in their message&#8217;s translation slot instead.</p><!-- blade:generated --><ol role="list" class="f-thread" aria-label="Conversation history"><li>
         <div class="f-generated">
-    <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 3.5 11 8l4.5 1.5L11 11l-1.5 4.5L8 11 3.5 9.5 8 8zM17.5 13.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8zM17 3.5l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5z" /></svg>
+    <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
     <span class="f-sr-only">Summary</span>
     <div class="f-generated__text">Studio North moved to the Team plan with annual billing. One guest invite expired and needs to be sent again.</div>
 </div>

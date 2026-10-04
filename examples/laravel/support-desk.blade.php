@@ -332,14 +332,14 @@ new class extends Component
                 <x-slot:selection>
                     <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
                         <x-fruit::menu title="Assign selected conversations">
-                            <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="Assign" title="Assign"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg></x-slot:trigger>
+                            <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="Assign" title="Assign"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></x-slot:trigger>
                             <x-fruit::menu-item wire:click="assignSelected('')">Unassigned</x-fruit::menu-item>
                             @foreach ($this::AGENTS as $agent => $name)
                                 <x-fruit::menu-item wire:click="assignSelected('{{ $agent }}')">{{ $name }}</x-fruit::menu-item>
                             @endforeach
                         </x-fruit::menu>
-                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="closeSelected" aria-label="Close selected" title="Close selected"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></x-fruit::button>
-                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="$set('selected', [])" aria-label="Clear selection" title="Clear selection"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg></x-fruit::button>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="closeSelected" aria-label="Close selected" title="Close selected"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></x-fruit::button>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="$set('selected', [])" aria-label="Clear selection" title="Clear selection"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></x-fruit::button>
                     </x-fruit::selection-bar>
                 </x-slot:selection>
             </x-fruit::list-header>
@@ -507,7 +507,7 @@ new class extends Component
                                         @if ($ticket['status'] === 'open')
                                             <x-slot:actions>
                                                 <x-fruit::button variant="ghost" class="f-button--icon" wire:click="quote({{ $index }})" aria-label="Quote {{ $message['author'] }} in reply">
-                                                    <svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v6"/></svg>
+                                                    <svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 18v-2a4 4 0 0 0-4-4H4"/><path d="m9 17-5-5 5-5"/></svg>
                                                 </x-fruit::button>
                                             </x-slot:actions>
                                         @endif
