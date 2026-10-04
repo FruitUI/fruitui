@@ -1,0 +1,17 @@
+<form id="merge-form" class="f-stack" x-data="{ target: '' }"
+  @submit.prevent="$toast('Merged into #' + target + '.', { tone: 'success' }); $el.closest('dialog').close('merged')">
+  <p>Choose the conversation to merge into. Its messages, notes and attachments come along, and this one closes.</p>
+  <div class="f-field">
+    <label class="f-label" for="merge-target">Merge into</label>
+    <select class="f-input" id="merge-target" x-model="target" required>
+      <option value="">Choose a conversation</option>
+      <option value="1041">#1041 Sign-in after changing our domain · Jordan Lee</option>
+      <option value="1039">#1039 An invoice for our finance team · Daniel Brooks</option>
+      <option value="1036">#1036 Inviting a client as a guest · Sophie Chen</option>
+    </select>
+  </div>
+</form>
+<footer class="f-dialog__footer" x-data>
+  <button class="f-button" type="button" @click="$el.closest('dialog').close()">Cancel</button>
+  <button class="f-button f-button--primary" type="submit" form="merge-form">Merge</button>
+</footer>

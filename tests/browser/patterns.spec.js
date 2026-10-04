@@ -396,6 +396,26 @@ test('without a confirmer on the page, confirm() asks with the browser', async (
   await page.getByRole('button', { name: 'Leave' }).click();
   await expect(page.getByRole('button', { name: 'Leave' })).toHaveAttribute('data-answer', 'true');
   expect(asked).toEqual(['Leave this page?\n\nYour draft is kept.']);
+  // Dialogs from script: html or url, a size, and promises for the content and the answer.
+  const opened = await page.evaluate(async () => {
+    const shown = window.FruitUI.dialog({ title: 'Outgoing emails', html: '<p>Sent at 10:42</p>', size: 'large' });
+    const body = await shown.loaded;
+    const result = { text: body.textContent, large: shown.element.classList.contains('f-dialog--large') };
+    shown.close('done');
+    result.closed = await shown.closed;
+    result.removed = !shown.element.isConnected;
+    return result;
+  });
+  expect(opened).toEqual({ text: 'Sent at 10:42', large: true, closed: 'done', removed: true });
+  expect(
+    await page.evaluate(() => {
+      try {
+        window.FruitUI.dialog({ title: 'Nothing' });
+      } catch (error) {
+        return error.message;
+      }
+    }),
+  ).toBe('FruitUI dialog needs either html or url.');
   // Code outside Alpine uses the same helpers through the global build.
   page.once('dialog', dialog => dialog.dismiss());
   expect(await page.evaluate(() => window.FruitUI.confirm({ title: 'Discard draft?', tone: 'danger' }))).toBe(false);
@@ -538,4 +558,65 @@ test('a selectable list selects with modifier clicks and keys and the header swa
   await page.keyboard.press('Shift+Tab');
   await expect(card.getByRole('checkbox', { name: 'Select Sophie Chen' })).toBeFocused();
   expect(await shown()).toBe(true);
+});
+
+test('a link opens its content in a loaded dialog that closes, cleans up and returns focus', async ({ page }) => {
+  let release;
+  const delayed = new Promise(resolve => (release = resolve));
+  await page.route('**/fragments/merge-conversation.html', async route => {
+    await delayed;
+    await route.continue();
+  });
+  await page.goto('/components.html');
+  const card = page.locator('#component-remote-dialog');
+  const trigger = card.getByRole('link', { name: 'Merge conversation…' });
+  const loadedEvents = [];
+  await page.exposeFunction('dialogLoaded', url => loadedEvents.push(url));
+  await page.evaluate(() =>
+    document.addEventListener('fruit-dialog-loaded', event => window.dialogLoaded(event.detail.url)),
+  );
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Merge conversation' });
+  await expect(dialog).toBeVisible();
+  // While loading: a busy body with a skeleton and a polite status.
+  await expect(dialog.locator('.f-dialog__body')).toHaveAttribute('aria-busy', 'true');
+  await expect(dialog.getByRole('status')).toHaveText('Loading…');
+  release();
+  await expect(dialog.getByRole('combobox', { name: 'Merge into' })).toBeVisible();
+  await expect(dialog.locator('.f-dialog__body')).not.toHaveAttribute('aria-busy');
+  expect(loadedEvents).toEqual(['fragments/merge-conversation.html']);
+  // The content's trailing footer becomes the dialog's own, outside the scrolling body.
+  expect(await dialog.evaluate(element => element.lastElementChild.matches('.f-dialog__footer'))).toBe(true);
+  await dialog.getByRole('combobox', { name: 'Merge into' }).selectOption('1041');
+  await dialog.getByRole('button', { name: 'Merge' }).click();
+  await expect(page.locator('#component-toast .f-toast[x-data]')).toHaveText('Merged into #1041.');
+  // Closing removes the dialog from the page.
+  expect(await page.evaluate(() => document.querySelectorAll('dialog[aria-labelledby^="fruit-dialog"]').length)).toBe(
+    0,
+  );
+  await expect(trigger).toBeFocused();
+
+  // Content supplied as HTML; Escape and the close button close it.
+  await card.getByRole('button', { name: 'Keyboard shortcuts' }).click();
+  const shortcuts = page.getByRole('dialog', { name: 'Keyboard shortcuts' });
+  await expect(shortcuts).toContainText('Select a range');
+  await page.keyboard.press('Escape');
+  await expect(shortcuts).toHaveCount(0);
+  await card.getByRole('button', { name: 'Keyboard shortcuts' }).click();
+  await shortcuts.getByRole('button', { name: 'Close' }).click();
+  await expect(shortcuts).toHaveCount(0);
+});
+
+test('a loaded dialog that fails offers to try again', async ({ page }) => {
+  let fail = true;
+  await page.route('**/fragments/merge-conversation.html', route =>
+    fail ? route.fulfill({ status: 500, body: 'Error' }) : route.continue(),
+  );
+  await page.goto('/components.html');
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge conversation…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Merge conversation' });
+  await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
+  fail = false;
+  await dialog.getByRole('button', { name: 'Try again' }).click();
+  await expect(dialog.getByRole('combobox', { name: 'Merge into' })).toBeVisible();
 });

@@ -620,7 +620,9 @@
   .support-back > span {
     font-size: var(--f-text-lg);
   }
-  .support-ticket-number {
+  /* The compact toolbar keeps the essential actions; Merge waits for the wider layout. */
+  .support-ticket-number,
+  .support-merge {
     display: none;
   }
   .support-status-select {

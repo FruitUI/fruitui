@@ -238,6 +238,20 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('Kopieer', $this->xpath(Blade::render('<x-fruit::copy-button value="x" />'))->query('//button')->item(0)->getAttribute('aria-label'));
     }
 
+    public function test_loaded_dialogs_take_translated_labels_and_dialogs_take_a_size(): void
+    {
+        app()->setLocale('nl');
+        $template = $this->xpath(Blade::render('<x-fruit::remote-dialog />'))->query('//template')->item(0);
+        $this->assertTrue($template->hasAttribute('data-fruit-remote-dialog'));
+        $this->assertSame('Sluit', $template->getAttribute('data-fruit-close-label'));
+        $this->assertSame('Laden…', $template->getAttribute('data-fruit-loading-label'));
+        $this->assertSame('Probeer opnieuw', $template->getAttribute('data-fruit-retry-label'));
+
+        $this->assertStringContainsString('class="f-dialog f-dialog--large"', Blade::render('<x-fruit::dialog size="large" aria-label="Terms">Long</x-fruit::dialog>'));
+        $this->assertStringContainsString('class="f-dialog"', Blade::render('<x-fruit::dialog aria-label="Short">Short</x-fruit::dialog>'));
+        $this->assertRejected('<x-fruit::dialog size="huge" aria-label="Terms">Long</x-fruit::dialog>', 'dialog size must be one of');
+    }
+
     public function test_toasts_carry_a_tone_from_the_server_and_the_session(): void
     {
         Fruit::flashToast('Could not connect to the IMAP server.', tone: 'danger');
