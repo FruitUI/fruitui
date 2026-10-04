@@ -151,6 +151,19 @@ export const tickets = [
         'Hello,\n\nWe changed our company domain this morning. A few teammates are having trouble signing in with SSO. Can you help us update the workspace settings?\n\nJordan',
         'Today, 10:26 AM',
       ),
+      {
+        ...reply(
+          'Hi Jordan,\n\nI’ve added your new domain to the workspace’s single sign-on settings. The attached notes show where to confirm it on your side.\n\nAlex',
+          'Today, 10:31 AM',
+        ),
+        attachments: [{ name: 'sso-setup-notes.txt', size: '1 KB', href: 'attachments/fruitui-design-notes.txt' }],
+        // A reply the mail server refused: shown as one status line with Retry and View log.
+        delivery: {
+          tone: 'danger',
+          text: 'Not sent: the mail server refused the connection.',
+          log: 'mail(): Sendmail exited with non-zero exit code 127',
+        },
+      },
     ],
   },
   {

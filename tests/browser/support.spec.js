@@ -267,3 +267,34 @@ test('quoting a message fills the reply and internal notes cannot be quoted', as
   await expect(reply).toHaveValue(/^Hi Sophie,[\s\S]*\S\n\n> Hi there,\n> \n> We’re growing the studio[\s\S]*\n\n$/);
   await expect(page.locator('.support-message[data-kind="note"] .f-message__actions')).toBeHidden();
 });
+
+test('a reply that failed to send shows one status line with Retry, View log and its attachment', async ({ page }) => {
+  await page.locator('button.support-ticket', { hasText: 'Jordan Lee' }).click();
+  const reply = page.getByRole('region', { name: 'Agent reply', exact: true }).first();
+  const status = reply.locator('.f-message__status');
+  await expect(status).toHaveAttribute('data-tone', 'danger');
+  await expect(status).toContainText('Not sent: the mail server refused the connection.');
+  // One status line, no nested alert box.
+  await expect(reply.locator('.f-alert')).toHaveCount(0);
+
+  await status.getByRole('button', { name: 'View log' }).click();
+  const log = page.getByRole('dialog', { name: 'Delivery log' });
+  await expect(log).toContainText('Sendmail exited with non-zero exit code 127');
+  await page.keyboard.press('Escape');
+
+  // The attachment's remove action shows on hover or focus.
+  const frame = reply.locator('.f-attachment__frame');
+  const actions = frame.getByRole('group', { name: 'Attachment actions' });
+  await page.mouse.move(0, 0);
+  await expect.poll(() => actions.evaluate(element => getComputedStyle(element).opacity)).toBe('0');
+  await frame.hover();
+  await expect.poll(() => actions.evaluate(element => getComputedStyle(element).opacity)).toBe('1');
+  await expect(frame.getByRole('link', { name: /sso-setup-notes\.txt/ })).toHaveAttribute('download', '');
+  await expectAccessible(page);
+
+  await status.getByRole('button', { name: 'Retry' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Jordan Lee' })).toBeVisible();
+  await expect(reply.locator('.f-message__status')).toHaveCount(0);
+  await actions.getByRole('button', { name: 'Remove sso-setup-notes.txt' }).click();
+  await expect(reply.locator('.f-attachment')).toHaveCount(0);
+});

@@ -293,6 +293,22 @@ export function supportDemo() {
       this.ticket.tags = this.ticket.tags.filter(value => value !== tag);
     },
     // Internal notes never reach a customer reply, so only customer messages and replies can be quoted.
+    /** Send a failed reply again; the demo always succeeds the second time. */
+    retry(entry) {
+      const original = this.ticket.threads[entry.index];
+      original.delivery = null;
+      this.$toast(`Reply sent to ${this.ticket.customer.name}`, { tone: 'success' });
+    },
+    showLog(entry) {
+      const log = document.createElement('pre');
+      log.textContent = entry.delivery.log;
+      this.$dialog({ title: 'Delivery log', html: log });
+    },
+    removeAttachment(entry, file) {
+      const original = this.ticket.threads[entry.index];
+      original.attachments = original.attachments.filter(item => item !== file && item.name !== file.name);
+      this.$toast(`Removed ${file.name}`);
+    },
     quote(entry) {
       if (!this.ticket || entry.kind === 'note') return;
       this.mode = 'reply';

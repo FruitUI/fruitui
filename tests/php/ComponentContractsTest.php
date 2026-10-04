@@ -328,6 +328,28 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::generated role="article">Text</x-fruit::generated>', 'overriding role');
     }
 
+    public function test_a_message_status_is_one_line_and_attachments_can_carry_actions(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::message layout="stacked" direction="outgoing" mine aria-label="Reply">Body<x-slot:status tone="danger">Not sent. <button type="button">Retry</button></x-slot:status></x-fruit::message>'));
+        $status = $xpath->query('//div[contains(@class, "f-message__status")]')->item(0);
+        $this->assertSame('danger', $status->getAttribute('data-tone'));
+        $this->assertFalse($status->hasAttribute('tone'));
+        $this->assertSame('true', $xpath->query('.//svg', $status)->item(0)->getAttribute('aria-hidden'));
+        $this->assertSame('Retry', $xpath->query('.//button', $status)->item(0)->textContent);
+        // The status sits before the body, under the header.
+        $this->assertSame('f-message__body', $xpath->query('following-sibling::div[1]', $status)->item(0)->getAttribute('class'));
+        $this->assertSame('neutral', $this->xpath(Blade::render('<x-fruit::message aria-label="A">B<x-slot:status>Draft</x-slot:status></x-fruit::message>'))->query('//div[contains(@class, "f-message__status")]')->item(0)->getAttribute('data-tone'));
+        $this->assertRejected('<x-fruit::message aria-label="A">B<x-slot:status tone="error">Failed</x-slot:status></x-fruit::message>', 'message status tone must be one of');
+
+        app()->setLocale('nl');
+        $attachment = $this->xpath(Blade::render('<x-fruit::attachment href="/a.txt">a.txt<x-slot:actions><button type="button" aria-label="Remove a.txt">x</button></x-slot:actions></x-fruit::attachment>'));
+        $frame = $attachment->query('//span[@class="f-attachment__frame"]')->item(0);
+        $this->assertSame('/a.txt', $attachment->query('./a[@class="f-attachment"]', $frame)->item(0)->getAttribute('href'));
+        $actions = $attachment->query('./span[@role="group"]', $frame)->item(0);
+        $this->assertSame('Bijlageacties', $actions->getAttribute('aria-label'));
+        $this->assertSame(0, $this->xpath(Blade::render('<x-fruit::attachment href="/a.txt">a.txt</x-fruit::attachment>'))->query('//span[@class="f-attachment__frame"]')->length);
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

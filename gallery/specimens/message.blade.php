@@ -39,6 +39,29 @@
         {{-- A machine translation stays with the message it translates. --}}
         <x-slot:translation lang="en">What’s the easiest way to move our projects so the comments come along?</x-slot:translation>
     </x-fruit::message>
+    <x-fruit::message layout="stacked" direction="outgoing" mine aria-label="Your reply, not sent" datetime="2026-10-02T10:31">
+        <x-slot:avatar><x-fruit::avatar>AM</x-fruit::avatar></x-slot:avatar>
+        <x-slot:author>Alex Morgan</x-slot:author>
+        <x-slot:meta>You</x-slot:meta>
+        <x-slot:time>10:31 AM</x-slot:time>
+        {{-- Delivery or state in one quiet line: tone neutral, warning or danger, with small actions. --}}
+        <x-slot:status tone="danger">
+            Not sent: the mail server refused the connection.
+            <x-fruit::button variant="ghost">Retry</x-fruit::button>
+            <x-fruit::button variant="ghost">View log</x-fruit::button>
+        </x-slot:status>
+        The attached notes show where to confirm your new domain.
+        <x-slot:attachments>
+            <x-fruit::attachment href="attachments/fruitui-design-notes.txt" download>
+                sso-setup-notes.txt
+                <x-slot:leading><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg></x-slot:leading>
+                <x-slot:detail>1 KB</x-slot:detail>
+                <x-slot:actions>
+                    <x-fruit::button variant="ghost" class="f-button--icon" aria-label="Remove sso-setup-notes.txt" title="Remove"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></x-fruit::button>
+                </x-slot:actions>
+            </x-fruit::attachment>
+        </x-slot:attachments>
+    </x-fruit::message>
     <x-fruit::message-event datetime="2026-10-02T10:45">
         Mia Patel assigned this to Alex Morgan
         <x-slot:icon><svg class="f-icon"><use href="#i-person"/></svg></x-slot:icon>
