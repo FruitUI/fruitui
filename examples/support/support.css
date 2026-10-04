@@ -40,7 +40,7 @@
   white-space: nowrap;
 }
 .support-queue-title p {
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
   color: var(--f-secondary);
   margin-top: 2px;
 }
@@ -57,7 +57,7 @@
 .support-status-select {
   width: 95px;
   min-height: 30px;
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
   background: var(--f-control);
 }
 .support-customer-toolbar {
@@ -67,7 +67,7 @@
   justify-content: space-between;
 }
 .support-customer-toolbar h2 {
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
   font-weight: 600;
 }
 .support-customer-icon {
@@ -105,7 +105,7 @@
   gap: 8px;
   padding-inline: var(--f-sidebar-item-indent, 8px) 8px;
   margin-bottom: 3px;
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
 }
 .support-sidebar .f-sidebar__item > .f-icon {
   --f-icon-size: 16px;
@@ -119,7 +119,7 @@
   --f-avatar-font-size: var(--f-text-2xs);
 }
 .support-sidebar-bottom strong {
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
   font-weight: 600;
 }
 .support-list-pane {
@@ -130,11 +130,11 @@
   padding: 14px 13px 0;
 }
 .support-list-tools .f-input {
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
 }
 .support-list-header {
   --f-list-header-padding: 2px 13px;
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-list-header .f-icon {
   --f-icon-size: 15px;
@@ -153,7 +153,7 @@
   gap: 6px;
 }
 .support-ticket-top strong {
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
 }
 .support-unread {
   width: 6px;
@@ -167,12 +167,12 @@
 }
 .support-ticket-preview {
   margin-top: 4px;
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
   line-height: 1.55;
 }
 .support-ticket-meta {
   margin-top: 8px;
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-ticket-origin {
   padding: 1px 5px;
@@ -203,7 +203,7 @@
   padding: 11px 8px;
   border-top: 1px solid var(--f-border);
   color: var(--f-secondary);
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-list-footer .f-icon {
   --f-icon-size: 12px;
@@ -225,7 +225,7 @@
   gap: 12px;
   margin-bottom: 10px;
   color: var(--f-secondary);
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-status {
   color: var(--f-accent);
@@ -247,7 +247,7 @@
 .support-conversation-heading p {
   margin-top: 8px;
   color: var(--f-secondary);
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
   overflow-wrap: anywhere;
 }
 .support-mailbox-detail {
@@ -272,16 +272,16 @@
   --f-message-event-inset: 38px 0;
 }
 .support-message .f-message__author {
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-base);
 }
 .support-message :is(.f-message__meta, .f-message__time) {
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-message .f-message__time {
   padding-top: 3px;
 }
 .support-message-body {
-  font-size: var(--f-text-sm);
+  font-size: var(--f-text-base);
   line-height: 1.7;
   white-space: pre-wrap;
 }
@@ -293,7 +293,7 @@
 }
 .support-thread-start {
   --f-divider-margin: 18px 0 0;
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-composer {
   --f-composer-padding: 15px 20px 18px;
@@ -313,21 +313,21 @@
   align-items: center;
   gap: 5px;
   padding: 3px 9px;
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
 }
 .support-composer-top .f-icon {
   --f-icon-size: 13px;
 }
 .support-composer-audience {
   color: var(--f-secondary);
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 
 .support-composer-bottom .f-help {
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-composer-bottom .f-button {
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-base);
   min-height: 30px;
 }
 .support-composer-bottom .f-icon {
@@ -359,7 +359,7 @@
   margin-top: 3px;
   margin-bottom: 9px;
   color: var(--f-secondary);
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
 }
 .support-customer-profile .f-badge {
   font-size: var(--f-text-2xs);
@@ -373,12 +373,12 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
   font-weight: 600;
 }
 .support-inspector-section .f-label,
 .support-inspector-section .f-input {
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-base);
 }
 .support-customer-facts {
   --f-description-term-size: var(--f-text-2xs);
@@ -417,7 +417,7 @@
   color: var(--f-text);
   border: 0;
   text-align: left;
-  font-size: var(--f-text-xs);
+  font-size: var(--f-text-sm);
   line-height: 1.5;
 }
 .support-related:hover {
@@ -430,7 +430,7 @@
   display: block;
   margin-top: 5px;
   color: var(--f-secondary);
-  font-size: var(--f-text-2xs);
+  font-size: var(--f-text-xs);
 }
 .support-related .f-icon {
   position: absolute;
@@ -659,13 +659,13 @@
     font-size: var(--f-text-md);
   }
   .support-message header strong {
-    font-size: var(--f-text-sm);
+    font-size: var(--f-text-base);
   }
   .support-message header small {
-    font-size: var(--f-text-2xs);
+    font-size: var(--f-text-xs);
   }
   .support-message time {
-    font-size: var(--f-text-2xs);
+    font-size: var(--f-text-xs);
     white-space: normal;
     max-width: 70px;
     text-align: right;
@@ -691,7 +691,7 @@
     line-height: 1.45;
   }
   .support-composer-bottom .f-button {
-    font-size: var(--f-text-sm);
+    font-size: var(--f-text-base);
   }
   .support-workspace[data-view='queues'] .support-sidebar {
     border: 0;

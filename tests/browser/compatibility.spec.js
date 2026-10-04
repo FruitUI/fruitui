@@ -19,9 +19,9 @@ for (const colorScheme of ['light', 'dark'])
     );
     await page.goto('/compatibility-fixture');
     await expect(page.locator('#legacy')).toHaveCSS('color', 'rgb(51, 122, 183)');
-    await expect(page.locator('.f-button')).toHaveCSS('font-size', '15px');
-    await expect(page.locator('.f-button')).toHaveCSS('line-height', '22.5px');
-    await expect(page.locator('.f-input')).toHaveCSS('line-height', '22.5px');
+    await expect(page.locator('.f-button')).toHaveCSS('font-size', '16px');
+    await expect(page.locator('.f-button')).toHaveCSS('line-height', '24px');
+    await expect(page.locator('.f-input')).toHaveCSS('line-height', '24px');
     await expect(page.locator('.f-label')).toHaveCSS('font-weight', '500');
     await expect(page.locator('.f-sidebar__item')).toHaveCSS(
       'color',
