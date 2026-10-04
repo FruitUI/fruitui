@@ -371,3 +371,38 @@ test('the compat build keeps code, keyboard keys and code blocks in the text col
   await expect(page.locator('pre')).toHaveCSS('word-break', 'normal');
   await expect(page.locator('pre')).not.toHaveCSS('background-color', 'rgb(245, 245, 245)');
 });
+
+test('components rendered as links need no host link reset in either build', async ({ page }) => {
+  // No host stylesheet at all: the browser's own underlined, blue links are all that remain to override.
+  const links = `
+    <a class="f-item-row" href="#"><span class="f-item-row__top"><span class="f-item-row__title">Sophie</span><span class="f-item-row__time">10:42</span></span><span class="f-item-row__subtitle">Team plan</span><span class="f-item-row__preview">Preview</span><span class="f-item-row__meta">Work</span></a>
+    <div class="f-menu__items" role="menu"><a class="f-menu-item" role="menuitem" href="#">Open</a></div>
+    <nav class="f-sidebar"><a class="f-sidebar__item" href="#">Inbox</a></nav>
+    <nav class="f-section-nav"><a href="#" aria-current="page">General</a><a href="#">Connection</a></nav>
+    <a class="f-button" href="#">Edit</a><a class="f-button f-button--primary" href="#">New conversation</a>
+    <a class="f-button f-button--ghost f-back" href="#"><span>Back</span></a>
+    <nav class="f-breadcrumbs"><ol><li><a href="#">Customers</a></li></ol></nav>
+    <div role="listbox"><a class="f-command" role="option" href="#">Support</a></div>
+    <div class="f-tabs" role="tablist"><a class="f-tab" role="tab" href="#" aria-selected="true">Details</a></div>
+    <a class="f-attachment" href="#"><span class="f-attachment__body"><strong>Notes</strong></span></a>
+    <nav class="f-pagination"><a href="#">Next</a></nav>
+    <ol class="f-notifications"><li class="f-notifications__item"><a href="#">Sophie replied</a></li></ol>`;
+  // A compat host loads core and layout; the layered all-in-one file has both.
+  for (const files of [['build/core.compat.css', 'build/layout.compat.css'], ['build/fruitui.css']]) {
+    const file = files.join(' + ');
+    const css = files.map(name => readFileSync(new URL(`../../${name}`, import.meta.url), 'utf8')).join('\n');
+    await page.setContent(
+      `<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">${links}</body></html>`,
+    );
+    const report = await page.evaluate(() =>
+      [...document.querySelectorAll('a'), ...document.querySelectorAll('a *')].map(element => {
+        const style = getComputedStyle(element);
+        return { name: element.className || element.tagName, line: style.textDecorationLine, color: style.color };
+      }),
+    );
+    for (const { name, line, color } of report) {
+      expect(line, `${file} ${name}`).toBe('none');
+      expect(color, `${file} ${name}`).not.toBe('rgb(0, 0, 238)');
+    }
+  }
+});
