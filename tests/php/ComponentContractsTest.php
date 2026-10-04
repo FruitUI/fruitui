@@ -248,6 +248,10 @@ class ComponentContractsTest extends TestCase
         $this->assertStringContainsString('class="f-message f-message--stacked f-message--outgoing"', Blade::render('<x-fruit::message layout="stacked" direction="outgoing" aria-label="Reply">Yes</x-fruit::message>'));
         $this->assertStringContainsString('class="f-message"', Blade::render('<x-fruit::message direction="incoming" aria-label="Question">Hi</x-fruit::message>'));
         $this->assertRejected('<x-fruit::message direction="sent">Yes</x-fruit::message>', 'message direction must be one of');
+        $this->assertStringContainsString('class="f-message f-message--stacked f-message--outgoing f-message--mine"', Blade::render('<x-fruit::message layout="stacked" direction="outgoing" mine aria-label="Your reply">Done</x-fruit::message>'));
+        $this->assertStringContainsString('class="f-message f-message--stacked f-message--generated"', Blade::render('<x-fruit::message layout="stacked" variant="generated" aria-label="Summary">Short</x-fruit::message>'));
+        $this->assertRejected('<x-fruit::message mine aria-label="Question">Hi</x-fruit::message>', 'use it with direction="outgoing"');
+        $this->assertRejected('<x-fruit::message variant="ai">Hi</x-fruit::message>', 'message variant must be one of');
     }
 
     public function test_a_field_label_can_be_a_slot_with_markup(): void

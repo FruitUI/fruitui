@@ -83,6 +83,10 @@ function event(body, time) {
 function reply(body, time, author = 'Alex Morgan') {
   return { kind: 'reply', author, time, body };
 }
+/** Generated text that is not sent, such as a summary or a translation. */
+function summary(body, time) {
+  return { kind: 'summary', author: 'Assistant', time, body };
+}
 
 export const tickets = [
   {
@@ -102,17 +106,18 @@ export const tickets = [
         'Hi there,\n\nWe’re growing the studio and would love to bring all 12 of us into Forma. Can we move to the Team plan without losing our projects?\n\nAlso, is it possible to pay annually? Thanks for making a tool we love using.\n\nSophie',
         'Yesterday, 4:12 PM',
       ),
-      event('Mia Patel assigned this to Alex Morgan', 'Yesterday, 4:20 PM'),
       note(
         'They’re bringing the whole studio over next week. Existing projects stay in place when upgrading. Annual billing is available on the Team plan.',
-        'Yesterday, 4:26 PM',
+        'Yesterday, 4:20 PM',
       ),
       reply(
-        'Hi Sophie,\n\nWelcome to the Team plan, all twelve of you! Upgrading keeps every project, comment and file exactly where it is.\n\nAnnual billing is available and saves two months compared with paying monthly. You can switch in Settings › Billing, or I can make the change for you.\n\nAlex',
+        'Hi Sophie,\n\nWelcome to the Team plan, all twelve of you! Upgrading keeps every project, comment and file exactly where it is.\n\nAnnual billing is available and saves two months compared with paying monthly. You can switch in Settings › Billing, or Alex on our billing team can make the change for you.\n\nMia',
         'Yesterday, 4:51 PM',
+        'Mia Patel',
       ),
+      event('Mia Patel assigned this to Alex Morgan', 'Yesterday, 4:52 PM'),
       customer(
-        'Thanks Alex, that’s great news.\n\nCould you make the switch for us? And one more question: three of our freelancers only need to comment on projects. Do they need full seats?\n\nSophie',
+        'Thanks Mia, that’s great news.\n\nCould you make the switch for us? And one more question: three of our freelancers only need to comment on projects. Do they need full seats?\n\nSophie',
         'Today, 9:58 AM',
       ),
       event('Alex Morgan upgraded the plan to Team', '10:20 AM'),
@@ -122,6 +127,10 @@ export const tickets = [
       ),
       customer(
         'Perfect, thank you! I’ve invited the freelancers as guests, but Ana says her invite link has expired. Could you send her a fresh one?\n\nSophie',
+      ),
+      summary(
+        'Studio North moved to the Team plan with annual billing. Sophie invited three freelancers as guests; one invite link expired and needs to be sent again.',
+        'Today, 10:43 AM',
       ),
     ],
   },

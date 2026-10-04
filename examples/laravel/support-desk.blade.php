@@ -430,7 +430,7 @@ new class extends Component
                                             <x-slot:time>{{ $message['time'] }}</x-slot:time>
                                         </x-fruit::message-event>
                                     @else
-                                    <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" aria-label="Message from {{ $message['author'] }}">
+                                    <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
                                         <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                         <x-slot:author>{{ $message['author'] }}</x-slot:author>
                                         <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>

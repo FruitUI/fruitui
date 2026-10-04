@@ -231,30 +231,47 @@ test('a message overflow menu opens from its actions and keeps them visible whil
   );
 });
 
-test('a thread separates messages with a line, keeps events and notes close, and marks outgoing replies', async ({
-  page,
-}) => {
+test('a thread separates messages, and sent, own, note and generated messages each look distinct', async ({ page }) => {
   await page.goto('/components.html');
-  const entries = page.locator('#component-thread .f-thread > li');
-  await expect(entries).toHaveCount(5);
+  const card = page.locator('#component-thread');
+  const entries = card.locator('.f-thread > li');
+  await expect(entries).toHaveCount(7);
   const lines = await entries.evaluateAll(items => items.map(item => getComputedStyle(item).borderTopWidth));
-  // Only the two plain messages at the end meet without an event or note between them.
-  expect(lines).toEqual(['0px', '0px', '0px', '0px', '1px']);
+  // Lines only between plain messages; events and cards sit without them.
+  expect(lines).toEqual(['0px', '0px', '0px', '0px', '0px', '1px', '0px']);
   // The space between messages is larger than a blank line between paragraphs.
-  const [reply, answer] = await entries.evaluateAll(items =>
-    items.slice(3).map(item => item.querySelector('.f-message').getBoundingClientRect()),
+  const [question, answer] = await entries.evaluateAll(items =>
+    items.slice(4, 6).map(item => item.querySelector('.f-message').getBoundingClientRect()),
   );
-  expect(answer.top - reply.bottom).toBeGreaterThanOrEqual(40);
+  expect(answer.top - question.bottom).toBeGreaterThanOrEqual(40);
 
-  const bar = name =>
-    page
-      .locator('#component-thread')
-      .getByRole('article', { name })
-      .first()
-      .evaluate(element => getComputedStyle(element, '::before').borderInlineStartWidth);
-  expect(await bar('Agent reply')).toBe('3px');
-  expect(await bar('Customer message')).toBe('0px');
-  await expect(page.getByRole('article', { name: 'Agent reply' })).toContainText('Reply to customer');
+  const style = (name, read) => card.getByRole('article', { name }).first().evaluate(read);
+  const bar = element => {
+    const before = getComputedStyle(element, '::before');
+    return [before.borderInlineStartWidth, before.borderInlineStartColor];
+  };
+  const accent = await page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--f-accent)';
+    document.querySelector('.fruit-ui body, body').append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  });
+  // Sent: your own in the accent, a teammate's in a neutral color; customers have no bar.
+  const [ownWidth, ownColor] = await style('Your reply', bar);
+  const [teamWidth, teamColor] = await style('Reply from Mia Patel', bar);
+  expect([ownWidth, teamWidth]).toEqual(['3px', '3px']);
+  expect(ownColor).toBe(accent);
+  expect(teamColor).not.toBe(accent);
+  expect((await style('Customer message', bar))[0]).toBe('0px');
+  // Not sent: a yellow note and an indigo generated card, each named in its meta text.
+  const background = element => getComputedStyle(element).backgroundColor;
+  const note = await style('Internal note', background);
+  const generated = await style('Generated summary', background);
+  expect(new Set([note, generated, 'rgba(0, 0, 0, 0)']).size).toBe(3);
+  await expect(card.getByRole('article', { name: 'Generated summary' })).toContainText('Generated, not sent');
+  expect((await style('Generated summary', bar))[0]).toBe('0px');
 });
 
 test('the Support thread lists its entries without a line before the first', async ({ page }) => {

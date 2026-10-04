@@ -1864,16 +1864,13 @@
         &lt;/x-fruit::message-event&gt;
     &lt;/li&gt;
 &lt;/x-fruit::thread&gt;</pre></details></section>
-<section id="component-thread" data-component="thread" class="f-card component-card"><h2>Thread</h2><p>A conversation’s history in order: a hairline and generous space between messages, events closer without lines, and outgoing replies marked on the leading edge.</p><!-- blade:thread --><ol role="list" class="f-thread" aria-label="Conversation history"><li>
+<section id="component-thread" data-component="thread" class="f-card component-card"><h2>Thread</h2><p>A conversation’s history in order, with each kind identifiable: sent replies carry a bar (the accent for your own, neutral for a teammate’s), notes are yellow cards and generated summaries indigo ones.</p><!-- blade:thread --><ol role="list" class="f-thread" aria-label="Conversation history"><li>
         <article class="f-message f-message--stacked" aria-label="Customer message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T10:42" >10:42 AM</time>    </header>
     <div class="f-message__body">Can we move to the Team plan without losing our projects?</div>
             </article>
-    </li>
-    <li>
-        <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> </div>
     </li>
     <li>
         <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
@@ -1884,25 +1881,46 @@
             </article>
     </li>
     <li>
-        <article class="f-message f-message--stacked f-message--outgoing" aria-label="Agent reply">
-    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AM</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">Reply to customer</small> </span>
+        <article class="f-message f-message--stacked f-message--outgoing" aria-label="Reply from Mia Patel">
+    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >MP</span></span>    <header class="f-message__header">
+        <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Reply to customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T10:51" >10:51 AM</time>    </header>
     <div class="f-message__body">Yes. Your projects stay in place, and annual billing is available on the Team plan.</div>
             </article>
+    </li>
+    <li>
+        <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:52" >10:52 AM</time> </div>
     </li>
     <li>
         <article class="f-message f-message--stacked" aria-label="Customer message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T11:20" >11:20 AM</time>    </header>
-    <div class="f-message__body">Perfect, thank you!</div>
+    <div class="f-message__body">Perfect. Could you make the switch for us?</div>
+            </article>
+    </li>
+    <li>
+        <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your reply">
+    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AM</span></span>    <header class="f-message__header">
+        <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">Reply to customer</small> </span>
+        <time class="f-message__time"  datetime="2026-10-02T11:24" >11:24 AM</time>    </header>
+    <div class="f-message__body">All done. Studio North is on the Team plan with annual billing.</div>
+            </article>
+    </li>
+    <li>
+        <article class="f-message f-message--stacked f-message--generated" aria-label="Generated summary">
+    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AI</span></span>    <header class="f-message__header">
+        <span class="f-message__identity"><strong class="f-message__author">Assistant</strong> <small class="f-message__meta">Summary · Generated, not sent</small> </span>
+            </header>
+    <div class="f-message__body">Studio North moved to the Team plan with annual billing.</div>
             </article>
     </li></ol><!-- /blade:thread --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ol class=&quot;f-thread&quot; role=&quot;list&quot; aria-label=&quot;Conversation history&quot;&gt;
   &lt;li&gt;&lt;article class=&quot;f-message f-message--stacked&quot; aria-label=&quot;Customer message&quot;&gt;…&lt;/article&gt;&lt;/li&gt;
   &lt;li&gt;&lt;div class=&quot;f-message-event&quot;&gt;…&lt;/div&gt;&lt;/li&gt;
   &lt;li&gt;&lt;article class=&quot;f-message f-message--stacked f-message--outgoing&quot; aria-label=&quot;Agent reply&quot;&gt;…&lt;/article&gt;&lt;/li&gt;
-&lt;/ol&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="thread">&lt;x-fruit::thread aria-label=&quot;Conversation history&quot;&gt;
+&lt;/ol&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="thread">{{-- Sent messages carry a bar: the accent for your own (mine), neutral for a teammate&apos;s. Notes and
+     generated text are not sent: yellow and indigo cards. --}}
+&lt;x-fruit::thread aria-label=&quot;Conversation history&quot;&gt;
     &lt;li&gt;
         &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message&quot; datetime=&quot;2026-10-02T10:42&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
@@ -1913,13 +1931,6 @@
         &lt;/x-fruit::message&gt;
     &lt;/li&gt;
     &lt;li&gt;
-        &lt;x-fruit::message-event datetime=&quot;2026-10-02T10:45&quot;&gt;
-            Mia Patel assigned this to Alex Morgan
-            &lt;x-slot:icon&gt;&lt;svg class=&quot;f-icon&quot;&gt;&lt;use href=&quot;#i-person&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:icon&gt;
-            &lt;x-slot:time&gt;10:45 AM&lt;/x-slot:time&gt;
-        &lt;/x-fruit::message-event&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
         &lt;x-fruit::message layout=&quot;stacked&quot; variant=&quot;note&quot; aria-label=&quot;Internal note&quot;&gt;
             &lt;x-slot:author&gt;Mia Patel&lt;/x-slot:author&gt;
             &lt;x-slot:meta&gt;Internal note · Only your team&lt;/x-slot:meta&gt;
@@ -1927,13 +1938,20 @@
         &lt;/x-fruit::message&gt;
     &lt;/li&gt;
     &lt;li&gt;
-        &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; aria-label=&quot;Agent reply&quot; datetime=&quot;2026-10-02T10:51&quot;&gt;
-            &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;AM&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
-            &lt;x-slot:author&gt;Alex Morgan&lt;/x-slot:author&gt;
+        &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; aria-label=&quot;Reply from Mia Patel&quot; datetime=&quot;2026-10-02T10:51&quot;&gt;
+            &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;MP&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
+            &lt;x-slot:author&gt;Mia Patel&lt;/x-slot:author&gt;
             &lt;x-slot:meta&gt;Reply to customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;10:51 AM&lt;/x-slot:time&gt;
             Yes. Your projects stay in place, and annual billing is available on the Team plan.
         &lt;/x-fruit::message&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;x-fruit::message-event datetime=&quot;2026-10-02T10:52&quot;&gt;
+            Mia Patel assigned this to Alex Morgan
+            &lt;x-slot:icon&gt;&lt;svg class=&quot;f-icon&quot;&gt;&lt;use href=&quot;#i-person&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:icon&gt;
+            &lt;x-slot:time&gt;10:52 AM&lt;/x-slot:time&gt;
+        &lt;/x-fruit::message-event&gt;
     &lt;/li&gt;
     &lt;li&gt;
         &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message&quot; datetime=&quot;2026-10-02T11:20&quot;&gt;
@@ -1941,7 +1959,24 @@
             &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
             &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;11:20 AM&lt;/x-slot:time&gt;
-            Perfect, thank you!
+            Perfect. Could you make the switch for us?
+        &lt;/x-fruit::message&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; mine aria-label=&quot;Your reply&quot; datetime=&quot;2026-10-02T11:24&quot;&gt;
+            &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;AM&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
+            &lt;x-slot:author&gt;Alex Morgan&lt;/x-slot:author&gt;
+            &lt;x-slot:meta&gt;Reply to customer&lt;/x-slot:meta&gt;
+            &lt;x-slot:time&gt;11:24 AM&lt;/x-slot:time&gt;
+            All done. Studio North is on the Team plan with annual billing.
+        &lt;/x-fruit::message&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;x-fruit::message layout=&quot;stacked&quot; variant=&quot;generated&quot; aria-label=&quot;Generated summary&quot;&gt;
+            &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;AI&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
+            &lt;x-slot:author&gt;Assistant&lt;/x-slot:author&gt;
+            &lt;x-slot:meta&gt;Summary · Generated, not sent&lt;/x-slot:meta&gt;
+            Studio North moved to the Team plan with annual billing.
         &lt;/x-fruit::message&gt;
     &lt;/li&gt;
 &lt;/x-fruit::thread&gt;</pre></details></section>
