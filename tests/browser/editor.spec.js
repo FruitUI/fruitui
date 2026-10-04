@@ -135,3 +135,40 @@ test('app buttons and menus follow the default toolbar and insert at the cursor'
   await expect(menu).toBeHidden();
   await expect.poll(() => value(page)).toContain('{%customer.firstName%}');
 });
+
+test('typed addresses become links, and readonly or disabled set later lock the rich surface', async ({ page }) => {
+  const { surface } = editor(page);
+  await surface.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await page.keyboard.type('See https://forma.example/help now');
+  await expect.poll(() => value(page)).toContain('href="https://forma.example/help"');
+  const control = page.locator('#gallery-editor');
+  for (const attribute of ['readonly', 'disabled']) {
+    await control.evaluate((element, name) => element.setAttribute(name, ''), attribute);
+    await expect(surface).toHaveAttribute('contenteditable', 'false');
+    await control.evaluate((element, name) => element.removeAttribute(name), attribute);
+    await expect(surface).toHaveAttribute('contenteditable', 'true');
+  }
+});
+
+test('plain paste drops formatting and can be switched at runtime', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'Script-made paste events carry their data only in Chromium.');
+  const { root, surface } = editor(page);
+  const paste = () =>
+    surface.evaluate(element => {
+      const data = new DataTransfer();
+      data.setData('text/html', '<p><strong>Bold</strong> <em>words</em></p>');
+      data.setData('text/plain', 'Bold words\nNext line');
+      element.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    });
+  await root.locator('.f-editor').evaluate(element => (element.dataset.fruitPaste = 'plain'));
+  await surface.click();
+  await page.keyboard.press('ControlOrMeta+a');
+  await paste();
+  await expect.poll(() => value(page)).toBe('<p>Bold words<br>Next line</p>');
+  // Back to rich paste without reloading.
+  await root.locator('.f-editor').evaluate(element => (element.dataset.fruitPaste = 'rich'));
+  await page.keyboard.press('ControlOrMeta+a');
+  await paste();
+  await expect.poll(() => value(page)).toContain('<strong>Bold</strong>');
+});

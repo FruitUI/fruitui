@@ -1,12 +1,13 @@
-@props(['wrapper' => []])
+@props(['wrapper' => [], 'paste' => 'rich'])
 @aware(['fruitField' => null])
-@php($attributes = \FruitUI\Support\ComponentContract::control('editor', $attributes, $fruitField))
+@php($attributes = \FruitUI\Support\ComponentContract::control('editor', $attributes, $fruitField, ['paste' => $paste]))
 <div {{ \FruitUI\Support\ComponentContract::wrapper($wrapper)->merge([
     'data-fruit-link-label' => __('Link address'),
     'data-fruit-image-label' => __('Image address'),
     'data-fruit-apply-label' => __('Apply'),
     'data-fruit-insert-label' => __('Insert'),
     'data-fruit-remove-link-label' => __('Remove link'),
+    'data-fruit-paste' => $paste,
 ])->class(['f-editor']) }} x-data="fruitEditor">
     <div class="f-editor__toolbar" wire:ignore hidden aria-label="{{ __('Text formatting') }}">
         @isset($toolbar)

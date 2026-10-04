@@ -230,6 +230,13 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
     }
 
+    public function test_the_editor_paste_mode_is_an_explicit_option(): void
+    {
+        $this->assertStringContainsString('data-fruit-paste="plain"', Blade::render('<x-fruit::editor name="body" paste="plain" />'));
+        $this->assertStringContainsString('data-fruit-paste="rich"', Blade::render('<x-fruit::editor name="body" />'));
+        $this->assertRejected('<x-fruit::editor name="body" paste="markdown" />', 'editor paste must be one of');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');
