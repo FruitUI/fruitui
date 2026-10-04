@@ -66,8 +66,9 @@ new class extends Component
 };
 ?>
 
-<form class="fruit-settings" wire:submit="save" style="display: grid; gap: 24px; max-width: 640px; margin: 24px auto; padding: 24px; border-radius: var(--f-radius-lg); background: var(--f-grouped-background)">
-    <h1 class="f-title-2">Support mailbox</h1>
+{{-- A narrow page column on the grouped background: the title, sections and save bar line up. --}}
+<form class="fruit-settings" wire:submit="save" style="min-height: 100dvh; background: var(--f-grouped-background)">
+<x-fruit::page width="narrow" title="Support mailbox" style="--f-page-background: var(--f-grouped-background)">
 
     <x-fruit::section-nav aria-label="Mailbox settings">
         @foreach ($this::TABS as $key => $label)
@@ -135,13 +136,14 @@ new class extends Component
         </x-fruit::form-section>
     @endif
 
-    {{-- The save bar: status first, the primary action last. wire:dirty tracks unsynced edits. --}}
-    <footer class="f-form-row" style="justify-content: flex-end">
-        <p class="f-help" role="status" style="margin-inline-end: auto">
+    {{-- The save bar stays in view: status first, the primary action last. wire:dirty tracks unsynced edits. --}}
+    <x-slot:footer>
+        <p class="f-help" role="status">
             <span wire:dirty>You have unsaved changes.</span>
             <span wire:dirty.remove>Changes are saved when you press Save.</span>
         </p>
         <x-fruit::button type="button" wire:click="revert">Revert</x-fruit::button>
         <x-fruit::button type="submit" variant="primary">Save</x-fruit::button>
-    </footer>
+    </x-slot:footer>
+</x-fruit::page>
 </form>

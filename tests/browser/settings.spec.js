@@ -108,3 +108,16 @@ for (const colorScheme of ['light', 'dark']) {
     await expectNoOverflow(page, '#settings');
   });
 }
+
+test('the settings column holds its sections and save bar at one width in a wide window', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 1000 });
+  await page.goto('/settings.html');
+  const column = page.locator('.settings-page');
+  const section = await column.locator('.f-form-section').first().boundingBox();
+  const save = await column.locator('.f-page__footer').boundingBox();
+  // Narrow: the content stays readable however wide the pane is, and the save bar lines up with it.
+  expect(section.width).toBeLessThanOrEqual(641);
+  expect(Math.abs(save.x - section.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(save.width - section.width)).toBeLessThanOrEqual(1);
+  await expect(column.getByRole('button', { name: 'Save' })).toBeVisible();
+});

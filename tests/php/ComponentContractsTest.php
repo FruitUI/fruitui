@@ -369,6 +369,22 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::suggestion title="AI draft">Draft<x-slot:status tone="busy">…</x-slot:status></x-fruit::suggestion>', 'suggestion status tone must be one of');
     }
 
+    public function test_a_page_column_has_a_width_a_header_and_a_save_bar(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::page width="narrow" title="Mailbox" description="How it sends." :level="2"><p>Rows</p><x-slot:actions><button type="button">Restore</button></x-slot:actions><x-slot:footer><button type="submit">Save</button></x-slot:footer></x-fruit::page>'));
+        $page = $xpath->query('//div[contains(@class, "f-page")]')->item(0);
+        $this->assertSame('f-page f-page--narrow', $page->getAttribute('class'));
+        $this->assertSame('Mailbox', $xpath->query('.//h2[@class="f-page__title"]', $page)->item(0)->textContent);
+        $this->assertSame('How it sends.', $xpath->query('.//p[@class="f-page__description"]', $page)->item(0)->textContent);
+        $this->assertSame('Restore', $xpath->query('.//div[@class="f-page__actions"]/button', $page)->item(0)->textContent);
+        $this->assertSame('Save', $xpath->query('./footer[@class="f-page__footer"]/button', $page)->item(0)->textContent);
+        $plain = $this->xpath(Blade::render('<x-fruit::page><p>Rows</p></x-fruit::page>'));
+        $this->assertSame(0, $plain->query('//header|//footer')->length);
+        $this->assertSame('f-page', $plain->query('//div[contains(@class, "f-page")]')->item(0)->getAttribute('class'));
+        $this->assertRejected('<x-fruit::page width="full">Rows</x-fruit::page>', 'page width must be one of');
+        $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

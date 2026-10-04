@@ -34,7 +34,7 @@
           <form class="f-pane f-pane--column settings-content" x-ref="form" @submit.prevent="save()" novalidate>
             <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="back()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2></header>
             <div class="f-pane__scroll settings-scroll">
-              <div class="settings-page">
+              <div class="f-page f-page--narrow settings-page"><div class="f-page__body">
 
                 <template x-if="page === 'general'"><div class="settings-sections">
                   <section class="f-form-section" aria-labelledby="settings-company-title">
@@ -139,12 +139,13 @@
                 </div></template>
 
               </div>
+              <footer class="f-page__footer settings-save" :data-dirty="dirty">
+                <p class="f-help" role="status" x-text="dirty ? 'You have unsaved changes.' : 'All changes saved.'">All changes saved.</p>
+                <button class="f-button" type="button" @click="revert()" :disabled="!dirty" disabled>Revert</button>
+                <button class="f-button f-button--primary" type="submit" :disabled="!dirty" disabled>Save</button>
+              </footer>
+              </div>
             </div>
-            <footer class="settings-save" :data-dirty="dirty">
-              <p class="f-help" role="status" x-text="dirty ? 'You have unsaved changes.' : 'All changes saved.'">All changes saved.</p>
-              <button class="f-button" type="button" @click="revert()" :disabled="!dirty" disabled>Revert</button>
-              <button class="f-button f-button--primary" type="submit" :disabled="!dirty" disabled>Save</button>
-            </footer>
           </form>
 
           <dialog class="f-dialog" x-ref="deleteDialog" aria-labelledby="settings-delete-title">
