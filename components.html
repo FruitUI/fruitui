@@ -1117,7 +1117,14 @@
                     <button class="f-button f-button--ghost" type="button" data-fruit-command="clear">Remove formatting</button>
                     <button class="f-button f-button--ghost" type="button" data-fruit-command="undo">Undo</button>
                     <button class="f-button f-button--ghost" type="button" data-fruit-command="redo">Redo</button>
-                    </div>
+                                    
+            <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>
+            <details x-data="fruitMenu" class="f-menu">
+    <summary role="button" class="f-button f-button--ghost" aria-haspopup="menu">Insert variable<span class="f-menu__chevron" aria-hidden="true"></span></summary>
+    <div class="f-menu__items" role="menu" aria-label="Insert variable"><button type="button" role="menuitem" class="f-menu-item" x-on:click="$dispatch('fruit-editor-insert', { html: '{%customer.firstName%}' })">Customer first name</button>
+                <button type="button" role="menuitem" class="f-menu-item" x-on:click="$dispatch('fruit-editor-insert', { html: '{%mailbox.email%}' })">Mailbox email</button></div>
+</details>
+            </div>
     <textarea data-fruit-control class="f-input" id="gallery-editor" name="signature" x-model="signature" required="required">&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;</textarea>
     <div class="f-editor__surface" wire:ignore hidden></div>
 </div>
@@ -1127,7 +1134,16 @@
     </div>
 </form><!-- /blade:editor --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &#x27;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;&lt;div class=&quot;f-editor&quot; x-data=&quot;fruitEditor&quot;&gt;&lt;div class=&quot;f-editor__toolbar&quot; hidden aria-label=&quot;Text formatting&quot;&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bold&quot;&gt;Bold&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;italic&quot;&gt;Italic&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bulletList&quot;&gt;Bullets&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;orderedList&quot;&gt;Numbered list&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;blockquote&quot;&gt;Quote&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;undo&quot;&gt;Undo&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;redo&quot;&gt;Redo&lt;/button&gt;&lt;/div&gt;&lt;textarea class=&quot;f-input&quot; id=&quot;gallery-editor&quot; data-fruit-control name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&lt;/textarea&gt;&lt;div class=&quot;f-editor__surface&quot; hidden&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;signature = &#x27;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&#x27;&quot;&gt;Set signature externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset signature&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="editor">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &apos;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&apos; }&quot; @submit.prevent&gt;
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;
-    &lt;x-fruit::editor id=&quot;gallery-editor&quot; name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;{{ &apos;&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;&apos; }}&lt;/x-fruit::editor&gt;
+    &lt;x-fruit::editor id=&quot;gallery-editor&quot; name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;
+        {{ &apos;&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;&apos; }}
+        &lt;x-slot:extras&gt;
+            &lt;x-fruit::menu title=&quot;Insert variable&quot;&gt;
+                &lt;x-slot:trigger class=&quot;f-button--ghost&quot;&gt;Insert variable&lt;span class=&quot;f-menu__chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/x-slot:trigger&gt;
+                &lt;x-fruit::menu-item x-on:click=&quot;$dispatch(&apos;fruit-editor-insert&apos;, { html: &apos;{%customer.firstName%}&apos; })&quot;&gt;Customer first name&lt;/x-fruit::menu-item&gt;
+                &lt;x-fruit::menu-item x-on:click=&quot;$dispatch(&apos;fruit-editor-insert&apos;, { html: &apos;{%mailbox.email%}&apos; })&quot;&gt;Mailbox email&lt;/x-fruit::menu-item&gt;
+            &lt;/x-fruit::menu&gt;
+        &lt;/x-slot:extras&gt;
+    &lt;/x-fruit::editor&gt;
     &lt;div class=&quot;f-row&quot;&gt;
         &lt;x-fruit::button @click=&quot;signature = &apos;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&apos;&quot;&gt;Set signature externally&lt;/x-fruit::button&gt;
         &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset signature&lt;/x-fruit::button&gt;

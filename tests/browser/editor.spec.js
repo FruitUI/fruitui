@@ -119,3 +119,19 @@ for (const colorScheme of ['light', 'dark']) {
     await expectAccessible(page, '#component-editor');
   });
 }
+
+test('app buttons and menus follow the default toolbar and insert at the cursor', async ({ page }) => {
+  const { root, surface } = editor(page);
+  const toolbar = root.locator('.f-editor__toolbar');
+  // The defaults stay; the extras follow a separator.
+  await expect(toolbar.getByRole('button', { name: 'Bold', exact: true })).toBeVisible();
+  await expect(toolbar.getByRole('separator')).toBeVisible();
+  await surface.click();
+  await page.keyboard.press('ControlOrMeta+End');
+  await toolbar.getByRole('button', { name: 'Insert variable' }).click();
+  const menu = page.getByRole('menu', { name: 'Insert variable' });
+  await expect(menu).toBeVisible();
+  await menu.getByRole('menuitem', { name: 'Customer first name' }).click();
+  await expect(menu).toBeHidden();
+  await expect.poll(() => value(page)).toContain('{%customer.firstName%}');
+});
