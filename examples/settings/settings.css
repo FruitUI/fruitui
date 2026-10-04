@@ -1,0 +1,90 @@
+/* The Settings example: grouped settings with FruitUI form sections. */
+.settings-container {
+  container: settings / inline-size;
+}
+.settings-workspace {
+  --f-workspace-columns: var(--f-sidebar-width, 230px) minmax(0, 1fr);
+  --f-workspace-height: 780px;
+  --f-workspace-background: var(--f-grouped-background);
+}
+.settings-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px 12px;
+}
+.settings-account strong {
+  display: block;
+  font-size: var(--f-text-sm);
+}
+.settings-account small {
+  display: block;
+  color: var(--f-secondary);
+  font-size: var(--f-text-xs);
+}
+.settings-content {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+}
+.settings-toolbar {
+  min-height: 52px;
+  gap: 6px;
+}
+.settings-toolbar > h2 {
+  outline-offset: 4px;
+}
+.settings-toolbar .f-back {
+  display: none;
+}
+.settings-scroll {
+  padding: 24px 28px 32px;
+}
+.settings-page {
+  max-width: 640px;
+  margin-inline: auto;
+}
+.settings-sections {
+  display: grid;
+  gap: 24px;
+}
+/* The save bar stays at the bottom of the page: status first, the primary action last. */
+.settings-save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--f-border);
+  background: var(--f-grouped-background);
+}
+.settings-save > p {
+  margin-inline-end: auto;
+}
+
+/* Compact layouts show the category list, then one page with a way back. */
+@container settings (max-width: 700px) {
+  .settings-workspace {
+    --f-workspace-columns: minmax(0, 1fr);
+  }
+  .settings-workspace[data-screen='list'] > .settings-content,
+  .settings-workspace[data-screen='page'] > .settings-sidebar {
+    display: none;
+  }
+  .settings-sidebar {
+    border-inline-end: 0;
+  }
+  .settings-toolbar .f-back {
+    display: inline-flex;
+  }
+  .settings-scroll {
+    padding: 16px;
+  }
+  .settings-save {
+    padding: 10px 16px;
+  }
+}
+.settings-container[data-preview='phone'] .settings-workspace {
+  --f-workspace-height: 800px;
+}

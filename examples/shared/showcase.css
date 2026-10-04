@@ -102,7 +102,7 @@
 .preview-controls .f-segmented {
   margin: 0;
 }
-/* Every example lays out by its container width, so a 390px frame shows its iPhone layout. */
+/* Every example lays out by its container width, so a 390px frame shows its phone layout. */
 [data-preview='phone'] {
   max-width: 390px;
   margin-inline: auto;
@@ -321,8 +321,9 @@
   .site-nav {
     grid-column: 1 / -1;
     grid-row: 2;
+    flex-wrap: wrap;
     margin-left: 0;
-    gap: 24px;
+    gap: 8px 24px;
   }
   .appearance-control {
     grid-column: 2;
@@ -356,7 +357,7 @@
     font-size: var(--f-text-2xl);
   }
   .site-nav {
-    gap: 10px;
+    gap: 6px 14px;
     margin-left: 4px;
   }
   .appearance-control select {

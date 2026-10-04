@@ -158,13 +158,13 @@ for (const [name, url, frame] of [
   ['Chat', '/chat.html', '#chat'],
   ['Admin', '/admin.html', '#admin'],
 ]) {
-  test(`${name} switches between its responsive layout and an iPhone-sized preview`, async ({ page }) => {
+  test(`${name} switches between its responsive layout and a phone-sized preview`, async ({ page }) => {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(url);
     const workspace = page.locator(frame);
     expect((await workspace.boundingBox()).width).toBeGreaterThan(900);
-    await page.getByRole('radio', { name: 'iPhone', exact: true }).check();
+    await page.getByRole('radio', { name: 'Phone', exact: true }).check();
     await expect.poll(async () => Math.round((await workspace.boundingBox()).width)).toBe(390);
     expect((await workspace.boundingBox()).height).toBeLessThanOrEqual(820);
     expect(await workspace.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);

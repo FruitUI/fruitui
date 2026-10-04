@@ -84,9 +84,9 @@ test('mobile navigation opens a message and returns to the list', async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test('iPhone preview uses the same mailbox and reader state as desktop', async ({ page }) => {
+test('phone preview uses the same mailbox and reader state as desktop', async ({ page }) => {
   await page.getByRole('button', { name: /Maya Rodriguez/ }).click();
-  await page.getByRole('radio', { name: 'iPhone', exact: true }).check();
+  await page.getByRole('radio', { name: 'Phone', exact: true }).check();
   await expect(page.locator('.f-mail__mobile-header')).toBeVisible();
   await expect(page.locator('.f-mail__toolbar')).not.toBeVisible();
   await expect(page.getByRole('heading', { name: 'Re: A weekend in the mountains' })).toBeVisible();
@@ -113,7 +113,7 @@ test('iPhone preview uses the same mailbox and reader state as desktop', async (
 });
 
 test('phone search, unread filtering, message navigation, and compose work', async ({ page }) => {
-  await page.getByRole('radio', { name: 'iPhone', exact: true }).check();
+  await page.getByRole('radio', { name: 'Phone', exact: true }).check();
   await page.getByRole('searchbox', { name: 'Search messages' }).fill('mountains');
   await expect(page.locator('.f-mail__message')).toHaveCount(1);
   await page.getByRole('searchbox').fill('');

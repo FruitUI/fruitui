@@ -662,38 +662,11 @@
 .admin-settings {
   max-width: 680px;
 }
-.admin-settings-fields {
+/* Grouped settings use the shared form sections; the footer holds the save actions. */
+.admin-settings-sections {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding-block: 25px;
-}
-.admin-setting-group {
-  border-top: 1px solid var(--f-border);
-  padding-top: 20px;
-}
-.admin-setting-group > legend {
-  padding-inline-end: 10px;
-}
-.admin-setting-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 20px;
-}
-.admin-setting-row strong {
-  font-size: var(--f-text-sm);
-  font-weight: 500;
-}
-.admin-setting-row small {
-  display: block;
-  font-size: var(--f-text-2xs);
-  color: var(--f-secondary);
-  margin-top: 4px;
-  line-height: 1.5;
-}
-.admin-setting-row > input {
-  flex-shrink: 0;
+  gap: 22px;
+  padding-block: 22px;
 }
 .admin-settings-footer {
   display: flex;
@@ -1177,7 +1150,6 @@
     width: 100%;
     padding-left: 42px;
   }
-  .admin-settings-fields,
   .admin-form-grid {
     grid-template-columns: 1fr;
   }
@@ -1185,12 +1157,6 @@
   .admin-dialog .f-input {
     min-height: 44px;
     font-size: 16px;
-  }
-  .admin-setting-row strong {
-    font-size: var(--f-text-base);
-  }
-  .admin-setting-row small {
-    font-size: var(--f-text-xs);
   }
   .admin-settings-footer > p {
     flex-basis: 100%;
@@ -1270,7 +1236,7 @@
   }
 }
 
-/* In the iPhone preview the dashboard scrolls inside a phone-height frame, like the other examples. */
+/* In the phone preview the dashboard scrolls inside a phone-height frame, like the other examples. */
 .admin-container[data-preview='phone'] .admin-workspace {
   height: 800px;
   overflow-y: auto;

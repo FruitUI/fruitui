@@ -9,6 +9,7 @@ import { mailDemo } from './mail/mail.js';
 import { supportDemo } from './support/support.js';
 import { chatDemo } from './chat/chat.js';
 import { adminDemo } from './admin/admin.js';
+import { settingsDemo } from './settings/settings.js';
 import { uploadDemo } from './shared/uploads.js';
 
 installIcons();
@@ -22,5 +23,6 @@ Alpine.data('mailDemo', withPreview(mailDemo));
 Alpine.data('supportDemo', withPreview(supportDemo));
 Alpine.data('chatDemo', withPreview(chatDemo));
 Alpine.data('adminDemo', withPreview(adminDemo));
+Alpine.data('settingsDemo', withPreview(settingsDemo));
 Alpine.data('uploadDemo', uploadDemo);
 Alpine.start();

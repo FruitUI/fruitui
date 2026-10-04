@@ -15,6 +15,7 @@
 /chat.html export-ignore
 /support.html export-ignore
 /components.html export-ignore
+/settings.html export-ignore
 /composer.lock export-ignore
 /package-lock.json export-ignore
 /playwright.config.js export-ignore

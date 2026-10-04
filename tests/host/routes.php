@@ -11,6 +11,8 @@ $examples = dirname(__DIR__, 2).'/examples/laravel';
 Livewire\Livewire::addComponent('fruit-mail-preferences', viewPath: "{$examples}/mail-preferences.blade.php");
 Livewire\Livewire::addComponent('fruit-support-desk', viewPath: "{$examples}/support-desk.blade.php");
 Route::get('/preferences', fn () => view('host', ['component' => 'fruit-mail-preferences']));
+Livewire\Livewire::addComponent('fruit-settings', viewPath: "{$examples}/settings.blade.php");
+Route::get('/settings', fn () => view('host', ['component' => 'fruit-settings']));
 Route::get('/support/{mailbox?}', fn (string $mailbox = 'all') => view('host', ['component' => 'fruit-support-desk', 'parameters' => ['mailbox' => $mailbox]]));
 
 // An application shell whose sidebar persists across wire:navigate.

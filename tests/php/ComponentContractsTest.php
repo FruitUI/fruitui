@@ -177,6 +177,43 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('/terms', $slot->query('//p/a')->item(0)->getAttribute('href'));
     }
 
+    public function test_form_sections_group_row_fields_under_a_named_heading(): void
+    {
+        $xpath = $this->xpath(Blade::render(<<<'BLADE'
+            <x-fruit::form-section title="Automatic reply" footer="Sent once per conversation." :level="3">
+                <x-fruit::field label="Subject" layout="row" description="Shown in the customer's inbox.">
+                    <x-fruit::input wire:model="settings.subject" />
+                </x-fruit::field>
+                <x-fruit::field label="Send automatically" layout="row">
+                    <x-fruit::switch wire:model="settings.enabled" />
+                </x-fruit::field>
+            </x-fruit::form-section>
+            BLADE));
+        $section = $xpath->query('//section')->item(0);
+        $heading = $xpath->query('//h3[@class="f-form-section__title"]')->item(0);
+        $this->assertSame('f-form-section', $section->getAttribute('class'));
+        $this->assertSame('f-section-automatic-reply-title', $heading->getAttribute('id'));
+        $this->assertSame($heading->getAttribute('id'), $section->getAttribute('aria-labelledby'));
+        $this->assertSame('Sent once per conversation.', trim($xpath->query('//p[@class="f-form-section__footer"]')->item(0)->textContent));
+        $rows = $xpath->query('//div[@class="f-form-section__rows"]/div[contains(@class, "f-field--row")]');
+        $this->assertSame(2, $rows->length);
+        // Row fields keep Field's associations: the label names the control and the help describes it.
+        $subject = $xpath->query('.//input', $rows->item(0))->item(0);
+        $this->assertSame('field-settings-subject', $subject->getAttribute('id'));
+        $this->assertSame('field-settings-subject-description', $subject->getAttribute('aria-describedby'));
+        $switch = $xpath->query('.//input[@role="switch"]', $rows->item(1))->item(0);
+        $this->assertSame($switch->getAttribute('id'), $xpath->query('.//label[@class="f-label"]', $rows->item(1))->item(0)->getAttribute('for'));
+
+        // Without a title there is no heading or label; without a footer, no footer.
+        $plain = $this->xpath(Blade::render('<x-fruit::form-section><div class="f-form-row">Row</div></x-fruit::form-section>'));
+        $this->assertSame(0, $plain->query('//h2|//h3|//h4|//p')->length);
+        $this->assertFalse($plain->query('//section')->item(0)->hasAttribute('aria-labelledby'));
+
+        $this->assertRejected('<x-fruit::form-section title="A" level="1">Row</x-fruit::form-section>', 'form-section level must be one of');
+        $this->assertRejected('<x-fruit::form-section role="list">Row</x-fruit::form-section>', 'overriding role');
+        $this->assertRejected('<x-fruit::field label="A" layout="inline"><x-fruit::input name="a" /></x-fruit::field>', 'Field layout must be one of');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

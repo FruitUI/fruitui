@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" class="fruit-ui" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grouped settings, built with FruitUI.">
+  <title>Settings · FruitUI</title>
+  <link rel="stylesheet" href="/src/fruitui.css">
+  <link rel="stylesheet" href="/examples/shared/showcase.css">
+  <link rel="stylesheet" href="/examples/settings/settings.css">
+  <script type="module" src="/examples/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#settings">Skip to Settings</a>
+  <div class="showcase">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html">Support</a><a href="/chat.html">Chat</a><a href="/admin.html">Admin</a><a href="/settings.html" aria-current="page">Settings</a><a href="/components.html">Components</a></nav>
+      <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+    </header>
+    <main x-data="settingsDemo">
+      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Settings that feel settled.</h1><p>Grouped, labelled and saved with care.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 05</span><fieldset class="f-segmented" aria-label="Settings preview size"><legend class="f-sr-only">Settings preview size</legend><label><input type="radio" name="settings-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="settings-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
+      <div class="settings-container" :data-preview="preview">
+        <section id="settings" class="f-workspace settings-workspace" aria-label="Settings example" data-screen="list" :data-screen="screen">
+          <aside class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar settings-sidebar">
+            <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="saved.name">Alex Morgan</strong><small>Forma account</small></div></div>
+            <nav aria-label="Settings" x-ref="navigation">
+              <a class="f-sidebar__item" href="#/general" @click="show()" :aria-current="page === 'general' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
+              <a class="f-sidebar__item" href="#/mailbox" @click="show()" :aria-current="page === 'mailbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Support mailbox</a>
+              <a class="f-sidebar__item" href="#/profile" @click="show()" :aria-current="page === 'profile' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
+            </nav>
+          </aside>
+
+          <form class="f-pane f-pane--column settings-content" x-ref="form" @submit.prevent="save()" novalidate>
+            <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="back()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2></header>
+            <div class="f-pane__scroll settings-scroll">
+              <div class="settings-page">
+
+                <template x-if="page === 'general'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-company-title">
+                    <h3 class="f-form-section__title" id="settings-company-title">Company</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-company">Company name</label><input class="f-input" id="settings-company" name="company" x-model="draft.company" required maxlength="60"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-timezone">Time zone</label><select class="f-input" id="settings-timezone" name="timezone" x-model="draft.timezone"><option value="America/New_York">New York</option><option value="Europe/London">London</option><option value="Europe/Amsterdam">Amsterdam</option><option value="Asia/Tokyo">Tokyo</option></select></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-date-format">Date format</label><select class="f-input" id="settings-date-format" name="dateFormat" x-model="draft.dateFormat"><option value="long">October 4, 2026</option><option value="short">10/4/2026</option><option value="iso">2026-10-04</option></select><p class="f-help" id="settings-date-format-help">Used in conversations and exports.</p></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-customers-title">
+                    <h3 class="f-form-section__title" id="settings-customers-title">Customers</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-photos">Customer photos</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-photos" name="photos" x-model="draft.photos" aria-describedby="settings-photos-help"><span></span></label><p class="f-help" id="settings-photos-help">From Gravatar, for customers without a photo.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-customer-email">Show customer email</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-customer-email" name="customerEmail" x-model="draft.customerEmail" aria-describedby="settings-customer-email-help"><span></span></label><p class="f-help" id="settings-customer-email-help">Beside the name in conversation lists.</p></div>
+                      <fieldset class="f-fieldset"><legend>Users can</legend>
+                        <label class="f-check"><input type="checkbox" name="manageTags" x-model="draft.manageTags"><span>Manage tags</span></label>
+                        <label class="f-check"><input type="checkbox" name="manageFolders" x-model="draft.manageFolders"><span>Manage custom folders</span></label>
+                        <div class="f-choice"><label class="f-check"><input type="checkbox" name="deleteConversations" x-model="draft.deleteConversations" aria-describedby="settings-delete-help"><span>Delete conversations</span></label><p class="f-help f-choice__description" id="settings-delete-help">Deleted conversations stay in Trash for 30 days.</p></div>
+                      </fieldset>
+                    </div>
+                    <p class="f-form-section__footer">Customers see these changes the next time they write.</p>
+                  </section>
+                </div></template>
+
+                <template x-if="page === 'mailbox'"><div class="settings-sections">
+                  <nav class="f-section-nav settings-tabs" aria-label="Mailbox settings">
+                    <template x-for="(label, key) in mailboxTabs" :key="key"><a :href="'#/mailbox/' + key" :aria-current="tab === key ? 'page' : null" x-text="label"></a></template>
+                  </nav>
+                  <template x-if="tab === 'general'"><div class="settings-sections">
+                    <section class="f-form-section" aria-labelledby="settings-mailbox-title">
+                      <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>
+                      <div class="f-form-section__rows">
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-name">Name</label><input class="f-input" id="settings-mailbox-name" name="mailboxName" x-model="draft.mailboxName" required maxlength="40"></div>
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="draft.mailboxEmail" required></div>
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-signature">Signature</label><textarea class="f-input" id="settings-signature" name="signature" rows="4" x-model="draft.signature" aria-describedby="settings-signature-help"></textarea><p class="f-help" id="settings-signature-help">Added below every reply from this mailbox.</p></div>
+                      </div>
+                    </section>
+                    <section class="f-form-section" aria-labelledby="settings-danger-title">
+                      <h3 class="f-form-section__title" id="settings-danger-title">Danger zone</h3>
+                      <div class="f-form-section__rows">
+                        <div class="f-form-row"><div><strong class="f-headline">Delete mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
+                      </div>
+                    </section>
+                  </div></template>
+                  <template x-if="tab === 'connection'"><div class="settings-sections">
+                    <section class="f-form-section" aria-labelledby="settings-sending-title">
+                      <h3 class="f-form-section__title" id="settings-sending-title">Sending</h3>
+                      <div class="f-form-section__rows">
+                        <fieldset class="f-fieldset"><legend>Send email with</legend>
+                          <div class="f-choice"><label class="f-check"><input type="radio" name="sending" value="php" x-model="draft.sending" aria-describedby="settings-php-help"><span>The server’s mail</span></label><p class="f-help f-choice__description" id="settings-php-help">Simple, but more likely to reach spam.</p></div>
+                          <label class="f-check"><input type="radio" name="sending" value="smtp" x-model="draft.sending"><span>SMTP</span></label>
+                        </fieldset>
+                        <template x-if="draft.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-host">Server</label><input class="f-input" id="settings-smtp-host" name="smtpHost" x-model="draft.smtpHost" required></div></template>
+                        <template x-if="draft.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-port">Port</label><input class="f-input" id="settings-smtp-port" type="number" name="smtpPort" x-model.number="draft.smtpPort" min="1" max="65535" required></div></template>
+                      </div>
+                      <p class="f-form-section__footer">Use port 587 with STARTTLS, or 465 with TLS.</p>
+                    </section>
+                  </div></template>
+                  <template x-if="tab === 'permissions'"><div class="settings-sections">
+                    <section class="f-form-section" aria-labelledby="settings-agents-title">
+                      <h3 class="f-form-section__title" id="settings-agents-title">Who can use this mailbox</h3>
+                      <div class="f-form-section__rows">
+                        <fieldset class="f-fieldset"><legend class="f-sr-only">Agents</legend>
+                          <label class="f-check"><input type="checkbox" name="agents[]" value="alex" x-model="draft.agents"><span>Alex Morgan</span></label>
+                          <label class="f-check"><input type="checkbox" name="agents[]" value="mia" x-model="draft.agents"><span>Mia Patel</span></label>
+                          <label class="f-check"><input type="checkbox" name="agents[]" value="noah" x-model="draft.agents"><span>Noah Williams</span></label>
+                        </fieldset>
+                      </div>
+                      <p class="f-form-section__footer">Administrators can always open every mailbox.</p>
+                    </section>
+                  </div></template>
+                  <template x-if="tab === 'auto-reply'"><div class="settings-sections">
+                    <section class="f-form-section" aria-labelledby="settings-auto-title">
+                      <h3 class="f-form-section__title" id="settings-auto-title">Automatic reply</h3>
+                      <div class="f-form-section__rows">
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-reply">Send an automatic reply</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-auto-reply" name="autoReply" x-model="draft.autoReply" aria-describedby="settings-auto-reply-help"><span></span></label><p class="f-help" id="settings-auto-reply-help">To the first message of every new conversation.</p></div>
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="draft.autoSubject" :disabled="!draft.autoReply" :required="draft.autoReply"></div>
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-body">Message</label><textarea class="f-input" id="settings-auto-body" name="autoBody" rows="4" x-model="draft.autoBody" :disabled="!draft.autoReply"></textarea></div>
+                      </div>
+                    </section>
+                  </div></template>
+                </div></template>
+
+                <template x-if="page === 'profile'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-profile-title">
+                    <h3 class="f-form-section__title" id="settings-profile-title">Profile</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-name">Name</label><input class="f-input" id="settings-name" name="name" autocomplete="name" x-model="draft.name" required maxlength="60"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-email">Email</label><input class="f-input" id="settings-email" type="email" name="email" autocomplete="email" x-model="draft.email" required></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-language">Language</label><select class="f-input" id="settings-language" name="language" x-model="draft.language"><option value="en">English</option><option value="nl">Nederlands</option><option value="de">Deutsch</option><option value="fr">Français</option></select></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-accent">Accent color</label><div class="f-color-picker" x-data="fruitColorPicker"><input class="f-input f-color" type="color" id="settings-accent" name="accent" x-model="draft.accent" aria-haspopup="dialog"><div data-fruit-ui></div></div></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-security-title">
+                    <h3 class="f-form-section__title" id="settings-security-title">Security</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-two-factor">Two-factor authentication</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-two-factor" name="twoFactor" x-model="draft.twoFactor" aria-describedby="settings-two-factor-help"><span></span></label><p class="f-help" id="settings-two-factor-help">A code from your phone when you sign in on a new device.</p></div>
+                      <div class="f-form-row"><div><strong class="f-headline">Delete account</strong><p class="f-help">Your conversations stay with your team.</p></div><button class="f-button f-button--danger" type="button" @click="$refs.deleteDialog.showModal()">Delete Account…</button></div>
+                    </div>
+                  </section>
+                </div></template>
+
+              </div>
+            </div>
+            <footer class="settings-save" :data-dirty="dirty">
+              <p class="f-help" role="status" x-text="dirty ? 'You have unsaved changes.' : 'All changes saved.'">All changes saved.</p>
+              <button class="f-button" type="button" @click="revert()" :disabled="!dirty" disabled>Revert</button>
+              <button class="f-button f-button--primary" type="submit" :disabled="!dirty" disabled>Save</button>
+            </footer>
+          </form>
+
+          <dialog class="f-dialog" x-ref="deleteDialog" aria-labelledby="settings-delete-title">
+            <header class="f-dialog__header"><h2 id="settings-delete-title">Delete your account?</h2></header>
+            <div class="f-dialog__body"><p>We’ll email you a link to confirm. Your conversations stay with your team.</p></div>
+            <footer class="f-dialog__footer"><form method="dialog"><button class="f-button" type="submit" autofocus>Cancel</button></form><button class="f-button f-button--danger" type="button" @click="deleteAccount()">Delete Account</button></footer>
+          </dialog>
+          <div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice" x-cloak></div>
+        </section>
+      </div>
+      <div class="mail-note"><span><svg class="f-icon" aria-hidden="true"><use href="#i-check"/></svg>Grouped settings. Native controls. A clear way to save.</span><span>Local demo · settings reset when you refresh.</span></div>
+    </main>
+    <footer class="site-footer"><span>FruitUI · Familiar by design.</span><a href="/components.html">Explore the shared components <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</body>
+</html>

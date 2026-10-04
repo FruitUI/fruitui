@@ -10,6 +10,7 @@ export default defineConfig({
         support: fileURLToPath(new URL('./support.html', import.meta.url)),
         chat: fileURLToPath(new URL('./chat.html', import.meta.url)),
         admin: fileURLToPath(new URL('./admin.html', import.meta.url)),
+        settings: fileURLToPath(new URL('./settings.html', import.meta.url)),
         components: fileURLToPath(new URL('./components.html', import.meta.url)),
       },
     },

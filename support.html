@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An Apple-inspired support inbox built with FruitUI. A shared inbox, thoughtful conversations, and customer context.">
+  <meta name="description" content="A support inbox built with FruitUI. A shared inbox, thoughtful conversations, and customer context.">
   <title>Support · FruitUI</title>
   <link rel="stylesheet" href="/src/fruitui.css">
   <link rel="stylesheet" href="/examples/shared/showcase.css">
@@ -15,11 +15,11 @@
   <div class="showcase">
     <header class="site-header">
       <a class="brand" href="/" aria-label="FruitUI home"><svg class="brand-mark" viewBox="0 0 28 32" fill="none" aria-hidden="true"><path d="M15 9C9 4 1 10 3 20c2 9 8 11 12 8 4 3 10-1 11-9 1-8-6-13-11-10Z" fill="currentColor"/><path d="M15 7c0-5 4-6 8-6-1 5-4 7-8 6Z" fill="#6b885c"/></svg>FruitUI</a>
-      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html" aria-current="page">Support</a><a href="/chat.html">Chat</a><a href="/admin.html">Admin</a><a href="/components.html">Components</a></nav>
+      <nav class="site-nav" aria-label="Main navigation"><a href="/">Mail</a><a href="/support.html" aria-current="page">Support</a><a href="/chat.html">Chat</a><a href="/admin.html">Admin</a><a href="/settings.html">Settings</a><a href="/components.html">Components</a></nav>
       <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
     </header>
     <main x-data="supportDemo">
-      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Good support feels personal.</h1><p>A shared inbox. A little more care in every conversation.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 02</span><fieldset class="f-segmented" aria-label="Support preview size"><legend class="f-sr-only">Support preview size</legend><label><input type="radio" name="support-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="support-preview" value="phone" x-model="preview"><span>iPhone</span></label></fieldset></div></div>
+      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Good support feels personal.</h1><p>A shared inbox. A little more care in every conversation.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 02</span><fieldset class="f-segmented" aria-label="Support preview size"><legend class="f-sr-only">Support preview size</legend><label><input type="radio" name="support-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="support-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
       <div class="support-container" :data-preview="preview">
         <section id="support" class="f-workspace support-workspace" aria-label="Support example" data-view="list" :data-view="view">
           <div class="f-splitter support-sidebar-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Support views" aria-controls="support-queues" data-edge="end" x-data="fruitSplitter({pane: 'support-queues', flexible: 'support-conversation', variable: '--f-sidebar-width', min: 170, max: 260, reserve: 280, edge: 'end'})"></div>
