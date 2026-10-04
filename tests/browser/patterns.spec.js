@@ -274,14 +274,30 @@ test('a thread separates messages, and sent, own, note and generated messages ea
   expect((await style('Generated summary', bar))[0]).toBe('0px');
 });
 
-test('the Support thread lists its entries without a line before the first', async ({ page }) => {
+test('the Support thread lists its entries newest first without a line before the first', async ({ page }) => {
   await page.goto('/support.html');
   const first = page.locator('.support-thread .f-thread > li').first();
   await expect(first).toBeVisible();
+  // The newest entry leads and the opening message ends the thread, above the start divider.
+  await expect(first).toContainText('Studio North moved to the Team plan');
+  await expect(page.locator('.support-thread .f-thread > li').last()).toContainText('Hi there');
+  expect(
+    await page.locator('.support-thread').evaluate(thread => thread.lastElementChild.matches('.support-thread-start')),
+  ).toBe(true);
+  expect(
+    await page
+      .locator('.support-conversation-content')
+      .evaluate(
+        content =>
+          content.querySelector('.f-composer').compareDocumentPosition(content.querySelector('.support-thread')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ),
+  ).toBeTruthy();
   expect(await first.evaluate(element => getComputedStyle(element).borderTopWidth)).toBe('0px');
   await page.locator('#support-reply').fill('Happy to help.');
   await page.getByRole('button', { name: 'Send reply' }).click();
-  await expect(page.locator('.support-thread .f-message--outgoing').last()).toContainText('Happy to help.');
+  // Newest first: the reply just sent leads the thread, below the composer.
+  await expect(page.locator('.support-thread .f-message--outgoing').first()).toContainText('Happy to help.');
 });
 
 test('a thread event shows its actions on hover or focus and keeps them while their menu is open', async ({ page }) => {
@@ -605,6 +621,16 @@ test('a link opens its content in a loaded dialog that closes, cleans up and ret
   await card.getByRole('button', { name: 'Keyboard shortcuts' }).click();
   await shortcuts.getByRole('button', { name: 'Close' }).click();
   await expect(shortcuts).toHaveCount(0);
+});
+
+test('a valueless dialog attribute rendered by Blade still loads the link', async ({ page }) => {
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    const link = document.querySelector('#component-remote-dialog a[data-fruit-dialog-url]');
+    link.setAttribute('data-fruit-dialog-url', 'data-fruit-dialog-url');
+  });
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge conversation…' }).click();
+  await expect(page.getByRole('dialog', { name: 'Merge conversation' }).getByRole('combobox')).toBeVisible();
 });
 
 test('a loaded dialog that fails offers to try again', async ({ page }) => {

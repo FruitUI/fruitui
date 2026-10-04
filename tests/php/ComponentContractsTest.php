@@ -260,6 +260,11 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('Vertaling', $xpath->query('.//span[@class="f-sr-only"]', $translation)->item(0)->textContent);
         $this->assertSame('Hi', $xpath->query('.//div[@class="f-message__translation-text"]', $translation)->item(0)->textContent);
         $this->assertSame('true', $xpath->query('.//svg', $translation)->item(0)->getAttribute('aria-hidden'));
+        // Read first: the translation comes before the original text.
+        $this->assertSame('f-message__body', $xpath->query('following-sibling::div[1]', $translation)->item(0)->getAttribute('class'));
+
+        $this->assertStringContainsString('class="f-composer f-composer--top"', Blade::render('<x-fruit::composer placement="top" aria-label="Reply">Reply</x-fruit::composer>'));
+        $this->assertRejected('<x-fruit::composer placement="side">Reply</x-fruit::composer>', 'composer placement must be one of');
     }
 
     public function test_a_field_label_can_be_a_slot_with_markup(): void

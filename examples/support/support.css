@@ -292,7 +292,7 @@
   color: var(--f-secondary);
 }
 .support-thread-start {
-  --f-divider-margin: 0 0 18px;
+  --f-divider-margin: 18px 0 0;
   font-size: var(--f-text-2xs);
 }
 .support-composer {

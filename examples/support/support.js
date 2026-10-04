@@ -104,6 +104,10 @@ export function supportDemo() {
       this.send();
       this.updateStatus('closed');
     },
+    /** The open conversation's entries, newest first, each with its place in the history. */
+    get timeline() {
+      return (this.ticket?.threads ?? []).map((entry, index) => ({ ...entry, index })).reverse();
+    },
     get ticket() {
       return this.tickets.find(ticket => ticket.id === this.selectedId) ?? null;
     },
@@ -332,7 +336,8 @@ export function supportDemo() {
         this.mode === 'note' ? 'Internal note added · visible to your team' : 'Reply added to the demo conversation',
       );
       this.$nextTick(() => {
-        this.$refs.thread.scrollTop = this.$refs.thread.scrollHeight;
+        // Newest first: the new entry is at the top.
+        this.$refs.thread.scrollTop = 0;
       });
     },
     openNew() {

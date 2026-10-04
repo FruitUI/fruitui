@@ -45,19 +45,21 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('radio', { name: 'Note', exact: true }).check();
   await page.getByRole('button', { name: 'Add note', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText(
+  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).first()).toContainText(
     'Private handoff: Mia will handle annual billing.',
   );
-  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).last()).toContainText('Only your team');
+  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).first()).toContainText(
+    'Only your team',
+  );
   await expect(page.getByLabel('Conversation status')).toHaveValue('open');
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('button', { name: 'Send reply', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).last()).toContainText(
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).first()).toContainText(
     'Hi Sophie, your projects will stay in place.',
   );
-  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).last()).not.toContainText(
+  await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).first()).not.toContainText(
     'Private handoff',
   );
   await expect(reply).toHaveValue('');
@@ -255,7 +257,8 @@ function queue(page, name) {
 }
 
 test('quoting a message fills the reply and internal notes cannot be quoted', async ({ page }) => {
-  const customer = page.locator('.support-message[data-kind="customer"]').first();
+  // Newest first: Sophie's opening message is the last entry.
+  const customer = page.locator('.support-message[data-kind="customer"]').last();
   await customer.hover();
   await customer.getByRole('button', { name: 'Quote Sophie Chen in reply', exact: true }).click();
   const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });

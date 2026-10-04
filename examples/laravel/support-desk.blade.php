@@ -421,33 +421,6 @@ new class extends Component
 
                     {{-- Keyed per ticket so enhanced controls start fresh; islands stay outside a changing key. --}}
                     <div class="f-stack" wire:key="conversation-{{ $ticket['id'] }}">
-                        <x-fruit::thread aria-label="Messages">
-                            @foreach ($ticket['messages'] as $index => $message)
-                                <li>
-                                    @if (isset($message['event']))
-                                        <x-fruit::message-event>
-                                            {{ $message['event'] }}
-                                            <x-slot:time>{{ $message['time'] }}</x-slot:time>
-                                        </x-fruit::message-event>
-                                    @else
-                                    <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
-                                        <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
-                                        <x-slot:author>{{ $message['author'] }}</x-slot:author>
-                                        <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
-                                        {{ $message['body'] }}
-                                        @if ($ticket['status'] === 'open')
-                                            <x-slot:actions>
-                                                <x-fruit::button variant="ghost" class="f-button--icon" wire:click="quote({{ $index }})" aria-label="Quote {{ $message['author'] }} in reply">
-                                                    <svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v6"/></svg>
-                                                </x-fruit::button>
-                                            </x-slot:actions>
-                                        @endif
-                                    </x-fruit::message>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </x-fruit::thread>
-
                         @if ($ticket['status'] === 'open')
                             <x-fruit::field control-id="support-assignee" label="Assigned to">
                                 <x-fruit::combobox name="assignee" wire:model.live="assignee">
@@ -472,7 +445,7 @@ new class extends Component
                                 <div><x-fruit::button type="submit">Merge</x-fruit::button></div>
                             </form>
 
-                            <x-fruit::composer wire:submit="send" aria-label="Reply">
+                            <x-fruit::composer wire:submit="send" placement="top" aria-label="Reply">
                                 <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">
                                     {{-- The server searches contacts as the address is typed; options follow each re-render. --}}
                                     <x-fruit::token-field name="cc" wire:model="cc" search="server" x-on:fruit-suggest.debounce.200ms="$wire.set('ccSearch', $event.detail.query)">
@@ -501,6 +474,34 @@ new class extends Component
                         @else
                             <x-fruit::alert tone="success">This conversation was closed as {{ strtolower($this::REASONS[$ticket['reason']] ?? 'resolved') }}.</x-fruit::alert>
                         @endif
+
+                        {{-- Newest first, below the composer; the keys keep each message's place for quoting. --}}
+                        <x-fruit::thread aria-label="Messages">
+                            @foreach (array_reverse($ticket['messages'], true) as $index => $message)
+                                <li>
+                                    @if (isset($message['event']))
+                                        <x-fruit::message-event>
+                                            {{ $message['event'] }}
+                                            <x-slot:time>{{ $message['time'] }}</x-slot:time>
+                                        </x-fruit::message-event>
+                                    @else
+                                    <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
+                                        <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
+                                        <x-slot:author>{{ $message['author'] }}</x-slot:author>
+                                        <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
+                                        {{ $message['body'] }}
+                                        @if ($ticket['status'] === 'open')
+                                            <x-slot:actions>
+                                                <x-fruit::button variant="ghost" class="f-button--icon" wire:click="quote({{ $index }})" aria-label="Quote {{ $message['author'] }} in reply">
+                                                    <svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v6"/></svg>
+                                                </x-fruit::button>
+                                            </x-slot:actions>
+                                        @endif
+                                    </x-fruit::message>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </x-fruit::thread>
                     </div>
                 </div>
             @else

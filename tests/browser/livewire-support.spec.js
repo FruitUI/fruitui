@@ -85,6 +85,10 @@ test('server validation errors reach Field associations and clear after a valid 
   await page.getByRole('button', { name: 'Send reply' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
   await expect(page.getByRole('list', { name: 'Messages' }).getByRole('listitem')).toHaveCount(2);
+  // Newest first: the reply just sent leads the thread below the composer.
+  await expect(page.getByRole('list', { name: 'Messages' }).getByRole('listitem').first()).toContainText(
+    'Thanks, we will move you over today.',
+  );
   await expect(reply).toHaveValue('');
   await expect(reply).not.toHaveAttribute('aria-invalid');
   await expect(cc).not.toHaveAttribute('aria-invalid');
