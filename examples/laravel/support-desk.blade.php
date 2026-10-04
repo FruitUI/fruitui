@@ -47,6 +47,7 @@ new class extends Component
     public ?int $openId = null;
     public string $assignee = '';
     public string $cc = '';
+    public string $bcc = '';
     public string $ccSearch = '';
     public string $mergeInto = '';
     public string $mergeSearch = '';
@@ -122,6 +123,7 @@ new class extends Component
         $this->openId = $id;
         $this->assignee = $ticket['assignee'];
         $this->cc = $ticket['cc'];
+        $this->bcc = $ticket['bcc'] ?? '';
         $this->reply = '';
         $this->mergeInto = '';
         $this->mergeSearch = '';
@@ -144,8 +146,9 @@ new class extends Component
         $this->validate([
             'reply' => ['required', 'string', 'min:3'],
             'cc' => ['nullable', new Tokens('email')],
-        ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.'], ['cc' => 'Cc']);
-        $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply]]]);
+            'bcc' => ['nullable', new Tokens('email')],
+        ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.'], ['cc' => 'Cc', 'bcc' => 'Bcc']);
+        $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'bcc' => $this->bcc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply]]]);
         $this->reply = '';
         Fruit::toast('Reply sent to '.$this->ticket['name'].'.');
     }
@@ -446,17 +449,28 @@ new class extends Component
                             </form>
 
                             <x-fruit::composer wire:submit="send" placement="top" aria-label="Reply">
-                                <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">
-                                    {{-- The server searches contacts as the address is typed; options follow each re-render. --}}
-                                    <x-fruit::token-field name="cc" wire:model="cc" search="server" x-on:fruit-suggest.debounce.200ms="$wire.set('ccSearch', $event.detail.query)">
-                                        {{ $cc }}
-                                        <x-slot:options>
-                                            @foreach ($this->ccMatches as $email => $name)
-                                                <option value="{{ $email }}">{{ $name }}</option>
-                                            @endforeach
-                                        </x-slot:options>
-                                    </x-fruit::token-field>
-                                </x-fruit::field>
+                                {{-- Mail-style recipient rows; Cc and Bcc show on demand, or when they already hold addresses. --}}
+                                <div x-data="{ copies: @js($cc !== '' || $bcc !== '' || $errors->hasAny(['cc', 'bcc'])) }">
+                                    <x-fruit::field control-id="support-to" label="To" layout="inline">
+                                        <x-fruit::input type="email" value="{{ $ticket['email'] }}" readonly />
+                                        <x-fruit::button variant="ghost" size="small" x-show="!copies" aria-controls="support-cc-row support-bcc-row" aria-expanded="false"
+                                            x-on:click="copies = true; $nextTick(() => $root.querySelector('#support-cc-row input')?.focus())">Cc/Bcc</x-fruit::button>
+                                    </x-fruit::field>
+                                    <x-fruit::field control-id="support-cc" label="Cc" layout="inline" id="support-cc-row" x-show="copies">
+                                        {{-- The server searches contacts as the address is typed; options follow each re-render. --}}
+                                        <x-fruit::token-field name="cc" wire:model="cc" placeholder="Add a recipient" search="server" x-on:fruit-suggest.debounce.200ms="$wire.set('ccSearch', $event.detail.query)">
+                                            {{ $cc }}
+                                            <x-slot:options>
+                                                @foreach ($this->ccMatches as $email => $name)
+                                                    <option value="{{ $email }}">{{ $name }}</option>
+                                                @endforeach
+                                            </x-slot:options>
+                                        </x-fruit::token-field>
+                                    </x-fruit::field>
+                                    <x-fruit::field control-id="support-bcc" label="Bcc" layout="inline" id="support-bcc-row" x-show="copies">
+                                        <x-fruit::token-field name="bcc" wire:model="bcc" placeholder="Add a recipient">{{ $bcc }}</x-fruit::token-field>
+                                    </x-fruit::field>
+                                </div>
                                 <x-fruit::field control-id="support-reply" label="Reply to {{ $ticket['name'] }}">
                                     <x-fruit::autocomplete trigger="@">
                                         <x-fruit::textarea name="reply" class="f-composer__input" rows="4" wire:model="reply" />

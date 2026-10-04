@@ -879,7 +879,28 @@
     &lt;x-fruit::splitter pane=&quot;gallery-resize-pane&quot; flexible=&quot;gallery-resize-content&quot; variable=&quot;--f-preview-width&quot;
         :min=&quot;96&quot; :max=&quot;240&quot; :reserve=&quot;96&quot; aria-label=&quot;Preview navigation&quot; style=&quot;--f-splitter-column: 1&quot; /&gt;
 &lt;/x-fruit::workspace&gt;</pre></details></section>
-<section id="component-composer" data-component="composer" class="f-card component-card"><h2>Message composer</h2><p>One native form arrangement. Labels, draft values, validation and sending belong to its controls and application.</p><!-- blade:composer --><form class="f-composer" style="--f-composer-padding: 16px;" aria-label="Composer preview" x-data="{ draft: '', sent: '' }" @submit.prevent="sent = draft; draft = ''">
+<section id="component-composer" data-component="composer" class="f-card component-card"><h2>Message composer</h2><p>One native form arrangement. Labels, draft values, validation and sending belong to its controls and application.</p><!-- blade:composer --><form class="f-composer" style="--f-composer-padding: 16px;" aria-label="Composer preview" x-data="{ draft: '', sent: '', copies: false }" @submit.prevent="sent = draft; draft = ''">
+    <div>
+        <div class="f-field f-field--inline">
+    <label class="f-label" for="field-to">To</label>
+    <input type="email" class="f-input" id="field-to" name="to" value="team@forma.example">
+            <button type="button" class="f-button f-button--ghost f-button--small" x-show="!copies" aria-controls="gallery-cc-row gallery-bcc-row" aria-expanded="false" x-on:click="copies = true; $nextTick(() => document.querySelector('#gallery-cc-row input')?.focus())">Cc/Bcc</button>
+        </div>
+        <div class="f-field f-field--inline" id="gallery-cc-row" x-show="copies">
+    <label class="f-label" for="field-gallery_cc">Cc</label>
+    <div class="f-token-field" data-fruit-placeholder="Add an item" data-fruit-remove-label="Remove {value}" data-fruit-removed-message="Removed {value}" data-fruit-count-message="{count} items" data-fruit-invalid-message="Check this value before adding it." data-fruit-length-message="Use at most {count} characters." x-data="fruitTokenField">
+    <textarea data-fruit-control class="f-input" id="field-gallery_cc" name="gallery_cc" placeholder="Add a recipient"></textarea>
+        <div data-fruit-ui wire:ignore></div>
+</div>
+        </div>
+        <div class="f-field f-field--inline" id="gallery-bcc-row" x-show="copies">
+    <label class="f-label" for="field-gallery_bcc">Bcc</label>
+    <div class="f-token-field" data-fruit-placeholder="Add an item" data-fruit-remove-label="Remove {value}" data-fruit-removed-message="Removed {value}" data-fruit-count-message="{count} items" data-fruit-invalid-message="Check this value before adding it." data-fruit-length-message="Use at most {count} characters." x-data="fruitTokenField">
+    <textarea data-fruit-control class="f-input" id="field-gallery_bcc" name="gallery_bcc" placeholder="Add a recipient"></textarea>
+        <div data-fruit-ui wire:ignore></div>
+</div>
+        </div>
+    </div>
     <label class="f-label" for="gallery-compose">Message to the team</label>
     <textarea class="f-input f-composer__input" id="gallery-compose" name="message" rows="3" required="required" x-model="draft" aria-describedby="gallery-compose-help"></textarea>
     <footer class="f-composer__footer">
@@ -893,7 +914,21 @@
   &lt;footer class=&quot;f-composer__footer&quot;&gt;&lt;span class=&quot;f-help&quot;&gt;Enter inserts a new line.&lt;/span&gt;
     &lt;button class=&quot;f-button f-button--primary&quot; type=&quot;submit&quot;&gt;Send&lt;/button&gt;
   &lt;/footer&gt;
-&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="composer">&lt;x-fruit::composer aria-label=&quot;Composer preview&quot; x-data=&quot;{ draft: &apos;&apos;, sent: &apos;&apos; }&quot; @submit.prevent=&quot;sent = draft; draft = &apos;&apos;&quot; style=&quot;--f-composer-padding: 16px&quot;&gt;
+&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="composer">&lt;x-fruit::composer aria-label=&quot;Composer preview&quot; x-data=&quot;{ draft: &apos;&apos;, sent: &apos;&apos;, copies: false }&quot; @submit.prevent=&quot;sent = draft; draft = &apos;&apos;&quot; style=&quot;--f-composer-padding: 16px&quot;&gt;
+    {{-- Mail-style recipient rows: short labels, full-width controls, Cc and Bcc on demand. --}}
+    &lt;div&gt;
+        &lt;x-fruit::field label=&quot;To&quot; layout=&quot;inline&quot;&gt;
+            &lt;x-fruit::input type=&quot;email&quot; name=&quot;to&quot; value=&quot;team@forma.example&quot; /&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; size=&quot;small&quot; x-show=&quot;!copies&quot; aria-controls=&quot;gallery-cc-row gallery-bcc-row&quot; aria-expanded=&quot;false&quot;
+                x-on:click=&quot;copies = true; $nextTick(() =&gt; document.querySelector(&apos;#gallery-cc-row input&apos;)?.focus())&quot;&gt;Cc/Bcc&lt;/x-fruit::button&gt;
+        &lt;/x-fruit::field&gt;
+        &lt;x-fruit::field label=&quot;Cc&quot; layout=&quot;inline&quot; id=&quot;gallery-cc-row&quot; x-show=&quot;copies&quot;&gt;
+            &lt;x-fruit::token-field name=&quot;gallery_cc&quot; placeholder=&quot;Add a recipient&quot; /&gt;
+        &lt;/x-fruit::field&gt;
+        &lt;x-fruit::field label=&quot;Bcc&quot; layout=&quot;inline&quot; id=&quot;gallery-bcc-row&quot; x-show=&quot;copies&quot;&gt;
+            &lt;x-fruit::token-field name=&quot;gallery_bcc&quot; placeholder=&quot;Add a recipient&quot; /&gt;
+        &lt;/x-fruit::field&gt;
+    &lt;/div&gt;
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-compose&quot;&gt;Message to the team&lt;/label&gt;
     &lt;x-fruit::textarea id=&quot;gallery-compose&quot; class=&quot;f-composer__input&quot; name=&quot;message&quot; rows=&quot;3&quot; required x-model=&quot;draft&quot; aria-describedby=&quot;gallery-compose-help&quot; /&gt;
     &lt;footer class=&quot;f-composer__footer&quot;&gt;

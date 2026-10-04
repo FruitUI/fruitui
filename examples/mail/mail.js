@@ -16,6 +16,8 @@ export function mailDemo() {
     composeTo: '',
     composeCc: '',
     composeBcc: '',
+    // Cc and Bcc rows appear on demand, as in mail apps.
+    showCopies: false,
     composeSubject: '',
     composeBody: '',
     account(id) {
@@ -156,6 +158,7 @@ export function mailDemo() {
     compose(mode = 'new') {
       this.composeCc = '';
       this.composeBcc = '';
+      this.showCopies = false;
       this.composeAccountId =
         mode !== 'new' && this.message
           ? this.message.accountId
@@ -176,6 +179,10 @@ export function mailDemo() {
           .forEach(control => control.dispatchEvent(new Event('fruit-token-reset'))),
       );
       this.$refs.composer.showModal();
+    },
+    revealCopies() {
+      this.showCopies = true;
+      this.$nextTick(() => this.$refs.composer.querySelector('#compose-cc-row input')?.focus());
     },
     send() {
       if (!this.account(this.composeAccountId)) return;

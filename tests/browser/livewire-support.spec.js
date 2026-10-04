@@ -29,7 +29,8 @@ test('opening conversations re-renders enhanced controls without duplicating or 
   await expect(assignee).toHaveValue('Unassigned');
   // Assigned to and Merge into, each enhanced once.
   await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
-  await expect(page.locator('.f-token-field__entry')).toHaveCount(1);
+  // Cc and Bcc, each enhanced once.
+  await expect(page.locator('.f-token-field__entry')).toHaveCount(2);
   await expect(page.locator('#support-assignee')).toBeHidden();
   await expect(page.locator('#support-cc')).toBeHidden();
   expect(errors).toEqual([]);
@@ -67,15 +68,16 @@ test('server validation errors reach Field associations and clear after a valid 
   await expect(reply).toHaveAttribute('aria-invalid', 'true');
   await expect(reply).toHaveAccessibleDescription('Write a reply before sending.');
 
-  const cc = page.getByRole('textbox', { name: 'Cc' });
+  // Cc and Bcc rows show on demand from the To row.
+  await page.getByRole('button', { name: 'Cc/Bcc' }).click();
+  const cc = page.getByRole('textbox', { name: 'Cc', exact: true });
+  await expect(cc).toBeFocused();
   await cc.fill('not-an-address');
   await cc.press('Enter');
   await reply.fill('Thanks, we will move you over today.');
   await page.getByRole('button', { name: 'Send reply' }).click();
   await expect(cc).toHaveAttribute('aria-invalid', 'true');
-  await expect(cc).toHaveAccessibleDescription(
-    /Enter or comma adds an address\. The Cc field contains an invalid entry: not-an-address\./,
-  );
+  await expect(cc).toHaveAccessibleDescription('The Cc field contains an invalid entry: not-an-address.');
   await expect(reply).not.toHaveAttribute('aria-invalid');
   await expect(reply).toHaveValue('Thanks, we will move you over today.');
 
@@ -441,7 +443,8 @@ test('a message action quotes it into the Livewire reply', async ({ page }) => {
 
 test('the Cc field asks the server for contacts while typing and adds the chosen address', async ({ page }) => {
   const errors = await openDesk(page);
-  const cc = page.getByRole('textbox', { name: 'Cc' });
+  await page.getByRole('button', { name: 'Cc/Bcc' }).click();
+  const cc = page.getByRole('textbox', { name: 'Cc', exact: true });
   await cc.pressSequentially('ortiz');
   const option = page.getByRole('listbox', { name: 'Suggestions' }).getByRole('option', { name: /Ana Ortiz/ });
   await expect(option).toBeVisible();

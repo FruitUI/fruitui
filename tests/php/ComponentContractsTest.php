@@ -211,7 +211,13 @@ class ComponentContractsTest extends TestCase
 
         $this->assertRejected('<x-fruit::form-section title="A" level="1">Row</x-fruit::form-section>', 'form-section level must be one of');
         $this->assertRejected('<x-fruit::form-section role="list">Row</x-fruit::form-section>', 'overriding role');
-        $this->assertRejected('<x-fruit::field label="A" layout="inline"><x-fruit::input name="a" /></x-fruit::field>', 'Field layout must be one of');
+        $this->assertRejected('<x-fruit::field label="A" layout="grid"><x-fruit::input name="a" /></x-fruit::field>', 'Field layout must be one of');
+
+        $inline = $this->xpath(Blade::render('<x-fruit::field label="Cc" layout="inline"><x-fruit::token-field name="cc" /><x-fruit::button variant="ghost" size="small">Bcc</x-fruit::button></x-fruit::field>'));
+        $field = $inline->query('//div[contains(@class, "f-field--inline")]')->item(0);
+        $this->assertSame('f-field f-field--inline', $field->getAttribute('class'));
+        $this->assertSame('field-cc', $inline->query('//label')->item(0)->getAttribute('for'));
+        $this->assertSame('field-cc', $inline->query('//textarea')->item(0)->getAttribute('id'));
     }
 
     public function test_item_links_and_fill_workspaces_keep_their_contracts(): void

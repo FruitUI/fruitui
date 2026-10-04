@@ -9,6 +9,12 @@ test('Mail recipient tokens validate, survive sending, and reset when starting a
   await dialog.getByRole('textbox', { name: 'Subject' }).fill('Team update');
   await dialog.getByRole('textbox', { name: 'Message', exact: true }).fill('Hello team');
   const cc = dialog.getByRole('textbox', { name: 'Cc', exact: true });
+  // Cc and Bcc rows appear on demand; revealing them moves focus to Cc.
+  const reveal = dialog.getByRole('button', { name: 'Cc/Bcc' });
+  await expect(cc).toBeHidden();
+  await reveal.click();
+  await expect(cc).toBeFocused();
+  await expect(reveal).toBeHidden();
   await cc.fill('invalid');
   await cc.press('Enter');
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
@@ -26,11 +32,14 @@ test('Mail recipient tokens validate, survive sending, and reset when starting a
   await expect(page.locator('.f-mail__message-header')).not.toContainText('noah@example.com');
   await page.getByRole('button', { name: 'Compose message' }).click();
   await expect(dialog.locator('.f-chip')).toHaveCount(0);
+  await expect(cc).toBeHidden();
+  await reveal.click();
   await expect(cc).toHaveValue('');
   await cc.fill('bad');
   await cc.press('Enter');
   await dialog.getByRole('button', { name: 'Close compose' }).click();
   await page.getByRole('button', { name: 'Compose message' }).click();
+  await reveal.click();
   await expect(cc).toHaveValue('');
   expect(await cc.evaluate(input => input.validity.valid)).toBe(true);
 });
