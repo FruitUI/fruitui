@@ -458,6 +458,20 @@ Dispatch `fruit-token-reset` on the native textarea to discard pending entry and
   }"></textarea>
 ```
 
+**Searching on the server.** For long lists such as customers, set `search="server"` on Combobox (`data-fruit-search="server"` on the wrapper in HTML). Typing sends a bubbling `fruit-suggest` event with `detail.query`; answer it by replacing the select's options. The open list follows the new options as supplied, without matching them again. Keep the current choice among the options (marked `selected`) so the native value survives each search, and use an empty hidden option with a `placeholder` for no choice:
+
+```blade
+<x-fruit::combobox name="customer" wire:model="customer" search="server" placeholder="Search customers"
+    x-on:fruit-suggest.debounce.200ms="$wire.set('customerSearch', $event.detail.query)">
+    <option value="" hidden></option>
+    @foreach ($this->customerMatches as $id => $name) {{-- includes the current choice --}}
+        <option value="{{ $id }}" @selected((string) $id === $customer)>{{ $name }}</option>
+    @endforeach
+</x-fruit::combobox>
+```
+
+The Livewire support desk's Merge into field works this way. Without Livewire, replace the options from the event handler after a `fetch`.
+
 Choice queries keep focus while `aria-activedescendant` identifies the highlighted option. Up/Down navigate, Enter commits, Escape restores the selected label, and Tab leaves without changing the selection. Disabled options/optgroups are skipped. The enhanced controls preserve form resets, native required/disabled/readonly behavior, label focus, external Alpine model updates, and helper cleanup. Combobox does not support multiple/size modes; use Select for native multiple selection or Token Field for free text tokens.
 
 ### Text completions

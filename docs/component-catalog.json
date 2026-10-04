@@ -811,7 +811,7 @@
         "element": "Native single select; enhanced query combobox and listbox.",
         "state": "Native scalar string, required/disabled; name and models remain on select.",
         "keyboard": "Text search, Up/Down, Enter selects; Escape cancels, Tab leaves.",
-        "options": "Native attributes; option/optgroup slot. No multiple/size mode. Requires fruitCombobox for enhancement."
+        "options": "Native attributes; option/optgroup slot. No multiple/size mode. Requires fruitCombobox for enhancement. Typing sends a bubbling `fruit-suggest` event with `detail.query`. `search`: local (default, matches option labels) or server (shows the options as the application replaces them in answer, keeping the list open; keep the current choice among the options so the value survives, and an empty hidden option for no choice)."
       }
     }
   },

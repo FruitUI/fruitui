@@ -48,6 +48,8 @@ new class extends Component
     public string $assignee = '';
     public string $cc = '';
     public string $ccSearch = '';
+    public string $mergeInto = '';
+    public string $mergeSearch = '';
     public string $reply = '';
     public string $closeReason = 'resolved';
 
@@ -78,6 +80,34 @@ new class extends Component
         );
     }
 
+    /**
+     * Other conversations matching the merge search, by number, subject or customer. The current
+     * choice stays among the options, so the select keeps its value while results change.
+     *
+     * @return array<int, string>
+     */
+    #[Computed]
+    public function mergeMatches(): array
+    {
+        $query = mb_strtolower(trim($this->mergeSearch));
+        $label = fn (array $ticket) => "#{$ticket['id']} {$ticket['subject']} · {$ticket['name']}";
+
+        return collect($this->store())
+            ->except($this->openId)
+            ->filter(fn (array $ticket) => (string) $ticket['id'] === $this->mergeInto
+                || ($query !== '' && str_contains(mb_strtolower($label($ticket)), ltrim($query, '#'))))
+            ->map($label)
+            ->all();
+    }
+
+    public function merge(): void
+    {
+        $this->validate(['mergeInto' => ['required', 'in:'.implode(',', array_keys($this->mergeMatches))]], ['mergeInto.required' => 'Choose a conversation to merge into.'], ['mergeInto' => 'conversation']);
+        Fruit::toast("Conversation #{$this->openId} merged into #{$this->mergeInto}.");
+        $this->mergeInto = '';
+        $this->mergeSearch = '';
+    }
+
     public function updatedSearch(): void
     {
         $this->resetPage();
@@ -93,6 +123,8 @@ new class extends Component
         $this->assignee = $ticket['assignee'];
         $this->cc = $ticket['cc'];
         $this->reply = '';
+        $this->mergeInto = '';
+        $this->mergeSearch = '';
         $this->resetValidation();
         // Islands are skipped on ordinary updates; this one follows the open ticket.
         $this->renderIsland('history');
@@ -390,6 +422,20 @@ new class extends Component
                                     @endforeach
                                 </x-fruit::combobox>
                             </x-fruit::field>
+
+                            {{-- Server search: each query re-renders the options, keeping the current choice. --}}
+                            <form class="f-stack" wire:submit="merge" aria-label="Merge">
+                                <x-fruit::field control-id="support-merge" label="Merge into" description="Search by number, subject or customer.">
+                                    <x-fruit::combobox name="mergeInto" wire:model="mergeInto" search="server" placeholder="Search conversations"
+                                        x-on:fruit-suggest.debounce.200ms="$wire.set('mergeSearch', $event.detail.query)">
+                                        <option value="" hidden></option>
+                                        @foreach ($this->mergeMatches as $id => $label)
+                                            <option value="{{ $id }}" @selected((string) $id === $mergeInto)>{{ $label }}</option>
+                                        @endforeach
+                                    </x-fruit::combobox>
+                                </x-fruit::field>
+                                <div><x-fruit::button type="submit">Merge</x-fruit::button></div>
+                            </form>
 
                             <x-fruit::composer wire:submit="send" aria-label="Reply">
                                 <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">

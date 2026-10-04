@@ -32,13 +32,16 @@ export function fruitCombobox() {
       list.children[active].scrollIntoView({ block: 'nearest' });
     } else query.removeAttribute('aria-activedescendant');
   };
+  // With data-fruit-search="server" the application replaces the options in answer to
+  // fruit-suggest events, so they are shown as supplied rather than matched again here.
   const show = (filter = '') => {
     if (query.disabled) return;
+    const server = root.dataset.fruitSearch === 'server';
     options = [...control.options].filter(
       option =>
         !option.matches(':disabled') &&
         !option.hidden &&
-        option.label.toLocaleLowerCase().includes(filter.toLocaleLowerCase()),
+        (server || option.label.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
     );
     list.replaceChildren();
     options.forEach((option, index) => {
@@ -102,7 +105,13 @@ export function fruitCombobox() {
       control.hidden = true;
       overlay = fruitPopup(list, query, { stretch: true });
       query.value = label();
-      query.addEventListener('input', () => show(query.value));
+      query.addEventListener('input', event => {
+        if (!event.isComposing)
+          control.dispatchEvent(
+            new CustomEvent('fruit-suggest', { bubbles: true, detail: { query: query.value.trim() } }),
+          );
+        show(query.value);
+      });
       query.addEventListener('click', () => show());
       query.addEventListener('blur', () => {
         hide();

@@ -45,7 +45,7 @@ final class ComponentContract
         'card' => ['roles' => ['group', 'region']],
         'checkbox' => ['roles' => ['checkbox'], 'type' => 'checkbox', 'emits' => ['type', 'role']],
         'color' => ['type' => 'color', 'emits' => ['type'], 'owns' => self::PICKER, 'message' => 'owns its picker popup association'],
-        'combobox' => ['owns' => [...self::ENHANCED, 'multiple', 'size'], 'message' => 'owns enhancement visibility and its single value contract'],
+        'combobox' => ['owns' => [...self::ENHANCED, 'multiple', 'size'], 'message' => 'owns enhancement visibility and its single value contract', 'options' => ['search' => ['local', 'server']]],
         'composer' => ['roles' => ['form']],
         'date' => ['options' => ['type' => self::DATE_TYPES], 'owns' => self::PICKER, 'message' => 'owns its picker popup association'],
         'description-list' => [],

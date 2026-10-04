@@ -27,7 +27,8 @@ test('opening conversations re-renders enhanced controls without duplicating or 
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('Sign-in after changing our domain');
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveAttribute('aria-current', 'true');
   await expect(assignee).toHaveValue('Unassigned');
-  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(1);
+  // Assigned to and Merge into, each enhanced once.
+  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
   await expect(page.locator('.f-token-field__entry')).toHaveCount(1);
   await expect(page.locator('#support-assignee')).toBeHidden();
   await expect(page.locator('#support-cc')).toBeHidden();
@@ -128,12 +129,14 @@ test('wire:navigate swaps mailboxes without reloading and enhancements initializ
   await expect(list(page).getByRole('listitem')).toHaveCount(3);
   await expect(page.getByRole('link', { name: /Unassigned/ })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Unassigned');
-  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(1);
+  // Assigned to and Merge into, each enhanced once.
+  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
 
   await page.goBack();
   await expect(page).toHaveURL(`${host}/support/all`);
   await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Alex Morgan');
-  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(1);
+  // Assigned to and Merge into, each enhanced once.
+  await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
   expect(await page.evaluate(() => window.fruitNavigationMarker)).toBe(true);
 
   await page.getByRole('link', { name: /Assigned to me/ }).click();
@@ -398,5 +401,33 @@ test('the Cc field asks the server for contacts while typing and adds the chosen
   await page.getByRole('button', { name: 'Send reply' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove ana@studio-north.example' })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('Merge into searches conversations on the server and keeps the choice while results change', async ({ page }) => {
+  const errors = await openDesk(page);
+  const merge = page.getByRole('combobox', { name: 'Merge into' });
+  await page.getByRole('button', { name: 'Merge', exact: true }).click();
+  await expect(merge).toHaveAccessibleDescription(/Choose a conversation to merge into\./);
+
+  await merge.pressSequentially('invoices');
+  const list = page.getByRole('listbox', { name: 'Merge into' });
+  await expect(list.getByRole('option')).toHaveText(['#1039 Invoices for last quarter · Daniel Brooks']);
+  await page.keyboard.press('Enter');
+  await expect(merge).toHaveValue('#1039 Invoices for last quarter · Daniel Brooks');
+
+  // A new search replaces the results while the list stays open; the chosen conversation stays.
+  await merge.fill('');
+  await merge.pressSequentially('calendar');
+  await expect(list.getByRole('option')).toHaveText([
+    '#1039 Invoices for last quarter · Daniel Brooks',
+    '#1036 Calendar sync stopped · Lena Wilson',
+  ]);
+  await expect(list).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(merge).toHaveValue('#1039 Invoices for last quarter · Daniel Brooks');
+  await page.getByRole('button', { name: 'Merge', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Conversation #1042 merged into #1039.' })).toBeVisible();
+  await expect(merge).toHaveValue('');
   expect(errors).toEqual([]);
 });

@@ -901,7 +901,8 @@ function V() {
 		f = e, [...r.children].forEach((e, t) => e.setAttribute("aria-selected", String(t === f))), r.children[f] ? (n.setAttribute("aria-activedescendant", r.children[f].id), r.children[f].scrollIntoView({ block: "nearest" })) : n.removeAttribute("aria-activedescendant");
 	}, b = (i = "") => {
 		if (n.disabled) return;
-		if (u = [...t.options].filter((e) => !e.matches(":disabled") && !e.hidden && e.label.toLocaleLowerCase().includes(i.toLocaleLowerCase())), r.replaceChildren(), u.forEach((e, t) => {
+		let a = e.dataset.fruitSearch === "server";
+		if (u = [...t.options].filter((e) => !e.matches(":disabled") && !e.hidden && (a || e.label.toLocaleLowerCase().includes(i.toLocaleLowerCase()))), r.replaceChildren(), u.forEach((e, t) => {
 			let n = document.createElement("li");
 			n.className = "f-combobox__option", n.id = `${r.id}-${t}`, n.setAttribute("role", "option"), n.textContent = e.label, n.addEventListener("pointerdown", (e) => e.preventDefault()), n.addEventListener("click", () => x(t)), r.append(n);
 		}), !u.length) {
@@ -909,14 +910,19 @@ function V() {
 			t.className = "f-combobox__empty", t.setAttribute("role", "presentation"), t.textContent = d(e, "no-matches", "No matches"), r.append(t);
 		}
 		p = !0, r.hidden = !1, n.setAttribute("aria-expanded", "true"), c.show();
-		let a = u.findIndex((e) => e.selected);
-		y(u.length ? Math.max(0, a) : -1);
+		let o = u.findIndex((e) => e.selected);
+		y(u.length ? Math.max(0, o) : -1);
 	}, x = (e) => {
 		u[e] && (h(t, u[e].value), n.value = _(), n.removeAttribute("aria-invalid"), v(), n.focus());
 	};
 	return {
 		init() {
-			e = this.$el, t = e.querySelector("select[data-fruit-control]"), !(!t || t.multiple || t.size > 1) && (n = document.createElement("input"), n.type = "text", n.className = "f-input", n.autocomplete = "off", n.setAttribute("role", "combobox"), n.setAttribute("aria-autocomplete", "list"), n.setAttribute("aria-expanded", "false"), r = document.createElement("ul"), r.id = m("fruit-options"), r.className = "f-combobox__options", r.setAttribute("role", "listbox"), r.hidden = !0, i = this.$el.querySelector("[data-fruit-ui]"), a = !i, i || (i = document.createElement("div"), i.setAttribute("data-fruit-ui", ""), this.$el.append(i)), n.setAttribute("aria-controls", r.id), i.append(n, r), t.hidden = !0, c = l(r, n, { stretch: !0 }), n.value = _(), n.addEventListener("input", () => b(n.value)), n.addEventListener("click", () => b()), n.addEventListener("blur", () => {
+			e = this.$el, t = e.querySelector("select[data-fruit-control]"), !(!t || t.multiple || t.size > 1) && (n = document.createElement("input"), n.type = "text", n.className = "f-input", n.autocomplete = "off", n.setAttribute("role", "combobox"), n.setAttribute("aria-autocomplete", "list"), n.setAttribute("aria-expanded", "false"), r = document.createElement("ul"), r.id = m("fruit-options"), r.className = "f-combobox__options", r.setAttribute("role", "listbox"), r.hidden = !0, i = this.$el.querySelector("[data-fruit-ui]"), a = !i, i || (i = document.createElement("div"), i.setAttribute("data-fruit-ui", ""), this.$el.append(i)), n.setAttribute("aria-controls", r.id), i.append(n, r), t.hidden = !0, c = l(r, n, { stretch: !0 }), n.value = _(), n.addEventListener("input", (e) => {
+				e.isComposing || t.dispatchEvent(new CustomEvent("fruit-suggest", {
+					bubbles: !0,
+					detail: { query: n.value.trim() }
+				})), b(n.value);
+			}), n.addEventListener("click", () => b()), n.addEventListener("blur", () => {
 				v(), n.value = _();
 			}), n.addEventListener("keydown", (e) => {
 				e.isComposing || (["ArrowDown", "ArrowUp"].includes(e.key) ? (e.preventDefault(), p ? u.length && y((f + (e.key === "ArrowDown" ? 1 : -1) + u.length) % u.length) : (b(), y(e.key === "ArrowUp" ? u.length - 1 : 0))) : e.key === "Enter" && p && f >= 0 ? (e.preventDefault(), x(f)) : e.key === "Escape" && p ? (e.preventDefault(), e.stopPropagation(), v(), n.value = _()) : e.key === "Tab" && v());

@@ -192,7 +192,7 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('notice', $toaster->getAttribute('x-show'));
     }
 
-    public function test_a_token_field_can_post_a_list_and_offer_suggestions(): void
+    public function test_token_fields_and_comboboxes_offer_server_search(): void
     {
         $html = Blade::render('<x-fruit::token-field name="cc" submit="list" search="server" x-on:fruit-suggest="find($event.detail.query)">ann@example.com<x-slot:options><option value="bob@example.com">Bob</option></x-slot:options></x-fruit::token-field>');
         $xpath = $this->xpath($html);
@@ -212,6 +212,11 @@ class LaravelIntegrationTest extends TestCase
         $this->assertFalse($plain->hasAttribute('data-fruit-search'));
         $this->assertRejected('<x-fruit::token-field name="cc" submit="json" />', 'token-field submit must be one of');
         $this->assertRejected('<x-fruit::token-field name="cc" search="remote" />', 'token-field search must be one of');
+
+        $combobox = $this->xpath(Blade::render('<x-fruit::combobox name="customer" search="server"><option value="" hidden></option></x-fruit::combobox>'))->query('//div[@x-data="fruitCombobox"]')->item(0);
+        $this->assertSame('server', $combobox->getAttribute('data-fruit-search'));
+        $this->assertFalse($this->xpath(Blade::render('<x-fruit::combobox name="customer" />'))->query('//div[@x-data="fruitCombobox"]')->item(0)->hasAttribute('data-fruit-search'));
+        $this->assertRejected('<x-fruit::combobox name="customer" search="remote" />', 'combobox search must be one of');
     }
 
     public function test_toasts_carry_a_tone_from_the_server_and_the_session(): void
