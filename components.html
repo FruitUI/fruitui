@@ -70,6 +70,12 @@
     <label class="f-label" for="invitation-code">Invitation code</label>
     <input type="text" class="f-input" id="invitation-code" name="invitation" value="Not available" disabled="disabled">
         </div>
+    
+    <div class="f-field">
+    <label class="f-label" for="field-confirmation">Type <strong>DELETE</strong> to confirm</label>
+    <input type="text" class="f-input" id="field-confirmation" aria-describedby="field-confirmation-description" name="confirmation" pattern="DELETE" autocomplete="off">
+            <p class="f-help" id="field-confirmation-description">This removes the workspace for everyone.</p>
+        </div>
 </div><!-- /blade:field --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Email&lt;/span&gt;
   &lt;input class=&quot;f-input&quot; aria-invalid=&quot;true&quot; aria-describedby=&quot;email-error&quot;&gt;
@@ -85,6 +91,11 @@
     &lt;/x-fruit::field&gt;
     &lt;x-fruit::field control-id=&quot;invitation-code&quot; label=&quot;Invitation code&quot;&gt;
         &lt;x-fruit::input name=&quot;invitation&quot; value=&quot;Not available&quot; disabled /&gt;
+    &lt;/x-fruit::field&gt;
+    {{-- A label slot holds markup; it still names the control. --}}
+    &lt;x-fruit::field description=&quot;This removes the workspace for everyone.&quot;&gt;
+        &lt;x-slot:label&gt;Type &lt;strong&gt;DELETE&lt;/strong&gt; to confirm&lt;/x-slot:label&gt;
+        &lt;x-fruit::input name=&quot;confirmation&quot; pattern=&quot;DELETE&quot; autocomplete=&quot;off&quot; /&gt;
     &lt;/x-fruit::field&gt;
 &lt;/div&gt;</pre></details></section>
         <section class="f-card component-card"><h2>Selection controls</h2><p>Independent native values. Keyboard accessible, without JavaScript.</p><form class="f-stack" id="selection-example" aria-label="Selection controls" x-data="{ previews: true, sounds: true, density: 'comfortable' }"><div id="component-switch" data-component="switch" class="f-stack"><h3>Switch</h3><!-- blade:switch --><label class="f-switch">

@@ -451,3 +451,11 @@ test('a copy button copies its value, confirms in place and reports failures', a
   await expect(status('#1042')).toHaveText('Could not copy');
   await expect(card.getByRole('button', { name: 'Copy number' })).toBeVisible();
 });
+
+test('a Field label slot with markup still names its control', async ({ page }) => {
+  await page.goto('/components.html');
+  const field = page.locator('#component-field').getByRole('textbox', { name: 'Type DELETE to confirm' });
+  await expect(field).toHaveAccessibleDescription('This removes the workspace for everyone.');
+  await page.locator('#component-field').getByText('DELETE', { exact: true }).click();
+  await expect(field).toBeFocused();
+});

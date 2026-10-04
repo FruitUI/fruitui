@@ -10,4 +10,9 @@
     <x-fruit::field control-id="invitation-code" label="Invitation code">
         <x-fruit::input name="invitation" value="Not available" disabled />
     </x-fruit::field>
+    {{-- A label slot holds markup; it still names the control. --}}
+    <x-fruit::field description="This removes the workspace for everyone.">
+        <x-slot:label>Type <strong>DELETE</strong> to confirm</x-slot:label>
+        <x-fruit::input name="confirmation" pattern="DELETE" autocomplete="off" />
+    </x-fruit::field>
 </div>

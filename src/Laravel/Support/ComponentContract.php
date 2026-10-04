@@ -6,6 +6,7 @@ use FruitUI\Fruit;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 use InvalidArgumentException;
 
 /** Small, explicit contracts for the native controls exposed by Blade. */
@@ -328,6 +329,17 @@ final class ComponentContract
         }
 
         return [$message === '' ? null : $message, $tone];
+    }
+
+    /** A Field's label prop or label slot, which must have visible text. */
+    public static function fieldLabel(mixed $label): mixed
+    {
+        $text = $label instanceof ComponentSlot ? trim(strip_tags($label->toHtml())) : (is_string($label) ? trim($label) : '');
+        if ($text === '') {
+            throw new InvalidArgumentException('FruitUI Field requires a nonempty label: a label prop or a label slot.');
+        }
+
+        return $label;
     }
 
     public static function splitter(mixed $pane, mixed $flexible, mixed $variable, mixed $min, mixed $max, mixed $reserve, mixed $edge, ComponentAttributeBag $attributes): void

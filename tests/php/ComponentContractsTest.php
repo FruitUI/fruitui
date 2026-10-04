@@ -250,6 +250,20 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::message direction="sent">Yes</x-fruit::message>', 'message direction must be one of');
     }
 
+    public function test_a_field_label_can_be_a_slot_with_markup(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::field layout="row"><x-slot:label>Type <strong>DELETE</strong> to confirm</x-slot:label><x-fruit::input name="confirmation" /></x-fruit::field>'));
+        $label = $xpath->query('//label')->item(0);
+        $this->assertSame('field-confirmation', $label->getAttribute('for'));
+        $this->assertSame('Type DELETE to confirm', $label->textContent);
+        $this->assertSame('DELETE', $xpath->query('//label/strong')->item(0)->textContent);
+        $this->assertSame('field-confirmation', $xpath->query('//input')->item(0)->getAttribute('id'));
+
+        $this->assertRejected('<x-fruit::field><x-fruit::input name="a" /></x-fruit::field>', 'requires a nonempty label');
+        $this->assertRejected('<x-fruit::field><x-slot:label> <span></span> </x-slot:label><x-fruit::input name="a" /></x-fruit::field>', 'requires a nonempty label');
+        $this->assertRejected('<x-fruit::field label=" "><x-fruit::input name="a" /></x-fruit::field>', 'requires a nonempty label');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');
