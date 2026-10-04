@@ -198,14 +198,15 @@ test('item links are real links with current state, and list items carry a check
 
 test('the selection bar follows a script-set count and hides at zero', async ({ page }) => {
   await page.goto('/components.html');
-  const bar = page.getByRole('region', { name: 'Selected conversations' });
+  const card = page.locator('#component-selection-bar');
+  const bar = card.getByRole('region', { name: 'Selected conversations' });
   await expect(bar.getByRole('status')).toHaveText('1 selected');
-  await page.getByRole('checkbox', { name: 'Select Sophie Chen' }).check();
+  await card.getByRole('checkbox', { name: 'Select Sophie Chen' }).check();
   await expect(bar.getByRole('status')).toHaveText('2 selected');
   await bar.getByRole('button', { name: 'Clear selection' }).click();
   await expect(bar).toBeHidden();
   // Plain DOM scripts (jQuery included) set the attribute directly.
-  await page.locator('.f-selection-bar').evaluate(element => (element.dataset.count = '3'));
+  await card.locator('.f-selection-bar').evaluate(element => (element.dataset.count = '3'));
   await expect(bar.getByRole('status')).toHaveText('3 selected');
 });
 
@@ -458,4 +459,66 @@ test('a Field label slot with markup still names its control', async ({ page }) 
   await expect(field).toHaveAccessibleDescription('This removes the workspace for everyone.');
   await page.locator('#component-field').getByText('DELETE', { exact: true }).click();
   await expect(field).toBeFocused();
+});
+
+test('a selectable list selects with modifier clicks and keys and the header swaps to the selection bar', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-list-header');
+  const row = name => card.getByRole('button', { name: new RegExp(name) });
+  const bar = card.getByRole('region', { name: 'Selected conversations' });
+  const values = () =>
+    card.locator('input[type=checkbox]').evaluateAll(boxes => boxes.filter(box => box.checked).map(box => box.value));
+  const select = card.getByRole('button', { name: 'Select', exact: true });
+
+  await row('Emma Thompson').click({ modifiers: ['ControlOrMeta'] });
+  expect(await values()).toEqual(['1042', '1040']);
+  await expect(bar.getByRole('status')).toHaveText('2 selected');
+  await expect(select).toBeHidden();
+  await row('Jordan Lee').click({ modifiers: ['ControlOrMeta'] });
+  await row('Emma Thompson').click({ modifiers: ['ControlOrMeta'] });
+  expect(await values()).toEqual(['1042', '1041']);
+  await row('Daniel Brooks').click({ modifiers: ['Shift'] });
+  expect(await values()).toEqual(['1042', '1041', '1040', '1039']);
+  await expect(row('Daniel Brooks')).toBeFocused();
+  // Checked items take the current highlight.
+  const background = name => row(name).evaluate(button => getComputedStyle(button.closest('li')).backgroundColor);
+  expect(await background('Daniel Brooks')).not.toBe('rgba(0, 0, 0, 0)');
+  await page.keyboard.press('Escape');
+  expect(await values()).toEqual([]);
+  await expect(select).toBeVisible();
+
+  await row('Jordan Lee').focus();
+  await page.keyboard.press('Shift+ArrowDown');
+  await page.keyboard.press('Shift+ArrowDown');
+  expect(await values()).toEqual(['1041', '1040', '1039']);
+  await page.keyboard.press('Shift+ArrowUp');
+  expect(await values()).toEqual(['1041', '1040']);
+  await page.keyboard.press('ControlOrMeta+a');
+  expect(await values()).toEqual(['1042', '1041', '1040', '1039']);
+  // A plain click clears the selection; the row then acts as usual.
+  await row('Sophie Chen').click();
+  expect(await values()).toEqual([]);
+
+  // Select shows the checkboxes, and a plain click toggles.
+  const shown = () =>
+    card
+      .locator('.f-check')
+      .first()
+      .evaluate(label => label.getBoundingClientRect().width > 1);
+  expect(await shown()).toBe(false);
+  await select.click();
+  await expect(select).toHaveAttribute('aria-pressed', 'true');
+  expect(await shown()).toBe(true);
+  await row('Jordan Lee').click();
+  expect(await values()).toEqual(['1041']);
+  await card.getByRole('button', { name: 'Clear selection' }).click();
+  await select.click();
+  expect(await shown()).toBe(false);
+  // A checkbox reached with Tab shows while it has focus.
+  await row('Sophie Chen').focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(card.getByRole('checkbox', { name: 'Select Sophie Chen' })).toBeFocused();
+  expect(await shown()).toBe(true);
 });

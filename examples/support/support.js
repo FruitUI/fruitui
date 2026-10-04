@@ -11,6 +11,8 @@ export function supportDemo() {
     query: '',
     priorityOnly: false,
     selectedId: 1042,
+    // Conversations checked for a bulk action (Cmd/Ctrl+click, Shift+click, or Select).
+    checked: [],
     page: 1,
     pageSize: 10,
     view: 'list',
@@ -137,6 +139,7 @@ export function supportDemo() {
       if (!this.queues.some(item => item.id === queue) || (mailboxId !== 'all' && !this.mailbox(mailboxId))) return;
       this.mailboxId = mailboxId;
       this.queue = queue;
+      this.checked = [];
       this.query = '';
       this.priorityOnly = false;
       this.syncSelection();
@@ -166,7 +169,9 @@ export function supportDemo() {
       const next = this.filtered[index + direction];
       if (next) {
         this.select(next.id, false);
-        this.$nextTick(() => this.$refs.ticketList.querySelector(`[data-ticket-id="${next.id}"]`)?.focus());
+        this.$nextTick(() =>
+          document.getElementById('support-tickets')?.querySelector(`[data-ticket-id="${next.id}"]`)?.focus(),
+        );
       }
     },
     showQueues() {
@@ -177,7 +182,7 @@ export function supportDemo() {
       });
     },
     backToList() {
-      const list = this.$refs.ticketList;
+      const list = document.getElementById('support-tickets');
       this.view = 'list';
       this.$nextTick(() => {
         if (list.getClientRects().length) list.querySelector(`[data-ticket-id="${this.selectedId}"]`)?.focus();
@@ -228,6 +233,41 @@ export function supportDemo() {
       this.$toast(id ? `Assigned to ${this.agents.find(agent => agent.id === id).name}` : 'Conversation unassigned');
       this.syncSelection();
       if (!this.ticket) this.backToList();
+    },
+    /** Apply a change to every checked conversation, then clear the selection and report it. */
+    bulk(change, message) {
+      const chosen = this.tickets.filter(ticket => this.checked.includes(ticket.id));
+      if (!chosen.length) return;
+      chosen.forEach(change);
+      this.checked = [];
+      this.syncSelection();
+      this.$toast(message(chosen.length === 1 ? '1 conversation' : `${chosen.length} conversations`));
+    },
+    assignChecked(id) {
+      if (id && !this.agents.some(agent => agent.id === id)) return;
+      const name = this.agents.find(agent => agent.id === id)?.name;
+      this.bulk(
+        ticket => (ticket.assignee = id),
+        count => (id ? `${count} assigned to ${name}` : `${count} unassigned`),
+      );
+    },
+    closeChecked() {
+      this.bulk(
+        ticket => (ticket.status = 'closed'),
+        count => `${count} closed`,
+      );
+    },
+    waitChecked() {
+      this.bulk(
+        ticket => (ticket.status = 'waiting'),
+        count => `${count} moved to Waiting`,
+      );
+    },
+    markCheckedUnread() {
+      this.bulk(
+        ticket => (ticket.unread = true),
+        count => `${count} marked as unread`,
+      );
     },
     togglePriority() {
       this.priorityOnly = !this.priorityOnly;

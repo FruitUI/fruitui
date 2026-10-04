@@ -177,6 +177,25 @@ new class extends Component
         $this->redirect(url('/support/closed'), navigate: true);
     }
 
+    public function assignSelected(string $agent): void
+    {
+        abort_unless($agent === '' || array_key_exists($agent, self::AGENTS), 422);
+        $tickets = $this->store();
+        foreach ($this->selected as $id) {
+            if (isset($tickets[(int) $id])) {
+                $tickets[(int) $id]['assignee'] = $agent;
+            }
+        }
+        session(['fruit-support.tickets' => $tickets]);
+        unset($this->ticket, $this->tickets, $this->counts);
+        if (isset($tickets[$this->openId])) {
+            $this->assignee = $tickets[$this->openId]['assignee'];
+        }
+        $count = count($this->selected);
+        $this->selected = [];
+        Fruit::toast(trans_choice('{1} :count conversation|[2,*] :count conversations', $count, ['count' => $count]).' '.($agent === '' ? 'unassigned.' : 'assigned to '.self::AGENTS[$agent].'.'));
+    }
+
     public function closeSelected(): void
     {
         $this->closeMany($this->selected);
@@ -301,6 +320,26 @@ new class extends Component
                     <x-fruit::input type="search" wire:model.live.debounce.200ms="search" />
                 </x-fruit::field>
             </div>
+            {{-- The list header: view tools, or while conversations are selected, the selection bar in their place.
+                 Cmd/Ctrl+click and Shift+click select rows; Select shows the checkboxes for touch. --}}
+            <x-fruit::list-header>
+                <span>{{ $this->tickets->total() }} conversations · Newest first</span>
+                <span class="f-toolbar__spacer"></span>
+                <x-fruit::button variant="ghost" size="small" data-fruit-select-toggle aria-controls="support-tickets" aria-pressed="false">Select</x-fruit::button>
+                <x-slot:selection>
+                    <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
+                        <x-fruit::menu title="Assign selected conversations">
+                            <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="Assign" title="Assign"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg></x-slot:trigger>
+                            <x-fruit::menu-item wire:click="assignSelected('')">Unassigned</x-fruit::menu-item>
+                            @foreach ($this::AGENTS as $agent => $name)
+                                <x-fruit::menu-item wire:click="assignSelected('{{ $agent }}')">{{ $name }}</x-fruit::menu-item>
+                            @endforeach
+                        </x-fruit::menu>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="closeSelected" aria-label="Close selected" title="Close selected"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg></x-fruit::button>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="$set('selected', [])" aria-label="Clear selection" title="Clear selection"><svg class="f-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg></x-fruit::button>
+                    </x-fruit::selection-bar>
+                </x-slot:selection>
+            </x-fruit::list-header>
             <div class="f-pane__scroll">
                 @if ($this->tickets->isEmpty())
                     <x-fruit::empty-state>
@@ -308,7 +347,7 @@ new class extends Component
                         {{ $search === '' ? 'This mailbox is empty.' : 'Try another search.' }}
                     </x-fruit::empty-state>
                 @else
-                    <x-fruit::item-list aria-label="{{ $this::MAILBOXES[$mailbox] }}">
+                    <x-fruit::item-list id="support-tickets" selection="multiple" aria-label="{{ $this::MAILBOXES[$mailbox] }}">
                         @foreach ($this->tickets as $item)
                             <li wire:key="ticket-{{ $item['id'] }}">
                                 <x-fruit::checkbox wire:model.live="selected" value="{{ $item['id'] }}"><span class="f-sr-only">Select {{ $item['name'] }}</span></x-fruit::checkbox>
@@ -329,10 +368,6 @@ new class extends Component
                             </li>
                         @endforeach
                     </x-fruit::item-list>
-                    <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
-                        <x-fruit::button variant="ghost" size="small" wire:click="$set('selected', [])">Clear selection</x-fruit::button>
-                        <x-fruit::button size="small" wire:click="closeSelected">Close selected</x-fruit::button>
-                    </x-fruit::selection-bar>
                     <div style="padding: 0 var(--f-space-3)">{{ $this->tickets->links() }}</div>
                 @endif
             </div>

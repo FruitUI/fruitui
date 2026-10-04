@@ -264,6 +264,24 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::field label=" "><x-fruit::input name="a" /></x-fruit::field>', 'requires a nonempty label');
     }
 
+    public function test_a_list_header_holds_tools_and_the_selection_bar_for_a_selectable_list(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::list-header><x-slot:leading><input type="checkbox" aria-label="Select all"></x-slot:leading><span>Newest first</span><x-slot:selection><x-fruit::selection-bar :count="2"><x-fruit::button>Close</x-fruit::button></x-fruit::selection-bar></x-slot:selection></x-fruit::list-header>'));
+        $header = $xpath->query('//div[@class="f-list-header"]')->item(0);
+        $this->assertSame(['f-list-header__leading', 'f-list-header__tools', 'f-selection-bar'], array_map(fn ($node) => $node->getAttribute('class'), iterator_to_array($xpath->query('./div', $header))));
+        $this->assertSame('2 selected', $xpath->query('.//span[@role="status"]', $header)->item(0)->textContent);
+
+        $list = $this->xpath(Blade::render('<x-fruit::item-list id="tickets" selection="multiple"><li>A</li></x-fruit::item-list>'))->query('//ul')->item(0);
+        $this->assertSame('multiple', $list->getAttribute('data-fruit-selection'));
+        $this->assertSame('fruitListSelection', $list->getAttribute('x-data'));
+        $plain = $this->xpath(Blade::render('<x-fruit::item-list x-data="{ starred: false }"><li>A</li></x-fruit::item-list>'))->query('//ul')->item(0);
+        $this->assertFalse($plain->hasAttribute('data-fruit-selection'));
+        $this->assertSame('{ starred: false }', $plain->getAttribute('x-data'));
+        $this->assertRejected('<x-fruit::item-list selection="single"><li>A</li></x-fruit::item-list>', 'item-list selection must be one of');
+        $this->assertRejected('<x-fruit::item-list selection="multiple" x-data="{}"><li>A</li></x-fruit::item-list>', 'owns its fruitListSelection helper');
+        $this->assertRejected('<x-fruit::list-header role="toolbar">Tools</x-fruit::list-header>', 'overriding role');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');

@@ -244,18 +244,67 @@ test('the desk works with Livewire’s injected scripts and the self-registering
   expect(errors).toEqual([]);
 });
 
-test('bulk selection shows the selection bar and closes the chosen conversations', async ({ page }) => {
+test('Cmd/Ctrl+click and Shift+click select conversations and the list header becomes the selection bar', async ({
+  page,
+}) => {
   const errors = await openDesk(page);
-  await expect(page.getByRole('region', { name: 'Selected conversations' })).toHaveCount(0);
-  await page.getByRole('checkbox', { name: 'Select Jordan Lee' }).check();
-  await page.getByRole('checkbox', { name: 'Select Daniel Brooks' }).check();
+  const bar = page.getByRole('region', { name: 'Selected conversations' });
+  const row = name => list(page).getByRole('button', { name: new RegExp(name) });
+  await expect(bar).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Select', exact: true })).toBeVisible();
+  // The checkboxes stay out of sight until Select is pressed.
+  const shown = name =>
+    page.getByRole('checkbox', { name }).evaluate(input => input.closest('.f-check').getBoundingClientRect().width > 1);
+  expect(await shown('Select Jordan Lee')).toBe(false);
+
+  // Script-made ids (here the Assign menu's) survive server updates, so the menu is not replaced.
+  await page.evaluate(() => (window.assignMenu = document.querySelector('.f-selection-bar [role="menu"]')));
+  // The open conversation joins the first Cmd/Ctrl+click; Shift+click adds the range from there.
+  await row('Jordan Lee').click({ modifiers: ['ControlOrMeta'] });
+  await expect(bar.getByRole('status')).toHaveText('2 selected');
+  expect(await page.evaluate(() => window.assignMenu.isConnected)).toBe(true);
+  await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A little help with our team plan');
+  await row('Daniel Brooks').click({ modifiers: ['Shift'] });
+  await expect(bar.getByRole('status')).toHaveText('4 selected');
+  await expect(page.getByRole('button', { name: 'Select', exact: true })).toBeHidden();
+  await bar.getByRole('button', { name: 'Assign' }).click();
+  await page.getByRole('menuitem', { name: 'Mia Patel' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '4 conversations assigned to Mia Patel.' })).toBeVisible();
+  await expect(bar).toHaveCount(0);
+  await expect(row('Daniel Brooks')).toContainText('Mia Patel');
+
+  // Shift+arrows extend from the focused row; Escape clears; a plain click opens as usual.
+  await row('Jordan Lee').focus();
+  await page.keyboard.press('Shift+ArrowDown');
+  await page.keyboard.press('Shift+ArrowDown');
+  await expect(bar.getByRole('status')).toHaveText('3 selected');
+  await page.keyboard.press('Escape');
+  await expect(bar).toHaveCount(0);
+  await row('Emma Thompson').click();
+  await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A new home for our workspace');
+  expect(errors).toEqual([]);
+});
+
+test('Select shows the checkboxes, a plain click toggles, and the chosen conversations close', async ({ page }) => {
+  const errors = await openDesk(page);
+  const select = page.getByRole('button', { name: 'Select', exact: true });
+  await select.click();
+  await expect(select).toHaveAttribute('aria-pressed', 'true');
+  const jordan = page.getByRole('checkbox', { name: 'Select Jordan Lee' });
+  expect(await jordan.evaluate(input => input.closest('.f-check').getBoundingClientRect().width)).toBeGreaterThan(1);
+  await list(page)
+    .getByRole('button', { name: /Daniel Brooks/ })
+    .click();
+  await jordan.check();
   const bar = page.getByRole('region', { name: 'Selected conversations' });
   await expect(bar.getByRole('status')).toHaveText('2 selected');
+  await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A little help with our team plan');
   await bar.getByRole('button', { name: 'Close selected' }).click();
   await expect(page.getByRole('status').filter({ hasText: '2 conversations closed.' })).toBeVisible();
-  await expect(bar).toHaveCount(0);
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Closed/ }).locator('.f-badge')).toHaveText('2');
+  // Select mode survives the server re-render.
+  await expect(select).toHaveAttribute('aria-pressed', 'true');
   expect(errors).toEqual([]);
 });
 
