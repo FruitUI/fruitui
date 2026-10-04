@@ -378,22 +378,45 @@
   &lt;label class=&quot;f-sr-only&quot; for=&quot;search&quot;&gt;Search&lt;/label&gt;
   &lt;input class=&quot;f-input&quot; id=&quot;search&quot; type=&quot;search&quot;&gt;
 &lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="search">&lt;x-fruit::search label=&quot;Search the workspace&quot; id=&quot;gallery-search&quot; name=&quot;query&quot; placeholder=&quot;Search the workspace&quot; wire:model.live.debounce.300ms=&quot;query&quot; /&gt;</pre></details></section>
-        <section id="component-segmented" data-component="segmented" class="f-card component-card"><h2>Segmented choices</h2><p>Native radios select one value. This control retains radio semantics.</p><!-- blade:segmented --><fieldset class="f-fieldset">
-    <legend>Preview position</legend>
+        <section id="component-segmented" data-component="segmented" class="f-card component-card"><h2>Segmented choices</h2><p>Native radios select one value. This control retains radio semantics.</p><!-- blade:segmented --><div class="f-stack">
+    <fieldset class="f-fieldset">
+    <legend >Preview position</legend>
     <div class="f-segmented"><label><input type="radio" name="preview" value="right" checked="checked"><span>Right</span></label>
-    <label><input type="radio" name="preview" value="below"><span>Below</span></label>
-    <label><input type="radio" name="preview" value="off"><span>Off</span></label></div>
-</fieldset><!-- /blade:segmented --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;
+        <label><input type="radio" name="preview" value="below"><span>Below</span></label>
+        <label><input type="radio" name="preview" value="off"><span>Off</span></label></div>
+</fieldset>
+    
+    <header class="f-toolbar" style="flex-wrap: wrap">
+        <h3 class="f-headline">New conversation</h3>
+        <span class="f-toolbar__spacer"></span>
+        <fieldset class="f-fieldset">
+    <legend  class="f-sr-only" >Conversation type</legend>
+    <div class="f-segmented"><label><input type="radio" name="conversation_type" value="email" checked="checked"><span>Email</span></label>
+            <label><input type="radio" name="conversation_type" value="phone"><span>Phone</span></label></div>
+</fieldset>
+    </header>
+</div><!-- /blade:segmented --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;fieldset class=&quot;f-fieldset&quot;&gt;
   &lt;legend&gt;Preview position&lt;/legend&gt;
   &lt;div class=&quot;f-segmented&quot;&gt;
     &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;right&quot; checked&gt;&lt;span&gt;Right&lt;/span&gt;&lt;/label&gt;
     &lt;label&gt;&lt;input type=&quot;radio&quot; name=&quot;preview&quot; value=&quot;below&quot;&gt;&lt;span&gt;Below&lt;/span&gt;&lt;/label&gt;
   &lt;/div&gt;
-&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="segmented">&lt;x-fruit::segmented legend=&quot;Preview position&quot;&gt;
-    &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;right&quot; checked&gt;Right&lt;/x-fruit::segment&gt;
-    &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;below&quot;&gt;Below&lt;/x-fruit::segment&gt;
-    &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;off&quot;&gt;Off&lt;/x-fruit::segment&gt;
-&lt;/x-fruit::segmented&gt;</pre></details></section>
+&lt;/fieldset&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="segmented">&lt;div class=&quot;f-stack&quot;&gt;
+    &lt;x-fruit::segmented legend=&quot;Preview position&quot;&gt;
+        &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;right&quot; checked&gt;Right&lt;/x-fruit::segment&gt;
+        &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;below&quot;&gt;Below&lt;/x-fruit::segment&gt;
+        &lt;x-fruit::segment name=&quot;preview&quot; value=&quot;off&quot;&gt;Off&lt;/x-fruit::segment&gt;
+    &lt;/x-fruit::segmented&gt;
+    {{-- In a toolbar the group is named for assistive technology only. --}}
+    &lt;header class=&quot;f-toolbar&quot; style=&quot;flex-wrap: wrap&quot;&gt;
+        &lt;h3 class=&quot;f-headline&quot;&gt;New conversation&lt;/h3&gt;
+        &lt;span class=&quot;f-toolbar__spacer&quot;&gt;&lt;/span&gt;
+        &lt;x-fruit::segmented legend=&quot;Conversation type&quot; legend-hidden&gt;
+            &lt;x-fruit::segment name=&quot;conversation_type&quot; value=&quot;email&quot; checked&gt;Email&lt;/x-fruit::segment&gt;
+            &lt;x-fruit::segment name=&quot;conversation_type&quot; value=&quot;phone&quot;&gt;Phone&lt;/x-fruit::segment&gt;
+        &lt;/x-fruit::segmented&gt;
+    &lt;/header&gt;
+&lt;/div&gt;</pre></details></section>
         <section id="component-disclosure" data-component="disclosure" class="f-card component-card"><h2>Disclosure</h2><p>Reveal supporting content with native Enter/Space and open state.</p><!-- blade:disclosure --><details class="f-disclosure">
     <summary>What makes FruitUI CSS first?</summary>
     <div><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.</p></div>

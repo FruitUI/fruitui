@@ -306,7 +306,7 @@
         "element": "`fieldset` with a legend containing native radios.",
         "state": "Native checked value of the radio group.",
         "keyboard": "Tab enters the group; arrows select; Space checks.",
-        "options": "`legend`: required group name. Slot: Segments."
+        "options": "`legend`: required group name. `legend-hidden`: keep the name for assistive technology only, for a segmented control in a toolbar. Slot: Segments."
       },
       "segment": {
         "purpose": "One option of a segmented control.",

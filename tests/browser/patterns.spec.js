@@ -672,3 +672,11 @@ test('a translation stays inside the message it translates, outlined and announc
     thread.getByRole('region', { name: 'Customer message' }).locator('.f-message__translation'),
   ).toContainText('move our projects');
 });
+
+test('a segmented control in a toolbar is named for assistive technology only', async ({ page }) => {
+  await page.goto('/components.html');
+  const group = page.locator('#component-segmented').getByRole('group', { name: 'Conversation type' });
+  await expect(group).toBeVisible();
+  await expect(group.locator('legend')).toHaveCSS('position', 'absolute');
+  await expect(group.getByRole('radio', { name: 'Email' })).toBeChecked();
+});

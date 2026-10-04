@@ -305,6 +305,16 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::list-header role="toolbar">Tools</x-fruit::list-header>', 'overriding role');
     }
 
+    public function test_a_segmented_control_can_name_its_group_for_assistive_technology_only(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::segmented legend="Conversation type" legend-hidden><x-fruit::segment name="type" value="email" checked>Email</x-fruit::segment></x-fruit::segmented>'));
+        $legend = $xpath->query('//legend')->item(0);
+        $this->assertSame('Conversation type', $legend->textContent);
+        $this->assertSame('f-sr-only', $legend->getAttribute('class'));
+        $this->assertFalse($this->xpath(Blade::render('<x-fruit::segmented legend="Type"><x-fruit::segment name="t" value="a">A</x-fruit::segment></x-fruit::segmented>'))->query('//legend')->item(0)->hasAttribute('class'));
+        $this->assertRejected('<x-fruit::segmented legend="Type" legend-hidden="yes">A</x-fruit::segmented>', 'legend-hidden must be a boolean');
+    }
+
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void
     {
         $html = Blade::render('<x-fruit::card role="group" aria-label="Notification settings"><x-fruit::checkbox name="sounds" value="1" checked>Play a sound</x-fruit::checkbox></x-fruit::card>');
