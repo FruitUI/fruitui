@@ -4249,6 +4249,12 @@ img.f-avatar {
     overflow-wrap: anywhere;
   }
 
+/* Links keep 4.5:1 on the tint: the darker selection blue rather than the accent. */
+
+.f-suggestion a:not(.f-button) {
+    color: var(--f-selection-text);
+  }
+
 .f-suggestion__translation {
     display: flex;
     gap: 10px;
@@ -4333,7 +4339,7 @@ img.f-avatar {
     flex: none;
     max-width: 40%;
     overflow: hidden;
-    color: var(--f-tertiary);
+    color: var(--f-secondary);
     font-size: var(--f-text-xs);
     text-overflow: ellipsis;
     white-space: nowrap;
