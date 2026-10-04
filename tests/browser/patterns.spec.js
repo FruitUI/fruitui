@@ -212,7 +212,7 @@ test('the selection bar follows a script-set count and hides at zero', async ({ 
 
 test('a message overflow menu opens from its actions and keeps them visible while open', async ({ page }) => {
   await page.goto('/components.html');
-  const message = page.locator('#component-message').getByRole('article', { name: 'Customer message' });
+  const message = page.locator('#component-message').getByRole('article', { name: 'Customer message', exact: true });
   const actions = message.locator('.f-message__actions');
   const opacity = () => actions.evaluate(element => getComputedStyle(element).opacity);
   await message.hover();
@@ -619,4 +619,30 @@ test('a loaded dialog that fails offers to try again', async ({ page }) => {
   fail = false;
   await dialog.getByRole('button', { name: 'Try again' }).click();
   await expect(dialog.getByRole('combobox', { name: 'Merge into' })).toBeVisible();
+});
+
+test('a translation stays inside the message it translates, outlined and announced as a translation', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const message = page
+    .locator('#component-message')
+    .getByRole('article', { name: 'Customer message from Emma Thompson' });
+  const translation = message.locator('.f-message__translation');
+  await expect(translation).toHaveAttribute('lang', 'en');
+  await expect(translation).toHaveText(
+    'TranslationWhat’s the easiest way to move our projects so the comments come along?',
+  );
+  const look = await translation.evaluate(element => {
+    const style = getComputedStyle(element);
+    return { border: style.borderTopWidth, background: style.backgroundColor };
+  });
+  expect(look).toEqual({ border: '1px', background: 'rgba(0, 0, 0, 0)' });
+
+  await page.goto('/support.html');
+  await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
+  const thread = page.getByRole('region', { name: 'Conversation history' });
+  await expect(
+    thread.getByRole('region', { name: 'Customer message' }).locator('.f-message__translation'),
+  ).toContainText('move our projects');
 });

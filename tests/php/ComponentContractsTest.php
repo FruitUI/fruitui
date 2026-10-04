@@ -252,6 +252,14 @@ class ComponentContractsTest extends TestCase
         $this->assertStringContainsString('class="f-message f-message--stacked f-message--generated"', Blade::render('<x-fruit::message layout="stacked" variant="generated" aria-label="Summary">Short</x-fruit::message>'));
         $this->assertRejected('<x-fruit::message mine aria-label="Question">Hi</x-fruit::message>', 'use it with direction="outgoing"');
         $this->assertRejected('<x-fruit::message variant="ai">Hi</x-fruit::message>', 'message variant must be one of');
+
+        app()->setLocale('nl');
+        $xpath = $this->xpath(Blade::render('<x-fruit::message layout="stacked" lang="da" aria-label="Emma">Hej<x-slot:translation lang="en">Hi</x-slot:translation></x-fruit::message>'));
+        $translation = $xpath->query('//div[@class="f-message__translation"]')->item(0);
+        $this->assertSame('en', $translation->getAttribute('lang'));
+        $this->assertSame('Vertaling', $xpath->query('.//span[@class="f-sr-only"]', $translation)->item(0)->textContent);
+        $this->assertSame('Hi', $xpath->query('.//div[@class="f-message__translation-text"]', $translation)->item(0)->textContent);
+        $this->assertSame('true', $xpath->query('.//svg', $translation)->item(0)->getAttribute('aria-hidden'));
     }
 
     public function test_a_field_label_can_be_a_slot_with_markup(): void

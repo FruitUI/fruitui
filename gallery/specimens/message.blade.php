@@ -30,6 +30,15 @@
             </x-fruit::menu>
         </x-slot:actions>
     </x-fruit::message>
+    <x-fruit::message layout="stacked" aria-label="Customer message from Emma Thompson" lang="da">
+        <x-slot:avatar><x-fruit::avatar>ET</x-fruit::avatar></x-slot:avatar>
+        <x-slot:author>Emma Thompson</x-slot:author>
+        <x-slot:meta>Customer</x-slot:meta>
+        <x-slot:time>10:08 AM</x-slot:time>
+        Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?
+        {{-- A machine translation stays with the message it translates. --}}
+        <x-slot:translation lang="en">What’s the easiest way to move our projects so the comments come along?</x-slot:translation>
+    </x-fruit::message>
     <x-fruit::message-event datetime="2026-10-02T10:45">
         Mia Patel assigned this to Alex Morgan
         <x-slot:icon><svg class="f-icon"><use href="#i-person"/></svg></x-slot:icon>

@@ -164,12 +164,18 @@ export const tickets = [
     unread: true,
     time: '46m',
     tags: ['Workspace'],
-    preview: 'We’d like to transfer our projects to a new workspace. Where do we start?',
+    preview: 'Vi er ved at oprette et separat workspace til vores nye studie.',
     threads: [
-      customer(
-        'Hi team,\n\nWe’re setting up a separate workspace for our new studio. What’s the easiest way to transfer our projects and keep the comments attached?\n\nThanks,\nEmma',
-        'Today, 10:08 AM',
-      ),
+      {
+        ...customer(
+          'Hej,\n\nVi er ved at oprette et separat workspace til vores nye studie. Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?\n\nTak,\nEmma',
+          'Today, 10:08 AM',
+        ),
+        // A machine translation shown with the message it translates.
+        lang: 'da',
+        translation:
+          'Hi,\n\nWe’re setting up a separate workspace for our new studio. What’s the easiest way to move our projects so the comments come along?\n\nThanks,\nEmma',
+      },
     ],
   },
   {

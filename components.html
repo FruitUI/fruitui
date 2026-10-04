@@ -1421,7 +1421,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T09:08" >9:08 AM</time>    </header>
     <div class="f-message__body">A little space for the things we’re making. Early ideas, tiny details, and anything that makes an interface feel more human.</div>
-        <footer class="f-message__footer"><button type="button" class="f-button f-button--ghost f-button--small">Reply in thread</button></footer>    <div class="f-message__actions" aria-label="Message actions" role="group"><button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Add reaction"><svg class="f-icon" aria-hidden="true"><use href="#i-smile"/></svg></button>
+            <footer class="f-message__footer"><button type="button" class="f-button f-button--ghost f-button--small">Reply in thread</button></footer>    <div class="f-message__actions" aria-label="Message actions" role="group"><button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Add reaction"><svg class="f-icon" aria-hidden="true"><use href="#i-smile"/></svg></button>
             <button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Reply in thread"><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg></button></div></article>
     <article class="f-message f-message--stacked" aria-label="Customer message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
@@ -1429,20 +1429,26 @@
             <span>Cc: mia@studio-north.example</span></span></span>
         <time class="f-message__time" >Today, 10:42 AM</time>    </header>
     <div class="f-message__body">We’re growing the studio. Can we move to the Team plan without losing our projects?</div>
-            <div class="f-message__actions" aria-label="Message actions" role="group"><details x-data="fruitMenu" class="f-menu">
+                <div class="f-message__actions" aria-label="Message actions" role="group"><details x-data="fruitMenu" class="f-menu">
     <summary role="button" class="f-button f-button--ghost f-button--icon" aria-label="More actions" aria-haspopup="menu"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></summary>
     <div class="f-menu__items" role="menu" aria-label="More actions for Sophie Chen’s message"><button type="button" role="menuitem" class="f-menu-item">Show original</button>
                 <button type="button" role="menuitem" class="f-menu-item">New conversation from here</button>
                 <div role="separator" class="f-menu__separator"></div>
                 <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger">Delete</button></div>
 </details></div></article>
+    <article class="f-message f-message--stacked" aria-label="Customer message from Emma Thompson" lang="da">
+    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >ET</span></span>    <header class="f-message__header">
+        <span class="f-message__identity"><strong class="f-message__author">Emma Thompson</strong> <small class="f-message__meta">Customer</small> </span>
+        <time class="f-message__time" >10:08 AM</time>    </header>
+    <div class="f-message__body">Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?</div>
+    <div class="f-message__translation" lang="en"><svg class="f-icon f-message__translation-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h9M8.5 3v2M11 5c-.7 3.6-3 6.5-6.5 8M6.5 8.5c1.2 2 3 3.6 5 4.5M13 21l4-9 4 9M14.4 18h5.2" /></svg><span class="f-sr-only">Translation</span><div class="f-message__translation-text">What’s the easiest way to move our projects so the comments come along?</div></div>            </article>
     <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> </div>
     <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Internal note · Only your team <span class="f-badge f-badge--warning">Draft</span></small> </span>
             </header>
     <div class="f-message__body">Existing projects stay in place when upgrading.</div>
-            </article>
+                </article>
 </div><!-- /blade:message --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;article class=&quot;f-message&quot; aria-label=&quot;Message from Mia Patel&quot;&gt;
   &lt;span class=&quot;f-avatar f-message__avatar&quot; aria-hidden=&quot;true&quot;&gt;MP&lt;/span&gt;
   &lt;header class=&quot;f-message__header&quot;&gt;
@@ -1482,6 +1488,15 @@
                 &lt;x-fruit::menu-item variant=&quot;danger&quot;&gt;Delete&lt;/x-fruit::menu-item&gt;
             &lt;/x-fruit::menu&gt;
         &lt;/x-slot:actions&gt;
+    &lt;/x-fruit::message&gt;
+    &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message from Emma Thompson&quot; lang=&quot;da&quot;&gt;
+        &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;ET&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
+        &lt;x-slot:author&gt;Emma Thompson&lt;/x-slot:author&gt;
+        &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
+        &lt;x-slot:time&gt;10:08 AM&lt;/x-slot:time&gt;
+        Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?
+        {{-- A machine translation stays with the message it translates. --}}
+        &lt;x-slot:translation lang=&quot;en&quot;&gt;What’s the easiest way to move our projects so the comments come along?&lt;/x-slot:translation&gt;
     &lt;/x-fruit::message&gt;
     &lt;x-fruit::message-event datetime=&quot;2026-10-02T10:45&quot;&gt;
         Mia Patel assigned this to Alex Morgan
@@ -1939,7 +1954,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T10:42" >10:42 AM</time>    </header>
     <div class="f-message__body">Can we move to the Team plan without losing our projects?</div>
-            </article>
+                </article>
     </li>
     <li>
         <article class="f-message f-message--stacked f-message--note" aria-label="Internal note">
@@ -1947,7 +1962,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Internal note · Only your team</small> </span>
             </header>
     <div class="f-message__body">Existing projects stay in place when upgrading.</div>
-            </article>
+                </article>
     </li>
     <li>
         <article class="f-message f-message--stacked f-message--outgoing" aria-label="Reply from Mia Patel">
@@ -1955,7 +1970,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Reply to customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T10:51" >10:51 AM</time>    </header>
     <div class="f-message__body">Yes. Your projects stay in place, and annual billing is available on the Team plan.</div>
-            </article>
+                </article>
     </li>
     <li>
         <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:52" >10:52 AM</time> </div>
@@ -1966,7 +1981,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T11:20" >11:20 AM</time>    </header>
     <div class="f-message__body">Perfect. Could you make the switch for us?</div>
-            </article>
+                </article>
     </li>
     <li>
         <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your reply">
@@ -1974,7 +1989,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">Reply to customer</small> </span>
         <time class="f-message__time"  datetime="2026-10-02T11:24" >11:24 AM</time>    </header>
     <div class="f-message__body">All done. Studio North is on the Team plan with annual billing.</div>
-            </article>
+                </article>
     </li>
     <li>
         <article class="f-message f-message--stacked f-message--generated" aria-label="Generated summary">
@@ -1982,7 +1997,7 @@
         <span class="f-message__identity"><strong class="f-message__author">Assistant</strong> <small class="f-message__meta">Summary · Generated, not sent</small> </span>
             </header>
     <div class="f-message__body">Studio North moved to the Team plan with annual billing.</div>
-            </article>
+                </article>
     </li></ol><!-- /blade:thread --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ol class=&quot;f-thread&quot; role=&quot;list&quot; aria-label=&quot;Conversation history&quot;&gt;
   &lt;li&gt;&lt;article class=&quot;f-message f-message--stacked&quot; aria-label=&quot;Customer message&quot;&gt;…&lt;/article&gt;&lt;/li&gt;
   &lt;li&gt;&lt;div class=&quot;f-message-event&quot;&gt;…&lt;/div&gt;&lt;/li&gt;
