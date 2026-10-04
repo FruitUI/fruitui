@@ -36,11 +36,18 @@ new class extends Component
         'maya@example.com' => [['A missing invoice', 'Resolved by Alex Morgan', '2026-09-03']],
     ];
 
+    /** The address book the Cc field searches on the server, standing in for a customer database. */
+    private const CONTACTS = [
+        'sophie@example.com' => 'Sophie Chen', 'jordan@example.com' => 'Jordan Lee', 'emma@example.com' => 'Emma Thompson',
+        'maya@example.com' => 'Maya Rodriguez', 'oliver@example.com' => 'Oliver Park', 'ana@studio-north.example' => 'Ana Ortiz',
+    ];
+
     public string $mailbox = 'all';
     public string $search = '';
     public ?int $openId = null;
     public string $assignee = '';
     public string $cc = '';
+    public string $ccSearch = '';
     public string $reply = '';
     public string $closeReason = 'resolved';
 
@@ -56,6 +63,19 @@ new class extends Component
         if ($first) {
             $this->open($first['id']);
         }
+    }
+
+    /** Cc suggestions: contacts whose name or address contains the text being typed. */
+    #[Computed]
+    public function ccMatches(): array
+    {
+        $query = mb_strtolower(trim($this->ccSearch));
+
+        return $query === '' ? [] : array_filter(
+            self::CONTACTS,
+            fn (string $name, string $email) => str_contains(mb_strtolower("{$name} {$email}"), $query),
+            ARRAY_FILTER_USE_BOTH,
+        );
     }
 
     public function updatedSearch(): void
@@ -373,7 +393,15 @@ new class extends Component
 
                             <x-fruit::composer wire:submit="send" aria-label="Reply">
                                 <x-fruit::field control-id="support-cc" label="Cc" description="Enter or comma adds an address.">
-                                    <x-fruit::token-field name="cc" wire:model="cc">{{ $cc }}</x-fruit::token-field>
+                                    {{-- The server searches contacts as the address is typed; options follow each re-render. --}}
+                                    <x-fruit::token-field name="cc" wire:model="cc" search="server" x-on:fruit-suggest.debounce.200ms="$wire.set('ccSearch', $event.detail.query)">
+                                        {{ $cc }}
+                                        <x-slot:options>
+                                            @foreach ($this->ccMatches as $email => $name)
+                                                <option value="{{ $email }}">{{ $name }}</option>
+                                            @endforeach
+                                        </x-slot:options>
+                                    </x-fruit::token-field>
                                 </x-fruit::field>
                                 <x-fruit::field control-id="support-reply" label="Reply to {{ $ticket['name'] }}">
                                     <x-fruit::autocomplete trigger="@">

@@ -825,9 +825,9 @@
       "token-field": {
         "purpose": "Enter removable independent text values.",
         "element": "Native textarea; enhanced textbox and chip remove buttons.",
-        "state": "Newline-delimited string; native required/disabled/readonly.",
-        "keyboard": "Enter/comma/paste add; empty Backspace focuses removal; chip Left/Right and Escape.",
-        "options": "Native textarea attributes; initial string slot; cancellable fruit-token-add validation; fruit-token-reset clears pending entry."
+        "state": "Newline-delimited string in the textarea; native required/disabled/readonly.",
+        "keyboard": "Enter/comma/paste add; empty Backspace focuses removal; chip Left/Right and Escape. With suggestions: Up/Down choose, Enter or Tab adds the highlighted suggestion, Escape closes the list.",
+        "options": "Native textarea attributes; initial string slot; cancellable fruit-token-add validation; fruit-token-reset clears pending entry. `submit`: text (default, the newline-delimited value under its name) or list (one hidden `name[]` input per token once enhanced; without JavaScript the text posts; Fruit::tokens() and the Tokens rule accept both). `options` slot: `<option value label>` suggestions, excluding tokens already added. Typing sends a bubbling `fruit-suggest` event with `detail.query`; `search`: local (default, matches the options by word prefix) or server (shows the options as the application supplies them in answer, refreshing while the field has focus)."
       }
     }
   },

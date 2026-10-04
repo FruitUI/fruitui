@@ -71,7 +71,7 @@ test('token entry publishes a newline string, rejects invalid entries, and suppo
   await tokens(page).fill('bad-address');
   await tokens(page).press(',');
   await expect(tokens(page)).toHaveAttribute('aria-invalid', 'true');
-  await expect(page.locator('#component-token-field [role=status]')).toHaveText('Enter an email address.');
+  await expect(page.locator('#token-example [role=status]').first()).toHaveText('Enter an email address.');
   expect(await value(page, '#token-example', 'recipients')).not.toContain('bad-address');
   await tokens(page).press('Escape');
   await tokens(page).press('Backspace');
@@ -95,7 +95,7 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
     'sophie@example.com\nmia@example.com\nnoah@example.com',
   );
   await page.getByRole('button', { name: 'Set recipients externally' }).click();
-  await expect(page.locator('#component-token-field .f-chip')).toHaveCount(1);
+  await expect(page.locator('#token-example .f-chip')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeVisible();
   await page.locator('#gallery-recipients').evaluate(textarea => {
     textarea.readOnly = true;
@@ -104,6 +104,59 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeDisabled();
   await page.getByRole('button', { name: 'Reset recipients' }).click();
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
+});
+
+test('a token field can post one value per token and add suggested entries', async ({ page }) => {
+  const field = page.getByRole('textbox', { name: 'Invite teammates' });
+  const posted = () => page.locator('#token-list-example').evaluate(form => new FormData(form).getAll('invites[]'));
+  // The textarea's name moves to one hidden invites[] input per token.
+  expect(await posted()).toEqual(['mia@studio.example']);
+  expect(await page.locator('#gallery-invites').evaluate(textarea => textarea.name)).toBe('');
+  const queries = [];
+  await page.exposeFunction('suggested', query => queries.push(query));
+  await page
+    .locator('#gallery-invites')
+    .evaluate(textarea => textarea.addEventListener('fruit-suggest', event => window.suggested(event.detail.query)));
+
+  await field.pressSequentially('no');
+  const list = page.getByRole('listbox', { name: 'Suggestions' });
+  await expect(list.getByRole('option')).toHaveText(['Noah Williamsnoah@studio.example']);
+  await expect(field).toHaveAttribute('aria-activedescendant', /.+/);
+  // Escape closes the list and keeps the text; typing again reopens it.
+  await page.keyboard.press('Escape');
+  await expect(list).toBeHidden();
+  await expect(field).toHaveValue('no');
+  await field.press('Backspace');
+  await field.pressSequentially('o');
+  await expect(list).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(list).toBeHidden();
+  await expect(field).toHaveValue('');
+  expect(await posted()).toEqual(['mia@studio.example', 'noah@studio.example']);
+  expect(queries).toEqual(['n', 'no', 'n', 'no']);
+
+  // Tokens already added are not suggested again; typed text still adds as typed.
+  await field.pressSequentially('mia');
+  await expect(list).toBeHidden();
+  await field.fill('');
+  await field.pressSequentially('a');
+  await expect(list.getByRole('option')).toHaveCount(1);
+  await list.getByRole('option', { name: /Alex Morgan/ }).click();
+  await expect(field).toBeFocused();
+  await field.pressSequentially('lee@studio.example');
+  await expect(list).toBeHidden();
+  await page.keyboard.press(',');
+  expect(await posted()).toEqual([
+    'mia@studio.example',
+    'noah@studio.example',
+    'alex@studio.example',
+    'lee@studio.example',
+  ]);
+  await page.getByRole('button', { name: 'Remove noah@studio.example' }).click();
+  expect(await posted()).toEqual(['mia@studio.example', 'alex@studio.example', 'lee@studio.example']);
+  // A disabled field posts nothing.
+  await page.locator('#gallery-invites').evaluate(textarea => (textarea.disabled = true));
+  await expect.poll(posted).toEqual([]);
 });
 
 test('menu opens with arrows, skips disabled commands, supports typeahead and restores focus', async ({ page }) => {
@@ -246,6 +299,9 @@ test('helper destruction restores the native controls and removes generated UI',
   await expect(page.locator('#component-combobox input[role=combobox]')).toHaveCount(0);
   await expect(page.locator('#gallery-recipients')).toBeVisible();
   await expect(page.locator('#component-token-field .f-token-field__entry')).toHaveCount(0);
+  // A list-submitting field gets its name back and drops its hidden inputs.
+  await expect(page.locator('#gallery-invites')).toHaveAttribute('name', 'invites');
+  await expect(page.locator('#token-list-example input[type=hidden]')).toHaveCount(0);
   await expect(page.locator('#gallery-editor')).toBeVisible();
   await expect(page.locator('#component-editor .tiptap')).toHaveCount(0);
 });

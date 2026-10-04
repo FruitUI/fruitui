@@ -382,3 +382,21 @@ test('a message action quotes it into the Livewire reply', async ({ page }) => {
   await expect(reply).toBeFocused();
   expect(errors).toEqual([]);
 });
+
+test('the Cc field asks the server for contacts while typing and adds the chosen address', async ({ page }) => {
+  const errors = await openDesk(page);
+  const cc = page.getByRole('textbox', { name: 'Cc' });
+  await cc.pressSequentially('ortiz');
+  const option = page.getByRole('listbox', { name: 'Suggestions' }).getByRole('option', { name: /Ana Ortiz/ });
+  await expect(option).toBeVisible();
+  // Server results show as supplied: "ortiz" matches the name, not the start of the address.
+  await expect(option).toContainText('ana@studio-north.example');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Remove ana@studio-north.example' })).toBeVisible();
+  await expect(cc).toHaveValue('');
+  await page.getByRole('textbox', { name: 'Reply to Sophie Chen' }).fill('Looping in Ana from your team.');
+  await page.getByRole('button', { name: 'Send reply' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove ana@studio-north.example' })).toBeVisible();
+  expect(errors).toEqual([]);
+});

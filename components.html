@@ -1010,14 +1010,27 @@
     <label class="f-label" for="gallery-recipients">Recipients</label>
     <div class="f-token-field" data-fruit-placeholder="Add an item" data-fruit-remove-label="Remove {value}" data-fruit-removed-message="Removed {value}" data-fruit-count-message="{count} items" data-fruit-invalid-message="Check this value before adding it." data-fruit-length-message="Use at most {count} characters." x-data="fruitTokenField">
     <textarea data-fruit-control class="f-input" id="gallery-recipients" name="recipients" x-model="recipients" required="required" placeholder="Add a recipient" @fruit-token-add="if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = 'Enter an email address.'; $event.preventDefault(); }">sophie@example.com</textarea>
-    <div data-fruit-ui wire:ignore></div>
+        <div data-fruit-ui wire:ignore></div>
 </div>
     <p class="f-help">Enter or comma to add. Backspace in the empty field focuses the last remove button.</p>
     <div class="f-row">
         <button type="button" class="f-button" @click="recipients = 'mia@example.com'">Set recipients externally</button>
         <button type="reset" class="f-button">Reset recipients</button>
     </div>
-</form><!-- /blade:token-field --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &#x27;sophie@example.com&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;&lt;div class=&quot;f-token-field&quot; x-data=&quot;fruitTokenField&quot;&gt;&lt;textarea class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot; @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &#x27;Enter an email address.&#x27;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/textarea&gt;&lt;/div&gt;&lt;p class=&quot;f-help&quot;&gt;Enter or comma to add. Backspace in the empty field focuses the last remove button.&lt;/p&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;recipients = &#x27;mia@example.com&#x27;&quot;&gt;Set recipients externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset recipients&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="token-field">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &apos;sophie@example.com&apos; }&quot; @submit.prevent&gt;
+</form>
+
+<form class="f-stack" id="token-list-example" @submit.prevent>
+    <label class="f-label" for="gallery-invites">Invite teammates</label>
+    <div class="f-token-field" data-fruit-placeholder="Add an item" data-fruit-remove-label="Remove {value}" data-fruit-removed-message="Removed {value}" data-fruit-count-message="{count} items" data-fruit-invalid-message="Check this value before adding it." data-fruit-length-message="Use at most {count} characters." data-fruit-submit="list" data-fruit-search="local" data-fruit-suggestions-label="Suggestions" data-fruit-suggestions-count-message="{count} suggestions" data-fruit-no-suggestions="No suggestions" x-data="fruitTokenField">
+    <textarea data-fruit-control class="f-input" id="gallery-invites" name="invites" placeholder="Name or email">mia@studio.example</textarea>
+    <datalist><option value="alex@studio.example">Alex Morgan</option>
+            <option value="mia@studio.example">Mia Patel</option>
+            <option value="noah@studio.example">Noah Williams</option></datalist>    <div data-fruit-ui wire:ignore></div>
+</div>
+</form><!-- /blade:token-field --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &#x27;sophie@example.com&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;&lt;div class=&quot;f-token-field&quot; x-data=&quot;fruitTokenField&quot;&gt;&lt;textarea class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot; @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &#x27;Enter an email address.&#x27;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/textarea&gt;&lt;/div&gt;&lt;p class=&quot;f-help&quot;&gt;Enter or comma to add. Backspace in the empty field focuses the last remove button.&lt;/p&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;recipients = &#x27;mia@example.com&#x27;&quot;&gt;Set recipients externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset recipients&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;
+
+&lt;!-- One hidden invites[] input per token; suggestions from the datalist. --&gt;
+&lt;form class=&quot;f-stack&quot; id=&quot;token-list-example&quot;&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-invites&quot;&gt;Invite teammates&lt;/label&gt;&lt;div class=&quot;f-token-field&quot; x-data=&quot;fruitTokenField&quot; data-fruit-submit=&quot;list&quot;&gt;&lt;textarea class=&quot;f-input&quot; data-fruit-control id=&quot;gallery-invites&quot; name=&quot;invites&quot; placeholder=&quot;Name or email&quot;&gt;mia@studio.example&lt;/textarea&gt;&lt;datalist&gt;&lt;option value=&quot;alex@studio.example&quot;&gt;Alex Morgan&lt;/option&gt;&lt;option value=&quot;mia@studio.example&quot;&gt;Mia Patel&lt;/option&gt;&lt;option value=&quot;noah@studio.example&quot;&gt;Noah Williams&lt;/option&gt;&lt;/datalist&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="token-field">&lt;form class=&quot;f-stack&quot; id=&quot;token-example&quot; x-data=&quot;{ recipients: &apos;sophie@example.com&apos; }&quot; @submit.prevent&gt;
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-recipients&quot;&gt;Recipients&lt;/label&gt;
     &lt;x-fruit::token-field id=&quot;gallery-recipients&quot; name=&quot;recipients&quot; x-model=&quot;recipients&quot; required placeholder=&quot;Add a recipient&quot;
         @fruit-token-add=&quot;if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = &apos;Enter an email address.&apos;; $event.preventDefault(); }&quot;&gt;sophie@example.com&lt;/x-fruit::token-field&gt;
@@ -1026,6 +1039,19 @@
         &lt;x-fruit::button @click=&quot;recipients = &apos;mia@example.com&apos;&quot;&gt;Set recipients externally&lt;/x-fruit::button&gt;
         &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset recipients&lt;/x-fruit::button&gt;
     &lt;/div&gt;
+&lt;/form&gt;
+{{-- submit=&quot;list&quot; posts one invites[] value per token. Suggestions come from the options; with
+     search=&quot;server&quot;, answer fruit-suggest events ($event.detail.query) with new options instead. --}}
+&lt;form class=&quot;f-stack&quot; id=&quot;token-list-example&quot; @submit.prevent&gt;
+    &lt;label class=&quot;f-label&quot; for=&quot;gallery-invites&quot;&gt;Invite teammates&lt;/label&gt;
+    &lt;x-fruit::token-field id=&quot;gallery-invites&quot; name=&quot;invites&quot; submit=&quot;list&quot; placeholder=&quot;Name or email&quot;&gt;
+        mia@studio.example
+        &lt;x-slot:options&gt;
+            &lt;option value=&quot;alex@studio.example&quot;&gt;Alex Morgan&lt;/option&gt;
+            &lt;option value=&quot;mia@studio.example&quot;&gt;Mia Patel&lt;/option&gt;
+            &lt;option value=&quot;noah@studio.example&quot;&gt;Noah Williams&lt;/option&gt;
+        &lt;/x-slot:options&gt;
+    &lt;/x-fruit::token-field&gt;
 &lt;/form&gt;</pre></details></section>
 <section id="component-chip" data-component="chip" class="f-card component-card"><h2>Chips</h2><p>Compact values with independent remove actions. A chip does not own a checkbox or selection state.</p><!-- blade:chip --><div class="f-row" x-data="{ visible: true }">
     <span class="f-chip" x-show="visible"><span>Billing</span><button type="button" class="f-chip__remove" @click="visible = false" aria-label="Remove Billing">×</button></span>

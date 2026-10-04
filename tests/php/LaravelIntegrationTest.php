@@ -192,6 +192,28 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('notice', $toaster->getAttribute('x-show'));
     }
 
+    public function test_a_token_field_can_post_a_list_and_offer_suggestions(): void
+    {
+        $html = Blade::render('<x-fruit::token-field name="cc" submit="list" search="server" x-on:fruit-suggest="find($event.detail.query)">ann@example.com<x-slot:options><option value="bob@example.com">Bob</option></x-slot:options></x-fruit::token-field>');
+        $xpath = $this->xpath($html);
+        $root = $xpath->query('//div[@x-data="fruitTokenField"]')->item(0);
+        $this->assertSame('list', $root->getAttribute('data-fruit-submit'));
+        $this->assertSame('server', $root->getAttribute('data-fruit-search'));
+        $this->assertSame('Suggestions', $root->getAttribute('data-fruit-suggestions-label'));
+        $this->assertSame('{count} items', $root->getAttribute('data-fruit-count-message'));
+        // The textarea keeps its name until the script moves it to name[] inputs.
+        $control = $xpath->query('//textarea')->item(0);
+        $this->assertSame('cc', $control->getAttribute('name'));
+        $this->assertSame('find($event.detail.query)', $control->getAttribute('x-on:fruit-suggest'));
+        $this->assertSame('bob@example.com', $xpath->query('//datalist/option')->item(0)->getAttribute('value'));
+
+        $plain = $this->xpath(Blade::render('<x-fruit::token-field name="cc" />'))->query('//div[@x-data="fruitTokenField"]')->item(0);
+        $this->assertFalse($plain->hasAttribute('data-fruit-submit'));
+        $this->assertFalse($plain->hasAttribute('data-fruit-search'));
+        $this->assertRejected('<x-fruit::token-field name="cc" submit="json" />', 'token-field submit must be one of');
+        $this->assertRejected('<x-fruit::token-field name="cc" search="remote" />', 'token-field search must be one of');
+    }
+
     public function test_toasts_carry_a_tone_from_the_server_and_the_session(): void
     {
         Fruit::flashToast('Could not connect to the IMAP server.', tone: 'danger');
@@ -384,6 +406,7 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame(['ann@example.com', 'bob@example.com', '0'], Fruit::tokens(" ann@example.com\r\n\n bob@example.com \nann@example.com\n0\n"));
         $this->assertSame([], Fruit::tokens(''));
         $this->assertSame([], Fruit::tokens(null));
+        $this->assertSame(['ann@example.com', 'bob@example.com'], Fruit::tokens([' ann@example.com', '', 'bob@example.com', 'ann@example.com', ['nested']]));
     }
 
     public function test_the_tokens_rule_validates_each_entry_under_the_fields_own_key(): void
@@ -394,7 +417,11 @@ class LaravelIntegrationTest extends TestCase
 
         $errors = Validator::make(['cc' => "ann@example.com\nbob@"], $rules)->errors();
         $this->assertSame(['The cc field contains an invalid entry: bob@.'], $errors->get('cc'));
-        $this->assertSame(['The cc field must be a string.'], Validator::make(['cc' => ['ann@example.com']], $rules)->errors()->get('cc'));
+        // submit="list" posts an array of entries, validated the same way.
+        $this->assertTrue(Validator::make(['cc' => ['ann@example.com', 'bob@example.com']], $rules)->passes());
+        $this->assertSame(['The cc field contains an invalid entry: bob@.'], Validator::make(['cc' => ['ann@example.com', 'bob@']], $rules)->errors()->get('cc'));
+        $this->assertSame(['The cc field must be a string.'], Validator::make(['cc' => [['ann@example.com']]], $rules)->errors()->get('cc'));
+        $this->assertSame(['The cc field must be a string.'], Validator::make(['cc' => 42], $rules)->errors()->get('cc'));
 
         Livewire::test(TokensFixture::class)
             ->set('cc', "ann@example.com\nnot-an-address")

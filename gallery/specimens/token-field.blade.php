@@ -8,3 +8,16 @@
         <x-fruit::button type="reset">Reset recipients</x-fruit::button>
     </div>
 </form>
+{{-- submit="list" posts one invites[] value per token. Suggestions come from the options; with
+     search="server", answer fruit-suggest events ($event.detail.query) with new options instead. --}}
+<form class="f-stack" id="token-list-example" @submit.prevent>
+    <label class="f-label" for="gallery-invites">Invite teammates</label>
+    <x-fruit::token-field id="gallery-invites" name="invites" submit="list" placeholder="Name or email">
+        mia@studio.example
+        <x-slot:options>
+            <option value="alex@studio.example">Alex Morgan</option>
+            <option value="mia@studio.example">Mia Patel</option>
+            <option value="noah@studio.example">Noah Williams</option>
+        </x-slot:options>
+    </x-fruit::token-field>
+</form>

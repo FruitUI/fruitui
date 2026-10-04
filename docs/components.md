@@ -351,7 +351,7 @@ Menus, Combobox, Token Field, Editor, Alert, Tabs, Section Nav, Pagination, Uplo
 | Commands for one item, on right-click | `f-context-menu` / `x-fruit::context-menu` | `fruitContextMenu` owns opening, focus and dismissal; the same commands must also be reachable elsewhere. |
 | Independent popup controls | Floating Disclosure | Ordinary controls retain their own keyboard contracts. |
 | One searchable existing option | `f-combobox` / `x-fruit::combobox` | The native single select owns its scalar value. |
-| Recipients or tags | `f-token-field` / `x-fruit::token-field` | The native textarea owns a newline-delimited string. |
+| Recipients or tags | `f-token-field` / `x-fruit::token-field` | The native textarea owns a newline-delimited string; `submit="list"` posts `name[]` values, and an `options` slot suggests entries (`search="server"` for server search). |
 | Rich formatted text | `f-editor` / `x-fruit::editor` | The native textarea owns HTML; an optional Tiptap module supplies editing. |
 | Related panels in one page | `f-tabs`, `f-tab` | Linked tabs/panels; optional `fruitTabs`, or existing route-aware callbacks. |
 | Related pages | `f-section-nav` | Ordinary links and `aria-current="page"`. |
@@ -414,7 +414,7 @@ Blade includes stable `wire:ignore` containers for generated UI. The named nativ
 
 Token entry adds on Enter, comma, or a multiline/comma paste. Values are trimmed and exact duplicates are ignored. Empty Backspace/Left focuses the last remove button; arrows navigate remove buttons, Escape returns to entry. Adding is atomic for a paste: if application validation rejects any value, the native value is unchanged. Applications can cancel the bubbling `fruit-token-add` event and set `event.detail.error`, or normalize `event.detail.value`. Existing server-provided values are not validated by this event; validate the entire submitted string on the server.
 
-On the server, `FruitUI\Fruit::tokens()` splits the value the way the field shows it: trimmed, without blank lines or exact duplicates. The `FruitUI\Rules\Tokens` rule applies ordinary Laravel rules to every token and reports a failure under the field's own key, so `x-fruit::field` shows it. Bind an existing array back with `implode("\n", $tags)`.
+On the server, `FruitUI\Fruit::tokens()` splits the value the way the field shows it: trimmed, without blank lines or exact duplicates. It also accepts the array that `submit="list"` posts. The `FruitUI\Rules\Tokens` rule applies ordinary Laravel rules to every token and reports a failure under the field's own key, so `x-fruit::field` shows it. Bind an existing array back with `implode("\n", $tags)`.
 
 ```php
 use FruitUI\Fruit;
@@ -429,6 +429,24 @@ public function send(): void
     $recipients = Fruit::tokens($this->cc); // ['ann@example.com', 'bob@example.com']
 }
 ```
+
+**Posting a list.** Controllers that expect an array take `submit="list"` (`data-fruit-submit="list"` on the wrapper in HTML). Once enhanced, the textarea's name moves to one hidden `name[]` input per token, kept in sync, so a form posts `cc[]=ann@example.com&cc[]=bob@example.com`. Without JavaScript the textarea still posts the text, so read it with `Fruit::tokens($request->input('cc'))` or validate with `new Tokens('email')`, which accept either form. With no tokens nothing posts under the name, as with unchecked checkboxes. `wire:model` and `x-model` keep binding the newline-delimited text.
+
+**Suggestions.** An `options` slot (a `<datalist>` inside the wrapper in HTML) offers entries while typing, label first and value after; tokens already added are left out. Up/Down choose, Enter or Tab adds the highlighted suggestion, a comma adds the text as typed, and Escape closes the list. Every keystroke sends a bubbling `fruit-suggest` event with `detail.query`. For server search, set `search="server"` (`data-fruit-search="server"`) and answer the event with new options; the list shows them as supplied, without matching them again, and refreshes while the field has focus:
+
+```blade
+<x-fruit::token-field name="cc" wire:model="cc" search="server"
+    x-on:fruit-suggest.debounce.200ms="$wire.set('contactSearch', $event.detail.query)">
+    {{ $cc }}
+    <x-slot:options>
+        @foreach ($this->contactMatches as $email => $name)
+            <option value="{{ $email }}">{{ $name }}</option>
+        @endforeach
+    </x-slot:options>
+</x-fruit::token-field>
+```
+
+The Livewire support desk's Cc field works this way. Without Livewire, replace the datalist's options from the event handler (for example after a `fetch`).
 
 Dispatch `fruit-token-reset` on the native textarea to discard pending entry and validation feedback without changing committed tokens. Mail uses it when starting another draft, including when the serialized model was already empty. Ordinary form resets also clear pending entry.
 
