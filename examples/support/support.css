@@ -347,10 +347,11 @@
 .support-composer-bottom .f-icon {
   --f-icon-size: 13px;
 }
+/* The inspector frames the content like the sidebar: the same material on both sides. */
 .support-customer {
   grid-column: 4;
   grid-row: 2;
-  --f-pane-background: var(--f-surface-secondary);
+  --f-pane-background: var(--f-material);
 }
 .support-customer-profile {
   display: flex;

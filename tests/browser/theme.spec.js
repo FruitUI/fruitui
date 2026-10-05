@@ -494,3 +494,50 @@ for (const theme of ['light', 'dark']) {
     }
   });
 }
+
+test('accent text follows each named accent and keeps 4.5:1 on toolbars, also on hover', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/core.css', import.meta.url), 'utf8');
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    for (const accent of ['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'graphite']) {
+      await page.setContent(`<!doctype html><html data-fruit-accent="${accent}"><head><style>${css}</style></head>
+        <body class="fruit-ui"><header class="f-toolbar"><a class="f-button f-button--ghost f-back" href="#"><span>Inbox</span></a>
+        <span id="hover" style="background: var(--f-hover)">x</span><span id="tint" style="color: var(--f-accent)">x</span></header></body></html>`);
+      const { contrast, distance } = await page.evaluate(() => {
+        const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        const paint = (...layers) => {
+          for (const color of layers) {
+            context.fillStyle = color;
+            context.fillRect(0, 0, 1, 1);
+          }
+          return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+        };
+        const luminance = rgb =>
+          rgb
+            .map(value => value / 255)
+            .map(value => (value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4))
+            .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+        const ratio = (a, b) => {
+          const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+          return (light + 0.05) / (dark + 0.05);
+        };
+        const style = selector => getComputedStyle(document.querySelector(selector));
+        const text = paint(style('.f-back').color);
+        const rest = paint(style('body').backgroundColor, style('.f-toolbar').backgroundColor);
+        const hover = paint(
+          style('body').backgroundColor,
+          style('.f-toolbar').backgroundColor,
+          style('#hover').backgroundColor,
+        );
+        const tint = paint(style('#tint').color);
+        return {
+          contrast: Math.min(ratio(text, rest), ratio(text, hover)),
+          distance: Math.hypot(...text.map((value, index) => value - tint[index])),
+        };
+      });
+      expect(contrast, `${colorScheme} ${accent}`).toBeGreaterThanOrEqual(4.5);
+      // Close to the accent links use, not a separate shade.
+      expect(distance, `${colorScheme} ${accent}`).toBeLessThan(80);
+    }
+  }
+});
