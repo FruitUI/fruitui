@@ -424,13 +424,12 @@ new class extends Component
                                             <x-slot:time>{{ $message['time'] }}</x-slot:time>
                                         </x-fruit::message-event>
                                     @else
-                                        {{-- A run of messages from one person shows the name and avatar once. --}}
+                                        {{-- A chat shows the name and time only; a run from one person shows them once. --}}
                                         @php($previous = $ticket['messages'][$index - 1] ?? null)
                                         <x-fruit::message :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'"
                                             :continued="isset($previous['author']) && $previous['author'] === $message['author']" aria-label="Message from {{ $message['author'] }}">
                                             <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                             <x-slot:author>{{ $message['author'] }}</x-slot:author>
-                                            <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to Customer' }}</x-slot:meta>
                                             @isset($message['time'])
                                                 <x-slot:time>{{ $message['time'] }}</x-slot:time>
                                             @endisset
