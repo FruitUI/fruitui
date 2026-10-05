@@ -347,7 +347,7 @@ A chat conversation reads from the bottom up: oldest at the top, the newest mess
 </section>
 ```
 
-The pane is a flex column, so the history takes the remaining height and scrolls while the composer stays in view. An application that swaps the whole conversation without re-rendering the history (Alpine state, say) calls `jumpToLatest({ smooth: false })` inside it; with Livewire, a new conversation renders a new history that opens at its newest message.
+The pane is a flex column, so the history takes the remaining height and scrolls while the composer stays in view. An application that swaps the whole conversation without re-rendering the history (Alpine state, say) calls `jumpToLatest({ smooth: false })` inside it; with Livewire, a new conversation renders a new history that opens at its newest message. When the history is a Livewire component's own view, give the view one root element around it: Livewire takes the first element of the output as the component's root, so a view that starts with `@if` or with the history's day threads can make the first thread the root, and later updates then morph only that thread.
 
 ## Message composers
 
