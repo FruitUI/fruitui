@@ -736,3 +736,37 @@ test('a message history opens at its newest message and follows what the docked 
   await expect(history).toBeFocused();
   await expectAccessible(page, '#component-history');
 });
+
+test('an inline message keeps its time beside the name, and a run’s sent bar is unbroken', async ({ page }) => {
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    const thread = document.createElement('ol');
+    thread.className = 'f-thread f-thread--compact';
+    thread.id = 'probe-thread';
+    const message = (classes, meta, headers) =>
+      `<li><article class="f-message ${classes}"><span class="f-avatar f-message__avatar">AB</span><header class="f-message__header"><span class="f-message__identity"><strong class="f-message__author">Ana</strong> <small class="f-message__meta">${meta}</small>${headers ? `<span class="f-message__headers"><span>${headers}</span></span>` : ''}</span><time class="f-message__time">6 min ago</time></header><div class="f-message__body"><p>Hi</p></div></article></li>`;
+    thread.innerHTML =
+      message('', 'Customer', 'From: Android 16') +
+      message('f-message--outgoing', 'You', '') +
+      message('f-message--outgoing f-message--continued', 'You', '');
+    document.querySelector('main, body').append(thread);
+  });
+  const [withHeaders, first, continued] = await page.locator('#probe-thread .f-message').all();
+  const box = locator => locator.evaluate(element => element.getBoundingClientRect().toJSON());
+  // A header line (From) goes below; the time stays on the name's line, right after the meta.
+  const meta = await box(withHeaders.locator('.f-message__meta'));
+  const time = await box(withHeaders.locator('.f-message__time'));
+  const headers = await box(withHeaders.locator('.f-message__headers'));
+  expect(Math.abs(time.top + time.height / 2 - (meta.top + meta.height / 2))).toBeLessThan(3);
+  expect(time.left - meta.right).toBeLessThan(16);
+  expect(headers.top).toBeGreaterThan(time.bottom - 1);
+  // The bar of a run has square joins, without a gap.
+  const bar = locator =>
+    locator.evaluate(element => {
+      const style = getComputedStyle(element, '::before');
+      return { top: style.borderStartStartRadius, bottom: style.borderEndStartRadius };
+    });
+  expect((await bar(first)).bottom).toBe('0px');
+  expect((await bar(continued)).top).toBe('0px');
+  expect((await box(continued)).top - (await box(first)).bottom).toBeLessThan(1);
+});
