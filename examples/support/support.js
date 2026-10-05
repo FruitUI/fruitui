@@ -20,6 +20,8 @@ export function supportDemo() {
     roomNewFrom: null,
     roomTyping: '',
     roomAnswered: {},
+    // The room Team Chat opens: the last one chosen in the switcher (most agents use one).
+    roomChoice: 'support',
     // Conversations checked for a bulk action (Cmd/Ctrl+click, Shift+click, or Select).
     checked: [],
     page: 1,
@@ -121,6 +123,9 @@ export function supportDemo() {
     roomUnread(id) {
       return this.rooms[id].filter(message => message.unread).length;
     },
+    get roomUnreadTotal() {
+      return Object.keys(this.rooms).reduce((total, id) => total + this.roomUnread(id), 0);
+    },
     person(id) {
       const name = this.agents.find(agent => agent.id === id)?.name ?? id;
       return {
@@ -174,8 +179,10 @@ export function supportDemo() {
     set roomDraft(value) {
       if (this.roomId) this.roomDrafts[this.roomId] = value;
     },
-    openRoom(id) {
+    /** Team Chat opens the chosen room; the switcher in its title changes and remembers the choice. */
+    openRoom(id = this.roomChoice) {
       if (!this.rooms[id]) return;
+      this.roomChoice = id;
       const messages = this.rooms[id];
       const first = messages.findIndex(message => message.unread);
       this.roomNewFrom = first < 0 ? null : first;
@@ -189,7 +196,6 @@ export function supportDemo() {
       // x-show may reveal the room a frame after the reactive update (as in Firefox and WebKit).
       this.$nextTick(() =>
         requestAnimationFrame(() => {
-          this.revealMailbox(refs.queues, id);
           // On a phone the sidebar gives way to the room: move focus to its title.
           if (!refs.queues.getClientRects().length) refs.roomTitle.focus();
         }),

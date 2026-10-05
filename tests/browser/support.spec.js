@@ -289,19 +289,19 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
 });
 
 async function openTeamChat(page, mailbox = 'Support') {
-  const group = page.locator(`details[data-scope="${mailbox.toLowerCase()}"]`);
-  if (!(await group.evaluate(element => element.open))) await group.locator('summary').click();
-  await page.getByRole('button', { name: new RegExp(`^${mailbox} Team Chat`) }).click();
+  await page.getByRole('button', { name: /^Team Chat/ }).click();
+  if (await page.getByRole('heading', { name: `${mailbox} Team` }).isVisible()) return;
+  await page.getByRole('button', { name: 'Switch Team Chat' }).click();
+  await page.getByRole('menuitemradio', { name: new RegExp(`^${mailbox}`) }).click();
 }
 
-test('a mailbox’s team chat opens in place, marks what is new and follows the conversation', async ({ page }) => {
-  const group = page.locator('details[data-scope="support"]');
-  if (!(await group.evaluate(element => element.open))) await group.locator('summary').click();
-  const link = page.getByRole('button', { name: /^Support Team Chat/ });
-  await expect(link).toHaveAccessibleName('Support Team Chat, 2 unread');
+test('team chat is one item at the top that opens the chosen mailbox’s room in place', async ({ page }) => {
+  const link = page.getByRole('button', { name: /^Team Chat/ });
+  // One way in, with the unread total of the rooms.
+  await expect(link).toHaveAccessibleName('Team Chat, 3 unread');
   await link.click();
   await expect(link).toHaveAttribute('aria-current', 'page');
-  await expect(link).toHaveAccessibleName('Support Team Chat');
+  await expect(link).toHaveAccessibleName('Team Chat, 1 unread');
   await expect(page.getByRole('button', { name: 'All Inboxes', exact: false }).first()).not.toHaveAttribute(
     'aria-current',
   );
@@ -334,8 +334,22 @@ test('a mailbox’s team chat opens in place, marks what is new and follows the 
   await expect(messages.last()).toContainText('Thanks, I’ll take a look.');
   await expect.poll(fromEnd).toBeLessThan(2);
   await expectAccessible(page, '#support');
+  // The title's switcher lists each mailbox's room with its unread count, and is remembered.
+  await page.getByRole('button', { name: 'Switch Team Chat' }).click();
+  await expect(page.getByRole('menuitemradio', { name: 'Support' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('menuitemradio', { name: 'Billing, 1 unread' }).click();
+  await expect(page.getByRole('heading', { name: 'Billing Team' })).toBeVisible();
+  await expect(link).toHaveAccessibleName('Team Chat');
+  await page
+    .getByRole('button', { name: /^Unassigned/ })
+    .first()
+    .click();
+  await expect(page.locator('#support-room')).toBeHidden();
+  await link.click();
+  await expect(page.getByRole('heading', { name: 'Billing Team' })).toBeVisible();
   // A conversation number opens that conversation and leaves the room.
-  await history.getByRole('link', { name: '#1042' }).click();
+  await openTeamChat(page);
+  await page.getByRole('region', { name: 'Support team chat' }).getByRole('link', { name: '#1042' }).click();
   await expect(page.locator('#support-room')).toBeHidden();
   await expect(page.locator('#ticket-title')).toHaveText('A little help with our team plan');
 });

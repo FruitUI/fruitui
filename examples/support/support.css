@@ -872,6 +872,18 @@
   grid-row: 2;
   min-height: 0;
 }
+.support-room-heading {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.support-room-heading h2 {
+  min-width: 0;
+}
+.support-room-choice .f-badge {
+  margin-inline-start: auto;
+}
 .support-room-history {
   --f-pane-scroll-padding: 8px max(14px, calc((100% - 760px) / 2)) 16px;
 }

@@ -377,6 +377,7 @@ export const teamRooms = {
       day: 'Today',
       time: '8:15 AM',
       body: 'The September invoices went out. Shout if anyone asks about a missing one.',
+      unread: true,
     },
   ],
   feedback: [],
