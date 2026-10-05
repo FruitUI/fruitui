@@ -10,6 +10,8 @@
  * conversations are a lazy island: a Skeleton placeholder until the pane
  * scrolls into view, then re-rendered on its own when another ticket opens.
  * Ticket rows have a context menu whose commands are also on the toolbar.
+ * Conversations from a chat channel show in the Chat view: oldest first in a
+ * history that follows new messages, with the composer docked below it.
  * Sample tickets live in the session so each visitor can change them.
  */
 
@@ -281,7 +283,10 @@ new class extends Component
 
     private function store(): array
     {
-        return session('fruit-support.tickets') ?? collect([
+        if ($tickets = session('fruit-support.tickets')) {
+            return $tickets;
+        }
+        $tickets = collect([
             [1042, 'Sophie Chen', 'SC', 'Studio North', 'A little help with our team plan', 'alex', 'We’re growing the studio. What’s the best way to bring everyone along?'],
             [1041, 'Jordan Lee', 'JL', 'Fieldwork', 'Sign-in after changing our domain', '', 'Our new domain is live, but single sign-on still points at the old one.'],
             [1040, 'Emma Thompson', 'ET', 'Gather Studio', 'A new home for our workspace', 'mia', 'We’d like to move our workspace to the EU region.'],
@@ -293,8 +298,19 @@ new class extends Component
             'id' => $row[0], 'name' => $row[1], 'initials' => $row[2], 'company' => $row[3], 'subject' => $row[4],
             'assignee' => $row[5], 'cc' => '', 'status' => 'open', 'reason' => null,
             'email' => strtolower(strtok($row[1], ' ')).'@example.com',
-            'messages' => [['author' => $row[1], 'body' => $row[6]]],
+            'channel' => 'email', 'messages' => [['author' => $row[1], 'body' => $row[6]]],
         ]])->all();
+        // A conversation from a chat channel: short messages, shown in the Chat view.
+        $tickets[1036] = [...$tickets[1036], 'channel' => 'chat', 'messages' => [
+            ['author' => 'Lena Wilson', 'body' => 'Hi! Since Monday new events no longer appear in our shared calendar.'],
+            ['author' => 'Alex Morgan', 'body' => 'Hi Lena, sorry about that. Is it every calendar, or only the shared one?'],
+            ['author' => 'Lena Wilson', 'body' => 'Only the shared one. Our personal calendars are fine.'],
+            ['event' => 'Alex Morgan assigned this to Noah Williams', 'time' => '9:14 AM'],
+            ['author' => 'Noah Williams', 'body' => 'Thanks, Lena. Could you try removing and re-adding the shared calendar under Settings › Calendars?'],
+            ['author' => 'Lena Wilson', 'body' => 'Done. The events from today are back, but last week’s are still missing.'],
+        ]];
+
+        return $tickets;
     }
 };
 ?>
@@ -391,6 +407,46 @@ new class extends Component
                         </x-fruit::tooltip>
                     @endif
                 </header>
+                @if (($ticket['channel'] ?? 'email') === 'chat')
+                    {{-- The Chat view: oldest first in a history that opens at the newest message and follows
+                         new ones; the composer stays docked below it. Keyed per ticket, so each opens at its newest. --}}
+                    <x-fruit::history aria-label="Chat with {{ $ticket['name'] }}" wire:key="chat-{{ $ticket['id'] }}" style="--f-pane-scroll-padding: var(--f-space-4)">
+                        <x-fruit::thread aria-label="Messages">
+                            @foreach ($ticket['messages'] as $index => $message)
+                                <li wire:key="message-{{ $index }}">
+                                    @if (isset($message['event']))
+                                        <x-fruit::message-event>
+                                            {{ $message['event'] }}
+                                            <x-slot:time>{{ $message['time'] }}</x-slot:time>
+                                        </x-fruit::message-event>
+                                    @else
+                                        <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
+                                            <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
+                                            <x-slot:author>{{ $message['author'] }}</x-slot:author>
+                                            <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to Customer' }}</x-slot:meta>
+                                            {{ $message['body'] }}
+                                        </x-fruit::message>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </x-fruit::thread>
+                    </x-fruit::history>
+                    @if ($ticket['status'] === 'open')
+                        <x-fruit::composer wire:submit="send" aria-label="Reply" wire:key="chat-composer-{{ $ticket['id'] }}">
+                            <label class="f-sr-only" for="support-chat-reply">Message {{ $ticket['name'] }}</label>
+                            <x-fruit::textarea id="support-chat-reply" name="reply" class="f-composer__input" rows="2" wire:model="reply" placeholder="Message {{ $ticket['name'] }}"
+                                :aria-invalid="$errors->has('reply') ? 'true' : null" :aria-describedby="$errors->has('reply') ? 'support-chat-help support-chat-error' : 'support-chat-help'"
+                                x-on:keydown.enter="if (!$event.shiftKey && !$event.isComposing) { $event.preventDefault(); $el.form.requestSubmit() }" />
+                            @error('reply')<p class="f-error" id="support-chat-error">{{ $message }}</p>@enderror
+                            <footer class="f-composer__footer">
+                                <span class="f-help" id="support-chat-help">Enter to send · Shift + Enter for a new line</span>
+                                <x-fruit::button type="submit" variant="primary">Send</x-fruit::button>
+                            </footer>
+                        </x-fruit::composer>
+                    @else
+                        <div style="padding: var(--f-space-4)"><x-fruit::alert tone="success">This conversation was closed as {{ strtolower($this::REASONS[$ticket['reason']] ?? 'resolved') }}.</x-fruit::alert></div>
+                    @endif
+                @else
                 <div class="f-pane__scroll f-stack" style="--f-pane-scroll-padding: var(--f-space-4)">
                     <x-fruit::description-list>
                         <div><dt>Customer</dt><dd>{{ $ticket['name'] }}</dd></div>
@@ -518,6 +574,7 @@ new class extends Component
                         </x-fruit::thread>
                     </div>
                 </div>
+                @endif
             @else
                 <x-fruit::empty-state>
                     <x-slot:title><h1>No conversation selected</h1></x-slot:title>

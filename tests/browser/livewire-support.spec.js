@@ -487,3 +487,36 @@ test('Merge into searches conversations on the server and keeps the choice while
   await expect(merge).toHaveValue('');
   expect(errors).toEqual([]);
 });
+
+test('a chat-channel conversation opens in the Chat view at its newest message and follows replies', async ({
+  page,
+}) => {
+  const errors = await openDesk(page);
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('Lena');
+  await list(page)
+    .getByRole('button', { name: /Lena Wilson/ })
+    .click();
+  const history = conversation(page).getByRole('region', { name: 'Chat with Lena Wilson' });
+  await expect(history).toBeVisible();
+  expect(await history.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  // Oldest first; the history opens at the newest message.
+  const messages = history.getByRole('article');
+  await expect(messages.first()).toContainText('Since Monday new events no longer appear');
+  await expect(messages.last()).toContainText('last week’s are still missing');
+  await expect.poll(fromEnd).toBeLessThan(2);
+  // Enter sends from the docked composer; Livewire's re-render adds the reply at the bottom, in view.
+  const composer = conversation(page).getByRole('textbox', { name: 'Message Lena Wilson' });
+  await composer.fill('Thanks! I’ll restore last week’s events from the backup now.');
+  await composer.press('Enter');
+  await expect(messages.last()).toContainText('restore last week’s events');
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expect(composer).toHaveValue('');
+  // A too-short reply keeps the error with the composer.
+  await composer.fill('Hi');
+  await composer.press('Enter');
+  await expect(composer).toHaveAttribute('aria-invalid', 'true');
+  await expect(conversation(page).getByText('Write at least three characters.')).toBeVisible();
+  await expectAccessible(page, '.support-desk');
+  expect(errors).toEqual([]);
+});

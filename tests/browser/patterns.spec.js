@@ -712,3 +712,27 @@ test('a suggestion shows a skeleton while it is made, then the draft, its transl
   await card.getByRole('button', { name: 'Dismiss draft' }).click();
   await expect(card).toBeHidden();
 });
+
+test('a message history opens at its newest message and follows what the docked composer sends', async ({ page }) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-history');
+  const history = card.getByRole('region', { name: 'Conversation with Sophie Chen' });
+  await card.scrollIntoViewIfNeeded();
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  expect(await history.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+  await expect.poll(fromEnd).toBeLessThan(2);
+  const reply = card.getByRole('textbox', { name: 'Message Sophie Chen' });
+  await reply.fill('Glad to hear it.');
+  await reply.press('Enter');
+  await expect(history.getByText('Glad to hear it.')).toBeVisible();
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expect(reply).toHaveValue('');
+  await history.evaluate(element => element.scrollTo({ top: 0 }));
+  const jump = history.getByRole('button', { name: 'Jump to Latest' });
+  await expect(jump).toBeVisible();
+  await jump.click();
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expect(jump).toBeHidden();
+  await expect(history).toBeFocused();
+  await expectAccessible(page, '#component-history');
+});

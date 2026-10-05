@@ -374,6 +374,38 @@ test('message actions appear on hover or focus and threads return focus to the c
   await expect(page.locator('.chat-message[data-message-id="201"] [data-thread-count]')).toBeHidden();
 });
 
+test('the history opens at the newest message, follows arrivals, and leaves a reader who scrolled back', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 560 });
+  const history = page.locator('#chat-history');
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  // A message arriving the way a Livewire morph or realtime update adds it.
+  const arrive = () =>
+    history.evaluate(element => {
+      const message = document.createElement('article');
+      message.className = 'f-message chat-message';
+      message.style.minHeight = '120px';
+      message.textContent = 'A message from elsewhere.';
+      element.querySelector('.f-history__latest').before(message);
+    });
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await arrive();
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await history.evaluate(element => element.scrollTo({ top: 0 }));
+  await expect(page.getByRole('button', { name: 'Jump to Latest', exact: true })).toBeVisible();
+  await arrive();
+  await page.waitForTimeout(100);
+  expect(await history.evaluate(element => element.scrollTop)).toBe(0);
+  // Sending from the composer returns to the newest message.
+  const composer = page.getByRole('textbox', { name: 'Message #design' });
+  await composer.fill('Back to the present.');
+  await composer.press('Enter');
+  await expect(history.getByText('Back to the present.')).toBeVisible();
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expect(composer).toBeFocused();
+});
+
 test('jump to latest appears after scrolling back and returns to the newest message', async ({ page }) => {
   const history = page.locator('#chat-history');
   const jump = page.getByRole('button', { name: 'Jump to Latest', exact: true });

@@ -391,6 +391,28 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
     }
 
+    public function test_a_history_is_a_named_focusable_region_that_follows_its_newest_message(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::history class="extra" wire:key="history"><ol class="f-thread"><li>Hi</li></ol></x-fruit::history>'));
+        $region = $xpath->query('//div[@role="region"]')->item(0);
+        $this->assertSame('Message History', $region->getAttribute('aria-label'));
+        $this->assertSame('0', $region->getAttribute('tabindex'));
+        $this->assertSame('f-pane__scroll f-history extra', $region->getAttribute('class'));
+        $this->assertSame('fruitHistory', $region->getAttribute('x-data'));
+        $this->assertSame('history', $region->getAttribute('wire:key'));
+        $this->assertSame('Hi', $xpath->query('./ol/li', $region)->item(0)->textContent);
+        // The Jump to Latest button is server-rendered, so Livewire morphs keep it.
+        $jump = $xpath->query('./button[@class="f-button f-history__latest"]', $region)->item(0);
+        $this->assertSame('button', $jump->getAttribute('type'));
+        $this->assertSame('awayFromLatest', $jump->getAttribute('x-show'));
+        $this->assertStringContainsString('Jump to Latest', $jump->textContent);
+        $named = $this->xpath(Blade::render('<x-fruit::history aria-label="Conversation with Sophie">x</x-fruit::history>'));
+        $this->assertSame('Conversation with Sophie', $named->query('//div[@role="region"]')->item(0)->getAttribute('aria-label'));
+        $this->assertRejected('<x-fruit::history x-data="{}">x</x-fruit::history>', 'owns its fruitHistory helper');
+        $this->assertRejected('<x-fruit::history tabindex="-1">x</x-fruit::history>', 'owns its fruitHistory helper');
+        $this->assertRejected('<x-fruit::history role="log">x</x-fruit::history>', 'native control semantics');
+    }
+
     public function test_an_accent_picker_offers_the_named_accents_as_native_radios(): void
     {
         $this->assertSame(['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'graphite'], Fruit::ACCENTS);

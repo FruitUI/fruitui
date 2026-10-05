@@ -790,12 +790,3 @@
 }
 
 /* Stays at the bottom of the history while you read older messages. */
-.chat-jump {
-  position: sticky;
-  bottom: 12px;
-  z-index: 2;
-  display: flex;
-  margin: 8px auto 0;
-  border-radius: var(--f-radius-full);
-  box-shadow: var(--f-shadow);
-}
