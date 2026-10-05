@@ -32,7 +32,7 @@ const defaults = () => ({
   name: 'Alex Morgan',
   email: 'alex@forma.example',
   language: 'en',
-  accent: '#007aff',
+  accent: 'blue',
   twoFactor: true,
 });
 
@@ -53,6 +53,10 @@ export function settingsDemo() {
       return JSON.stringify(this.saved) !== JSON.stringify(this.draft);
     },
     init() {
+      // The accent previews at once on the whole page; Revert restores the saved one.
+      const accent = value => (document.documentElement.dataset.fruitAccent = value);
+      accent(this.draft.accent);
+      this.$watch('draft.accent', accent);
       this.route();
       window.addEventListener('hashchange', () => this.route());
     },

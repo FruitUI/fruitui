@@ -2,6 +2,7 @@
 
 namespace FruitUI\Tests;
 
+use FruitUI\Fruit;
 use Illuminate\Support\Facades\Blade;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
@@ -383,6 +384,28 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('f-page', $plain->query('//div[contains(@class, "f-page")]')->item(0)->getAttribute('class'));
         $this->assertRejected('<x-fruit::page width="full">Rows</x-fruit::page>', 'page width must be one of');
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
+    }
+
+    public function test_an_accent_picker_offers_the_named_accents_as_native_radios(): void
+    {
+        $this->assertSame(['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'graphite'], Fruit::ACCENTS);
+        $xpath = $this->xpath(Blade::render('<x-fruit::accent-picker name="accent" value="purple" wire:model.live="accent" class="extra" />'));
+        $group = $xpath->query('//div[@role="radiogroup"]')->item(0);
+        $this->assertSame('Accent Color', $group->getAttribute('aria-label'));
+        $this->assertSame('f-accent-picker extra', $group->getAttribute('class'));
+        $this->assertFalse($group->hasAttribute('wire:model.live'));
+        $radios = $xpath->query('//input[@type="radio"]', $group);
+        $this->assertSame(8, $radios->length);
+        $this->assertSame('accent', $radios->item(0)->getAttribute('name'));
+        $this->assertSame('accent', $radios->item(1)->getAttribute('wire:model.live'));
+        $this->assertTrue($radios->item(1)->hasAttribute('checked'));
+        $this->assertFalse($radios->item(0)->hasAttribute('checked'));
+        $this->assertSame('purple', $xpath->query('//label[@data-fruit-accent="purple"]/input')->item(0)->getAttribute('value'));
+        app()->setLocale('nl');
+        $this->assertStringContainsString('aria-label="Accentkleur"', Blade::render('<x-fruit::accent-picker />'));
+        $this->assertStringContainsString('<span class="f-sr-only">Grafiet</span>', Blade::render('<x-fruit::accent-picker />'));
+        $this->assertRejected('<x-fruit::accent-picker value="teal" />', 'accent-picker value must be one of');
+        $this->assertRejected('<x-fruit::accent-picker role="listbox" />', 'overriding role');
     }
 
     public function test_a_card_can_group_a_choice_without_owning_its_interaction(): void

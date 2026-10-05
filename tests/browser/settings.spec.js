@@ -69,7 +69,7 @@ test('compact layouts show the category list, then one page with a way back', as
   await expect(sidebar(page)).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeFocused();
   // Switch rows keep the control at the trailing edge; text rows stack.
-  const twoFactor = await page.getByRole('switch', { name: 'Two-factor authentication' }).boundingBox();
+  const twoFactor = await page.getByRole('switch', { name: 'Two-Factor Authentication' }).boundingBox();
   const label = await page.locator('label[for="settings-two-factor"]').boundingBox();
   expect(twoFactor.x).toBeGreaterThan(label.x + label.width);
   const name = await page.getByLabel('Name', { exact: true }).boundingBox();
@@ -120,4 +120,25 @@ test('the settings column holds its sections and save bar at one width in a wide
   expect(Math.abs(save.x - section.x)).toBeLessThanOrEqual(1);
   expect(Math.abs(save.width - section.width)).toBeLessThanOrEqual(1);
   await expect(column.getByRole('button', { name: 'Save' })).toBeVisible();
+});
+
+test('the accent color previews on the whole page and Revert restores it', async ({ page }) => {
+  await page.goto('/settings.html#/profile');
+  const html = page.locator('html');
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  await expect(html).toHaveAttribute('data-fruit-accent', 'blue');
+  const fill = () => save.evaluate(button => getComputedStyle(button).backgroundColor);
+  const blue = await fill();
+  const group = page.getByRole('radiogroup', { name: 'Accent Color' });
+  await group.getByRole('radio', { name: 'Blue' }).focus();
+  // A native radio group: arrow keys move and select.
+  await page.keyboard.press('ArrowRight');
+  await expect(group.getByRole('radio', { name: 'Purple' })).toBeChecked();
+  await expect(html).toHaveAttribute('data-fruit-accent', 'purple');
+  // The primary button follows the accent.
+  await expect.poll(fill).not.toBe(blue);
+  await page.getByRole('button', { name: 'Revert' }).click();
+  await expect(html).toHaveAttribute('data-fruit-accent', 'blue');
+  await expect.poll(fill).toBe(blue);
+  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
 });

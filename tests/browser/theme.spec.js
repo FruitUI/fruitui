@@ -465,3 +465,16 @@ test('links in a message author and time keep the header text style until hovere
     await expect(page.locator(link)).toHaveCSS('text-decoration-line', 'underline');
   }
 });
+
+for (const theme of ['light', 'dark']) {
+  test(`every named accent keeps its links, buttons and switches readable in ${theme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: theme });
+    await page.goto('/components.html');
+    const card = page.locator('#component-accent-picker');
+    for (const accent of ['Blue', 'Purple', 'Pink', 'Red', 'Orange', 'Yellow', 'Green', 'Graphite']) {
+      await card.getByRole('radio', { name: accent }).check();
+      await expect(card.locator('[x-data]').first()).toHaveAttribute('data-fruit-accent', accent.toLowerCase());
+      await expectAccessible(page, '#component-accent-picker');
+    }
+  });
+}
