@@ -306,6 +306,40 @@ test('helper destruction restores the native controls and removes generated UI',
   await expect(page.locator('#component-editor .tiptap')).toHaveCount(0);
 });
 
+test('a busy button covers its label with a spinner, keeps its width and name, and ignores clicks', async ({
+  page,
+}) => {
+  const card = page.locator('#component-spinner');
+  const save = card.getByRole('button', { name: 'Save Changes', exact: true });
+  const after = (locator, property) =>
+    locator.evaluate((el, property) => getComputedStyle(el, '::after')[property], property);
+  const fill = locator => locator.evaluate(el => getComputedStyle(el).webkitTextFillColor);
+  const width = await save.evaluate(el => el.getBoundingClientRect().width);
+  expect(await after(save, 'content')).toBe('none');
+  let clicks = 0;
+  await page.exposeFunction('countSaveClick', () => clicks++);
+  await save.evaluate(el => el.addEventListener('click', () => window.countSaveClick()));
+  await save.click();
+  await expect(save).toHaveAttribute('aria-busy', 'true');
+  // The spinner shows after the delay; the label stays for the width and the accessible name.
+  await expect.poll(() => after(save, 'opacity')).toBe('1');
+  expect(await fill(save)).toBe('rgba(0, 0, 0, 0)');
+  expect(await save.evaluate(el => el.getBoundingClientRect().width)).toBeCloseTo(width, 0);
+  await save.click({ force: true });
+  await save.press('Enter');
+  expect(clicks).toBe(1);
+  await expect(save).toBeFocused();
+  await expect(save).toHaveAttribute('aria-busy', 'false', { timeout: 4000 });
+  expect(await after(save, 'content')).toBe('none');
+  // An icon button hides its icon the same way; a button with its own spinner keeps its label.
+  const sync = card.getByRole('button', { name: 'Sync Mailbox' });
+  expect(await sync.locator('svg').evaluate(el => getComputedStyle(el).opacity)).toBe('0');
+  expect(await after(sync, 'content')).not.toBe('none');
+  const labelled = card.getByRole('button', { name: 'Saving Changes…' });
+  expect(await after(labelled, 'content')).toBe('none');
+  expect(await fill(labelled)).not.toBe('rgba(0, 0, 0, 0)');
+});
+
 test('forced colors preserve choice focus and reduced motion slows activity animation', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await combo(page).focus();
@@ -316,6 +350,8 @@ test('forced colors preserve choice focus and reduced motion slows activity anim
   const spinner = page.locator('#component-spinner .f-spinner');
   // Activity indicators keep showing progress under reduced motion, more slowly.
   expect(await spinner.evaluate(el => getComputedStyle(el).animationDuration)).toBe('2.4s');
+  const busy = page.locator('#component-spinner').getByRole('button', { name: 'Refresh' });
+  expect(await busy.evaluate(el => getComputedStyle(el, '::after').animationDuration)).toBe('0s, 2.4s');
   await combo(page).press('Enter');
   expect(await value(page, '#combobox-example', 'assignee')).not.toBeNull();
 });

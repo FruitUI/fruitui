@@ -1357,11 +1357,24 @@
     &lt;span&gt;Newest Activity&lt;/span&gt;
     &lt;div class=&quot;f-pagination__controls&quot;&gt;&lt;a class=&quot;f-button&quot; href=&quot;/admin.html#/customers&quot;&gt;Older Activity&lt;/a&gt;&lt;/div&gt;
 &lt;/x-fruit::pagination&gt;</pre></details></section>
-<section id="component-spinner" data-component="spinner" class="f-card component-card"><h2>Busy Actions</h2><p>Keep a readable action name; aria-busy describes activity and native disabled blocks repeated actions.</p><!-- blade:spinner --><button type="button" class="f-button" aria-busy="true" disabled="disabled"><span class="f-spinner" aria-hidden="true"></span>
-    Saving changes…</button><!-- /blade:spinner --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-busy=&quot;true&quot; disabled&gt;&lt;span class=&quot;f-spinner&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Saving changes…&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="spinner">&lt;x-fruit::button aria-busy=&quot;true&quot; disabled&gt;
-    &lt;x-fruit::spinner /&gt;
-    Saving changes…
-&lt;/x-fruit::button&gt;</pre></details></section>
+<section id="component-spinner" data-component="spinner" class="f-card component-card"><h2>Busy Actions</h2><p>Set aria-busy (Livewire sets data-loading): after a short delay a spinner covers the label, the button keeps its width, focus and name, and ignores further clicks. A button with its own spinner keeps its label visible instead.</p><!-- blade:spinner --><div class="f-row" x-data="{ saving: false }">
+    <button type="button" class="f-button f-button--primary" x-bind:aria-busy="String(saving)" aria-busy="false" x-on:click="saving = true; setTimeout(() => saving = false, 2000)">Save Changes</button>
+    <button type="button" class="f-button" aria-busy="true">Refresh</button>
+    <button type="button" class="f-button f-button--ghost f-button--icon" aria-busy="true" aria-label="Sync Mailbox"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
+    <button type="button" class="f-button" aria-busy="true"><span class="f-spinner" aria-hidden="true"></span>
+        Saving Changes…</button>
+</div><!-- /blade:spinner --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;submit&quot; aria-busy=&quot;true&quot;&gt;Save Changes&lt;/button&gt;
+&lt;button class=&quot;f-button&quot; type=&quot;button&quot; aria-busy=&quot;true&quot;&gt;&lt;span class=&quot;f-spinner&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;Saving Changes…&lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="spinner">{{-- aria-busy (or Livewire&apos;s data-loading) alone: after a short delay a spinner covers the label, the
+     width holds and further clicks are ignored. With its own spinner, the button shows a label of your choosing. --}}
+&lt;div class=&quot;f-row&quot; x-data=&quot;{ saving: false }&quot;&gt;
+    &lt;x-fruit::button variant=&quot;primary&quot; x-bind:aria-busy=&quot;String(saving)&quot; aria-busy=&quot;false&quot; x-on:click=&quot;saving = true; setTimeout(() =&gt; saving = false, 2000)&quot;&gt;Save Changes&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button aria-busy=&quot;true&quot;&gt;Refresh&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; aria-busy=&quot;true&quot; aria-label=&quot;Sync Mailbox&quot;&gt;&lt;svg class=&quot;f-icon&quot; viewBox=&quot;0 0 24 24&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8&quot;/&gt;&lt;path d=&quot;M21 3v5h-5&quot;/&gt;&lt;path d=&quot;M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16&quot;/&gt;&lt;path d=&quot;M8 16H3v5&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+    &lt;x-fruit::button aria-busy=&quot;true&quot;&gt;
+        &lt;x-fruit::spinner /&gt;
+        Saving Changes…
+    &lt;/x-fruit::button&gt;
+&lt;/div&gt;</pre></details></section>
 <section id="component-upload" data-component="upload" class="f-card component-card"><h2>Upload Rows</h2><p>File, Progress, links, and action buttons compose uploading, complete, error, and cancelled states. The application owns the upload.</p><!-- blade:upload --><div x-data="uploadDemo" class="f-stack">
     <label class="f-label" for="gallery-files">Attachments</label>
     <input class="f-input f-file" type="file" id="gallery-files" multiple @change="addFiles($event.target.files)">
