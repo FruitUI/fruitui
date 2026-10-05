@@ -34,7 +34,13 @@
           <form class="f-pane f-pane--column settings-content" x-ref="form" @submit.prevent="save()" novalidate>
             <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="back()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2></header>
             <div class="f-pane__scroll settings-scroll">
-              <div class="f-page f-page--narrow settings-page"><div class="f-page__body">
+              <div class="f-page f-page--narrow settings-page">
+                <template x-if="page === 'mailbox'"><div class="f-page__nav">
+                  <nav class="f-section-nav settings-tabs" aria-label="Mailbox settings">
+                    <template x-for="(label, key) in mailboxTabs" :key="key"><a :href="'#/mailbox/' + key" :aria-current="tab === key ? 'page' : null" x-text="label"></a></template>
+                  </nav>
+                </div></template>
+                <div class="f-page__body">
 
                 <template x-if="page === 'general'"><div class="settings-sections">
                   <section class="f-form-section" aria-labelledby="settings-company-title">
@@ -61,9 +67,6 @@
                 </div></template>
 
                 <template x-if="page === 'mailbox'"><div class="settings-sections">
-                  <nav class="f-section-nav settings-tabs" aria-label="Mailbox settings">
-                    <template x-for="(label, key) in mailboxTabs" :key="key"><a :href="'#/mailbox/' + key" :aria-current="tab === key ? 'page' : null" x-text="label"></a></template>
-                  </nav>
                   <template x-if="tab === 'general'"><div class="settings-sections">
                     <section class="f-form-section" aria-labelledby="settings-mailbox-title">
                       <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>

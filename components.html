@@ -2057,13 +2057,14 @@
         &lt;/div&gt;
     &lt;/x-fruit::form-section&gt;
 &lt;/div&gt;</pre></details></section>
-        <section id="component-page-column" data-component="page-column" class="f-card component-card"><h2>Page Column</h2><p>The content column of a page, centered in its pane: header, content and save bar share one width, so the title and Save line up with the settings. Narrow for forms and settings, medium for reading and detail pages, wide for tables.</p><!-- blade:page-column --><div style="max-height: 420px; overflow: auto; border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-grouped-background)">
+        <section id="component-page-column" data-component="page-column" class="f-card component-card"><h2>Page Column</h2><p>The content column of a page, centered in its pane: header, section tabs, content and save bar share one width, so the title and Save line up with the settings. Narrow for forms and settings, medium for reading and detail pages, wide for tables.</p><!-- blade:page-column --><div style="max-height: 420px; overflow: auto; border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-grouped-background)">
     <div class="f-page f-page--narrow" style="--f-page-background: var(--f-grouped-background);">
             <header class="f-page__header">
             <div class="f-page__heading">
                 <h3 class="f-page__title">Notifications</h3>                <p class="f-page__description">Choose what reaches you, and where.</p>            </div>
             <div class="f-page__actions"><button type="button" class="f-button f-button--ghost f-button--small">Restore Defaults</button></div>        </header>
-        <div class="f-page__body"><section class="f-form-section"  aria-labelledby="f-section-email-title" >
+        <div class="f-page__nav"><nav class="f-section-nav" aria-label="Preferences"><a href="#component-page-column" aria-current="page">Notifications</a>
+                <a href="#component-page-column">Privacy</a></nav></div>    <div class="f-page__body"><section class="f-form-section"  aria-labelledby="f-section-email-title" >
             <h2 class="f-form-section__title" id="f-section-email-title">Email</h2>
         <div class="f-form-section__rows"><div class="f-field f-field--row">
     <label class="f-label" for="field-notify_new">New Conversations</label>
@@ -2107,11 +2108,17 @@
   &lt;/header&gt;
   &lt;div class=&quot;f-page__body&quot;&gt;&lt;!-- form sections --&gt;&lt;/div&gt;
   &lt;footer class=&quot;f-page__footer&quot;&gt;&lt;p class=&quot;f-help&quot; role=&quot;status&quot;&gt;All changes saved.&lt;/p&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot;&gt;Revert&lt;/button&gt;&lt;button class=&quot;f-button f-button--primary&quot; type=&quot;submit&quot;&gt;Save&lt;/button&gt;&lt;/footer&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="page-column">{{-- A page&apos;s content column, centered in its pane: title, description and actions, the content, and a
-     save bar that stays in view, all one width. width: narrow (forms, settings), medium, wide (tables). --}}
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="page-column">{{-- A page&apos;s content column, centered in its pane: title, description and actions, section tabs, the
+     content, and a save bar that stays in view, all one width. width: narrow (forms, settings), medium, wide (tables). --}}
 &lt;div style=&quot;max-height: 420px; overflow: auto; border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-grouped-background)&quot;&gt;
     &lt;x-fruit::page width=&quot;narrow&quot; title=&quot;Notifications&quot; description=&quot;Choose what reaches you, and where.&quot; :level=&quot;3&quot; style=&quot;--f-page-background: var(--f-grouped-background)&quot;&gt;
         &lt;x-slot:actions&gt;&lt;x-fruit::button variant=&quot;ghost&quot; size=&quot;small&quot;&gt;Restore Defaults&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;
+        &lt;x-slot:nav&gt;
+            &lt;x-fruit::section-nav aria-label=&quot;Preferences&quot;&gt;
+                &lt;a href=&quot;#component-page-column&quot; aria-current=&quot;page&quot;&gt;Notifications&lt;/a&gt;
+                &lt;a href=&quot;#component-page-column&quot;&gt;Privacy&lt;/a&gt;
+            &lt;/x-fruit::section-nav&gt;
+        &lt;/x-slot:nav&gt;
         &lt;x-fruit::form-section title=&quot;Email&quot;&gt;
             &lt;x-fruit::field label=&quot;New Conversations&quot; layout=&quot;row&quot;&gt;&lt;x-fruit::switch name=&quot;notify_new&quot; checked /&gt;&lt;/x-fruit::field&gt;
             &lt;x-fruit::field label=&quot;Replies to My Conversations&quot; layout=&quot;row&quot;&gt;&lt;x-fruit::switch name=&quot;notify_replies&quot; checked /&gt;&lt;/x-fruit::field&gt;

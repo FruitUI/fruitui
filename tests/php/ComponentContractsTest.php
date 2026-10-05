@@ -379,8 +379,13 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('How it sends.', $xpath->query('.//p[@class="f-page__description"]', $page)->item(0)->textContent);
         $this->assertSame('Restore', $xpath->query('.//div[@class="f-page__actions"]/button', $page)->item(0)->textContent);
         $this->assertSame('Save', $xpath->query('./footer[@class="f-page__footer"]/button', $page)->item(0)->textContent);
+        // Section tabs sit between the header and the content, outside the body's own wrappers.
+        $tabs = $this->xpath(Blade::render('<x-fruit::page title="Customer"><x-slot:nav class="extra"><nav class="f-section-nav" aria-label="Customer"><a href="#" aria-current="page">Profile</a></nav></x-slot:nav><div class="wrapper"><p>Rows</p></div></x-fruit::page>'));
+        $children = $tabs->query('//div[@class="f-page"]/*');
+        $this->assertSame(['f-page__header', 'f-page__nav extra', 'f-page__body'], array_map(fn ($child) => $child->getAttribute('class'), iterator_to_array($children)));
+        $this->assertSame('Customer', $tabs->query('//div[@class="f-page__nav extra"]/nav')->item(0)->getAttribute('aria-label'));
         $plain = $this->xpath(Blade::render('<x-fruit::page><p>Rows</p></x-fruit::page>'));
-        $this->assertSame(0, $plain->query('//header|//footer')->length);
+        $this->assertSame(0, $plain->query('//header|//footer|//div[@class="f-page__nav"]')->length);
         $this->assertSame('f-page', $plain->query('//div[contains(@class, "f-page")]')->item(0)->getAttribute('class'));
         $this->assertRejected('<x-fruit::page width="full">Rows</x-fruit::page>', 'page width must be one of');
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');

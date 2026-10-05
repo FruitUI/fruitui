@@ -70,11 +70,13 @@ new class extends Component
 <form class="fruit-settings" wire:submit="save" style="min-height: 100dvh; background: var(--f-grouped-background)">
 <x-fruit::page width="narrow" title="Support Mailbox" style="--f-page-background: var(--f-grouped-background)">
 
-    <x-fruit::section-nav aria-label="Mailbox settings">
-        @foreach ($this::TABS as $key => $label)
-            <a href="?tab={{ $key }}" wire:click.prevent="$set('tab', '{{ $key }}')" @if ($tab === $key) aria-current="page" @endif>{{ $label }}</a>
-        @endforeach
-    </x-fruit::section-nav>
+    <x-slot:nav>
+        <x-fruit::section-nav aria-label="Mailbox settings">
+            @foreach ($this::TABS as $key => $label)
+                <a href="?tab={{ $key }}" wire:click.prevent="$set('tab', '{{ $key }}')" @if ($tab === $key) aria-current="page" @endif>{{ $label }}</a>
+            @endforeach
+        </x-fruit::section-nav>
+    </x-slot:nav>
 
     @if ($tab === 'general')
         <x-fruit::form-section title="Mailbox">

@@ -23,6 +23,12 @@ test('Settings is linked from every example and its pages and mailbox tabs follo
   await expect(page).toHaveURL(/#\/mailbox$/);
   const tabs = page.getByRole('navigation', { name: 'Mailbox settings' });
   await expect(tabs.getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
+  // The page spaces its section tabs from the content.
+  const gap = await page.evaluate(() => {
+    const nav = document.querySelector('.f-page__nav').getBoundingClientRect();
+    return document.querySelector('.f-page__body .f-form-section').getBoundingClientRect().top - nav.bottom;
+  });
+  expect(gap).toBe(24);
   await tabs.getByRole('link', { name: 'Connection' }).click();
   await expect(page).toHaveURL(/#\/mailbox\/connection$/);
   await expect(page.getByRole('region', { name: 'Sending' })).toBeVisible();
