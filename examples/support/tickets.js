@@ -267,16 +267,17 @@ export const tickets = [
     unread: false,
     time: '3h',
     tags: ['Workspace', 'Guests'],
-    preview: 'I’ll give that a try with our next client project. Thank you!',
+    preview: 'Perfect, I’ll give that a try with our next client project. Thank you!',
+    // Written in the website chat: short messages, shown in the Chat view.
+    channel: 'chat',
     threads: [
-      customer('Can we invite a client to one project without giving them access to everything?', 'Today, 7:34 AM'),
-      {
-        kind: 'reply',
-        author: 'Alex Morgan',
-        time: 'Today, 7:48 AM',
-        body: 'Yes! Invite them as a guest from the project’s Share menu. They’ll only see that project, and you can adjust their permissions at any time.',
-      },
-      customer('I’ll give that a try with our next client project. Thank you!', 'Today, 7:54 AM'),
+      customer('Hi! Can we invite a client to one project without giving them access to everything?', '7:34 AM'),
+      reply('Hi Lena! Yes, invite them as a guest from the project’s Share menu.', '7:36 AM'),
+      reply('They’ll only see that project, and you can change their permissions at any time.', '7:36 AM'),
+      customer('Oh nice. Can guests comment too?', '7:41 AM'),
+      reply('They can comment and upload files. Editing stays with your team unless you allow it.', '7:43 AM'),
+      note('Lena’s studio has asked about guests before. A short guide in the Help Center would help.', '7:45 AM'),
+      customer('Perfect, I’ll give that a try with our next client project. Thank you!', '7:54 AM'),
     ],
   },
   {

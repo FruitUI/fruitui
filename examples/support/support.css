@@ -240,6 +240,14 @@
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
+/* A chat names the customer, not a subject, and keeps its heading short. */
+.support-conversation-heading.support-conversation-heading--chat {
+  padding-block: 12px;
+}
+.support-conversation-heading.support-conversation-heading--chat h2 {
+  font-size: var(--f-text-xl);
+  letter-spacing: 0;
+}
 .support-conversation-heading p {
   margin-top: 8px;
   color: var(--f-secondary);
@@ -297,6 +305,16 @@
   --f-composer-footer-margin: 11px;
   --f-composer-input-min-height: 96px;
   --f-composer-input-max-height: 200px;
+}
+/* Both views share the column; each view's own content fills it. */
+.support-view {
+  display: contents;
+}
+.support-chat-history {
+  --f-pane-scroll-padding: 12px 14px 16px;
+}
+.support-chat-composer {
+  --f-composer-input-min-height: 48px;
 }
 .support-composer[data-mode='note'] {
   --f-composer-background: var(--f-surface-secondary);

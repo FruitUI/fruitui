@@ -104,9 +104,14 @@ export function supportDemo() {
       this.send();
       this.updateStatus('closed');
     },
-    /** The open conversation's entries, newest first, each with its place in the history. */
+    /** A conversation from the website chat, shown in the Chat view. */
+    get chat() {
+      return this.ticket?.channel === 'chat';
+    },
+    /** The open conversation's entries with their place in the history: newest first, or oldest first in a chat. */
     get timeline() {
-      return (this.ticket?.threads ?? []).map((entry, index) => ({ ...entry, index })).reverse();
+      const entries = (this.ticket?.threads ?? []).map((entry, index) => ({ ...entry, index }));
+      return this.chat ? entries : entries.reverse();
     },
     get ticket() {
       return this.tickets.find(ticket => ticket.id === this.selectedId) ?? null;
@@ -335,7 +340,7 @@ export function supportDemo() {
       ticket.threads.push({
         kind: this.mode === 'note' ? 'note' : 'reply',
         author: 'Alex Morgan',
-        ...(this.mode === 'reply' ? { from: this.mailbox(ticket.mailboxId).email } : {}),
+        ...(this.mode === 'reply' && !this.chat ? { from: this.mailbox(ticket.mailboxId).email } : {}),
         time: 'Just now',
         body,
       });
@@ -351,10 +356,8 @@ export function supportDemo() {
       this.$toast(
         this.mode === 'note' ? 'Internal note added · visible to your team' : 'Reply added to the demo conversation',
       );
-      this.$nextTick(() => {
-        // Newest first: the new entry is at the top.
-        this.$refs.thread.scrollTop = 0;
-      });
+      // Newest first: the new entry is at the top. A chat's history follows it at the bottom by itself.
+      if (!this.chat) this.$nextTick(() => (this.$refs.thread.scrollTop = 0));
     },
     openNew() {
       this.newMailboxId = this.mailboxId === 'all' ? this.mailboxes[0].id : this.mailboxId;

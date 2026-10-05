@@ -217,14 +217,7 @@
 .chat-message {
   --f-message-gap: 11px;
   --f-message-body-gap: 5px;
-  /* The padding has room for the actions inside the message. */
-  --f-message-actions-top: 4px;
-  padding: 12px;
-  border-radius: 10px;
   scroll-margin-block: 10px;
-}
-.chat-message:hover {
-  background: var(--f-hover);
 }
 .chat-message[data-highlighted='true'] {
   background: var(--f-selection);

@@ -251,6 +251,11 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('f-thread', $list->getAttribute('class'));
         $this->assertSame('Messages', $list->getAttribute('aria-label'));
         $this->assertRejected('<x-fruit::thread role="feed">A</x-fruit::thread>', 'overriding role');
+        // A chat is a compact thread; the density is an explicit, small choice.
+        $compact = $this->xpath(Blade::render('<x-fruit::thread density="compact" class="extra"><li>A</li></x-fruit::thread>'))->query('//ol')->item(0);
+        $this->assertSame('f-thread f-thread--compact extra', $compact->getAttribute('class'));
+        $this->assertSame('f-thread', $this->xpath(Blade::render('<x-fruit::thread density="comfortable"><li>A</li></x-fruit::thread>'))->query('//ol')->item(0)->getAttribute('class'));
+        $this->assertRejected('<x-fruit::thread density="chat"><li>A</li></x-fruit::thread>', 'density must be one of');
 
         $this->assertStringContainsString('class="f-message f-message--stacked f-message--outgoing"', Blade::render('<x-fruit::message layout="stacked" direction="outgoing" aria-label="Reply">Yes</x-fruit::message>'));
         $this->assertStringContainsString('class="f-message"', Blade::render('<x-fruit::message direction="incoming" aria-label="Question">Hi</x-fruit::message>'));

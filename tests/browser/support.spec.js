@@ -250,6 +250,40 @@ test('read-only Support retains automatic CSS dark mode without JavaScript', asy
 function ticket(page, id) {
   return page.locator(`button.support-ticket[data-ticket-id="${id}"]`);
 }
+test('a website-chat conversation opens in the Chat view, oldest first, at its newest message', async ({ page }) => {
+  await queue(page, 'Waiting').click();
+  await page.locator('button.support-ticket', { hasText: 'Inviting a client' }).click();
+  const conversation = page.locator('#support-conversation');
+  await expect(conversation.getByRole('heading', { level: 2 })).toHaveText('Lena Wilson');
+  await expect(conversation).toContainText('Support · Website Chat');
+  const history = conversation.getByRole('region', { name: 'Chat with Lena Wilson' });
+  const messages = history.getByRole('list', { name: 'Messages' });
+  await expect(messages).toHaveClass(/f-thread--compact/);
+  const entries = messages.locator(':scope > li');
+  await expect(entries.first()).toContainText('Can we invite a client');
+  await expect(entries.last()).toContainText('I’ll give that a try');
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  await expect.poll(fromEnd).toBeLessThan(2);
+  // Compact rows: no line between messages.
+  expect(await entries.nth(1).evaluate(element => getComputedStyle(element).borderTopStyle)).toBe('none');
+  // Enter sends; the reply lands last, in view, and the composer keeps focus.
+  const composer = conversation.getByRole('textbox', { name: 'Message Lena Wilson' });
+  await composer.fill('Let me know how it goes!');
+  await composer.press('Enter');
+  await expect(entries.last()).toContainText('Let me know how it goes!');
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expect(composer).toBeFocused();
+  // Shift+Enter is a new line, not a send.
+  await composer.press('Shift+Enter');
+  await expect(entries).toHaveCount(8);
+  await expectAccessible(page, '#support-conversation');
+  // An email conversation keeps the email view: newest first, the composer on top.
+  await queue(page, 'Open').click();
+  await page.locator('button.support-ticket').first().click();
+  await expect(conversation.locator('.f-history')).toHaveCount(0);
+  await expect(conversation.locator('form.f-composer--top')).toBeVisible();
+});
+
 function queue(page, name) {
   return page
     .getByRole('navigation', { name: 'Support views', exact: true })

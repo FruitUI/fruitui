@@ -150,7 +150,7 @@ new class extends Component
             'cc' => ['nullable', new Tokens('email')],
             'bcc' => ['nullable', new Tokens('email')],
         ], ['reply.required' => 'Write a reply before sending.', 'reply.min' => 'Write at least three characters.'], ['cc' => 'Cc', 'bcc' => 'Bcc']);
-        $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'bcc' => $this->bcc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply]]]);
+        $this->change(fn (array $ticket) => [...$ticket, 'cc' => $this->cc, 'bcc' => $this->bcc, 'messages' => [...$ticket['messages'], ['author' => 'Alex Morgan', 'body' => $this->reply, 'time' => now()->format('g:i A')]]]);
         $this->reply = '';
         Fruit::toast('Reply sent to '.$this->ticket['name'].'.');
     }
@@ -302,12 +302,15 @@ new class extends Component
         ]])->all();
         // A conversation from a chat channel: short messages, shown in the Chat view.
         $tickets[1036] = [...$tickets[1036], 'channel' => 'chat', 'messages' => [
-            ['author' => 'Lena Wilson', 'body' => 'Hi! Since Monday new events no longer appear in our shared calendar.'],
-            ['author' => 'Alex Morgan', 'body' => 'Hi Lena, sorry about that. Is it every calendar, or only the shared one?'],
-            ['author' => 'Lena Wilson', 'body' => 'Only the shared one. Our personal calendars are fine.'],
+            ['author' => 'Lena Wilson', 'body' => 'Hi! Since Monday new events no longer appear in our shared calendar.', 'time' => '9:02 AM'],
+            ['author' => 'Alex Morgan', 'body' => 'Hi Lena, sorry about that. Is it every calendar, or only the shared one?', 'time' => '9:05 AM'],
+            ['author' => 'Lena Wilson', 'body' => 'Only the shared one. Our personal calendars are fine.', 'time' => '9:11 AM'],
+            ['author' => 'Alex Morgan', 'body' => 'Thanks. Do the events show up on the web, or are they missing everywhere?', 'time' => '9:12 AM'],
+            ['author' => 'Lena Wilson', 'body' => 'They’re on the web. Just not in Outlook or on our phones.', 'time' => '9:13 AM'],
+            ['author' => 'Alex Morgan', 'body' => 'That narrows it down to the calendar feed. Let me ask Noah, who looks after sync.', 'time' => '9:13 AM'],
             ['event' => 'Alex Morgan assigned this to Noah Williams', 'time' => '9:14 AM'],
-            ['author' => 'Noah Williams', 'body' => 'Thanks, Lena. Could you try removing and re-adding the shared calendar under Settings › Calendars?'],
-            ['author' => 'Lena Wilson', 'body' => 'Done. The events from today are back, but last week’s are still missing.'],
+            ['author' => 'Noah Williams', 'body' => 'Thanks, Lena. Could you try removing and re-adding the shared calendar under Settings › Calendars?', 'time' => '9:20 AM'],
+            ['author' => 'Lena Wilson', 'body' => 'Done. The events from today are back, but last week’s are still missing.', 'time' => '9:31 AM'],
         ]];
 
         return $tickets;
@@ -411,7 +414,7 @@ new class extends Component
                     {{-- The Chat view: oldest first in a history that opens at the newest message and follows
                          new ones; the composer stays docked below it. Keyed per ticket, so each opens at its newest. --}}
                     <x-fruit::history aria-label="Chat with {{ $ticket['name'] }}" wire:key="chat-{{ $ticket['id'] }}" style="--f-pane-scroll-padding: var(--f-space-4)">
-                        <x-fruit::thread aria-label="Messages">
+                        <x-fruit::thread aria-label="Messages" density="compact">
                             @foreach ($ticket['messages'] as $index => $message)
                                 <li wire:key="message-{{ $index }}">
                                     @if (isset($message['event']))
@@ -420,10 +423,13 @@ new class extends Component
                                             <x-slot:time>{{ $message['time'] }}</x-slot:time>
                                         </x-fruit::message-event>
                                     @else
-                                        <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
+                                        <x-fruit::message :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
                                             <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                             <x-slot:author>{{ $message['author'] }}</x-slot:author>
                                             <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to Customer' }}</x-slot:meta>
+                                            @isset($message['time'])
+                                                <x-slot:time>{{ $message['time'] }}</x-slot:time>
+                                            @endisset
                                             {{ $message['body'] }}
                                         </x-fruit::message>
                                     @endif

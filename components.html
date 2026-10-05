@@ -1940,8 +1940,8 @@
 <section id="component-history" data-component="history" class="f-card component-card"><h2>Message History</h2><p>A chat history read from the bottom up: it opens at the newest message and follows new ones, while the composer stays docked below. Scrolled back, new messages leave the reader in place and Jump to Latest appears; sending returns to the newest.</p><!-- blade:history --><div class="f-pane f-pane--column" style="height: 400px; border: 1px solid var(--f-border); border-radius: var(--f-radius)" x-data="{ sent: [], draft: '' }">
     <div role="region" tabindex="0" aria-label="Conversation with Sophie Chen" class="f-pane__scroll f-history" style="--f-pane-scroll-padding: 16px;" x-data="fruitHistory">
     <div role="separator"  aria-label="Yesterday"  class="f-divider"><span aria-hidden="true">Yesterday</span></div>
-        <ol role="list" class="f-thread"><li>
-                <article class="f-message f-message--stacked" aria-label="Customer Message">
+        <ol role="list" class="f-thread f-thread--compact"><li>
+                <article class="f-message" aria-label="Customer Message">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time" >4:12 PM</time>    </header>
@@ -1949,7 +1949,7 @@
             </article>
             </li>
             <li>
-                <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your Reply">
+                <article class="f-message f-message--outgoing f-message--mine" aria-label="Your Reply">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">You</strong>  </span>
         <time class="f-message__time" >4:15 PM</time>    </header>
@@ -1959,7 +1959,7 @@
             <li><div class="f-message-event"><span class="f-message-event__text">You assigned this conversation to yourself.</span> </div>
 </li>
             <li>
-                <article class="f-message f-message--stacked" aria-label="Customer Message">
+                <article class="f-message" aria-label="Customer Message">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time" >4:20 PM</time>    </header>
@@ -1967,8 +1967,8 @@
             </article>
             </li></ol>
         <div role="separator"  aria-label="Today"  class="f-divider"><span aria-hidden="true">Today</span></div>
-        <ol role="list" class="f-thread"><li>
-                <article class="f-message f-message--stacked" aria-label="Customer Message">
+        <ol role="list" class="f-thread f-thread--compact"><li>
+                <article class="f-message" aria-label="Customer Message">
         <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time" >9:02 AM</time>    </header>
@@ -1976,7 +1976,7 @@
             </article>
             </li>
             <template x-for="(text, index) in sent" :key="index">
-                <li><article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your Reply"><header class="f-message__header"><span class="f-message__identity"><strong class="f-message__author">You</strong></span><time class="f-message__time">Just now</time></header><div class="f-message__body" x-text="text"></div></article></li>
+                <li><article class="f-message f-message--outgoing f-message--mine" aria-label="Your Reply"><header class="f-message__header"><span class="f-message__identity"><strong class="f-message__author">You</strong></span><time class="f-message__time">Just now</time></header><div class="f-message__body" x-text="text"></div></article></li>
             </template></ol>
     <button type="button" class="f-button f-history__latest" x-show="awayFromLatest" x-cloak x-on:click="jumpToLatest({ focus: true })"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>Jump to Latest</button>
 </div>
@@ -1995,21 +1995,21 @@
     &lt;button class=&quot;f-button f-history__latest&quot; type=&quot;button&quot; x-show=&quot;awayFromLatest&quot; x-cloak x-on:click=&quot;jumpToLatest({ focus: true })&quot;&gt;…Jump to Latest&lt;/button&gt;
   &lt;/div&gt;
   &lt;form class=&quot;f-composer&quot;&gt;…&lt;/form&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="history">{{-- A chat column: the history opens at the newest message and follows new ones; the composer stays
-     docked below it. Scroll back to see Jump to Latest; sending returns to the newest message. --}}
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="history">{{-- A chat column: a compact thread in a history that opens at the newest message and follows new ones;
+     the composer stays docked below it. Scroll back to see Jump to Latest; sending returns to the newest message. --}}
 &lt;div class=&quot;f-pane f-pane--column&quot; style=&quot;height: 400px; border: 1px solid var(--f-border); border-radius: var(--f-radius)&quot; x-data=&quot;{ sent: [], draft: &apos;&apos; }&quot;&gt;
     &lt;x-fruit::history aria-label=&quot;Conversation with Sophie Chen&quot; style=&quot;--f-pane-scroll-padding: 16px&quot;&gt;
         &lt;x-fruit::divider&gt;Yesterday&lt;/x-fruit::divider&gt;
-        &lt;x-fruit::thread&gt;
+        &lt;x-fruit::thread density=&quot;compact&quot;&gt;
             &lt;li&gt;
-                &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot;&gt;
+                &lt;x-fruit::message aria-label=&quot;Customer Message&quot;&gt;
                     &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
                     &lt;x-slot:time&gt;4:12 PM&lt;/x-slot:time&gt;
                     Hi! Our export has been running for an hour. Is that normal?
                 &lt;/x-fruit::message&gt;
             &lt;/li&gt;
             &lt;li&gt;
-                &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; mine aria-label=&quot;Your Reply&quot;&gt;
+                &lt;x-fruit::message direction=&quot;outgoing&quot; mine aria-label=&quot;Your Reply&quot;&gt;
                     &lt;x-slot:author&gt;You&lt;/x-slot:author&gt;
                     &lt;x-slot:time&gt;4:15 PM&lt;/x-slot:time&gt;
                     Large workspaces can take a while. I’ll keep an eye on it for you.
@@ -2017,7 +2017,7 @@
             &lt;/li&gt;
             &lt;li&gt;&lt;x-fruit::message-event&gt;You assigned this conversation to yourself.&lt;/x-fruit::message-event&gt;&lt;/li&gt;
             &lt;li&gt;
-                &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot;&gt;
+                &lt;x-fruit::message aria-label=&quot;Customer Message&quot;&gt;
                     &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
                     &lt;x-slot:time&gt;4:20 PM&lt;/x-slot:time&gt;
                     Great, I’ll check again in the morning.
@@ -2025,16 +2025,16 @@
             &lt;/li&gt;
         &lt;/x-fruit::thread&gt;
         &lt;x-fruit::divider&gt;Today&lt;/x-fruit::divider&gt;
-        &lt;x-fruit::thread&gt;
+        &lt;x-fruit::thread density=&quot;compact&quot;&gt;
             &lt;li&gt;
-                &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot;&gt;
+                &lt;x-fruit::message aria-label=&quot;Customer Message&quot;&gt;
                     &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
                     &lt;x-slot:time&gt;9:02 AM&lt;/x-slot:time&gt;
                     It finished overnight, thank you!
                 &lt;/x-fruit::message&gt;
             &lt;/li&gt;
             &lt;template x-for=&quot;(text, index) in sent&quot; :key=&quot;index&quot;&gt;
-                &lt;li&gt;&lt;article class=&quot;f-message f-message--stacked f-message--outgoing f-message--mine&quot; aria-label=&quot;Your Reply&quot;&gt;&lt;header class=&quot;f-message__header&quot;&gt;&lt;span class=&quot;f-message__identity&quot;&gt;&lt;strong class=&quot;f-message__author&quot;&gt;You&lt;/strong&gt;&lt;/span&gt;&lt;time class=&quot;f-message__time&quot;&gt;Just now&lt;/time&gt;&lt;/header&gt;&lt;div class=&quot;f-message__body&quot; x-text=&quot;text&quot;&gt;&lt;/div&gt;&lt;/article&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;article class=&quot;f-message f-message--outgoing f-message--mine&quot; aria-label=&quot;Your Reply&quot;&gt;&lt;header class=&quot;f-message__header&quot;&gt;&lt;span class=&quot;f-message__identity&quot;&gt;&lt;strong class=&quot;f-message__author&quot;&gt;You&lt;/strong&gt;&lt;/span&gt;&lt;time class=&quot;f-message__time&quot;&gt;Just now&lt;/time&gt;&lt;/header&gt;&lt;div class=&quot;f-message__body&quot; x-text=&quot;text&quot;&gt;&lt;/div&gt;&lt;/article&gt;&lt;/li&gt;
             &lt;/template&gt;
         &lt;/x-fruit::thread&gt;
     &lt;/x-fruit::history&gt;
