@@ -151,7 +151,8 @@ export function supportDemo() {
     },
     /**
      * The room as sections, each a labelled divider and a list: one per day, and a "New" section from
-     * the first message that was unread. A run of messages from one person shows the name once.
+     * the first message that was unread. A run of messages from one person shows the name once; a pinned
+     * message starts its own run.
      */
     get roomSections() {
       const sections = [];
@@ -169,7 +170,8 @@ export function supportDemo() {
           sections.push(section);
         }
         const previous = section.messages.at(-1);
-        section.messages.push({ ...message, index, continued: previous?.author === message.author });
+        // A pinned message keeps its header, so its pin sits beside its time.
+        section.messages.push({ ...message, index, continued: previous?.author === message.author && !message.pinned });
       });
       return sections;
     },

@@ -365,6 +365,13 @@ test('the team chat’s details list its people, pinned messages and recent file
   ]);
   const pins = details.locator('.support-room-pin');
   await expect(pins).toHaveCount(2);
+  // A pinned message keeps its header, even in a run, so its pin sits beside its time.
+  const checklist = page.getByRole('article', { name: 'Message from Noah Williams, pinned' });
+  await expect(checklist).not.toHaveClass(/f-message--continued/);
+  const time = await checklist.locator('.f-message__time').boundingBox();
+  const mark = await checklist.locator('.support-room-pinned').boundingBox();
+  expect(Math.abs(mark.y + mark.height / 2 - (time.y + time.height / 2))).toBeLessThan(4);
+  expect(mark.x).toBeGreaterThan(time.x + time.width);
   await expect(details.getByRole('link', { name: /domain-checklist\.txt/ })).toBeVisible();
   // Pin from a message's actions; the pinned list follows, and a pin shows its message.
   const history = page.getByRole('region', { name: 'Support team chat' });
