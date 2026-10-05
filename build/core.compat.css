@@ -122,42 +122,77 @@
      text on filled buttons, the lighter dark-appearance accent and selection text. */
 
 :where([data-fruit-accent='blue']),
-  :where([data-fruit-accent='blue'] .fruit-ui) {
+  [data-fruit-accent='blue'] .fruit-ui {
     --f-tint: #006cde;
   }
 
 :where([data-fruit-accent='purple']),
-  :where([data-fruit-accent='purple'] .fruit-ui) {
+  [data-fruit-accent='purple'] .fruit-ui {
     --f-tint: #9c3fbf;
   }
 
 :where([data-fruit-accent='pink']),
-  :where([data-fruit-accent='pink'] .fruit-ui) {
+  [data-fruit-accent='pink'] .fruit-ui {
     --f-tint: #d8326e;
   }
 
 :where([data-fruit-accent='red']),
-  :where([data-fruit-accent='red'] .fruit-ui) {
+  [data-fruit-accent='red'] .fruit-ui {
     --f-tint: #dc343b;
   }
 
 :where([data-fruit-accent='orange']),
-  :where([data-fruit-accent='orange'] .fruit-ui) {
+  [data-fruit-accent='orange'] .fruit-ui {
     --f-tint: #c55400;
   }
 
 :where([data-fruit-accent='yellow']),
-  :where([data-fruit-accent='yellow'] .fruit-ui) {
+  [data-fruit-accent='yellow'] .fruit-ui {
     --f-tint: #a06a00;
   }
 
 :where([data-fruit-accent='green']),
-  :where([data-fruit-accent='green'] .fruit-ui) {
+  [data-fruit-accent='green'] .fruit-ui {
     --f-tint: #2e8700;
   }
 
 :where([data-fruit-accent='graphite']),
-  :where([data-fruit-accent='graphite'] .fruit-ui) {
+  [data-fruit-accent='graphite'] .fruit-ui {
+    --f-tint: #767676;
+  }
+
+/* The scope's own accent comes last, so it wins over an ancestor's. The compat build gives these
+     selectors and the ancestor ones the scope's class weight, as it does the default tint. */
+
+.fruit-ui[data-fruit-accent='blue'] {
+    --f-tint: #006cde;
+  }
+
+.fruit-ui[data-fruit-accent='purple'] {
+    --f-tint: #9c3fbf;
+  }
+
+.fruit-ui[data-fruit-accent='pink'] {
+    --f-tint: #d8326e;
+  }
+
+.fruit-ui[data-fruit-accent='red'] {
+    --f-tint: #dc343b;
+  }
+
+.fruit-ui[data-fruit-accent='orange'] {
+    --f-tint: #c55400;
+  }
+
+.fruit-ui[data-fruit-accent='yellow'] {
+    --f-tint: #a06a00;
+  }
+
+.fruit-ui[data-fruit-accent='green'] {
+    --f-tint: #2e8700;
+  }
+
+.fruit-ui[data-fruit-accent='graphite'] {
     --f-tint: #767676;
   }
 

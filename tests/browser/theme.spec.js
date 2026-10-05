@@ -327,6 +327,22 @@ test('one brand tint recolors every accent shade in both appearances', async ({ 
   }
 });
 
+for (const build of ['core', 'core.compat']) {
+  test(`named accents reach the scope from an ancestor or the scope itself in ${build}.css`, async ({ page }) => {
+    const css = readFileSync(new URL(`../../build/${build}.css`, import.meta.url), 'utf8');
+    await page.setContent(`<!doctype html><html data-fruit-accent="purple"><head><style>${css}</style></head>
+      <body class="fruit-ui"><main class="fruit-ui" data-fruit-accent="green"><div data-fruit-accent="orange"></div></main></body></html>`);
+    const tint = selector =>
+      page.locator(selector).evaluate(element => getComputedStyle(element).getPropertyValue('--f-tint').trim());
+    expect(await tint('body')).toBe('#9c3fbf');
+    // The scope's own accent wins over an ancestor's; a plain element inside sets its own.
+    expect(await tint('main')).toBe('#2e8700');
+    expect(await tint('main div')).toBe('#c55400');
+    await page.evaluate(() => document.documentElement.removeAttribute('data-fruit-accent'));
+    expect(await tint('body')).toBe('#006cde');
+  });
+}
+
 test('the compat build honours data-theme and keeps headings in the text color against host rules', async ({
   page,
 }) => {
