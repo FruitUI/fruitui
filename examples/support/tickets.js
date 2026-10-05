@@ -352,6 +352,7 @@ export const teamRooms = {
       day: 'Yesterday',
       time: '4:12 PM',
       body: 'Heads-up: the sign-in fix for custom domains ships tomorrow morning.',
+      pinned: true,
     },
     { author: 'noah', day: 'Yesterday', time: '4:20 PM', body: 'Nice. I’ll let Jordan know in #1041 once it’s out.' },
     {
@@ -359,6 +360,7 @@ export const teamRooms = {
       day: 'Yesterday',
       time: '4:21 PM',
       body: 'Here’s the checklist I use for domain changes.',
+      pinned: true,
       attachments: [{ name: 'domain-checklist.txt', size: '2 KB', href: 'examples/chat/interaction-notes.txt' }],
     },
     { author: 'alex', day: 'Today', time: '9:02 AM', body: 'Morning! I’m on billing questions today.' },

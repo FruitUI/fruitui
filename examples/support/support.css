@@ -862,15 +862,103 @@
 }
 .support-workspace[data-room] .support-room-toolbar {
   display: flex;
-  grid-column: 2 / -1;
+  grid-column: 2 / 4;
   grid-row: 1;
   gap: 8px;
 }
 .support-workspace[data-room] .support-room {
   display: flex;
-  grid-column: 2 / -1;
+  grid-column: 2 / 4;
   grid-row: 2;
   min-height: 0;
+}
+/* The room's details (people, pinned messages, recent files) in the inspector's place. */
+.support-room-details-toolbar,
+.support-room-details,
+.support-room-details-toggle {
+  display: none;
+}
+.support-workspace[data-room] .support-room-details-toolbar {
+  display: flex;
+  grid-column: 4;
+  grid-row: 1;
+  justify-content: space-between;
+  border-left: 1px solid var(--f-border);
+}
+.support-room-details-toolbar h2 {
+  font-size: var(--f-text-base);
+  font-weight: 600;
+}
+.support-workspace[data-room] .support-room-details {
+  display: block;
+  grid-column: 4;
+  grid-row: 2;
+  --f-pane-background: var(--f-material);
+}
+.support-room-details .support-inspector-section:first-child {
+  border-top: 0;
+}
+.support-room-people,
+.support-room-pins,
+.support-room-recent {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.support-room-people li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--f-text-sm);
+}
+.support-room-people .f-avatar {
+  --f-avatar-size: 26px;
+  --f-avatar-font-size: var(--f-text-2xs);
+}
+.support-room-people small {
+  color: var(--f-secondary);
+  font-size: var(--f-text-xs);
+}
+.support-room-pin {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-md);
+  background: var(--f-surface);
+  color: var(--f-text);
+  font: inherit;
+  text-align: start;
+}
+.support-room-pin:hover {
+  background: var(--f-surface-secondary);
+}
+.support-room-pin-author {
+  font-size: var(--f-text-xs);
+}
+.support-room-pin-author time {
+  color: var(--f-secondary);
+}
+.support-room-pin-text {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--f-text-sm);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.support-room-recent .f-attachment {
+  width: 100%;
+}
+.support-room-pinned {
+  --f-icon-size: 13px;
+  color: var(--f-secondary);
+}
+.support-room-message:focus-visible {
+  outline: var(--f-focus-ring-width) solid var(--f-focus-ring-color);
+  outline-offset: -2px;
 }
 .support-room-heading {
   display: flex;
@@ -913,8 +1001,37 @@
 .support-room-attach {
   margin-inline-start: auto;
 }
-@container support (max-width: 900px) {
+@container support (max-width: 1100px) {
   .support-workspace[data-room] :is(.support-room-toolbar, .support-room) {
+    grid-column: 2 / -1;
+  }
+  .support-workspace[data-room] :is(.support-room-details-toolbar, .support-room-details) {
+    display: none;
+  }
+  .support-workspace[data-room] .support-room-details-toggle {
+    display: inline-flex;
+    margin-inline-start: auto;
+  }
+  .support-workspace[data-room][data-view='roomDetails'] :is(.support-room-toolbar, .support-room) {
+    display: none;
+  }
+  .support-workspace[data-room][data-view='roomDetails'] .support-room-details-toolbar {
+    display: flex;
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 0;
+    border-bottom: 1px solid var(--f-border);
+  }
+  .support-workspace[data-room][data-view='roomDetails'] .support-room-details {
+    display: block;
+    grid-column: 2 / -1;
+    border: 0;
+  }
+}
+@container support (max-width: 900px) {
+  .support-workspace[data-room] :is(.support-room-toolbar, .support-room),
+  .support-workspace[data-room][data-view='roomDetails'] :is(.support-room-details-toolbar, .support-room-details) {
     grid-column: 1 / -1;
   }
   .support-workspace[data-room][data-view='queues'] .support-room {

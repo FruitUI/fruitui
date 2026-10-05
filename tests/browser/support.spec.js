@@ -354,6 +354,46 @@ test('team chat is one item at the top that opens the chosen mailbox’s room in
   await expect(page.locator('#ticket-title')).toHaveText('A little help with our team plan');
 });
 
+test('the team chat’s details list its people, pinned messages and recent files', async ({ page }) => {
+  await openTeamChat(page);
+  const details = page.getByRole('complementary', { name: 'Chat details' });
+  await expect(details.getByRole('heading', { name: /People/ })).toBeVisible();
+  await expect(details.locator('.support-room-people li')).toHaveText([
+    /Alex Morgan\s*You$/,
+    /Mia Patel$/,
+    /Noah Williams$/,
+  ]);
+  const pins = details.locator('.support-room-pin');
+  await expect(pins).toHaveCount(2);
+  await expect(details.getByRole('link', { name: /domain-checklist\.txt/ })).toBeVisible();
+  // Pin from a message's actions; the pinned list follows, and a pin shows its message.
+  const history = page.getByRole('region', { name: 'Support team chat' });
+  const message = history.getByRole('article', { name: /Message from Alex Morgan/ }).first();
+  await message.hover();
+  const pin = message.getByRole('button', { name: 'Pin Message' });
+  await expect(pin).toHaveAttribute('aria-pressed', 'false');
+  await pin.click();
+  await expect(pin).toHaveAttribute('aria-pressed', 'true');
+  await expect(message).toHaveAccessibleName('Message from Alex Morgan, pinned');
+  await expect(pins).toHaveCount(3);
+  await pins.first().click();
+  await expect(history.getByRole('article', { name: /Message from Mia Patel, pinned/ })).toBeFocused();
+  await expectAccessible(page, '#support');
+});
+
+test('on a narrower window the team chat’s details open in place of the room', async ({ page }) => {
+  await page.setViewportSize({ width: 1000, height: 900 });
+  await openTeamChat(page);
+  await expect(page.getByRole('complementary', { name: 'Chat details' })).toBeHidden();
+  await page.getByRole('button', { name: 'Show chat details' }).click();
+  await expect(page.getByRole('complementary', { name: 'Chat details' })).toBeVisible();
+  await expect(page.locator('#support-room')).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Back to team chat' })).toBeFocused();
+  await page.getByRole('button', { name: 'Back to team chat' }).click();
+  await expect(page.locator('#support-room')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Show chat details' })).toBeFocused();
+});
+
 test('team chat sends attachments, and an empty room says what it is for', async ({ page }) => {
   await openTeamChat(page);
   await page.locator('#support-room input[type=file]').setInputFiles({

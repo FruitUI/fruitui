@@ -173,6 +173,47 @@ export function supportDemo() {
       });
       return sections;
     },
+    /** The room's details: pinned messages first to last, and the newest attachments. */
+    get roomPinned() {
+      return (this.room?.messages ?? [])
+        .map((message, index) => ({ ...message, index }))
+        .filter(message => message.pinned);
+    },
+    get roomAttachments() {
+      return (this.room?.messages ?? [])
+        .flatMap((message, index) =>
+          (message.attachments ?? []).map(file => ({ ...file, index, author: message.author, time: message.time })),
+        )
+        .reverse()
+        .slice(0, 6);
+    },
+    togglePin(index) {
+      const message = this.rooms[this.roomId][index];
+      message.pinned = !message.pinned;
+    },
+    /** Scroll a message into view and focus it: from a pinned message or an attachment in the details. */
+    showMessage(index) {
+      if (this.view === 'roomDetails') this.view = 'room';
+      this.$nextTick(() =>
+        requestAnimationFrame(() => {
+          const message = document
+            .getElementById('support-room-history')
+            ?.querySelector(`[data-room-index="${index}"]`);
+          message?.scrollIntoView({ block: 'center' });
+          message?.focus({ preventScroll: true });
+        }),
+      );
+    },
+    showRoomDetails() {
+      const refs = this.$refs;
+      this.view = 'roomDetails';
+      this.$nextTick(() => requestAnimationFrame(() => refs.roomDetailsBack.focus()));
+    },
+    hideRoomDetails() {
+      const refs = this.$refs;
+      this.view = 'room';
+      this.$nextTick(() => requestAnimationFrame(() => refs.roomDetailsToggle.focus()));
+    },
     get roomDraft() {
       return this.roomDrafts[this.roomId] ?? '';
     },
