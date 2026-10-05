@@ -343,3 +343,41 @@ export const mailboxes = [
   { id: 'billing', name: 'Billing', email: 'billing@forma.example' },
   { id: 'feedback', name: 'Feedback', email: 'feedback@forma.example' },
 ];
+
+/** Each mailbox's team chat: one room for the agents who work in it. Alex Morgan is you. */
+export const teamRooms = {
+  support: [
+    {
+      author: 'mia',
+      day: 'Yesterday',
+      time: '4:12 PM',
+      body: 'Heads-up: the sign-in fix for custom domains ships tomorrow morning.',
+    },
+    { author: 'noah', day: 'Yesterday', time: '4:20 PM', body: 'Nice. I’ll let Jordan know in #1041 once it’s out.' },
+    {
+      author: 'noah',
+      day: 'Yesterday',
+      time: '4:21 PM',
+      body: 'Here’s the checklist I use for domain changes.',
+      attachments: [{ name: 'domain-checklist.txt', size: '2 KB', href: 'examples/chat/interaction-notes.txt' }],
+    },
+    { author: 'alex', day: 'Today', time: '9:02 AM', body: 'Morning! I’m on billing questions today.' },
+    {
+      author: 'mia',
+      day: 'Today',
+      time: '9:40 AM',
+      body: '@alex could you take #1042? Sophie asks about annual billing.',
+      unread: true,
+    },
+    { author: 'mia', day: 'Today', time: '9:41 AM', body: 'I left a note in the conversation.', unread: true },
+  ],
+  billing: [
+    {
+      author: 'noah',
+      day: 'Today',
+      time: '8:15 AM',
+      body: 'The September invoices went out. Shout if anyone asks about a missing one.',
+    },
+  ],
+  feedback: [],
+};

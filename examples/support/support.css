@@ -841,3 +841,75 @@
   width: 100px;
   font-size: var(--f-text-xs);
 }
+
+/* A mailbox's team chat: a place of its own, in place of the list, conversation and details. */
+.support-room-toolbar,
+.support-room {
+  display: none;
+}
+.support-workspace[data-room]
+  :is(
+    .support-list-toolbar,
+    .support-list-pane,
+    .support-thread-toolbar,
+    .support-conversation,
+    .support-customer-toolbar,
+    .support-customer,
+    .support-workspace > .f-splitter
+  ) {
+  display: none;
+}
+.support-workspace[data-room] .support-room-toolbar {
+  display: flex;
+  grid-column: 2 / -1;
+  grid-row: 1;
+  gap: 8px;
+}
+.support-workspace[data-room] .support-room {
+  display: flex;
+  grid-column: 2 / -1;
+  grid-row: 2;
+  min-height: 0;
+}
+.support-room-history {
+  --f-pane-scroll-padding: 8px max(14px, calc((100% - 760px) / 2)) 16px;
+}
+/* The typing line and the composer share the messages' column. */
+.support-room-typing {
+  padding-inline: max(26px, calc((100% - 736px) / 2));
+}
+.support-room .support-chat-composer {
+  --f-composer-padding: 15px max(20px, calc((100% - 760px) / 2)) 18px;
+}
+.support-room-text {
+  margin: 0;
+  white-space: pre-line;
+}
+.support-mention {
+  color: var(--f-accent);
+  font-weight: 600;
+}
+.support-room-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.support-room-attach {
+  margin-inline-start: auto;
+}
+@container support (max-width: 900px) {
+  .support-workspace[data-room] :is(.support-room-toolbar, .support-room) {
+    grid-column: 1 / -1;
+  }
+  .support-workspace[data-room][data-view='queues'] .support-room {
+    grid-column: 2;
+  }
+}
+@container support (max-width: 700px) {
+  .support-workspace[data-room][data-view='queues'] .support-room {
+    display: none;
+  }
+}

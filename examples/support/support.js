@@ -1,4 +1,4 @@
-import { tickets, queues, agents, mailboxes } from './tickets.js';
+import { tickets, queues, agents, mailboxes, teamRooms } from './tickets.js';
 
 export function supportDemo() {
   return {
@@ -11,6 +11,15 @@ export function supportDemo() {
     query: '',
     priorityOnly: false,
     selectedId: 1042,
+    // A mailbox's team chat, open in place of the list and conversation (null: the mailboxes).
+    rooms: structuredClone(teamRooms),
+    roomId: null,
+    roomDrafts: {},
+    roomFiles: [],
+    // Where the "New" divider goes: the first message that was unread when the room opened.
+    roomNewFrom: null,
+    roomTyping: '',
+    roomAnswered: {},
     // Conversations checked for a bulk action (Cmd/Ctrl+click, Shift+click, or Select).
     checked: [],
     page: 1,
@@ -104,6 +113,130 @@ export function supportDemo() {
       this.send();
       this.updateStatus('closed');
     },
+    get room() {
+      return this.roomId
+        ? { id: this.roomId, name: this.mailbox(this.roomId).name, messages: this.rooms[this.roomId] }
+        : null;
+    },
+    roomUnread(id) {
+      return this.rooms[id].filter(message => message.unread).length;
+    },
+    person(id) {
+      const name = this.agents.find(agent => agent.id === id)?.name ?? id;
+      return {
+        name,
+        initials: name
+          .split(' ')
+          .map(word => word[0])
+          .join(''),
+      };
+    },
+    /** A message's text with conversation numbers (#1042) and mentions (@mia) picked out. */
+    parts(body) {
+      return body
+        .split(/(#\d{4}\b|@[a-z]+\b)/)
+        .filter(Boolean)
+        .map(text => {
+          const ticket = text.startsWith('#') && this.tickets.find(item => item.id === Number(text.slice(1)));
+          if (ticket) return { text, ticket: ticket.id, title: ticket.subject };
+          if (text.startsWith('@') && this.agents.some(agent => agent.id === text.slice(1)))
+            return { text, mention: true };
+          return { text };
+        });
+    },
+    /**
+     * The room as sections, each a labelled divider and a list: one per day, and a "New" section from
+     * the first message that was unread. A run of messages from one person shows the name once.
+     */
+    get roomSections() {
+      const sections = [];
+      (this.room?.messages ?? []).forEach((message, index) => {
+        let section = sections.at(-1);
+        const fresh = index === this.roomNewFrom;
+        if (!section || section.day !== message.day || fresh) {
+          section = {
+            key: `${message.day}-${index}`,
+            day: message.day,
+            label: fresh ? 'New' : message.day,
+            accent: fresh,
+            messages: [],
+          };
+          sections.push(section);
+        }
+        const previous = section.messages.at(-1);
+        section.messages.push({ ...message, index, continued: previous?.author === message.author });
+      });
+      return sections;
+    },
+    get roomDraft() {
+      return this.roomDrafts[this.roomId] ?? '';
+    },
+    set roomDraft(value) {
+      if (this.roomId) this.roomDrafts[this.roomId] = value;
+    },
+    openRoom(id) {
+      if (!this.rooms[id]) return;
+      const messages = this.rooms[id];
+      const first = messages.findIndex(message => message.unread);
+      this.roomNewFrom = first < 0 ? null : first;
+      messages.forEach(message => (message.unread = false));
+      this.roomId = id;
+      this.roomFiles = [];
+      this.roomTyping = '';
+      this.checked = [];
+      this.view = 'room';
+      const refs = this.$refs;
+      // x-show may reveal the room a frame after the reactive update (as in Firefox and WebKit).
+      this.$nextTick(() =>
+        requestAnimationFrame(() => {
+          this.revealMailbox(refs.queues, id);
+          // On a phone the sidebar gives way to the room: move focus to its title.
+          if (!refs.queues.getClientRects().length) refs.roomTitle.focus();
+        }),
+      );
+    },
+    leaveRoom() {
+      this.roomId = null;
+      this.roomNewFrom = null;
+    },
+    backToRoom() {
+      const refs = this.$refs;
+      this.view = 'room';
+      this.$nextTick(() => requestAnimationFrame(() => refs.roomTitle.focus()));
+    },
+    addRoomFiles(files) {
+      for (const file of files)
+        this.roomFiles.push({
+          name: file.name,
+          size: file.size < 1024 ? `${file.size} B` : `${Math.round(file.size / 1024)} KB`,
+          href: URL.createObjectURL(file),
+        });
+    },
+    sendRoom() {
+      const body = this.roomDraft.trim();
+      if (!this.room || (!body && !this.roomFiles.length)) return;
+      const id = this.roomId;
+      this.rooms[id].push({ author: 'alex', day: 'Today', time: 'Just now', body, attachments: [...this.roomFiles] });
+      this.roomDraft = '';
+      this.roomFiles = [];
+      // The first time, a teammate answers after a moment, so the history follows an arrival.
+      if (this.roomAnswered[id]) return;
+      this.roomAnswered[id] = true;
+      const teammate = id === 'billing' ? 'noah' : 'mia';
+      setTimeout(() => {
+        if (this.roomId === id) this.roomTyping = this.person(teammate).name.split(' ')[0];
+      }, 600);
+      setTimeout(() => {
+        this.rooms[id].push({
+          author: teammate,
+          day: 'Today',
+          time: 'Just now',
+          body: 'Thanks, I’ll take a look.',
+          unread: this.roomId !== id,
+        });
+        this.roomTyping = '';
+      }, 2200);
+    },
     /** A conversation from the website chat, shown in the Chat view. */
     get chat() {
       return this.ticket?.channel === 'chat';
@@ -146,6 +279,7 @@ export function supportDemo() {
     },
     setQueue(queue, mailboxId = 'all') {
       if (!this.queues.some(item => item.id === queue) || (mailboxId !== 'all' && !this.mailbox(mailboxId))) return;
+      this.leaveRoom();
       this.mailboxId = mailboxId;
       this.queue = queue;
       this.checked = [];
@@ -155,12 +289,13 @@ export function supportDemo() {
       this.backToList();
       this.$nextTick(() => this.revealMailbox());
     },
-    revealMailbox(queues = this.$refs.queues) {
-      const group = queues.querySelector(`[data-scope="${this.mailboxId}"]`);
+    revealMailbox(queues = this.$refs.queues, mailboxId = this.mailboxId) {
+      const group = queues.querySelector(`[data-scope="${mailboxId}"]`);
       if (group) group.open = true;
     },
     select(id, open = true) {
       const refs = this.$refs;
+      this.leaveRoom();
       this.page = Math.max(1, Math.floor(this.filtered.findIndex(ticket => ticket.id === id) / this.pageSize) + 1);
       this.selectedId = id;
       this.ticket.unread = false;

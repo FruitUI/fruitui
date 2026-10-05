@@ -288,6 +288,90 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
   await expect(conversation.locator('form.f-composer--top')).toBeVisible();
 });
 
+async function openTeamChat(page, mailbox = 'Support') {
+  const group = page.locator(`details[data-scope="${mailbox.toLowerCase()}"]`);
+  if (!(await group.evaluate(element => element.open))) await group.locator('summary').click();
+  await page.getByRole('button', { name: new RegExp(`^${mailbox} Team Chat`) }).click();
+}
+
+test('a mailbox’s team chat opens in place, marks what is new and follows the conversation', async ({ page }) => {
+  const group = page.locator('details[data-scope="support"]');
+  if (!(await group.evaluate(element => element.open))) await group.locator('summary').click();
+  const link = page.getByRole('button', { name: /^Support Team Chat/ });
+  await expect(link).toHaveAccessibleName('Support Team Chat, 2 unread');
+  await link.click();
+  await expect(link).toHaveAttribute('aria-current', 'page');
+  await expect(link).toHaveAccessibleName('Support Team Chat');
+  await expect(page.getByRole('button', { name: 'All Inboxes', exact: false }).first()).not.toHaveAttribute(
+    'aria-current',
+  );
+  // The room takes the list, conversation and details' place.
+  await expect(page.locator('#support-list-pane')).toBeHidden();
+  await expect(page.locator('#support-conversation')).toBeHidden();
+  await expect(page.getByRole('heading', { name: 'Support Team' })).toBeVisible();
+  const history = page.getByRole('region', { name: 'Support team chat' });
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  await expect.poll(fromEnd).toBeLessThan(2);
+  // Days, then "New" from the first unread message; a run shows the name once.
+  await expect(history.getByRole('separator')).toHaveText(['Yesterday', 'Today', 'New']);
+  const fresh = history.getByRole('list', { name: 'New messages' }).getByRole('article');
+  await expect(fresh).toHaveCount(2);
+  await expect(fresh.nth(1)).toHaveClass(/f-message--continued/);
+  await expect(fresh.first().locator('.support-mention')).toHaveText('@alex');
+  // A mention picks a teammate with Enter; the next Enter sends.
+  const composer = page.getByRole('textbox', { name: 'Message the Support team' });
+  await composer.fill('On it. @');
+  await composer.press('m');
+  await expect(page.getByRole('option', { name: /Mia Patel/ })).toBeVisible();
+  await composer.press('Enter');
+  await expect(composer).toHaveValue(/On it\. @mia/);
+  await composer.press('Enter');
+  await expect(composer).toHaveValue('');
+  const messages = history.getByRole('article');
+  await expect(messages.last()).toContainText('On it. @mia');
+  // A teammate answers; the history follows the arrival.
+  await expect(page.getByRole('status').filter({ hasText: 'Mia is typing…' })).toBeVisible();
+  await expect(messages.last()).toContainText('Thanks, I’ll take a look.');
+  await expect.poll(fromEnd).toBeLessThan(2);
+  await expectAccessible(page, '#support');
+  // A conversation number opens that conversation and leaves the room.
+  await history.getByRole('link', { name: '#1042' }).click();
+  await expect(page.locator('#support-room')).toBeHidden();
+  await expect(page.locator('#ticket-title')).toHaveText('A little help with our team plan');
+});
+
+test('team chat sends attachments, and an empty room says what it is for', async ({ page }) => {
+  await openTeamChat(page);
+  await page.locator('#support-room input[type=file]').setInputFiles({
+    name: 'refund-policy.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('Refunds within 30 days.'),
+  });
+  const pending = page.getByRole('list', { name: 'Attachments to send' });
+  await expect(pending).toContainText('refund-policy.txt');
+  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  const sent = page.getByRole('region', { name: 'Support team chat' }).getByRole('article').last();
+  await expect(sent.getByRole('link', { name: /refund-policy\.txt/ })).toHaveAttribute('download', 'refund-policy.txt');
+  await expect(pending).toBeHidden();
+  await openTeamChat(page, 'Feedback');
+  await expect(page.getByRole('heading', { name: 'A room for the team.' })).toBeVisible();
+});
+
+test('on a phone the team chat takes the screen and the sidebar is one tap away', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.getByRole('button', { name: 'Show support views' }).first().click();
+  await openTeamChat(page);
+  await expect(page.getByRole('heading', { name: 'Support Team' })).toBeFocused();
+  await expect(page.locator('#support-queues')).toBeHidden();
+  await page.locator('.support-room-toolbar').getByRole('button', { name: 'Show support views' }).click();
+  await expect(page.locator('#support-queues')).toBeVisible();
+  await expect(page.locator('#support-room')).toBeHidden();
+  await page.getByRole('button', { name: 'Back to team chat' }).click();
+  await expect(page.locator('#support-room')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Support Team' })).toBeFocused();
+  expect(await page.locator('#support').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+});
+
 function queue(page, name) {
   return page
     .getByRole('navigation', { name: 'Support views', exact: true })
