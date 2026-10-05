@@ -274,3 +274,30 @@ test('a fill workspace is the whole window and its panes scroll on their own', a
   await expect(workspace).toHaveCSS('box-shadow', 'none');
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(700);
 });
+
+test('a splitter changes only the cursor for a pointer and shows its line for keyboard focus', async ({ page }) => {
+  await page.goto('/components.html');
+  const handle = page.locator('#component-splitter').getByRole('separator');
+  const line = () => handle.evaluate(element => getComputedStyle(element, '::after').backgroundColor);
+  await handle.scrollIntoViewIfNeeded();
+  await expect(handle).toHaveCSS('cursor', 'col-resize');
+  await handle.hover();
+  expect(await line()).toBe('rgba(0, 0, 0, 0)');
+  const box = await handle.boundingBox();
+  await page.mouse.down();
+  await page.mouse.move(box.x + 30, box.y + box.height / 2);
+  await expect(handle).toHaveAttribute('data-resizing', '');
+  expect(await line()).toBe('rgba(0, 0, 0, 0)');
+  await page.mouse.up();
+  // Focus stays on the handle for the keyboard, without the line or ring until a key is used.
+  await expect(handle).toBeFocused();
+  expect(await line()).toBe('rgba(0, 0, 0, 0)');
+  await expect(handle).toHaveCSS('outline-style', 'none');
+  await page.keyboard.press('ArrowLeft');
+  expect(await line()).not.toBe('rgba(0, 0, 0, 0)');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  await expect(handle).toBeFocused();
+  expect(await line()).not.toBe('rgba(0, 0, 0, 0)');
+  await expect(handle).not.toHaveCSS('outline-style', 'none');
+});

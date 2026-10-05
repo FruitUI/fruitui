@@ -469,7 +469,8 @@ function E({ pane: e, variable: t, min: n = 160, max: r = 420, reserve: i = 280,
 				pointercancel: this.cancel,
 				lostpointercapture: this.end,
 				keydown: this.key,
-				dblclick: this.reset
+				dblclick: this.reset,
+				blur: this.forget
 			}).map(([e, t]) => [e, t.bind(this)]));
 			for (let [e, t] of Object.entries(g)) c.addEventListener(e, t);
 			f = new ResizeObserver(() => {
@@ -504,7 +505,7 @@ function E({ pane: e, variable: t, min: n = 160, max: r = 420, reserve: i = 280,
 			l.style.getPropertyValue(t) !== i && (l.style.setProperty(t, i), this.schedule());
 		},
 		start(e) {
-			e.button === 0 && v(u) && v(d) && (e.preventDefault(), c.focus({ preventScroll: !0 }), h = {
+			e.button === 0 && v(u) && v(d) && (e.preventDefault(), c.setAttribute("data-pointer", ""), c.focus({ preventScroll: !0 }), h = {
 				id: e.pointerId,
 				x: e.clientX,
 				width: u.getBoundingClientRect().width,
@@ -537,7 +538,7 @@ function E({ pane: e, variable: t, min: n = 160, max: r = 420, reserve: i = 280,
 			}, n);
 		},
 		key(e) {
-			if (e.key === "Escape" && h) {
+			if (e.key !== "Escape" && this.forget(), e.key === "Escape" && h) {
 				e.preventDefault(), e.stopPropagation(), this.cancel();
 				return;
 			}
@@ -548,6 +549,9 @@ function E({ pane: e, variable: t, min: n = 160, max: r = 420, reserve: i = 280,
 				End: r
 			};
 			e.key in o && (e.preventDefault(), e.stopPropagation(), this.set(o[e.key]), this.commit(400));
+		},
+		forget() {
+			c.removeAttribute("data-pointer");
 		},
 		reset() {
 			l.style.removeProperty(t), this.schedule(), requestAnimationFrame(() => this.commit());
