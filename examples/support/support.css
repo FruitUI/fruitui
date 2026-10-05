@@ -17,10 +17,6 @@
   grid-row: 1;
   border-right: 1px solid var(--f-border);
 }
-.support-sidebar-toolbar > .f-icon {
-  --f-icon-size: 17px;
-  color: var(--f-secondary);
-}
 .support-list-toolbar {
   grid-column: 2;
   grid-row: 1;
