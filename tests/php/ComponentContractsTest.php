@@ -413,6 +413,19 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
     }
 
+    public function test_a_divider_is_named_by_its_text_or_a_fuller_aria_label(): void
+    {
+        $named = $this->xpath(Blade::render('<x-fruit::divider>Today</x-fruit::divider>'))->query('//div[@role="separator"]')->item(0);
+        $this->assertSame('Today', $named->getAttribute('aria-label'));
+        $fresh = $this->xpath(Blade::render('<x-fruit::divider tone="accent" aria-label="New messages">New</x-fruit::divider>'));
+        $separator = $fresh->query('//div[@role="separator"]')->item(0);
+        $this->assertSame('New messages', $separator->getAttribute('aria-label'));
+        $this->assertSame('New', $fresh->query('./span[@aria-hidden="true"]', $separator)->item(0)->textContent);
+        $this->assertSame(1, substr_count(Blade::render('<x-fruit::divider aria-label="New messages">New</x-fruit::divider>'), 'aria-label'));
+        $plain = $this->xpath(Blade::render('<x-fruit::divider />'))->query('//div[@role="separator"]')->item(0);
+        $this->assertFalse($plain->hasAttribute('aria-label'));
+    }
+
     public function test_a_history_is_a_named_focusable_region_that_follows_its_newest_message(): void
     {
         $xpath = $this->xpath(Blade::render('<x-fruit::history class="extra" wire:key="history"><ol class="f-thread"><li>Hi</li></ol></x-fruit::history>'));
