@@ -770,3 +770,34 @@ test('an inline message keeps its time beside the name, and a run’s sent bar i
   expect((await bar(continued)).top).toBe('0px');
   expect((await box(continued)).top - (await box(first)).bottom).toBeLessThan(1);
 });
+
+test('a chat’s message field is one line that grows, with Send only on touch screens', async ({ page, browser }) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-history');
+  const field = card.locator('.f-composer__field');
+  const box = card.getByRole('textbox', { name: 'Message Sophie Chen' });
+  const height = () => box.evaluate(element => element.getBoundingClientRect().height);
+  const oneLine = await height();
+  expect(oneLine).toBeLessThan(44);
+  await expect(card.getByRole('button', { name: 'Send' })).toBeHidden();
+  await expect(card.getByRole('button', { name: 'Attach Files' })).toBeVisible();
+  // The field carries the focus ring for the borderless textarea inside it.
+  await box.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  await expect(field).not.toHaveCSS('outline-style', 'none');
+  await expect(box).toHaveAccessibleDescription('Enter to send, Shift+Enter for a new line.');
+  // Lines grow the field where the browser sizes fields to their content.
+  if (await page.evaluate(() => CSS.supports('field-sizing', 'content'))) {
+    await box.fill('One');
+    await box.press('Shift+Enter');
+    await box.pressSequentially('Two');
+    expect(await height()).toBeGreaterThan(oneLine + 10);
+  }
+  // A touch screen shows Send.
+  const context = await browser.newContext({ hasTouch: true, isMobile: browser.browserType().name() === 'chromium' });
+  const touch = await context.newPage();
+  await touch.goto('/components.html');
+  await expect(touch.locator('#component-history').getByRole('button', { name: 'Send' })).toBeVisible();
+  await context.close();
+});

@@ -410,7 +410,7 @@ test('team chat sends attachments, and an empty room says what it is for', async
   });
   const pending = page.getByRole('list', { name: 'Attachments to send' });
   await expect(pending).toContainText('refund-policy.txt');
-  await page.getByRole('button', { name: 'Send', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Message the Support team' }).press('Enter');
   const sent = page.getByRole('region', { name: 'Support team chat' }).getByRole('article').last();
   await expect(sent.getByRole('link', { name: /refund-policy\.txt/ })).toHaveAttribute('download', 'refund-policy.txt');
   await expect(pending).toBeHidden();

@@ -78,7 +78,7 @@ test('threads preserve their drafts and add replies without posting to the chann
   await expect(threadButton(page, 201)).toBeFocused();
   await threadButton(page, 202).click();
   await expect(reply).toHaveValue('A reply draft for Sophie.');
-  await page.getByRole('button', { name: 'Send thread reply', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Reply to Thread' }).press('Enter');
   await expect(page.locator('.chat-thread-reply')).toHaveCount(3);
   await expect(page.locator('.chat-thread-reply').last()).toContainText('A reply draft for Sophie.');
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(5);
@@ -168,7 +168,7 @@ test('channel creation validates names, rejects duplicates, and creates a conver
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(0);
   const composer = page.getByRole('textbox', { name: 'Message #release-notes', exact: true });
   await composer.fill('Our first release is taking shape.');
-  await page.getByRole('button', { name: 'Send message', exact: true }).click();
+  await page.locator('#chat-message').press('Enter');
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(1);
   await expect(page.locator('.chat-history')).toContainText('Our first release is taking shape.');
 });

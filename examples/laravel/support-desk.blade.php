@@ -442,15 +442,16 @@ new class extends Component
                     </x-fruit::history>
                     @if ($ticket['status'] === 'open')
                         <x-fruit::composer wire:submit="send" aria-label="Reply" wire:key="chat-composer-{{ $ticket['id'] }}">
+                            {{-- A chat's message field: one line that grows, Enter sends (a Send button only on touch screens). --}}
                             <label class="f-sr-only" for="support-chat-reply">Message {{ $ticket['name'] }}</label>
-                            <x-fruit::textarea id="support-chat-reply" name="reply" class="f-composer__input" rows="2" wire:model="reply" placeholder="Message {{ $ticket['name'] }}"
-                                :aria-invalid="$errors->has('reply') ? 'true' : null" :aria-describedby="$errors->has('reply') ? 'support-chat-help support-chat-error' : 'support-chat-help'"
-                                x-on:keydown.enter="if (!$event.shiftKey && !$event.isComposing) { $event.preventDefault(); $el.form.requestSubmit() }" />
+                            <div class="f-composer__field">
+                                <x-fruit::textarea id="support-chat-reply" name="reply" class="f-composer__input" rows="1" wire:model="reply" placeholder="Message {{ $ticket['name'] }}"
+                                    :aria-invalid="$errors->has('reply') ? 'true' : null" :aria-describedby="$errors->has('reply') ? 'support-chat-help support-chat-error' : 'support-chat-help'"
+                                    x-on:keydown.enter="if (!$event.shiftKey && !$event.isComposing) { $event.preventDefault(); $el.form.requestSubmit() }" />
+                                <x-fruit::button type="submit" variant="primary" class="f-button--icon f-composer__send" aria-label="Send"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></x-fruit::button>
+                            </div>
+                            <p class="f-sr-only" id="support-chat-help">Enter to send, Shift+Enter for a new line.</p>
                             @error('reply')<p class="f-error" id="support-chat-error">{{ $message }}</p>@enderror
-                            <footer class="f-composer__footer">
-                                <span class="f-help" id="support-chat-help">Enter to send · Shift + Enter for a new line</span>
-                                <x-fruit::button type="submit" variant="primary">Send</x-fruit::button>
-                            </footer>
                         </x-fruit::composer>
                     @else
                         <div style="padding: var(--f-space-4)"><x-fruit::alert tone="success">This conversation was closed as {{ strtolower($this::REASONS[$ticket['reason']] ?? 'resolved') }}.</x-fruit::alert></div>

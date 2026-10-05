@@ -339,10 +339,6 @@
   font-size: var(--f-text-2xl);
 }
 
-.chat-composer > .f-input {
-  padding: 12px;
-}
-
 .chat-composer-bottom .f-help {
   font-size: var(--f-text-xs);
 }
@@ -389,10 +385,6 @@
 }
 .chat-thread-composer {
   padding: 14px 16px 18px;
-}
-.chat-thread-composer > .f-input {
-  min-height: 82px;
-  font-size: var(--f-text-base);
 }
 .chat-activity {
   height: 100%;

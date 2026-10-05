@@ -313,8 +313,10 @@
 .support-chat-history {
   --f-pane-scroll-padding: 12px 14px 16px;
 }
-.support-chat-composer {
-  --f-composer-input-min-height: 48px;
+/* An internal note is written on the note's yellow, so it never looks like a reply. */
+.support-chat-composer[data-mode='note'] .f-composer__field {
+  border-color: var(--f-note-border);
+  background: var(--f-note-background);
 }
 .support-composer[data-mode='note'] {
   --f-composer-background: var(--f-surface-secondary);
@@ -997,9 +999,6 @@
   margin: 0 0 8px;
   padding: 0;
   list-style: none;
-}
-.support-room-attach {
-  margin-inline-start: auto;
 }
 @container support (max-width: 1100px) {
   .support-workspace[data-room] :is(.support-room-toolbar, .support-room) {
