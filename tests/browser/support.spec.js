@@ -11,7 +11,7 @@ test('support sits beside Mail and queue search and priority filters work', asyn
     page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Mail', exact: true }),
   ).toHaveAttribute('href', '/');
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
-  const search = page.getByRole('searchbox', { name: 'Search conversations' });
+  const search = page.getByRole('searchbox', { name: 'Search Conversations' });
   await search.fill('sso');
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
   await expect(page.locator('#ticket-title')).toHaveText('Sign-in after changing our domain');
@@ -29,12 +29,12 @@ test('support sits beside Mail and queue search and priority filters work', asyn
 });
 
 test('reply and note drafts stay independent across tickets and notes remain internal', async ({ page }) => {
-  const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });
+  const reply = page.getByRole('textbox', { name: 'Reply Message', exact: true });
   await reply.fill('Hi Sophie, your projects will stay in place.');
   await page.getByRole('radio', { name: 'Note', exact: true }).check();
-  await expect(page.getByRole('textbox', { name: 'Internal note', exact: true })).toHaveValue('');
+  await expect(page.getByRole('textbox', { name: 'Internal Note', exact: true })).toHaveValue('');
   await page
-    .getByRole('textbox', { name: 'Internal note', exact: true })
+    .getByRole('textbox', { name: 'Internal Note', exact: true })
     .fill('Private handoff: Mia will handle annual billing.');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
@@ -45,17 +45,17 @@ test('reply and note drafts stay independent across tickets and notes remain int
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
   await page.getByRole('radio', { name: 'Note', exact: true }).check();
   await page.getByRole('button', { name: 'Add note', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).first()).toContainText(
+  await expect(page.getByRole('region', { name: 'Internal Note', exact: true }).first()).toContainText(
     'Private handoff: Mia will handle annual billing.',
   );
-  await expect(page.getByRole('region', { name: 'Internal note', exact: true }).first()).toContainText(
+  await expect(page.getByRole('region', { name: 'Internal Note', exact: true }).first()).toContainText(
     'Only your team',
   );
-  await expect(page.getByLabel('Conversation status')).toHaveValue('open');
+  await expect(page.getByLabel('Conversation Status')).toHaveValue('open');
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('radio', { name: 'Reply', exact: true }).check();
   await expect(reply).toHaveValue('Hi Sophie, your projects will stay in place.');
-  await page.getByRole('button', { name: 'Send reply', exact: true }).click();
+  await page.getByRole('button', { name: 'Send Reply', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).first()).toContainText(
     'Hi Sophie, your projects will stay in place.',
   );
@@ -70,27 +70,27 @@ test('reply and note drafts stay independent across tickets and notes remain int
 test('assignment, closing, waiting, and reopening update the actual queues', async ({ page }) => {
   await queue(page, 'Unassigned').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).fill('Alex');
-  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).press('Enter');
+  await page.getByRole('combobox', { name: 'Assigned To', exact: true }).fill('Alex');
+  await page.getByRole('combobox', { name: 'Assigned To', exact: true }).press('Enter');
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
-  await expect(queue(page, 'Assigned to me')).toContainText('4');
-  await queue(page, 'Assigned to me').click();
+  await expect(queue(page, 'Assigned to Me')).toContainText('4');
+  await queue(page, 'Assigned to Me').click();
   await ticket(page, 1041).click();
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
-  await page.getByRole('button', { name: 'Close conversation', exact: true }).click();
+  await page.getByRole('button', { name: 'Close Conversation', exact: true }).click();
   await expect(queue(page, 'Closed')).toContainText('2');
   await queue(page, 'Closed').click();
   await ticket(page, 1041).click();
-  await page.getByRole('textbox', { name: 'Reply message', exact: true }).fill('We have updated your SSO domain.');
+  await page.getByRole('textbox', { name: 'Reply Message', exact: true }).fill('We have updated your SSO domain.');
   await page.getByRole('button', { name: 'Reopen & reply', exact: true }).click();
-  await expect(page.getByLabel('Conversation status')).toHaveValue('open');
+  await expect(page.getByLabel('Conversation Status')).toHaveValue('open');
   await expect(ticket(page, 1041)).toHaveAttribute('aria-current', 'true');
   await expect(queue(page, 'Closed')).toContainText('1');
-  await page.getByLabel('Conversation status').selectOption('waiting');
+  await page.getByLabel('Conversation Status').selectOption('waiting');
   await expect(queue(page, 'Waiting')).toContainText('3');
   await queue(page, 'Waiting').click();
   await ticket(page, 1041).click();
-  await expect(page.getByLabel('Conversation status')).toHaveValue('waiting');
+  await expect(page.getByLabel('Conversation Status')).toHaveValue('waiting');
 });
 
 test('tags and customer history belong to the selected customer', async ({ page }) => {
@@ -105,30 +105,30 @@ test('tags and customer history belong to the selected customer', async ({ page 
   await expect(tags.locator('.f-chip')).toHaveCount(2);
   await page.getByRole('button', { name: /A copy of last month’s invoice/ }).click();
   await expect(page.locator('#ticket-title')).toHaveText('A copy of last month’s invoice');
-  await expect(page.getByLabel('Conversation status')).toHaveValue('closed');
+  await expect(page.getByLabel('Conversation Status')).toHaveValue('closed');
   await expect(page.locator('.support-customer-profile')).toContainText('Sophie Chen');
   await expect(page.getByRole('button', { name: /A little help with our team plan/ }).last()).toBeVisible();
 });
 
 test('new conversations retain native validation and create an unassigned ticket', async ({ page }) => {
-  await page.getByRole('button', { name: 'New conversation', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'New conversation', exact: true });
-  await expect(dialog.getByLabel('Customer name')).toBeFocused();
-  await dialog.getByRole('button', { name: 'Create conversation' }).click();
+  await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'New Conversation', exact: true });
+  await expect(dialog.getByLabel('Customer Name')).toBeFocused();
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
   await expect(dialog).toBeVisible();
-  expect(await dialog.getByLabel('Customer name').evaluate(element => element.validity.valueMissing)).toBe(true);
-  await dialog.getByLabel('Customer name').fill('Ava Martin');
-  await dialog.getByLabel('Customer email').fill('invalid');
+  expect(await dialog.getByLabel('Customer Name').evaluate(element => element.validity.valueMissing)).toBe(true);
+  await dialog.getByLabel('Customer Name').fill('Ava Martin');
+  await dialog.getByLabel('Customer Email').fill('invalid');
   await dialog.getByLabel('Subject', { exact: true }).fill('A question about guest access');
-  await dialog.getByLabel('Customer message').fill('Can guests leave comments?');
-  await dialog.getByRole('button', { name: 'Create conversation' }).click();
-  expect(await dialog.getByLabel('Customer email').evaluate(element => element.validity.typeMismatch)).toBe(true);
-  await dialog.getByLabel('Customer email').fill('ava@example.com');
-  await dialog.getByLabel('Customer message').fill('   ');
-  await dialog.getByRole('button', { name: 'Create conversation' }).click();
+  await dialog.getByLabel('Customer Message').fill('Can guests leave comments?');
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
+  expect(await dialog.getByLabel('Customer Email').evaluate(element => element.validity.typeMismatch)).toBe(true);
+  await dialog.getByLabel('Customer Email').fill('ava@example.com');
+  await dialog.getByLabel('Customer Message').fill('   ');
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
   await expect(dialog).toContainText('Complete each field');
-  await dialog.getByLabel('Customer message').fill('Can guests leave comments?');
-  await dialog.getByRole('button', { name: 'Create conversation' }).click();
+  await dialog.getByLabel('Customer Message').fill('Can guests leave comments?');
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
   await expect(dialog).not.toBeVisible();
   await expect(page.locator('button.support-ticket')).toHaveCount(7);
   await expect(ticket(page, 1043)).toHaveAttribute('aria-current', 'true');
@@ -141,12 +141,12 @@ test('keyboard selection and empty search keep focus and recover the inbox', asy
   await page.keyboard.press('ArrowDown');
   await expect(ticket(page, 1041)).toBeFocused();
   await expect(ticket(page, 1041)).toHaveAttribute('aria-current', 'true');
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('nothing-matches');
-  await expect(page.getByRole('heading', { name: 'No conversations', exact: true })).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('nothing-matches');
+  await expect(page.getByRole('heading', { name: 'No Conversations', exact: true })).toBeVisible();
   await expect(page.locator('button.support-ticket')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Clear filters', exact: true }).click();
+  await page.getByRole('button', { name: 'Clear Filters', exact: true }).click();
   await expect(page.locator('button.support-ticket')).toHaveCount(6);
-  await expect(page.getByRole('searchbox', { name: 'Search conversations' })).toBeFocused();
+  await expect(page.getByRole('searchbox', { name: 'Search Conversations' })).toBeFocused();
 });
 
 test('phone and tablet screens share drafts, assignment, and focus with desktop', async ({ page }) => {
@@ -154,13 +154,13 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await expect(page.locator('.support-conversation')).not.toBeVisible();
   await ticket(page, 1042).click();
   await expect(page.locator('#ticket-title')).toBeFocused();
-  await page.getByRole('textbox', { name: 'Reply message', exact: true }).fill('Draft across all layouts.');
+  await page.getByRole('textbox', { name: 'Reply Message', exact: true }).fill('Draft across all layouts.');
   await page.getByRole('button', { name: 'Show customer details', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Back to conversation', exact: true })).toBeFocused();
-  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).fill('Mia');
-  await page.getByRole('combobox', { name: 'Assigned to', exact: true }).press('Enter');
+  await page.getByRole('combobox', { name: 'Assigned To', exact: true }).fill('Mia');
+  await page.getByRole('combobox', { name: 'Assigned To', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Back to conversation', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Reply Message', exact: true })).toHaveValue(
     'Draft across all layouts.',
   );
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
@@ -176,7 +176,7 @@ test('phone and tablet screens share drafts, assignment, and focus with desktop'
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.support-customer')).toBeVisible();
   await expect(page.locator('#support-assignee')).toHaveValue('mia');
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Reply Message', exact: true })).toHaveValue(
     'Draft across all layouts.',
   );
 });
@@ -195,9 +195,9 @@ test('small screens and a narrow container fit without losing actions', async ({
   await ticket(page, 1042).click();
   const box = await page.locator('#support').boundingBox();
   for (const control of [
-    page.getByLabel('Conversation status'),
+    page.getByLabel('Conversation Status'),
     page.getByRole('button', { name: 'Show customer details' }),
-    page.getByRole('button', { name: 'Send reply', exact: true }),
+    page.getByRole('button', { name: 'Send Reply', exact: true }),
   ]) {
     const rect = await control.boundingBox();
     expect(rect.x).toBeGreaterThanOrEqual(box.x);
@@ -211,7 +211,7 @@ for (const theme of ['light', 'dark']) {
     test.slow();
     await page.emulateMedia({ colorScheme: theme });
     await expectAccessible(page);
-    await page.getByRole('button', { name: 'New conversation', exact: true }).click();
+    await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.setViewportSize({ width: 390, height: 844 });
@@ -261,7 +261,7 @@ test('quoting a message fills the reply and internal notes cannot be quoted', as
   const customer = page.locator('.support-message[data-kind="customer"]').last();
   await customer.hover();
   await customer.getByRole('button', { name: 'Quote Sophie Chen in reply', exact: true }).click();
-  const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });
+  const reply = page.getByRole('textbox', { name: 'Reply Message', exact: true });
   await expect(reply).toBeFocused();
   // The quote follows the existing draft after a blank line.
   await expect(reply).toHaveValue(/^Hi Sophie,[\s\S]*\S\n\n> Hi there,\n> \n> We’re growing the studio[\s\S]*\n\n$/);
@@ -277,7 +277,7 @@ test('a reply that failed to send shows one status line with Retry, View log and
   // One status line, no nested alert box.
   await expect(reply.locator('.f-alert')).toHaveCount(0);
 
-  await status.getByRole('button', { name: 'View log' }).click();
+  await status.getByRole('button', { name: 'View Log' }).click();
   const log = page.getByRole('dialog', { name: 'Delivery log' });
   await expect(log).toContainText('Sendmail exited with non-zero exit code 127');
   await page.keyboard.press('Escape');

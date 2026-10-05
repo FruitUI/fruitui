@@ -1,4 +1,4 @@
-<x-fruit::field control-id="default-mailbox" label="Default mailbox">
+<x-fruit::field control-id="default-mailbox" label="Default Mailbox">
     <x-fruit::select name="mailbox">
         <optgroup label="Combined folders">
             <option value="all">All Inboxes</option>
@@ -8,11 +8,11 @@
         <optgroup label="Accounts">
             <option value="work">Work</option>
             <option value="personal">Personal</option>
-            <option value="offline" disabled>Offline account</option>
+            <option value="offline" disabled>Offline Account</option>
         </optgroup>
     </x-fruit::select>
 </x-fruit::field>
-<x-fruit::field control-id="included-folders" label="Included folders">
+<x-fruit::field control-id="included-folders" label="Included Folders">
     <x-fruit::select name="folders[]" multiple size="3">
         <option value="inbox" selected>Inbox</option>
         <option value="sent">Sent</option>

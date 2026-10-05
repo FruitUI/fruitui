@@ -52,7 +52,7 @@ test('segments and plan catalog drill into real filtered customer records', asyn
   await destination(page, 'billing', 'Plans');
   await expect(page.locator('.admin-plan-catalog')).toContainText('7 customers on this plan');
   await page.getByRole('button', { name: 'View customers on Business', exact: true }).click();
-  await expect(page.getByLabel('Plan filter', { exact: true })).toHaveValue('business');
+  await expect(page.getByLabel('Plan Filter', { exact: true })).toHaveValue('business');
   await expect(page.getByLabel('Status', { exact: true })).toHaveValue('all');
   await expect(page.locator('.admin-pagination')).toContainText('1–5 of 7 customers');
   await expect(page.locator('[data-customer]')).toHaveCount(5);
@@ -64,7 +64,7 @@ test('segments and plan catalog drill into real filtered customer records', asyn
     .getByRole('link', { name: 'Customers', exact: true })
     .click();
   await expect(title(page)).toHaveText('Customers');
-  await expect(page.getByLabel('Plan filter', { exact: true })).toHaveValue('business');
+  await expect(page.getByLabel('Plan Filter', { exact: true })).toHaveValue('business');
 });
 
 test('customer tabs implement keyboard selection, panel focus, breadcrumbs, and browser history', async ({ page }) => {
@@ -102,14 +102,14 @@ test('customer tabs implement keyboard selection, panel focus, breadcrumbs, and 
 
 test('record edits update detail panels and customer activity stays scoped to its identity', async ({ page }) => {
   await page.getByRole('link', { name: 'View Sophie Chen', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit customer', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Edit customer', exact: true });
-  await dialog.getByLabel('Full name', { exact: true }).fill('Sophie Chen Park');
+  await page.getByRole('button', { name: 'Edit Customer', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit Customer', exact: true });
+  await dialog.getByLabel('Full Name', { exact: true }).fill('Sophie Chen Park');
   await dialog.getByLabel('Plan', { exact: true }).selectOption('starter');
-  await dialog.getByLabel('Subscription status', { exact: true }).selectOption('trial');
-  await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await dialog.getByLabel('Subscription Status', { exact: true }).selectOption('trial');
+  await dialog.getByRole('button', { name: 'Save Changes', exact: true }).click();
   await expect(title(page)).toHaveText('Sophie Chen Park');
-  await expect(page.getByRole('button', { name: 'Edit customer', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Edit Customer', exact: true })).toBeFocused();
   await page.getByRole('tab', { name: 'Subscription', exact: true }).click();
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toContainText('Starter');
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toContainText('$29 / month');
@@ -117,12 +117,12 @@ test('record edits update detail panels and customer activity stays scoped to it
     page
       .getByRole('tabpanel', { name: 'Subscription', exact: true })
       .locator('.admin-detail-fields > div')
-      .filter({ hasText: 'Current monthly revenue' })
+      .filter({ hasText: 'Current Monthly Revenue' })
       .locator('dd'),
   ).toHaveText('$0');
   await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   await expect(page.getByRole('tabpanel', { name: 'Activity', exact: true })).toContainText('Updated Sophie Chen Park');
-  await page.getByRole('link', { name: 'Back to customers', exact: true }).click();
+  await page.getByRole('link', { name: 'Back to Customers', exact: true }).click();
   await page.getByRole('link', { name: 'View Mia Patel', exact: true }).click();
   await page.getByRole('tab', { name: 'Activity', exact: true }).click();
   await expect(page.getByRole('tabpanel', { name: 'Activity', exact: true })).toContainText('No changes yet');
@@ -135,9 +135,9 @@ test('subscription links, direct URLs, invalid destinations, and deleted-record 
   page,
 }) => {
   await destination(page, 'billing', 'Subscriptions');
-  await page.getByLabel('Subscription filter', { exact: true }).selectOption('trial');
+  await page.getByLabel('Subscription Filter', { exact: true }).selectOption('trial');
   await expect(page.locator('.admin-subscription-table tbody tr')).toHaveCount(4);
-  await page.getByLabel('Search subscriptions', { exact: true }).fill('sub_1002');
+  await page.getByLabel('Search Subscriptions', { exact: true }).fill('sub_1002');
   await expect(page.locator('.admin-subscription-table tbody tr')).toHaveCount(1);
   await page.getByRole('link', { name: 'View subscription for Oliver Park', exact: true }).click();
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toBeVisible();
@@ -174,11 +174,11 @@ test('long customer details, breadcrumbs, groups, and tabs fit narrow layouts wi
   page,
 }) => {
   await page.getByRole('link', { name: 'View Sophie Chen', exact: true }).click();
-  await page.getByRole('button', { name: 'Edit customer', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Edit customer', exact: true });
-  await dialog.getByLabel('Full name', { exact: true }).fill('N'.repeat(80));
+  await page.getByRole('button', { name: 'Edit Customer', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Edit Customer', exact: true });
+  await dialog.getByLabel('Full Name', { exact: true }).fill('N'.repeat(80));
   await dialog.getByLabel('Company', { exact: true }).fill('C'.repeat(100));
-  await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Save Changes', exact: true }).click();
   await page.getByRole('tab', { name: 'Subscription', exact: true }).click();
   for (const width of [320, 390, 820, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -193,10 +193,10 @@ test('long customer details, breadcrumbs, groups, and tabs fit narrow layouts wi
   await expectNoOverflow(page, '#admin');
   await page.goBack();
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Edit customer', exact: true }).click();
-  await dialog.getByLabel('Internal notes', { exact: true }).fill('Draft survives resizing.');
+  await page.getByRole('button', { name: 'Edit Customer', exact: true }).click();
+  await dialog.getByLabel('Internal Notes', { exact: true }).fill('Draft survives resizing.');
   await page.setViewportSize({ width: 1440, height: 1100 });
-  await expect(dialog.getByLabel('Internal notes', { exact: true })).toHaveValue('Draft survives resizing.');
+  await expect(dialog.getByLabel('Internal Notes', { exact: true })).toHaveValue('Draft survives resizing.');
   await page.keyboard.press('Escape');
   await expect(page.getByRole('tabpanel', { name: 'Subscription', exact: true })).toBeVisible();
 });
@@ -215,7 +215,7 @@ for (const appearance of ['light', 'dark']) {
     await expectAccessible(page);
     await nav(page).getByRole('link', { name: 'Subscriptions', exact: true }).click();
     await expectAccessible(page);
-    await page.getByLabel('Search subscriptions', { exact: true }).fill('no match');
+    await page.getByLabel('Search Subscriptions', { exact: true }).fill('no match');
     await expectAccessible(page);
     await nav(page).getByRole('link', { name: 'Revenue', exact: true }).click();
     await expect(title(page)).toHaveText('Revenue');
@@ -224,7 +224,7 @@ for (const appearance of ['light', 'dark']) {
       .getByRole('link', { name: /^Directory/ })
       .click();
     await page.getByRole('link', { name: 'View Sophie Chen', exact: true }).click();
-    await page.getByRole('link', { name: 'Back to customers', exact: true }).hover();
+    await page.getByRole('link', { name: 'Back to Customers', exact: true }).hover();
     await expectAccessible(page);
     for (const tab of ['Profile', 'Subscription', 'Activity']) {
       await page.getByRole('tab', { name: tab, exact: true }).click();
@@ -232,7 +232,7 @@ for (const appearance of ['light', 'dark']) {
       await page.getByRole('tab', { name: tab, exact: true }).hover();
       await expectAccessible(page);
       if (tab === 'Subscription') {
-        await page.getByRole('link', { name: 'Explore plans', exact: true }).hover();
+        await page.getByRole('link', { name: 'Explore Plans', exact: true }).hover();
         await expectAccessible(page);
       }
     }

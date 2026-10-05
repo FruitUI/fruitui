@@ -8,7 +8,7 @@ async function openSettings(page, query = '') {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${host}/settings${query}`);
-  await expect(page.getByRole('heading', { name: 'Support mailbox', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Support Mailbox', level: 1 })).toBeVisible();
   return errors;
 }
 

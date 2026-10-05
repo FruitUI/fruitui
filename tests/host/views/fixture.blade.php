@@ -17,5 +17,5 @@
         <x-fruit::editor name="blurSignature" wire:model.live.blur="blurSignature">{{ $blurSignature }}</x-fruit::editor>
     </x-fruit::field>
     <p id="blur-commits">{{ $blurCommits }} blur commits</p><output id="saved-blur-signature">{{ $blurSignature }}</output>
-    <x-fruit::button wire:click="mutate">Update from server</x-fruit::button>
+    <x-fruit::button wire:click="mutate">Update From Server</x-fruit::button>
 </main>

@@ -19,7 +19,7 @@ test('Settings is linked from every example and its pages and mailbox tabs follo
   await page.goto('/settings.html');
   await expect(sidebar(page).getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('region', { name: 'Company' })).toBeVisible();
-  await sidebar(page).getByRole('link', { name: 'Support mailbox' }).click();
+  await sidebar(page).getByRole('link', { name: 'Support Mailbox' }).click();
   await expect(page).toHaveURL(/#\/mailbox$/);
   const tabs = page.getByRole('navigation', { name: 'Mailbox settings' });
   await expect(tabs.getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
@@ -38,14 +38,14 @@ test('rows label their controls and describe them, and the save bar saves, rever
   const save = page.getByRole('button', { name: 'Save', exact: true });
   await expect(status).toHaveText('All changes saved.');
   await expect(save).toBeDisabled();
-  await expect(page.getByRole('switch', { name: 'Customer photos' })).toHaveAccessibleDescription(
+  await expect(page.getByRole('switch', { name: 'Customer Photos' })).toHaveAccessibleDescription(
     'From Gravatar, for customers without a photo.',
   );
-  await expect(page.getByLabel('Date format', { exact: true })).toHaveValue('long');
+  await expect(page.getByLabel('Date Format', { exact: true })).toHaveValue('long');
 
-  const company = page.getByLabel('Company name', { exact: true });
+  const company = page.getByLabel('Company Name', { exact: true });
   await company.fill('North Studio');
-  await page.getByRole('switch', { name: 'Show customer email' }).check();
+  await page.getByRole('switch', { name: 'Show Customer Email' }).check();
   await expect(status).toHaveText('You have unsaved changes.');
   await save.click();
   await expect(status).toHaveText('All changes saved.');

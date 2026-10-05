@@ -21,7 +21,7 @@ const escape = value => value.replaceAll('&', '&amp;').replaceAll('"', '&quot;')
 function markup(data, changed = false) {
   return `<main wire:id="fruit-widgets" wire:snapshot="${escape(JSON.stringify(snapshot(data)))}" wire:effects="{}">
     <h1>Support preferences</h1>
-    <label for="wire-choice">${changed ? 'Conversation owner' : 'Assigned to'}</label>
+    <label for="wire-choice">${changed ? 'Conversation owner' : 'Assigned To'}</label>
     <div class="f-combobox" x-data="fruitCombobox"><select class="f-input" data-fruit-control id="wire-choice" name="assignee" wire:model="assignee"><option value="alex">Alex Morgan</option><option value="mia">Mia Patel</option></select><div data-fruit-ui wire:ignore></div></div>
     <label for="wire-tokens">Recipients</label><div class="f-token-field" x-data="fruitTokenField"><textarea class="f-input" data-fruit-control id="wire-tokens" name="recipients" wire:model="recipients" ${changed ? 'readonly' : ''}>${escape(data.recipients)}</textarea><div data-fruit-ui wire:ignore></div></div>
     <label for="wire-editor">Signature</label><div class="f-editor" x-data="fruitEditor"><div class="f-editor__toolbar" hidden wire:ignore><button class="f-button" type="button" data-fruit-command="bold">Bold</button></div><textarea class="f-input" data-fruit-control id="wire-editor" name="signature" wire:model="signature">${escape(data.signature)}</textarea><div class="f-editor__surface" hidden wire:ignore></div></div>
@@ -52,7 +52,7 @@ test('Livewire model events and server morphs preserve widgets while updating na
     });
   });
   await page.goto('/livewire-widget-fixture');
-  const choice = page.getByRole('combobox', { name: 'Assigned to', exact: true });
+  const choice = page.getByRole('combobox', { name: 'Assigned To', exact: true });
   await expect(choice).toHaveValue('Alex Morgan');
   await choice.fill('Mia');
   await choice.press('Enter');

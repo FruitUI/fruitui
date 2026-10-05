@@ -2,7 +2,7 @@
  * The Settings example: grouped settings. One draft holds every
  * page's values; the save bar shows when it differs from what was saved, and Save validates natively.
  */
-const pages = { general: 'General', mailbox: 'Support mailbox', profile: 'Profile' };
+const pages = { general: 'General', mailbox: 'Support Mailbox', profile: 'Profile' };
 const mailboxTabs = {
   general: 'General',
   connection: 'Connection',

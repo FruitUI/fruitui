@@ -24,7 +24,7 @@
                 </ul>
             </section>
             <section>
-                <h4>Documentation used</h4>
+                <h4>Documentation Used</h4>
                 <ul class="f-suggestion__sources">
                     <li><a href="https://forma.example/help/guests">Inviting guests to a workspace</a><small>forma.example/help</small></li>
                     <li><a href="https://forma.example/help/plans/team">What the Team plan includes</a><small>forma.example/help</small></li>
@@ -32,5 +32,5 @@
             </section>
         </x-slot:details>
     </x-fruit::suggestion>
-    <x-fruit::button x-show="!open" x-on:click="open = true">Show the draft again</x-fruit::button>
+    <x-fruit::button x-show="!open" x-on:click="open = true">Show the Draft Again</x-fruit::button>
 </div>

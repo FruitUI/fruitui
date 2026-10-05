@@ -6,7 +6,7 @@
         </x-fruit::generated>
     </li>
     <li>
-        <x-fruit::message layout="stacked" aria-label="Customer message" datetime="2026-10-02T10:42">
+        <x-fruit::message layout="stacked" aria-label="Customer Message" datetime="2026-10-02T10:42">
             <x-slot:avatar><x-fruit::avatar>SC</x-fruit::avatar></x-slot:avatar>
             <x-slot:author>Sophie Chen</x-slot:author>
             <x-slot:meta>Customer</x-slot:meta>

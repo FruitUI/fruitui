@@ -99,7 +99,7 @@ export const tickets = [
     priority: 'normal',
     unread: false,
     time: '12m',
-    tags: ['Billing', 'Team plan'],
+    tags: ['Billing', 'Team Plan'],
     preview: 'One of our freelancers says her invite link has expired.',
     threads: [
       customer(
@@ -325,7 +325,7 @@ export const tickets = [
 
 export const queues = [
   { id: 'open', label: 'Open', icon: 'inbox' },
-  { id: 'mine', label: 'Assigned to me', icon: 'person' },
+  { id: 'mine', label: 'Assigned to Me', icon: 'person' },
   { id: 'unassigned', label: 'Unassigned', icon: 'tray' },
   { id: 'waiting', label: 'Waiting', icon: 'clock' },
   { id: 'closed', label: 'Closed', icon: 'check-circle' },

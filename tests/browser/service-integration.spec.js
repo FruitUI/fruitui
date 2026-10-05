@@ -46,17 +46,17 @@ test('Mail recipient tokens validate, survive sending, and reset when starting a
 
 test('Support pagination and split send action operate on the selected conversation', async ({ page }) => {
   await page.goto('/support.html');
-  await page.getByRole('combobox', { name: 'Conversations per page' }).selectOption('5');
+  await page.getByRole('combobox', { name: 'Conversations per Page' }).selectOption('5');
   await expect(page.locator('.support-ticket[data-ticket-id]')).toHaveCount(5);
   await page.getByRole('button', { name: 'Next conversation page' }).click();
   await expect(page.locator('.support-ticket[data-ticket-id]')).toHaveCount(1);
   await expect(page.locator('.support-pagination')).toContainText('2 / 2');
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('Sophie');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('Sophie');
   await expect(page.locator('.support-pagination')).toContainText('1 / 1');
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('');
   await page.getByRole('button', { name: /A little help with our team plan/ }).click();
   await page.getByRole('button', { name: 'Reply options', exact: true }).click();
-  const command = page.getByRole('menuitem', { name: 'Send and close' });
+  const command = page.getByRole('menuitem', { name: 'Send and Close' });
   await expect(command).toBeVisible();
   expect(
     await command.evaluate(el => {
@@ -70,22 +70,22 @@ test('Support pagination and split send action operate on the selected conversat
     .getByRole('button', { name: /^Closed/ })
     .click();
   await page.getByRole('button', { name: /A little help with our team plan/ }).click();
-  await expect(page.getByRole('combobox', { name: 'Conversation status' })).toHaveValue('closed');
+  await expect(page.getByRole('combobox', { name: 'Conversation Status' })).toHaveValue('closed');
   // The conversation's two earlier replies, then the one just sent.
   await expect(page.locator('.support-message[data-kind=reply]')).toHaveCount(3);
 });
 
 test('Admin rich signatures and native joined numeric fields save and reset together', async ({ page }) => {
   await page.goto('/admin.html#/settings');
-  const signature = page.getByRole('textbox', { name: 'Support reply signature' });
+  const signature = page.getByRole('textbox', { name: 'Support Reply Signature' });
   await expect(signature).toBeVisible();
   await signature.fill('Kind regards, Mia');
-  const days = page.getByRole('spinbutton', { name: 'Default trial length' });
+  const days = page.getByRole('spinbutton', { name: 'Default Trial Length' });
   await days.fill('21');
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
   await signature.fill('Unsaved');
   await days.fill('7');
-  await page.getByRole('button', { name: 'Reset changes', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset Changes', exact: true }).click();
   await expect(signature).toHaveText('Kind regards, Mia');
   await expect(days).toHaveValue('21');
 });
@@ -97,7 +97,7 @@ for (const scheme of ['light', 'dark'])
     await page.goto('/support.html');
     await page.getByRole('button', { name: /A little help with our team plan/ }).click();
     await page.getByRole('button', { name: 'Show customer details' }).click();
-    const choice = page.getByRole('combobox', { name: 'Assigned to', exact: true });
+    const choice = page.getByRole('combobox', { name: 'Assigned To', exact: true });
     await choice.click();
     const list = page.locator('.f-combobox__options');
     await expect(list).toBeVisible();

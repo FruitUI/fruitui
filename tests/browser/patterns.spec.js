@@ -101,10 +101,10 @@ async function loadStandalone(page) {
           <span class="f-item-row__top"><span class="f-item-row__title">Sophie with a very long sender name that should truncate</span><span class="f-item-row__time">10:42</span></span>
           <span class="f-item-row__subtitle">A long conversation subject that should stay on one line</span>
           <span class="f-item-row__preview">A long preview that explains a conversation across multiple lines and remains within the available space on a small screen.</span>
-          <span class="f-item-row__meta">Work mailbox</span>
+          <span class="f-item-row__meta">Work Mailbox</span>
         </button></li><li><button class="f-item-row" type="button" aria-current="true"><span class="f-item-row__title">Quiet current row</span><span class="f-item-row__preview">A softer current state.</span></button></li></ul>
         <a class="f-attachment" href="/attachments/fruitui-design-notes.txt" download><span class="f-attachment__body">design-notes-with-a-very-long-filename-that-must-wrap.txt<small class="f-attachment__detail">Text document</small></span></a>
-        <div class="f-empty-state"><h2 class="f-empty-state__title">No results</h2><p class="f-empty-state__description">Try another search.</p><div class="f-empty-state__actions"><button class="f-button" type="button">Clear filters</button></div></div>
+        <div class="f-empty-state"><h2 class="f-empty-state__title">No results</h2><p class="f-empty-state__description">Try another search.</p><div class="f-empty-state__actions"><button class="f-button" type="button">Clear Filters</button></div></div>
         </main></body></html>`,
     }),
   );
@@ -113,13 +113,13 @@ async function loadStandalone(page) {
 
 test('named dialogs and the toaster respond to browser events without Livewire', async ({ page }) => {
   await page.goto('/components.html');
-  await page.getByRole('button', { name: 'Open named dialog' }).click();
+  await page.getByRole('button', { name: 'Open Named Dialog' }).click();
   const dialog = page.getByRole('dialog', { name: 'Archive this conversation?' });
   await expect(dialog).toBeVisible();
   expect(await dialog.evaluate(element => element.matches(':modal'))).toBe(true);
   await dialog.getByRole('button', { name: 'Done' }).click();
   await expect(dialog).toBeHidden();
-  await page.getByRole('button', { name: 'Show toast' }).click();
+  await page.getByRole('button', { name: 'Show Toast' }).click();
   const toaster = page.getByRole('status').filter({ hasText: 'Conversation archived.' });
   await expect(toaster).toBeVisible();
   expect(await toaster.evaluate(element => element.matches(':popover-open'))).toBe(true);
@@ -131,7 +131,7 @@ test('named dialogs and the toaster respond to browser events without Livewire',
 
 test('a toast announced while a modal dialog is open appears above it', async ({ page }) => {
   await page.goto('/components.html');
-  await page.getByRole('button', { name: 'Open named dialog' }).click();
+  await page.getByRole('button', { name: 'Open Named Dialog' }).click();
   await expect(page.getByRole('dialog', { name: 'Archive this conversation?' })).toBeVisible();
   await page.evaluate(() =>
     window.dispatchEvent(new CustomEvent('fruit-toast', { detail: { message: 'Above the dialog' } })),
@@ -203,7 +203,7 @@ test('the selection bar follows a script-set count and hides at zero', async ({ 
   await expect(bar.getByRole('status')).toHaveText('1 selected');
   await card.getByRole('checkbox', { name: 'Select Sophie Chen' }).check();
   await expect(bar.getByRole('status')).toHaveText('2 selected');
-  await bar.getByRole('button', { name: 'Clear selection' }).click();
+  await bar.getByRole('button', { name: 'Clear Selection' }).click();
   await expect(bar).toBeHidden();
   // Plain DOM scripts (jQuery included) set the attribute directly.
   await card.locator('.f-selection-bar').evaluate(element => (element.dataset.count = '3'));
@@ -212,14 +212,14 @@ test('the selection bar follows a script-set count and hides at zero', async ({ 
 
 test('a message overflow menu opens from its actions and keeps them visible while open', async ({ page }) => {
   await page.goto('/components.html');
-  const message = page.locator('#component-message').getByRole('article', { name: 'Customer message', exact: true });
+  const message = page.locator('#component-message').getByRole('article', { name: 'Customer Message', exact: true });
   const actions = message.locator('.f-message__actions');
   const opacity = () => actions.evaluate(element => getComputedStyle(element).opacity);
   await message.hover();
-  await message.getByRole('button', { name: 'More actions' }).click();
+  await message.getByRole('button', { name: 'More Actions' }).click();
   const menu = page.getByRole('menu', { name: 'More actions for Sophie Chen’s message' });
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole('menuitem', { name: 'Show original' })).toBeFocused();
+  await expect(menu.getByRole('menuitem', { name: 'Show Original' })).toBeFocused();
   await page.mouse.move(0, 0);
   await expect.poll(opacity).toBe('1');
   await page.keyboard.press('Escape');
@@ -264,10 +264,10 @@ test('a thread separates messages, and sent, own, note and generated messages ea
   expect([ownWidth, teamWidth]).toEqual(['3px', '3px']);
   expect(ownColor).toBe(accent);
   expect(teamColor).not.toBe(accent);
-  expect((await style('Customer message', bar))[0]).toBe('0px');
+  expect((await style('Customer Message', bar))[0]).toBe('0px');
   // Not sent: a yellow note and an indigo generated card, each named in its meta text.
   const background = element => getComputedStyle(element).backgroundColor;
-  const note = await style('Internal note', background);
+  const note = await style('Internal Note', background);
   // A generated summary is compact: an icon and its text on the generated tint, named for screen readers.
   const summary = card.locator('.f-generated');
   const generated = await summary.evaluate(background);
@@ -298,7 +298,7 @@ test('the Support thread lists its entries newest first without a line before th
   ).toBeTruthy();
   expect(await first.evaluate(element => getComputedStyle(element).borderTopWidth)).toBe('0px');
   await page.locator('#support-reply').fill('Happy to help.');
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   // Newest first: the reply just sent leads the thread, below the composer.
   await expect(page.locator('.support-thread .f-message--outgoing').first()).toContainText('Happy to help.');
 });
@@ -315,8 +315,8 @@ test('a thread event shows its actions on hover or focus and keeps them while th
   expect((await event.boundingBox()).height).toBeLessThanOrEqual(plain.height + 1);
   await event.hover();
   await expect.poll(opacity).toBe('1');
-  await event.getByRole('button', { name: 'More actions' }).click();
-  await expect(page.getByRole('menuitem', { name: 'Outgoing emails' })).toBeFocused();
+  await event.getByRole('button', { name: 'More Actions' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Outgoing Emails' })).toBeFocused();
   await page.mouse.move(0, 0);
   await expect.poll(opacity).toBe('1');
   await page.keyboard.press('Escape');
@@ -344,7 +344,7 @@ test('toast tones lead with an icon, announce errors assertively and keep them t
   await card.getByRole('button', { name: 'Success' }).click();
   await expect(toast).toHaveAttribute('data-tone', 'success');
   await expect(toast).toHaveAttribute('aria-live', 'polite');
-  await card.getByRole('button', { name: 'Show toast' }).click();
+  await card.getByRole('button', { name: 'Show Toast' }).click();
   await expect(toast).toHaveText('Conversation archived.');
   await expect(toast).not.toHaveAttribute('data-tone');
   expect(await icon()).toBe('none');
@@ -356,7 +356,7 @@ test('the confirmer asks once per request and answers each in turn', async ({ pa
   const answer = card.getByRole('status');
   const dialog = page.getByRole('alertdialog');
 
-  await card.getByRole('button', { name: 'Delete conversation…' }).click();
+  await card.getByRole('button', { name: 'Delete Conversation…' }).click();
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAccessibleName('Delete this conversation?');
   await expect(dialog).toHaveAccessibleDescription('It moves to Trash, where it stays for 30 days.');
@@ -367,12 +367,12 @@ test('the confirmer asks once per request and answers each in turn', async ({ pa
   await expect(dialog).toBeHidden();
   await expect(answer).toHaveText('Kept.');
 
-  await card.getByRole('button', { name: 'Delete conversation…' }).click();
+  await card.getByRole('button', { name: 'Delete Conversation…' }).click();
   await dialog.getByRole('button', { name: 'Delete' }).click();
   await expect(answer).toHaveText('Deleted.');
 
   // Any other question starts on its action; without a message there is no description.
-  await card.getByRole('button', { name: 'Mark all as read…' }).click();
+  await card.getByRole('button', { name: 'Mark All as Read…' }).click();
   await expect(dialog.getByRole('button', { name: 'Mark as Read' })).toBeFocused();
   await expect(dialog.getByRole('button', { name: 'Mark as Read' })).toHaveClass(/f-button--primary/);
   await expect(dialog.locator('.f-confirm__message')).toBeHidden();
@@ -417,7 +417,7 @@ test('without a confirmer on the page, confirm() asks with the browser', async (
   expect(asked).toEqual(['Leave this page?\n\nYour draft is kept.']);
   // Dialogs from script: html or url, a size, and promises for the content and the answer.
   const opened = await page.evaluate(async () => {
-    const shown = window.FruitUI.dialog({ title: 'Outgoing emails', html: '<p>Sent at 10:42</p>', size: 'large' });
+    const shown = window.FruitUI.dialog({ title: 'Outgoing Emails', html: '<p>Sent at 10:42</p>', size: 'large' });
     const body = await shown.loaded;
     const result = { text: body.textContent, large: shown.element.classList.contains('f-dialog--large') };
     shown.close('done');
@@ -479,7 +479,7 @@ test('a copy button copies its value, confirms in place and reports failures', a
   await page.clock.install();
   await page.goto('/components.html');
   const card = page.locator('#component-copy-button');
-  const invite = card.getByRole('button', { name: 'Copy invite link' });
+  const invite = card.getByRole('button', { name: 'Copy Invite Link' });
   const status = value => card.locator(`.f-copy:has([data-fruit-copy="${value}"])`).getByRole('status');
   const events = [];
   await page.exposeFunction('copiedEvent', value => events.push(value));
@@ -504,9 +504,9 @@ test('a copy button copies its value, confirms in place and reports failures', a
   await expect(secret.locator('.f-copy__icon')).toBeHidden();
 
   await page.evaluate(() => (window.failCopy = true));
-  await card.getByRole('button', { name: 'Copy number' }).click();
+  await card.getByRole('button', { name: 'Copy Number' }).click();
   await expect(status('#1042')).toHaveText('Could not copy');
-  await expect(card.getByRole('button', { name: 'Copy number' })).toBeVisible();
+  await expect(card.getByRole('button', { name: 'Copy Number' })).toBeVisible();
 });
 
 test('a Field label slot with markup still names its control', async ({ page }) => {
@@ -569,7 +569,7 @@ test('a selectable list selects with modifier clicks and keys and the header swa
   expect(await shown()).toBe(true);
   await row('Jordan Lee').click();
   expect(await values()).toEqual(['1041']);
-  await card.getByRole('button', { name: 'Clear selection' }).click();
+  await card.getByRole('button', { name: 'Clear Selection' }).click();
   await select.click();
   expect(await shown()).toBe(false);
   // A checkbox reached with Tab shows while it has focus.
@@ -588,25 +588,25 @@ test('a link opens its content in a loaded dialog that closes, cleans up and ret
   });
   await page.goto('/components.html');
   const card = page.locator('#component-remote-dialog');
-  const trigger = card.getByRole('link', { name: 'Merge conversation…' });
+  const trigger = card.getByRole('link', { name: 'Merge Conversation…' });
   const loadedEvents = [];
   await page.exposeFunction('dialogLoaded', url => loadedEvents.push(url));
   await page.evaluate(() =>
     document.addEventListener('fruit-dialog-loaded', event => window.dialogLoaded(event.detail.url)),
   );
   await trigger.click();
-  const dialog = page.getByRole('dialog', { name: 'Merge conversation' });
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
   await expect(dialog).toBeVisible();
   // While loading: a busy body with a skeleton and a polite status.
   await expect(dialog.locator('.f-dialog__body')).toHaveAttribute('aria-busy', 'true');
   await expect(dialog.getByRole('status')).toHaveText('Loading…');
   release();
-  await expect(dialog.getByRole('combobox', { name: 'Merge into' })).toBeVisible();
+  await expect(dialog.getByRole('combobox', { name: 'Merge Into' })).toBeVisible();
   await expect(dialog.locator('.f-dialog__body')).not.toHaveAttribute('aria-busy');
   expect(loadedEvents).toEqual(['fragments/merge-conversation.html']);
   // The content's trailing footer becomes the dialog's own, outside the scrolling body.
   expect(await dialog.evaluate(element => element.lastElementChild.matches('.f-dialog__footer'))).toBe(true);
-  await dialog.getByRole('combobox', { name: 'Merge into' }).selectOption('1041');
+  await dialog.getByRole('combobox', { name: 'Merge Into' }).selectOption('1041');
   await dialog.getByRole('button', { name: 'Merge' }).click();
   await expect(page.locator('#component-toast .f-toast[x-data]')).toHaveText('Merged into #1041.');
   // Closing removes the dialog from the page.
@@ -616,12 +616,12 @@ test('a link opens its content in a loaded dialog that closes, cleans up and ret
   await expect(trigger).toBeFocused();
 
   // Content supplied as HTML; Escape and the close button close it.
-  await card.getByRole('button', { name: 'Keyboard shortcuts' }).click();
-  const shortcuts = page.getByRole('dialog', { name: 'Keyboard shortcuts' });
-  await expect(shortcuts).toContainText('Select a range');
+  await card.getByRole('button', { name: 'Keyboard Shortcuts' }).click();
+  const shortcuts = page.getByRole('dialog', { name: 'Keyboard Shortcuts' });
+  await expect(shortcuts).toContainText('Select a Range');
   await page.keyboard.press('Escape');
   await expect(shortcuts).toHaveCount(0);
-  await card.getByRole('button', { name: 'Keyboard shortcuts' }).click();
+  await card.getByRole('button', { name: 'Keyboard Shortcuts' }).click();
   await shortcuts.getByRole('button', { name: 'Close' }).click();
   await expect(shortcuts).toHaveCount(0);
 });
@@ -632,8 +632,8 @@ test('a valueless dialog attribute rendered by Blade still loads the link', asyn
     const link = document.querySelector('#component-remote-dialog a[data-fruit-dialog-url]');
     link.setAttribute('data-fruit-dialog-url', 'data-fruit-dialog-url');
   });
-  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge conversation…' }).click();
-  await expect(page.getByRole('dialog', { name: 'Merge conversation' }).getByRole('combobox')).toBeVisible();
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
+  await expect(page.getByRole('dialog', { name: 'Merge Conversation' }).getByRole('combobox')).toBeVisible();
 });
 
 test('a loaded dialog that fails offers to try again', async ({ page }) => {
@@ -642,12 +642,12 @@ test('a loaded dialog that fails offers to try again', async ({ page }) => {
     fail ? route.fulfill({ status: 500, body: 'Error' }) : route.continue(),
   );
   await page.goto('/components.html');
-  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge conversation…' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Merge conversation' });
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
   await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
   fail = false;
-  await dialog.getByRole('button', { name: 'Try again' }).click();
-  await expect(dialog.getByRole('combobox', { name: 'Merge into' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Try Again' }).click();
+  await expect(dialog.getByRole('combobox', { name: 'Merge Into' })).toBeVisible();
 });
 
 test('a translation stays inside the message it translates, outlined and announced as a translation', async ({
@@ -672,13 +672,13 @@ test('a translation stays inside the message it translates, outlined and announc
   await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
   const thread = page.getByRole('region', { name: 'Conversation history' });
   await expect(
-    thread.getByRole('region', { name: 'Customer message' }).locator('.f-message__translation'),
+    thread.getByRole('region', { name: 'Customer Message' }).locator('.f-message__translation'),
   ).toContainText('move our projects');
 });
 
 test('a segmented control in a toolbar is named for assistive technology only', async ({ page }) => {
   await page.goto('/components.html');
-  const group = page.locator('#component-segmented').getByRole('group', { name: 'Conversation type' });
+  const group = page.locator('#component-segmented').getByRole('group', { name: 'Conversation Type' });
   await expect(group).toBeVisible();
   await expect(group.locator('legend')).toHaveCSS('position', 'absolute');
   await expect(group.getByRole('radio', { name: 'Email' })).toBeChecked();

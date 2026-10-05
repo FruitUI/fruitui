@@ -22,8 +22,8 @@ test('links are added on the selection, edited in place and removed from a popov
   for (let i = 0; i < 4; i++) await page.keyboard.press('Shift+ArrowLeft');
   const link = root.getByRole('button', { name: 'Link', exact: true });
   await link.click();
-  const popover = page.getByRole('dialog', { name: 'Link address' });
-  const address = popover.getByRole('textbox', { name: 'Link address' });
+  const popover = page.getByRole('dialog', { name: 'Link Address' });
+  const address = popover.getByRole('textbox', { name: 'Link Address' });
   await expect(address).toBeFocused();
   await address.fill('https://forma.example/guide');
   await popover.getByRole('button', { name: 'Apply' }).click();
@@ -41,7 +41,7 @@ test('links are added on the selection, edited in place and removed from a popov
   await expect(link).toBeFocused();
   await surface.getByText('guide').click();
   await link.click();
-  await popover.getByRole('button', { name: 'Remove link' }).click();
+  await popover.getByRole('button', { name: 'Remove Link' }).click();
   await expect.poll(() => value(page)).not.toContain('<a ');
 });
 
@@ -53,15 +53,15 @@ test('images insert by address, formatting clears, and pasted or dropped images 
   await surface.click();
   await page.keyboard.press('ControlOrMeta+End');
   await root.getByRole('button', { name: 'Image', exact: true }).click();
-  const popover = page.getByRole('dialog', { name: 'Image address' });
-  await popover.getByRole('textbox', { name: 'Image address' }).fill('https://cdn.forma.example/logo.png');
+  const popover = page.getByRole('dialog', { name: 'Image Address' });
+  await popover.getByRole('textbox', { name: 'Image Address' }).fill('https://cdn.forma.example/logo.png');
   await popover.getByRole('button', { name: 'Insert' }).click();
   await expect.poll(() => value(page)).toContain('<img src="https://cdn.forma.example/logo.png">');
 
   // Remove formatting turns the bold signature back into plain text.
   await surface.click();
   await page.keyboard.press('ControlOrMeta+a');
-  await root.getByRole('button', { name: 'Remove formatting' }).click();
+  await root.getByRole('button', { name: 'Remove Formatting' }).click();
   await expect.poll(() => value(page)).not.toContain('<strong>');
 
   // The application answers the upload hook with the uploaded file's address.
@@ -128,10 +128,10 @@ test('app buttons and menus follow the default toolbar and insert at the cursor'
   await expect(toolbar.getByRole('separator').last()).toBeVisible();
   await surface.click();
   await page.keyboard.press('ControlOrMeta+End');
-  await toolbar.getByRole('button', { name: 'Insert variable' }).click();
-  const menu = page.getByRole('menu', { name: 'Insert variable' });
+  await toolbar.getByRole('button', { name: 'Insert Variable' }).click();
+  const menu = page.getByRole('menu', { name: 'Insert Variable' });
   await expect(menu).toBeVisible();
-  await menu.getByRole('menuitem', { name: 'Customer first name' }).click();
+  await menu.getByRole('menuitem', { name: 'Customer First Name' }).click();
   await expect(menu).toBeHidden();
   await expect.poll(() => value(page)).toContain('{%customer.firstName%}');
 });

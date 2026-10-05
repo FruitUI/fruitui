@@ -6,8 +6,8 @@
             <x-slot:time>10:45 AM</x-slot:time>
             <x-slot:actions>
                 <x-fruit::menu title="More actions for this event">
-                    <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="More actions"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></x-slot:trigger>
-                    <x-fruit::menu-item>Outgoing emails</x-fruit::menu-item>
+                    <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="More Actions"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></x-slot:trigger>
+                    <x-fruit::menu-item>Outgoing Emails</x-fruit::menu-item>
                 </x-fruit::menu>
             </x-slot:actions>
         </x-fruit::message-event>

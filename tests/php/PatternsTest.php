@@ -19,7 +19,7 @@ class PatternsTest extends TestCase
                         <x-slot:trailing>10:42</x-slot:trailing>
                         <x-slot:subtitle>A fresh start</x-slot:subtitle>
                         <x-slot:preview>A few thoughts…</x-slot:preview>
-                        <x-slot:meta>Work mailbox</x-slot:meta>
+                        <x-slot:meta>Work Mailbox</x-slot:meta>
                     </x-fruit::item-row>
                 </li>
             </x-fruit::item-list>
@@ -39,7 +39,7 @@ class PatternsTest extends TestCase
         $this->assertSame('selected', $input->getAttribute('wire:model'));
         $this->assertSame('42', $input->getAttribute('value'));
         $xpath = new DOMXPath($document);
-        foreach (['title' => 'Sophie Chen', 'trailing' => '10:42', 'subtitle' => 'A fresh start', 'preview' => 'A few thoughts…', 'meta' => 'Work mailbox'] as $part => $content) {
+        foreach (['title' => 'Sophie Chen', 'trailing' => '10:42', 'subtitle' => 'A fresh start', 'preview' => 'A few thoughts…', 'meta' => 'Work Mailbox'] as $part => $content) {
             $class = $part === 'trailing' ? 'time' : $part;
             $node = $xpath->query('//*[contains(concat(" ", normalize-space(@class), " "), " f-item-row__'.$class.' ")]')->item(0);
             $this->assertSame($content, trim($node->textContent));
@@ -61,9 +61,9 @@ class PatternsTest extends TestCase
             </x-fruit::attachment>
             <x-fruit::empty-state role="region" aria-label="Search results">
                 <x-slot:icon aria-hidden="true">Inbox</x-slot:icon>
-                <x-slot:title><h2>No conversations</h2></x-slot:title>
+                <x-slot:title><h2>No Conversations</h2></x-slot:title>
                 Try another search.
-                <x-slot:actions><x-fruit::button wire:click="clearFilters">Clear filters</x-fruit::button></x-slot:actions>
+                <x-slot:actions><x-fruit::button wire:click="clearFilters">Clear Filters</x-fruit::button></x-slot:actions>
             </x-fruit::empty-state>
             BLADE);
         $document = $this->document($html);
@@ -72,9 +72,9 @@ class PatternsTest extends TestCase
         $this->assertSame('notes.txt', $link->getAttribute('download'));
         $this->assertStringContainsString('f-attachment custom', $link->getAttribute('class'));
         $this->assertSame('Text document', trim($link->getElementsByTagName('small')->item(0)->textContent));
-        $this->assertSame('Clear filters', trim($document->getElementsByTagName('button')->item(0)->textContent));
+        $this->assertSame('Clear Filters', trim($document->getElementsByTagName('button')->item(0)->textContent));
         $this->assertSame('clearFilters', $document->getElementsByTagName('button')->item(0)->getAttribute('wire:click'));
-        $this->assertSame('No conversations', $document->getElementsByTagName('h2')->item(0)->textContent);
+        $this->assertSame('No Conversations', $document->getElementsByTagName('h2')->item(0)->textContent);
         $this->assertStringContainsString('f-empty-state__actions', $html);
         $this->assertStringContainsString('f-empty-state__description', $html);
     }

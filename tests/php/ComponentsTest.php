@@ -16,10 +16,10 @@ class ComponentsTest extends TestCase
         $this->assertStringContainsString('x-on:click="open"', $button);
         $this->assertStringContainsString('type="button"', $button);
 
-        $switch = Blade::render('<x-fruit::switch wire:model.live="previews" id="previews" checked>Show previews</x-fruit::switch>');
+        $switch = Blade::render('<x-fruit::switch wire:model.live="previews" id="previews" checked>Show Previews</x-fruit::switch>');
         $this->assertMatchesRegularExpression('/<input[^>]+wire:model.live="previews"[^>]*>/', $switch);
         $this->assertStringContainsString('role="switch"', $switch);
-        $this->assertStringContainsString('Show previews', $switch);
+        $this->assertStringContainsString('Show Previews', $switch);
     }
 
     public function test_native_controls_and_slots_render(): void

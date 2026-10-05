@@ -73,7 +73,7 @@ export function chatDemo() {
       return this.searching
         ? 'Search results'
         : this.mode === 'unread'
-          ? 'All unread'
+          ? 'All Unread'
           : this.mode === 'threads'
             ? 'Threads'
             : this.room.kind === 'channel'

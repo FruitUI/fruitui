@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { expectAccessible } from './helpers.js';
 
-const combo = page => page.getByRole('combobox', { name: 'Assign conversation' });
+const combo = page => page.getByRole('combobox', { name: 'Assign Conversation' });
 const tokens = page => page.getByRole('textbox', { name: 'Recipients', exact: true });
-const signature = page => page.getByRole('textbox', { name: 'Reply signature', exact: true });
+const signature = page => page.getByRole('textbox', { name: 'Reply Signature', exact: true });
 const value = (page, form, name) => page.locator(form).evaluate((form, name) => new FormData(form).get(name), name);
 
 const runtimeErrors = new WeakMap();
@@ -37,11 +37,11 @@ test('choice Escape cancels pending search; external model changes and reset upd
   await combo(page).fill('unmatched');
   await expect(page.locator('#component-combobox')).toContainText('No matches');
   await combo(page).press('Escape');
-  await expect(combo(page)).toHaveValue('Support team');
-  await page.getByRole('button', { name: 'Assign Mia externally' }).click();
+  await expect(combo(page)).toHaveValue('Support Team');
+  await page.getByRole('button', { name: 'Assign Mia Externally' }).click();
   await expect(combo(page)).toHaveValue('Mia Patel');
-  await page.getByRole('button', { name: 'Reset choice' }).click();
-  await expect(combo(page)).toHaveValue('Support team');
+  await page.getByRole('button', { name: 'Reset Choice' }).click();
+  await expect(combo(page)).toHaveValue('Support Team');
   expect(await value(page, '#combobox-example', 'assignee')).toBe('support');
 });
 
@@ -94,7 +94,7 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
   expect(await value(page, '#token-example', 'recipients')).toBe(
     'sophie@example.com\nmia@example.com\nnoah@example.com',
   );
-  await page.getByRole('button', { name: 'Set recipients externally' }).click();
+  await page.getByRole('button', { name: 'Set Recipients Externally' }).click();
   await expect(page.locator('#token-example .f-chip')).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeVisible();
   await page.locator('#gallery-recipients').evaluate(textarea => {
@@ -102,12 +102,12 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
   });
   await expect(tokens(page)).toHaveAttribute('readonly');
   await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeDisabled();
-  await page.getByRole('button', { name: 'Reset recipients' }).click();
+  await page.getByRole('button', { name: 'Reset Recipients' }).click();
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
 });
 
 test('a token field can post one value per token and add suggested entries', async ({ page }) => {
-  const field = page.getByRole('textbox', { name: 'Invite teammates' });
+  const field = page.getByRole('textbox', { name: 'Invite Teammates' });
   const posted = () => page.locator('#token-list-example').evaluate(form => new FormData(form).getAll('invites[]'));
   // The textarea's name moves to one hidden invites[] input per token.
   expect(await posted()).toEqual(['mia@studio.example']);
@@ -161,12 +161,12 @@ test('a token field can post one value per token and add suggested entries', asy
 
 test('menu opens with arrows, skips disabled commands, supports typeahead and restores focus', async ({ page }) => {
   const root = page.locator('#component-menu');
-  const trigger = root.getByText('More actions', { exact: true });
+  const trigger = root.getByText('More Actions', { exact: true });
   await trigger.focus();
   await trigger.press('ArrowDown');
   await expect(root.getByRole('menuitem', { name: 'Archive', exact: true })).toBeFocused();
   await page.keyboard.press('ArrowDown');
-  await expect(root.getByRole('menuitem', { name: 'Mark unread' })).toBeFocused();
+  await expect(root.getByRole('menuitem', { name: 'Mark Unread' })).toBeFocused();
   await page.keyboard.press('End');
   await expect(root.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
   await page.keyboard.press('a');
@@ -182,7 +182,7 @@ test('menu opens with arrows, skips disabled commands, supports typeahead and re
 
 test('menu Tab leaves and outside dismissal closes; tooltip responds to focus and Escape', async ({ page }) => {
   const root = page.locator('#component-menu');
-  const trigger = root.getByText('More actions', { exact: true });
+  const trigger = root.getByText('More Actions', { exact: true });
   await trigger.click();
   await page.keyboard.press('Tab');
   await expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -224,9 +224,9 @@ test('rich editing submits HTML and supports formatting, external updates, reset
   await page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true }).click();
   await expect(signature(page).locator('strong')).toHaveText('Hello Sophie');
   expect(await value(page, '#editor-example', 'signature')).toContain('<strong>Hello Sophie</strong>');
-  await page.getByRole('button', { name: 'Set signature externally' }).click();
+  await page.getByRole('button', { name: 'Set Signature Externally' }).click();
   await expect(signature(page)).toHaveText('Mia Patel');
-  await page.getByRole('button', { name: 'Reset signature' }).click();
+  await page.getByRole('button', { name: 'Reset Signature' }).click();
   await expect(signature(page)).toContainText('Alex Morgan');
   await page.locator('#gallery-editor').evaluate(textarea => {
     textarea.readOnly = true;
@@ -252,7 +252,7 @@ test('upload composition reads real files and supports cancel, retry, error and 
     'cancelled',
   );
   await root.getByRole('button', { name: 'Retry' }).click();
-  await root.getByRole('button', { name: 'Simulate error' }).click();
+  await root.getByRole('button', { name: 'Simulate Error' }).click();
   await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveAttribute(
     'data-state',
     'error',
@@ -263,7 +263,7 @@ test('upload composition reads real files and supports cancel, retry, error and 
     'complete',
     { timeout: 7000 },
   );
-  await expect(root.getByRole('link', { name: 'Download local file' })).toHaveAttribute('href', /^blob:/);
+  await expect(root.getByRole('link', { name: 'Download Local File' })).toHaveAttribute('href', /^blob:/);
   await root.getByRole('button', { name: 'Remove brief.txt' }).click();
   await expect(root.getByRole('list', { name: 'Attachments' }).locator('.f-upload__row')).toHaveCount(0);
 });
@@ -345,13 +345,13 @@ test('menus include groups, separators, checked items, links and shortcut hints'
   await trigger.press('ArrowDown');
   await expect(root.getByRole('menuitemradio', { name: 'Date' })).toBeFocused();
   await expect(root.getByRole('menuitemradio', { name: 'Date' })).toHaveAttribute('aria-checked', 'true');
-  await expect(root.getByRole('group', { name: 'Sort by' })).toBeVisible();
+  await expect(root.getByRole('group', { name: 'Sort By' })).toBeVisible();
   await expect(root.getByRole('separator')).toHaveCount(2);
   await page.keyboard.press('s');
   await expect(root.getByRole('menuitemradio', { name: 'Sender' })).toBeFocused();
   // Typeahead accumulates and ignores the shortcut hint.
   await page.keyboard.press('h');
-  await expect(root.getByRole('menuitemcheckbox', { name: 'Show previews' })).toBeFocused();
+  await expect(root.getByRole('menuitemcheckbox', { name: 'Show Previews' })).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(trigger).toBeFocused();
   await expect(root.getByText('Sorted by date, without previews')).toBeVisible();
@@ -363,7 +363,7 @@ test('menus include groups, separators, checked items, links and shortcut hints'
   await expect(root.getByText('Sorted by sender, without previews')).toBeVisible();
   await trigger.click();
   await expect(root.getByRole('menuitemradio', { name: 'Sender' })).toHaveAttribute('aria-checked', 'true');
-  await expect(root.getByRole('menuitemcheckbox', { name: 'Show previews' })).toHaveAttribute('aria-checked', 'false');
+  await expect(root.getByRole('menuitemcheckbox', { name: 'Show Previews' })).toHaveAttribute('aria-checked', 'false');
 });
 
 test('autocomplete suggests mentions and saved replies and inserts them into the native field', async ({ page }) => {
@@ -386,7 +386,7 @@ test('autocomplete suggests mentions and saved replies and inserts them into the
   await reply.press('Escape');
   await expect(suggestions).toBeHidden();
   await expect(reply).toHaveValue('Thanks @alex and @a');
-  const saved = page.getByRole('textbox', { name: 'Saved reply' });
+  const saved = page.getByRole('textbox', { name: 'Saved Reply' });
   await saved.fill('/sc');
   await page.getByRole('option', { name: /screenshot/ }).click();
   await expect(saved).toHaveValue('Could you send a screenshot of what you see? ');
@@ -394,18 +394,18 @@ test('autocomplete suggests mentions and saved replies and inserts them into the
 
 test('the command palette opens with its shortcut, filters, and activates commands by keyboard', async ({ page }) => {
   await page.keyboard.press('ControlOrMeta+k');
-  const palette = page.getByRole('dialog', { name: 'Go to' });
+  const palette = page.getByRole('dialog', { name: 'Go To' });
   await expect(palette).toBeVisible();
-  const search = palette.getByRole('combobox', { name: 'Go to' });
+  const search = palette.getByRole('combobox', { name: 'Go To' });
   await expect(search).toBeFocused();
   await expect(palette.getByRole('option')).toHaveCount(5);
   await search.fill('toa');
-  await expect(palette.getByRole('option', { name: /Show a toast/ })).toHaveAttribute('aria-selected', 'true');
+  await expect(palette.getByRole('option', { name: /Show a Toast/ })).toHaveAttribute('aria-selected', 'true');
   await expect(palette.getByRole('group', { name: 'Examples' })).toBeHidden();
   await search.press('Enter');
   await expect(palette).toBeHidden();
   await expect(page.getByRole('status').filter({ hasText: 'Command palette works.' })).toBeVisible();
-  await page.getByRole('button', { name: 'Open command palette' }).click();
+  await page.getByRole('button', { name: 'Open Command Palette' }).click();
   await expect(search).toHaveValue('');
   await search.fill('zzz');
   await expect(palette.getByText('No results')).toBeVisible();
@@ -422,9 +422,9 @@ test('the command palette opens with its shortcut, filters, and activates comman
 test('the command palette keeps search focus, rounds its search ring and keeps selected shortcuts legible', async ({
   page,
 }) => {
-  await page.getByRole('button', { name: 'Open command palette' }).click();
-  const palette = page.getByRole('dialog', { name: 'Go to' });
-  const search = palette.getByRole('combobox', { name: 'Go to' });
+  await page.getByRole('button', { name: 'Open Command Palette' }).click();
+  const palette = page.getByRole('dialog', { name: 'Go To' });
+  const search = palette.getByRole('combobox', { name: 'Go To' });
   await expect(search).toBeFocused();
   // The inset focus ring follows the dialog's rounded top corners.
   expect(parseFloat(await search.evaluate(element => getComputedStyle(element).borderTopLeftRadius))).toBeGreaterThan(
@@ -432,7 +432,7 @@ test('the command palette keeps search focus, rounds its search ring and keeps s
   );
 
   // Pointer presses inside the palette leave focus in the search field.
-  const toast = palette.getByRole('option', { name: /Show a toast/ });
+  const toast = palette.getByRole('option', { name: /Show a Toast/ });
   await toast.hover();
   await expect(toast).toHaveAttribute('aria-selected', 'true');
   const list = await palette.getByRole('listbox').boundingBox();
@@ -466,7 +466,7 @@ test('a context menu opens at the pointer or from the keyboard and returns focus
   await page.mouse.click(box.x + 60, box.y + 10, { button: 'right' });
   await expect(menu).toBeVisible();
   await expect(item).toHaveAttribute('data-fruit-context-open', '');
-  await expect(menu.getByRole('menuitem', { name: /Mark as unread/ })).toBeFocused();
+  await expect(menu.getByRole('menuitem', { name: /Mark as Unread/ })).toBeFocused();
   const position = await menu.boundingBox();
   expect(Math.abs(position.x - (box.x + 60))).toBeLessThan(2);
   expect(position.y).toBeGreaterThanOrEqual(box.y + 10);
@@ -482,7 +482,7 @@ test('a context menu opens at the pointer or from the keyboard and returns focus
   // Shift+F10 opens below the focused row; arrows wrap; Escape returns focus to the row.
   await row.focus();
   await page.keyboard.press('Shift+F10');
-  await expect(menu.getByRole('menuitem', { name: /Mark as unread/ })).toBeFocused();
+  await expect(menu.getByRole('menuitem', { name: /Mark as Unread/ })).toBeFocused();
   await page.keyboard.press('ArrowUp');
   await expect(menu.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
   await page.keyboard.press('Escape');

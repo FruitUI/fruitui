@@ -7,10 +7,10 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('search, unread filter, and reading a message update the inbox', async ({ page }) => {
-  await page.getByRole('searchbox', { name: 'Search messages' }).fill('mountains');
+  await page.getByRole('searchbox', { name: 'Search Messages' }).fill('mountains');
   await expect(page.locator('.f-mail__message')).toHaveCount(1);
   await page.getByRole('searchbox').fill('nothingmatches');
-  await expect(page.getByRole('heading', { name: 'No messages', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No Messages', exact: true })).toBeVisible();
   await page.getByRole('searchbox').fill('');
   await page.getByRole('button', { name: 'Show unread messages' }).click();
   await expect(page.locator('.f-mail__message')).toHaveCount(3);
@@ -114,7 +114,7 @@ test('phone preview uses the same mailbox and reader state as desktop', async ({
 
 test('phone search, unread filtering, message navigation, and compose work', async ({ page }) => {
   await page.getByRole('radio', { name: 'Phone', exact: true }).check();
-  await page.getByRole('searchbox', { name: 'Search messages' }).fill('mountains');
+  await page.getByRole('searchbox', { name: 'Search Messages' }).fill('mountains');
   await expect(page.locator('.f-mail__message')).toHaveCount(1);
   await page.getByRole('searchbox').fill('');
   await page.getByRole('button', { name: 'Show unread messages', exact: true }).click();
@@ -134,9 +134,9 @@ test('phone search, unread filtering, message navigation, and compose work', asy
   await page.getByRole('button', { name: 'Back to messages' }).click();
   await expect(page.getByRole('button', { name: /Sophie Chen/ })).toBeFocused();
   await page.getByLabel('Mailbox options', { exact: true }).click();
-  await page.getByRole('button', { name: 'Mark all as read' }).click();
+  await page.getByRole('button', { name: 'Mark All as Read' }).click();
   await page.getByRole('button', { name: 'Show unread messages', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'No messages', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No Messages', exact: true })).toBeVisible();
 });
 
 test('a medium container keeps the list and reader together', async ({ page }) => {
@@ -216,7 +216,7 @@ for (const theme of ['light', 'dark']) {
 
 test('selection controls keep native form values and Alpine state aligned', async ({ page }) => {
   await page.goto('/components.html');
-  const form = page.getByRole('form', { name: 'Selection controls' });
+  const form = page.getByRole('form', { name: 'Selection Controls' });
   const checkbox = form.getByRole('checkbox', { name: 'Play a sound for new messages' });
   await checkbox.focus();
   await page.keyboard.press('Space');

@@ -222,7 +222,7 @@ class LaravelIntegrationTest extends TestCase
     public function test_a_copy_button_carries_its_value_and_translated_feedback(): void
     {
         app()->setLocale('nl');
-        $xpath = $this->xpath(Blade::render('<x-fruit::copy-button value="whsec_1" aria-label="Copy secret" /><x-fruit::copy-button value="#1042" variant="ghost" size="small">Copy number</x-fruit::copy-button>'));
+        $xpath = $this->xpath(Blade::render('<x-fruit::copy-button value="whsec_1" aria-label="Copy secret" /><x-fruit::copy-button value="#1042" variant="ghost" size="small">Copy Number</x-fruit::copy-button>'));
         [$icon, $text] = [$xpath->query('//button')->item(0), $xpath->query('//button')->item(1)];
         $this->assertSame('button', $icon->getAttribute('type'));
         $this->assertSame('whsec_1', $icon->getAttribute('data-fruit-copy'));
@@ -230,7 +230,7 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('f-button f-button--icon', $icon->getAttribute('class'));
         $this->assertSame('f-button f-button--ghost f-button--small', $text->getAttribute('class'));
         $this->assertFalse($text->hasAttribute('aria-label'));
-        $this->assertSame('Copy number', $xpath->query('.//span[@class="f-copy__label"]', $text)->item(0)->textContent);
+        $this->assertSame('Copy Number', $xpath->query('.//span[@class="f-copy__label"]', $text)->item(0)->textContent);
         $root = $xpath->query('//span[@class="f-copy"]')->item(0);
         $this->assertSame('fruitCopy', $root->getAttribute('x-data'));
         $this->assertSame('Gekopieerd', $root->getAttribute('data-fruit-copied-message'));

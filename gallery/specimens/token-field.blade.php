@@ -4,14 +4,14 @@
         @fruit-token-add="if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($event.detail.value)) { $event.detail.error = 'Enter an email address.'; $event.preventDefault(); }">sophie@example.com</x-fruit::token-field>
     <p class="f-help">Enter or comma to add. Backspace in the empty field focuses the last remove button.</p>
     <div class="f-row">
-        <x-fruit::button @click="recipients = 'mia@example.com'">Set recipients externally</x-fruit::button>
-        <x-fruit::button type="reset">Reset recipients</x-fruit::button>
+        <x-fruit::button @click="recipients = 'mia@example.com'">Set Recipients Externally</x-fruit::button>
+        <x-fruit::button type="reset">Reset Recipients</x-fruit::button>
     </div>
 </form>
 {{-- submit="list" posts one invites[] value per token. Suggestions come from the options; with
      search="server", answer fruit-suggest events ($event.detail.query) with new options instead. --}}
 <form class="f-stack" id="token-list-example" @submit.prevent>
-    <label class="f-label" for="gallery-invites">Invite teammates</label>
+    <label class="f-label" for="gallery-invites">Invite Teammates</label>
     <x-fruit::token-field id="gallery-invites" name="invites" submit="list" placeholder="Name or email">
         mia@studio.example
         <x-slot:options>

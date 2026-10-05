@@ -8,16 +8,16 @@ async function openDesk(page, mailbox = 'all') {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${host}/support/${mailbox}`);
-  await expect(page.getByRole('combobox', { name: 'Assigned to' })).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Assigned To' })).toBeVisible();
   return errors;
 }
 
-const list = page => page.getByRole('list', { name: /All open|Unassigned|Assigned to me|Closed/ });
+const list = page => page.getByRole('list', { name: /All Open|Unassigned|Assigned to Me|Closed/ });
 const conversation = page => page.getByRole('region', { name: 'Conversation', exact: true });
 
 test('opening conversations re-renders enhanced controls without duplicating or exposing them', async ({ page }) => {
   const errors = await openDesk(page);
-  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  const assignee = page.getByRole('combobox', { name: 'Assigned To' });
   await expect(assignee).toHaveValue('Alex Morgan');
   await expect(page.locator('#support-assignee')).toBeHidden();
 
@@ -41,7 +41,7 @@ test('a live combobox commit updates the server, the list and announces a toast'
   await list(page)
     .getByRole('button', { name: /Jordan Lee/ })
     .click();
-  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  const assignee = page.getByRole('combobox', { name: 'Assigned To' });
   await expect(assignee).toHaveValue('Unassigned');
   await assignee.fill('Mia');
   await assignee.press('Enter');
@@ -53,18 +53,18 @@ test('a live combobox commit updates the server, the list and announces a toast'
   const unassigned = page.getByRole('link', { name: /Unassigned/ });
   await expect(unassigned.locator('.f-badge')).toHaveText('2');
   await page.reload();
-  await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Alex Morgan');
+  await expect(page.getByRole('combobox', { name: 'Assigned To' })).toHaveValue('Alex Morgan');
   await list(page)
     .getByRole('button', { name: /Jordan Lee/ })
     .click();
-  await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Mia Patel');
+  await expect(page.getByRole('combobox', { name: 'Assigned To' })).toHaveValue('Mia Patel');
   expect(errors).toEqual([]);
 });
 
 test('server validation errors reach Field associations and clear after a valid reply', async ({ page }) => {
   const errors = await openDesk(page);
   const reply = page.getByRole('textbox', { name: 'Reply to Sophie Chen' });
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   await expect(reply).toHaveAttribute('aria-invalid', 'true');
   await expect(reply).toHaveAccessibleDescription('Write a reply before sending.');
 
@@ -75,7 +75,7 @@ test('server validation errors reach Field associations and clear after a valid 
   await cc.fill('not-an-address');
   await cc.press('Enter');
   await reply.fill('Thanks, we will move you over today.');
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   await expect(cc).toHaveAttribute('aria-invalid', 'true');
   await expect(cc).toHaveAccessibleDescription('The Cc field contains an invalid entry: not-an-address.');
   await expect(reply).not.toHaveAttribute('aria-invalid');
@@ -84,7 +84,7 @@ test('server validation errors reach Field associations and clear after a valid 
   await page.getByRole('button', { name: 'Remove not-an-address' }).click();
   await cc.fill('studio@example.com');
   await cc.press('Enter');
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
   await expect(page.getByRole('list', { name: 'Messages' }).getByRole('listitem')).toHaveCount(2);
   // Newest first: the reply just sent leads the thread below the composer.
@@ -105,7 +105,7 @@ test('a server-opened dialog stays open through morphs, then closing redirects w
   await page.evaluate(() => {
     window.fruitNavigationMarker = true;
   });
-  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await page.getByRole('button', { name: 'Close Conversation' }).click();
   const dialog = page.getByRole('dialog', { name: 'Close this conversation?' });
   await expect(dialog).toBeVisible();
   await dialog.getByLabel('Reason').selectOption('duplicate');
@@ -113,7 +113,7 @@ test('a server-opened dialog stays open through morphs, then closing redirects w
   await expect(dialog).toBeVisible();
   expect(await dialog.evaluate(element => element.matches(':modal'))).toBe(true);
 
-  await dialog.getByRole('button', { name: 'Close conversation' }).click();
+  await dialog.getByRole('button', { name: 'Close Conversation' }).click();
   await expect(page).toHaveURL(`${host}/support/closed`);
   await expect(page.getByRole('status').filter({ hasText: 'Conversation #1042 closed as duplicate.' })).toBeVisible();
   await expect(conversation(page).getByRole('alert').or(conversation(page).locator('.f-alert'))).toContainText(
@@ -134,21 +134,21 @@ test('wire:navigate swaps mailboxes without reloading and enhancements initializ
   await expect(list(page)).toHaveAccessibleName('Unassigned');
   await expect(list(page).getByRole('listitem')).toHaveCount(3);
   await expect(page.getByRole('link', { name: /Unassigned/ })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Unassigned');
+  await expect(page.getByRole('combobox', { name: 'Assigned To' })).toHaveValue('Unassigned');
   // Assigned to and Merge into, each enhanced once.
   await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
 
   await page.goBack();
   await expect(page).toHaveURL(`${host}/support/all`);
-  await expect(page.getByRole('combobox', { name: 'Assigned to' })).toHaveValue('Alex Morgan');
+  await expect(page.getByRole('combobox', { name: 'Assigned To' })).toHaveValue('Alex Morgan');
   // Assigned to and Merge into, each enhanced once.
   await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
   expect(await page.evaluate(() => window.fruitNavigationMarker)).toBe(true);
 
-  await page.getByRole('link', { name: /Assigned to me/ }).click();
+  await page.getByRole('link', { name: /Assigned to Me/ }).click();
   await expect(page).toHaveURL(`${host}/support/mine`);
-  await expect(list(page)).toHaveAccessibleName('Assigned to me');
-  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  await expect(list(page)).toHaveAccessibleName('Assigned to Me');
+  const assignee = page.getByRole('combobox', { name: 'Assigned To' });
   await assignee.fill('Noah');
   await assignee.press('Enter');
   await expect(page.getByRole('status').filter({ hasText: 'Assigned to Noah Williams.' })).toBeVisible();
@@ -166,12 +166,12 @@ test('search and Livewire pagination use the FruitUI paginator view', async ({ p
   await expect(list(page).getByRole('listitem')).toHaveCount(3);
   await expect(pagination.getByRole('button', { name: 'Next' })).toBeDisabled();
 
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('calendar');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('calendar');
   await expect(list(page).getByRole('listitem')).toHaveCount(1);
   await expect(list(page)).toContainText('Lena Wilson');
   await expect(pagination).toHaveCount(0);
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('nothing matches');
-  await expect(page.getByRole('heading', { name: 'No conversations' })).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('nothing matches');
+  await expect(page.getByRole('heading', { name: 'No Conversations' })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -182,7 +182,7 @@ for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });
     await openDesk(page);
     await expectAccessible(page);
-    await page.getByRole('button', { name: 'Close conversation' }).click();
+    await page.getByRole('button', { name: 'Close Conversation' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await expectAccessible(page, 'dialog');
   });
@@ -199,12 +199,12 @@ test('controls keep their appearance while Livewire locks a submitting form', as
   const reply = page.getByRole('textbox', { name: 'Reply to Sophie Chen' });
   const before = await reply.evaluate(element => getComputedStyle(element).backgroundColor);
   await reply.fill('Thanks, we will move you over today.');
-  await page.getByRole('button', { name: 'Send reply' }).click();
-  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveAttribute('data-loading', 'true');
+  await page.getByRole('button', { name: 'Send Reply' }).click();
+  await expect(page.getByRole('button', { name: 'Send Reply' })).toHaveAttribute('data-loading', 'true');
   await expect(reply).toHaveAttribute('readonly');
   expect(await reply.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(before);
-  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveCSS('opacity', '1');
-  await expect(page.getByRole('button', { name: 'Send reply' })).toHaveCSS('cursor', 'progress');
+  await expect(page.getByRole('button', { name: 'Send Reply' })).toHaveCSS('opacity', '1');
+  await expect(page.getByRole('button', { name: 'Send Reply' })).toHaveCSS('cursor', 'progress');
   release();
   await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
   await expect(reply).not.toHaveAttribute('readonly');
@@ -214,11 +214,11 @@ test('controls keep their appearance while Livewire locks a submitting form', as
 test('a dialog bound with wire:model closes natively and reopens from the server', async ({ page }) => {
   const errors = await openDesk(page);
   const dialog = page.getByRole('dialog', { name: 'Close this conversation?' });
-  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await page.getByRole('button', { name: 'Close Conversation' }).click();
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Cancel' }).click();
   await expect(dialog).toBeHidden();
-  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await page.getByRole('button', { name: 'Close Conversation' }).click();
   await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(dialog).toBeHidden();
@@ -239,13 +239,13 @@ test('the desk works with Livewire’s injected scripts and the self-registering
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${host}/injected/support/all`);
-  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  const assignee = page.getByRole('combobox', { name: 'Assigned To' });
   await expect(assignee).toHaveValue('Alex Morgan');
   await expect(page.locator('#field-assignee, #support-assignee')).toBeHidden();
   await assignee.fill('Mia');
   await assignee.press('Enter');
   await expect(page.getByRole('status').filter({ hasText: 'Assigned to Mia Patel.' })).toBeVisible();
-  await page.getByRole('button', { name: 'Close conversation' }).click();
+  await page.getByRole('button', { name: 'Close Conversation' }).click();
   await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -305,7 +305,7 @@ test('Select shows the checkboxes, a plain click toggles, and the chosen convers
   const bar = page.getByRole('region', { name: 'Selected conversations' });
   await expect(bar.getByRole('status')).toHaveText('2 selected');
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A little help with our team plan');
-  await bar.getByRole('button', { name: 'Close selected' }).click();
+  await bar.getByRole('button', { name: 'Close Selected' }).click();
   await expect(page.getByRole('status').filter({ hasText: '2 conversations closed.' })).toBeVisible();
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Closed/ }).locator('.f-badge')).toHaveText('2');
@@ -316,7 +316,7 @@ test('Select shows the checkboxes, a plain click toggles, and the chosen convers
 
 test('mention autocomplete survives Livewire re-renders and its insertion reaches the server', async ({ page }) => {
   const errors = await openDesk(page);
-  const assignee = page.getByRole('combobox', { name: 'Assigned to' });
+  const assignee = page.getByRole('combobox', { name: 'Assigned To' });
   await assignee.fill('Mia');
   await assignee.press('Enter');
   await expect(page.getByRole('status').filter({ hasText: 'Assigned to Mia Patel.' })).toBeVisible();
@@ -325,7 +325,7 @@ test('mention autocomplete survives Livewire re-renders and its insertion reache
   await reply.fill('Looping in @no');
   await page.getByRole('option', { name: /Noah Williams/ }).click();
   await expect(reply).toHaveValue('Looping in @noah ');
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   await expect(page.getByRole('list', { name: 'Messages' })).toContainText('Looping in @noah');
   await expect(reply).toHaveAttribute('aria-autocomplete', 'list');
   expect(errors).toEqual([]);
@@ -337,13 +337,13 @@ test('the command palette navigates with wire:navigate and runs Livewire actions
     window.fruitNavigationMarker = true;
   });
   await page.keyboard.press('ControlOrMeta+k');
-  const palette = page.getByRole('dialog', { name: 'Go to' });
+  const palette = page.getByRole('dialog', { name: 'Go To' });
   await palette.getByRole('combobox').fill('unas');
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(`${host}/support/unassigned`);
   expect(await page.evaluate(() => window.fruitNavigationMarker)).toBe(true);
   await page.keyboard.press('ControlOrMeta+k');
-  await page.getByRole('dialog', { name: 'Go to' }).getByRole('combobox').fill('close conv');
+  await page.getByRole('dialog', { name: 'Go To' }).getByRole('combobox').fill('close conv');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Close this conversation?' })).toBeVisible();
   expect(errors).toEqual([]);
@@ -390,8 +390,8 @@ test('the lazy history island loads behind a skeleton, follows the open ticket a
   page,
 }) => {
   const errors = await openDesk(page);
-  const history = conversation(page).getByRole('region', { name: 'Earlier conversations' });
-  await expect(history.getByRole('list', { name: 'Earlier conversations' })).toContainText('Moving to annual billing');
+  const history = conversation(page).getByRole('region', { name: 'Earlier Conversations' });
+  await expect(history.getByRole('list', { name: 'Earlier Conversations' })).toContainText('Moving to annual billing');
   await expect(history).not.toHaveAttribute('aria-busy');
   await expect(conversation(page).locator('.f-skeleton')).toHaveCount(0);
 
@@ -406,7 +406,7 @@ test('the lazy history island loads behind a skeleton, follows the open ticket a
 
   // An unrelated update re-renders the component but leaves the island's DOM alone.
   await history.evaluate(element => (element.dataset.probe = 'kept'));
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('Emma');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('Emma');
   await expect(list(page).getByRole('button')).toHaveCount(1);
   await expect(history).toHaveAttribute('data-probe', 'kept');
   await expect(history).toContainText('Exporting last year’s projects');
@@ -418,14 +418,14 @@ test('a ticket row context menu runs Livewire actions for that ticket', async ({
   const row = list(page).getByRole('button', { name: /Jordan Lee/ });
   await row.click({ button: 'right' });
   const menu = page.getByRole('menu', { name: 'Conversation actions' }).filter({ visible: true });
-  await menu.getByRole('menuitem', { name: 'Close conversation' }).click();
+  await menu.getByRole('menuitem', { name: 'Close Conversation' }).click();
   await expect(page.getByRole('status').filter({ hasText: '1 conversation closed.' })).toBeVisible();
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
 
   await list(page)
     .getByRole('button', { name: /Emma Thompson/ })
     .click({ button: 'right' });
-  await menu.getByRole('menuitem', { name: 'Open conversation' }).click();
+  await menu.getByRole('menuitem', { name: 'Open Conversation' }).click();
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A new home for our workspace');
   expect(errors).toEqual([]);
 });
@@ -454,7 +454,7 @@ test('the Cc field asks the server for contacts while typing and adds the chosen
   await expect(page.getByRole('button', { name: 'Remove ana@studio-north.example' })).toBeVisible();
   await expect(cc).toHaveValue('');
   await page.getByRole('textbox', { name: 'Reply to Sophie Chen' }).fill('Looping in Ana from your team.');
-  await page.getByRole('button', { name: 'Send reply' }).click();
+  await page.getByRole('button', { name: 'Send Reply' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Reply sent to Sophie Chen.' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Remove ana@studio-north.example' })).toBeVisible();
   expect(errors).toEqual([]);
@@ -462,12 +462,12 @@ test('the Cc field asks the server for contacts while typing and adds the chosen
 
 test('Merge into searches conversations on the server and keeps the choice while results change', async ({ page }) => {
   const errors = await openDesk(page);
-  const merge = page.getByRole('combobox', { name: 'Merge into' });
+  const merge = page.getByRole('combobox', { name: 'Merge Into' });
   await page.getByRole('button', { name: 'Merge', exact: true }).click();
   await expect(merge).toHaveAccessibleDescription(/Choose a conversation to merge into\./);
 
   await merge.pressSequentially('invoices');
-  const list = page.getByRole('listbox', { name: 'Merge into' });
+  const list = page.getByRole('listbox', { name: 'Merge Into' });
   await expect(list.getByRole('option')).toHaveText(['#1039 Invoices for last quarter · Daniel Brooks']);
   await page.keyboard.press('Enter');
   await expect(merge).toHaveValue('#1039 Invoices for last quarter · Daniel Brooks');

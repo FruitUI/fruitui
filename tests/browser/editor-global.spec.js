@@ -51,17 +51,17 @@ for (const order of [
     // Replace from anywhere (as Livewire's dispatch() does), naming the editor's textarea.
     await page.evaluate(() =>
       window.dispatchEvent(
-        new CustomEvent('fruit-editor-set', { detail: { target: 'reply', html: '<p>Saved reply</p>' } }),
+        new CustomEvent('fruit-editor-set', { detail: { target: 'reply', html: '<p>Saved Reply</p>' } }),
       ),
     );
-    await expect(page.locator('#reply')).toHaveValue('<p>Saved reply</p>');
-    await expect(surface).toHaveText('Saved reply');
+    await expect(page.locator('#reply')).toHaveValue('<p>Saved Reply</p>');
+    await expect(surface).toHaveText('Saved Reply');
     // A request naming another editor is ignored.
     await page.evaluate(() =>
       window.dispatchEvent(new CustomEvent('fruit-editor-set', { detail: { target: 'note', html: '<p>Other</p>' } })),
     );
-    await expect(page.locator('#reply')).toHaveValue('<p>Saved reply</p>');
-    expect(changes).toEqual(['<p>Hello <strong>there</strong></p>', '<p>Saved reply</p>']);
+    await expect(page.locator('#reply')).toHaveValue('<p>Saved Reply</p>');
+    expect(changes).toEqual(['<p>Hello <strong>there</strong></p>', '<p>Saved Reply</p>']);
   });
 }
 

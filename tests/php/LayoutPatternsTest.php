@@ -61,7 +61,7 @@ class LayoutPatternsTest extends TestCase
         $html = Blade::render(<<<'BLADE'
             <x-fruit::floating-disclosure placement="above" open x-data="fruitFloatingDisclosure">
                 <x-slot:trigger class="f-button" aria-label="Options">Options</x-slot:trigger>
-                <x-slot:content class="f-stack"><x-fruit::button wire:click="markAllRead" x-on:click="close(true)">Mark all read</x-fruit::button></x-slot:content>
+                <x-slot:content class="f-stack"><x-fruit::button wire:click="markAllRead" x-on:click="close(true)">Mark All Read</x-fruit::button></x-slot:content>
             </x-fruit::floating-disclosure>
             BLADE);
         $document = $this->document($html);

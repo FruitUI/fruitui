@@ -171,7 +171,7 @@ test('floating disclosure uses native toggle, optional outside/Escape dismissal 
   await summary.focus();
   await page.keyboard.press('Space');
   await expect(details).toHaveAttribute('open', '');
-  await details.getByRole('button', { name: 'Show unread' }).focus();
+  await details.getByRole('button', { name: 'Show Unread' }).focus();
   await page.keyboard.press('Escape');
   await expect(details).not.toHaveAttribute('open');
   await expect(summary).toBeFocused();
@@ -181,7 +181,7 @@ test('floating disclosure uses native toggle, optional outside/Escape dismissal 
   await expect(details).not.toHaveAttribute('open');
   await expect(outside).toBeFocused();
   await summary.click();
-  await details.getByRole('button', { name: 'Show unread' }).click();
+  await details.getByRole('button', { name: 'Show Unread' }).click();
   await expect(summary).toBeFocused();
   await expect(details).not.toHaveAttribute('open');
   await expect(details.locator('[role="menu"], [role="menuitem"]')).toHaveCount(0);
@@ -192,14 +192,14 @@ test('composer owns native submit while textarea preserves multiline value and r
 }) => {
   await page.goto('/components.html');
   const form = page.getByRole('form', { name: 'Composer preview' });
-  const input = form.getByRole('textbox', { name: 'Message to the team' });
-  await form.getByRole('button', { name: 'Send preview' }).click();
+  const input = form.getByRole('textbox', { name: 'Message to the Team' });
+  await form.getByRole('button', { name: 'Send Preview' }).click();
   await expect(input).toBeFocused();
   await input.fill('One');
   await page.keyboard.press('Enter');
   await page.keyboard.type('Two');
   await expect(input).toHaveValue('One\nTwo');
-  await form.getByRole('button', { name: 'Send preview' }).click();
+  await form.getByRole('button', { name: 'Send Preview' }).click();
   await expect(form.locator('output')).toContainText('One\nTwo');
   await expect(input).toHaveValue('');
 });
@@ -212,7 +212,7 @@ const standalone = `<!doctype html><html lang="en" class="fruit-ui"><head><meta 
 <form class="f-composer" aria-label="Reply" style="--f-composer-padding:12px"><label for="standalone-message">Reply</label><textarea id="standalone-message" class="f-input f-composer__input" name="reply" required aria-describedby="help"></textarea><footer class="f-composer__footer"><span id="help" class="f-help">Enter inserts a line.</span><button class="f-button f-button--primary" type="submit">Send</button></footer></form></div>
 <div class="f-splitter" style="grid-column:1" role="separator" tabindex="0" aria-label="Navigation" aria-orientation="vertical"></div></section>
 <details class="f-floating-disclosure"><summary class="f-button">Options</summary><div class="f-floating-disclosure__content"><button class="f-button" type="button">Independent action</button></div></details>
-<span class="f-avatar" aria-label="Forma workspace" style="--f-avatar-radius:10px;--f-avatar-color:var(--f-text);--f-avatar-background:var(--f-surface);--f-avatar-border:1px solid var(--f-border)">F</span>
+<span class="f-avatar" aria-label="Forma Workspace" style="--f-avatar-radius:10px;--f-avatar-color:var(--f-text);--f-avatar-background:var(--f-surface);--f-avatar-border:1px solid var(--f-border)">F</span>
 </main></body></html>`;
 async function loadStandalone(page) {
   await page.route('**/layout-fixture', route => route.fulfill({ contentType: 'text/html', body: standalone }));

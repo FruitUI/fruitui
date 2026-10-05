@@ -3,5 +3,5 @@
         Billing
         <x-slot:remove @click="visible = false">Remove Billing</x-slot:remove>
     </x-fruit::chip>
-    <x-fruit::chip>Team plan</x-fruit::chip>
+    <x-fruit::chip>Team Plan</x-fruit::chip>
 </div>

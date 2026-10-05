@@ -17,7 +17,7 @@ test('Chat is linked beside the examples and unread activity follows real conver
   const main = page.getByRole('navigation', { name: 'Main navigation' });
   await expect(main.getByRole('link', { name: 'Chat', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(main.getByRole('link', { name: 'Support', exact: true })).toHaveAttribute('href', '/support.html');
-  const unread = navigation(page).getByRole('button', { name: /^All unread/ });
+  const unread = navigation(page).getByRole('button', { name: /^All Unread/ });
   await expect(unread).toContainText('6');
   await unread.click();
   await expect(page.locator('.chat-result')).toHaveCount(6);
@@ -28,7 +28,7 @@ test('Chat is linked beside the examples and unread activity follows real conver
   await expect(unread).toContainText('4');
   await unread.click();
   await expect(page.locator('.chat-result')).toHaveCount(4);
-  await page.getByRole('button', { name: 'Mark all read', exact: true }).click();
+  await page.getByRole('button', { name: 'Mark All Read', exact: true }).click();
   await expect(page.locator('.chat-result')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'You’re all caught up.', exact: true })).toBeVisible();
   await expect(unread).toContainText('0');
@@ -69,7 +69,7 @@ test('conversation drafts stay independent and Enter sends while Shift Enter pre
 
 test('threads preserve their drafts and add replies without posting to the channel', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Message #design', exact: true }).fill('A channel draft.');
-  const reply = page.getByRole('textbox', { name: 'Reply to thread', exact: true });
+  const reply = page.getByRole('textbox', { name: 'Reply to Thread', exact: true });
   await reply.fill('A reply draft for Sophie.');
   await threadButton(page, 201).click();
   await expect(reply).toHaveValue('');
@@ -100,7 +100,7 @@ test('threads preserve their drafts and add replies without posting to the chann
 test('workspace search finds channel messages, direct messages, and thread replies with their context', async ({
   page,
 }) => {
-  const search = page.getByRole('searchbox', { name: 'Search workspace' });
+  const search = page.getByRole('searchbox', { name: 'Search Workspace' });
   await search.fill('second pair of eyes');
   await expect(page.locator('.chat-result')).toHaveCount(1);
   await expect(page.locator('.chat-result')).toContainText('Sophie Chen');
@@ -115,7 +115,7 @@ test('workspace search finds channel messages, direct messages, and thread repli
   await expect(page.locator('.chat-thread-history')).toContainText('picking up right where');
   await search.fill('nothing-will-match');
   await expect(page.getByRole('heading', { name: 'No messages found', exact: true })).toBeVisible();
-  await page.locator('.chat-empty').getByRole('button', { name: 'Clear search', exact: true }).click();
+  await page.locator('.chat-empty').getByRole('button', { name: 'Clear Search', exact: true }).click();
   await expect(search).toBeFocused();
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(5);
 });
@@ -150,9 +150,9 @@ test('reactions toggle per person, the picker supports Escape, and the attachmen
 });
 
 test('channel creation validates names, rejects duplicates, and creates a conversation', async ({ page }) => {
-  await page.getByRole('button', { name: 'Create channel', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Create channel' });
-  const name = dialog.getByRole('textbox', { name: 'Channel name' });
+  await page.getByRole('button', { name: 'Create Channel', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Create Channel' });
+  const name = dialog.getByRole('textbox', { name: 'Channel Name' });
   await expect(name).toBeFocused();
   await name.fill('Bad Name');
   await dialog.getByLabel('Description', { exact: true }).fill('Release plans.');
@@ -174,16 +174,16 @@ test('channel creation validates names, rejects duplicates, and creates a conver
 });
 
 test('direct message creation opens an existing conversation without duplicating it', async ({ page }) => {
-  await page.getByRole('button', { name: 'New direct message', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'New direct message' });
+  await page.getByRole('button', { name: 'New Direct Message', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'New Direct Message' });
   await dialog.getByLabel('Recipient', { exact: true }).selectOption('oliver');
-  await dialog.getByRole('button', { name: 'Open conversation', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Open Conversation', exact: true }).click();
   const composer = page.getByRole('textbox', { name: 'Message Oliver Park', exact: true });
   await expect(composer).toBeFocused();
   await composer.fill('Coffee at 11 sounds great.');
   await composer.press('Enter');
-  await page.getByRole('button', { name: 'New direct message', exact: true }).click();
-  await dialog.getByRole('button', { name: 'Open conversation', exact: true }).click();
+  await page.getByRole('button', { name: 'New Direct Message', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Open Conversation', exact: true }).click();
   await expect(navigation(page).locator('[data-room-id="dm-oliver"]')).toHaveCount(1);
   await expect(page.locator('.chat-history .chat-message')).toHaveCount(1);
   await expect(page.locator('.chat-history')).toContainText('Coffee at 11 sounds great.');
@@ -197,14 +197,14 @@ test('direct message creation opens an existing conversation without duplicating
 
 test('phone and tablet navigation preserve conversation and thread state with clear focus', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Message #design', exact: true }).fill('A draft across layouts.');
-  await page.getByRole('textbox', { name: 'Reply to thread', exact: true }).fill('A thread draft across layouts.');
+  await page.getByRole('textbox', { name: 'Reply to Thread', exact: true }).fill('A thread draft across layouts.');
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(navigation(page)).not.toBeVisible();
   await expect(page.locator('.chat-thread')).not.toBeVisible();
   const trigger = threadButton(page, 202);
   await trigger.click();
   await expect(page.locator('#chat-thread-title')).toBeFocused();
-  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Reply to Thread', exact: true })).toHaveValue(
     'A thread draft across layouts.',
   );
   await expect(page.locator('.chat-conversation')).not.toBeVisible();
@@ -227,7 +227,7 @@ test('phone and tablet navigation preserve conversation and thread state with cl
   await expect(page.locator('.chat-conversation')).not.toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1100 });
   await expect(page.locator('.chat-conversation')).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Reply to thread', exact: true })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Reply to Thread', exact: true })).toHaveValue(
     'A thread draft across layouts.',
   );
 });
@@ -245,8 +245,8 @@ test('all screens, dialogs, and long messages fit a 320px container', async ({ p
   await page.getByRole('button', { name: 'Close thread', exact: true }).click();
   await page.getByRole('button', { name: 'Show workspace', exact: true }).click();
   await expectNoOverflow(page, '#chat');
-  await page.getByRole('button', { name: 'Create channel', exact: true }).click();
-  await expect(page.getByRole('dialog', { name: 'Create channel' })).toBeVisible();
+  await page.getByRole('button', { name: 'Create Channel', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Create Channel' })).toBeVisible();
   await expectNoOverflow(page, '#chat');
   await page.keyboard.press('Escape');
   for (const width of [320, 390, 720, 820, 1100, 1440]) {
@@ -272,19 +272,19 @@ for (const appearance of ['light', 'dark']) {
     await page.getByRole('button', { name: 'Conversation details', exact: true }).click();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
-    await page.getByRole('button', { name: 'Create channel', exact: true }).click();
-    const dialog = page.getByRole('dialog', { name: 'Create channel' });
-    await dialog.getByLabel('Channel name', { exact: true }).fill('design');
+    await page.getByRole('button', { name: 'Create Channel', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Create Channel' });
+    await dialog.getByLabel('Channel Name', { exact: true }).fill('design');
     await dialog.getByLabel('Description', { exact: true }).fill('An existing channel.');
     await dialog.getByRole('button', { name: 'Create', exact: true }).click();
     await expect(dialog).toContainText('That channel already exists.');
     await expectAccessible(page);
     await page.keyboard.press('Escape');
-    await page.getByRole('button', { name: 'New direct message', exact: true }).click();
+    await page.getByRole('button', { name: 'New Direct Message', exact: true }).click();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
     await navigation(page)
-      .getByRole('button', { name: /^All unread/ })
+      .getByRole('button', { name: /^All Unread/ })
       .click();
     await expectAccessible(page);
     await room(page, 'design').click();
@@ -292,7 +292,7 @@ for (const appearance of ['light', 'dark']) {
     await expectAccessible(page);
     await threadButton(page, 202).click();
     await expect(page.locator('#chat-thread-title')).toBeFocused();
-    await page.getByRole('textbox', { name: 'Reply to thread', exact: true }).press('Enter');
+    await page.getByRole('textbox', { name: 'Reply to Thread', exact: true }).press('Enter');
     await expect(page.locator('#chat-thread-error')).toBeVisible();
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Close thread', exact: true }).click();
@@ -376,7 +376,7 @@ test('message actions appear on hover or focus and threads return focus to the c
 
 test('jump to latest appears after scrolling back and returns to the newest message', async ({ page }) => {
   const history = page.locator('#chat-history');
-  const jump = page.getByRole('button', { name: 'Jump to latest', exact: true });
+  const jump = page.getByRole('button', { name: 'Jump to Latest', exact: true });
   await expect(jump).toBeHidden();
   await page.setViewportSize({ width: 1440, height: 560 });
   await history.evaluate(element => element.scrollTo({ top: element.scrollHeight }));

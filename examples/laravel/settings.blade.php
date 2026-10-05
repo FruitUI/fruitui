@@ -68,7 +68,7 @@ new class extends Component
 
 {{-- A narrow page column on the grouped background: the title, sections and save bar line up. --}}
 <form class="fruit-settings" wire:submit="save" style="min-height: 100dvh; background: var(--f-grouped-background)">
-<x-fruit::page width="narrow" title="Support mailbox" style="--f-page-background: var(--f-grouped-background)">
+<x-fruit::page width="narrow" title="Support Mailbox" style="--f-page-background: var(--f-grouped-background)">
 
     <x-fruit::section-nav aria-label="Mailbox settings">
         @foreach ($this::TABS as $key => $label)
@@ -81,7 +81,7 @@ new class extends Component
             <x-fruit::field label="Name" layout="row">
                 <x-fruit::input wire:model="settings.name" required maxlength="40" />
             </x-fruit::field>
-            <x-fruit::field label="Email address" layout="row">
+            <x-fruit::field label="Email Address" layout="row">
                 <x-fruit::input type="email" wire:model="settings.email" required />
             </x-fruit::field>
             <x-fruit::field label="Signature" layout="row" description="Added below every reply from this mailbox.">
@@ -89,10 +89,10 @@ new class extends Component
             </x-fruit::field>
         </x-fruit::form-section>
 
-        <x-fruit::form-section title="Danger zone">
+        <x-fruit::form-section title="Danger Zone">
             <div class="f-form-row">
                 <div>
-                    <strong class="f-headline">Delete mailbox</strong>
+                    <strong class="f-headline">Delete Mailbox</strong>
                     <p class="f-help">Removes the mailbox and its conversations for everyone.</p>
                 </div>
                 <x-fruit::button variant="danger" x-on:click="$confirm({ title: 'Delete this mailbox?', message: 'Its conversations are removed for everyone.', confirm: 'Delete Mailbox', tone: 'danger' }).then(confirmed => confirmed && $wire.deleteMailbox())">Delete Mailbox…</x-fruit::button>
@@ -123,7 +123,7 @@ new class extends Component
             @endif
         </x-fruit::form-section>
     @else
-        <x-fruit::form-section title="Automatic reply">
+        <x-fruit::form-section title="Automatic Reply">
             <x-fruit::field label="Send an automatic reply" layout="row" description="To the first message of every new conversation.">
                 <x-fruit::switch wire:model.live="settings.autoReply" />
             </x-fruit::field>

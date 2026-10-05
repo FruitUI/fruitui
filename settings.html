@@ -19,14 +19,14 @@
       <div class="appearance-control" x-data="appearance"><svg class="f-icon" aria-hidden="true"><use href="#i-sun"/></svg><label class="f-sr-only" for="appearance">Appearance</label><select class="f-input" id="appearance" x-model="theme" @change="apply"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
     </header>
     <main x-data="settingsDemo">
-      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Settings that feel settled.</h1><p>Grouped, labelled and saved with care.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 05</span><fieldset class="f-segmented" aria-label="Settings preview size"><legend class="f-sr-only">Settings preview size</legend><label><input type="radio" name="settings-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="settings-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
+      <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Settings that feel settled.</h1><p>Grouped, labelled and saved with care.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 05</span><fieldset class="f-segmented" aria-label="Settings Preview Size"><legend class="f-sr-only">Settings Preview Size</legend><label><input type="radio" name="settings-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="settings-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
       <div class="settings-container" :data-preview="preview">
         <section id="settings" class="f-workspace settings-workspace" aria-label="Settings example" data-screen="list" :data-screen="screen">
           <aside class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar settings-sidebar">
-            <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="saved.name">Alex Morgan</strong><small>Forma account</small></div></div>
+            <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="saved.name">Alex Morgan</strong><small>Forma Account</small></div></div>
             <nav aria-label="Settings" x-ref="navigation">
               <a class="f-sidebar__item" href="#/general" @click="show()" :aria-current="page === 'general' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
-              <a class="f-sidebar__item" href="#/mailbox" @click="show()" :aria-current="page === 'mailbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Support mailbox</a>
+              <a class="f-sidebar__item" href="#/mailbox" @click="show()" :aria-current="page === 'mailbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Support Mailbox</a>
               <a class="f-sidebar__item" href="#/profile" @click="show()" :aria-current="page === 'profile' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
             </nav>
           </aside>
@@ -40,16 +40,16 @@
                   <section class="f-form-section" aria-labelledby="settings-company-title">
                     <h3 class="f-form-section__title" id="settings-company-title">Company</h3>
                     <div class="f-form-section__rows">
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-company">Company name</label><input class="f-input" id="settings-company" name="company" x-model="draft.company" required maxlength="60"></div>
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-timezone">Time zone</label><select class="f-input" id="settings-timezone" name="timezone" x-model="draft.timezone"><option value="America/New_York">New York</option><option value="Europe/London">London</option><option value="Europe/Amsterdam">Amsterdam</option><option value="Asia/Tokyo">Tokyo</option></select></div>
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-date-format">Date format</label><select class="f-input" id="settings-date-format" name="dateFormat" x-model="draft.dateFormat"><option value="long">October 4, 2026</option><option value="short">10/4/2026</option><option value="iso">2026-10-04</option></select><p class="f-help" id="settings-date-format-help">Used in conversations and exports.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-company">Company Name</label><input class="f-input" id="settings-company" name="company" x-model="draft.company" required maxlength="60"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-timezone">Time Zone</label><select class="f-input" id="settings-timezone" name="timezone" x-model="draft.timezone"><option value="America/New_York">New York</option><option value="Europe/London">London</option><option value="Europe/Amsterdam">Amsterdam</option><option value="Asia/Tokyo">Tokyo</option></select></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-date-format">Date Format</label><select class="f-input" id="settings-date-format" name="dateFormat" x-model="draft.dateFormat"><option value="long">October 4, 2026</option><option value="short">10/4/2026</option><option value="iso">2026-10-04</option></select><p class="f-help" id="settings-date-format-help">Used in conversations and exports.</p></div>
                     </div>
                   </section>
                   <section class="f-form-section" aria-labelledby="settings-customers-title">
                     <h3 class="f-form-section__title" id="settings-customers-title">Customers</h3>
                     <div class="f-form-section__rows">
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-photos">Customer photos</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-photos" name="photos" x-model="draft.photos" aria-describedby="settings-photos-help"><span></span></label><p class="f-help" id="settings-photos-help">From Gravatar, for customers without a photo.</p></div>
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-customer-email">Show customer email</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-customer-email" name="customerEmail" x-model="draft.customerEmail" aria-describedby="settings-customer-email-help"><span></span></label><p class="f-help" id="settings-customer-email-help">Beside the name in conversation lists.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-photos">Customer Photos</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-photos" name="photos" x-model="draft.photos" aria-describedby="settings-photos-help"><span></span></label><p class="f-help" id="settings-photos-help">From Gravatar, for customers without a photo.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-customer-email">Show Customer Email</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-customer-email" name="customerEmail" x-model="draft.customerEmail" aria-describedby="settings-customer-email-help"><span></span></label><p class="f-help" id="settings-customer-email-help">Beside the name in conversation lists.</p></div>
                       <fieldset class="f-fieldset"><legend>Users can</legend>
                         <label class="f-check"><input type="checkbox" name="manageTags" x-model="draft.manageTags"><span>Manage tags</span></label>
                         <label class="f-check"><input type="checkbox" name="manageFolders" x-model="draft.manageFolders"><span>Manage custom folders</span></label>
@@ -69,14 +69,14 @@
                       <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>
                       <div class="f-form-section__rows">
                         <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-name">Name</label><input class="f-input" id="settings-mailbox-name" name="mailboxName" x-model="draft.mailboxName" required maxlength="40"></div>
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="draft.mailboxEmail" required></div>
+                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email Address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="draft.mailboxEmail" required></div>
                         <div class="f-field f-field--row"><label class="f-label" for="settings-signature">Signature</label><textarea class="f-input" id="settings-signature" name="signature" rows="4" x-model="draft.signature" aria-describedby="settings-signature-help"></textarea><p class="f-help" id="settings-signature-help">Added below every reply from this mailbox.</p></div>
                       </div>
                     </section>
                     <section class="f-form-section" aria-labelledby="settings-danger-title">
-                      <h3 class="f-form-section__title" id="settings-danger-title">Danger zone</h3>
+                      <h3 class="f-form-section__title" id="settings-danger-title">Danger Zone</h3>
                       <div class="f-form-section__rows">
-                        <div class="f-form-row"><div><strong class="f-headline">Delete mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
+                        <div class="f-form-row"><div><strong class="f-headline">Delete Mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
                       </div>
                     </section>
                   </div></template>
@@ -96,7 +96,7 @@
                   </div></template>
                   <template x-if="tab === 'permissions'"><div class="settings-sections">
                     <section class="f-form-section" aria-labelledby="settings-agents-title">
-                      <h3 class="f-form-section__title" id="settings-agents-title">Who can use this mailbox</h3>
+                      <h3 class="f-form-section__title" id="settings-agents-title">Who Can Use This Mailbox</h3>
                       <div class="f-form-section__rows">
                         <fieldset class="f-fieldset"><legend class="f-sr-only">Agents</legend>
                           <label class="f-check"><input type="checkbox" name="agents[]" value="alex" x-model="draft.agents"><span>Alex Morgan</span></label>
@@ -109,7 +109,7 @@
                   </div></template>
                   <template x-if="tab === 'auto-reply'"><div class="settings-sections">
                     <section class="f-form-section" aria-labelledby="settings-auto-title">
-                      <h3 class="f-form-section__title" id="settings-auto-title">Automatic reply</h3>
+                      <h3 class="f-form-section__title" id="settings-auto-title">Automatic Reply</h3>
                       <div class="f-form-section__rows">
                         <div class="f-field f-field--row"><label class="f-label" for="settings-auto-reply">Send an automatic reply</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-auto-reply" name="autoReply" x-model="draft.autoReply" aria-describedby="settings-auto-reply-help"><span></span></label><p class="f-help" id="settings-auto-reply-help">To the first message of every new conversation.</p></div>
                         <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="draft.autoSubject" :disabled="!draft.autoReply" :required="draft.autoReply"></div>
@@ -126,14 +126,14 @@
                       <div class="f-field f-field--row"><label class="f-label" for="settings-name">Name</label><input class="f-input" id="settings-name" name="name" autocomplete="name" x-model="draft.name" required maxlength="60"></div>
                       <div class="f-field f-field--row"><label class="f-label" for="settings-email">Email</label><input class="f-input" id="settings-email" type="email" name="email" autocomplete="email" x-model="draft.email" required></div>
                       <div class="f-field f-field--row"><label class="f-label" for="settings-language">Language</label><select class="f-input" id="settings-language" name="language" x-model="draft.language"><option value="en">English</option><option value="nl">Nederlands</option><option value="de">Deutsch</option><option value="fr">Français</option></select></div>
-                      <div class="f-field f-field--row"><label class="f-label" for="settings-accent">Accent color</label><div class="f-color-picker" x-data="fruitColorPicker"><input class="f-input f-color" type="color" id="settings-accent" name="accent" x-model="draft.accent" aria-haspopup="dialog"><div data-fruit-ui></div></div></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-accent">Accent Color</label><div class="f-color-picker" x-data="fruitColorPicker"><input class="f-input f-color" type="color" id="settings-accent" name="accent" x-model="draft.accent" aria-haspopup="dialog"><div data-fruit-ui></div></div></div>
                     </div>
                   </section>
                   <section class="f-form-section" aria-labelledby="settings-security-title">
                     <h3 class="f-form-section__title" id="settings-security-title">Security</h3>
                     <div class="f-form-section__rows">
                       <div class="f-field f-field--row"><label class="f-label" for="settings-two-factor">Two-factor authentication</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-two-factor" name="twoFactor" x-model="draft.twoFactor" aria-describedby="settings-two-factor-help"><span></span></label><p class="f-help" id="settings-two-factor-help">A code from your phone when you sign in on a new device.</p></div>
-                      <div class="f-form-row"><div><strong class="f-headline">Delete account</strong><p class="f-help">Your conversations stay with your team.</p></div><button class="f-button f-button--danger" type="button" @click="$refs.deleteDialog.showModal()">Delete Account…</button></div>
+                      <div class="f-form-row"><div><strong class="f-headline">Delete Account</strong><p class="f-help">Your conversations stay with your team.</p></div><button class="f-button f-button--danger" type="button" @click="$refs.deleteDialog.showModal()">Delete Account…</button></div>
                     </div>
                   </section>
                 </div></template>

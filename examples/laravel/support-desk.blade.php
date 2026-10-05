@@ -24,7 +24,7 @@ new class extends Component
 {
     use WithPagination;
 
-    public const MAILBOXES = ['all' => 'All open', 'unassigned' => 'Unassigned', 'mine' => 'Assigned to me', 'closed' => 'Closed'];
+    public const MAILBOXES = ['all' => 'All Open', 'unassigned' => 'Unassigned', 'mine' => 'Assigned to Me', 'closed' => 'Closed'];
     public const AGENTS = ['alex' => 'Alex Morgan', 'mia' => 'Mia Patel', 'noah' => 'Noah Williams'];
     public const REASONS = ['resolved' => 'Resolved', 'duplicate' => 'Duplicate', 'spam' => 'Spam'];
     private const PER_PAGE = 4;
@@ -319,7 +319,7 @@ new class extends Component
 
         <x-fruit::pane class="f-pane--column f-pane--border-end" role="region" aria-label="Conversations">
             <div style="padding: var(--f-space-3)">
-                <x-fruit::field control-id="support-search" label="Search conversations">
+                <x-fruit::field control-id="support-search" label="Search Conversations">
                     <x-fruit::input type="search" wire:model.live.debounce.200ms="search" />
                 </x-fruit::field>
             </div>
@@ -338,15 +338,15 @@ new class extends Component
                                 <x-fruit::menu-item wire:click="assignSelected('{{ $agent }}')">{{ $name }}</x-fruit::menu-item>
                             @endforeach
                         </x-fruit::menu>
-                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="closeSelected" aria-label="Close selected" title="Close selected"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></x-fruit::button>
-                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="$set('selected', [])" aria-label="Clear selection" title="Clear selection"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></x-fruit::button>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="closeSelected" aria-label="Close Selected" title="Close Selected"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></x-fruit::button>
+                        <x-fruit::button variant="ghost" class="f-button--icon" wire:click="$set('selected', [])" aria-label="Clear Selection" title="Clear Selection"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></x-fruit::button>
                     </x-fruit::selection-bar>
                 </x-slot:selection>
             </x-fruit::list-header>
             <div class="f-pane__scroll">
                 @if ($this->tickets->isEmpty())
                     <x-fruit::empty-state>
-                        <x-slot:title><h2>No conversations</h2></x-slot:title>
+                        <x-slot:title><h2>No Conversations</h2></x-slot:title>
                         {{ $search === '' ? 'This mailbox is empty.' : 'Try another search.' }}
                     </x-fruit::empty-state>
                 @else
@@ -363,9 +363,9 @@ new class extends Component
                                 </x-fruit::item-row>
                                 {{-- The same commands are on the toolbar and the selection bar. --}}
                                 <x-fruit::context-menu title="Conversation actions">
-                                    <x-fruit::menu-item wire:click="open({{ $item['id'] }})">Open conversation</x-fruit::menu-item>
+                                    <x-fruit::menu-item wire:click="open({{ $item['id'] }})">Open Conversation</x-fruit::menu-item>
                                     @if ($item['status'] === 'open')
-                                        <x-fruit::menu-item wire:click="closeOne({{ $item['id'] }})">Close conversation</x-fruit::menu-item>
+                                        <x-fruit::menu-item wire:click="closeOne({{ $item['id'] }})">Close Conversation</x-fruit::menu-item>
                                     @endif
                                 </x-fruit::context-menu>
                             </li>
@@ -387,7 +387,7 @@ new class extends Component
                     <span class="f-toolbar__spacer"></span>
                     @if ($ticket['status'] === 'open')
                         <x-fruit::tooltip text="Close when the customer needs nothing else." text-id="close-help">
-                            <x-fruit::button wire:click="confirmClose" aria-describedby="close-help">Close conversation</x-fruit::button>
+                            <x-fruit::button wire:click="confirmClose" aria-describedby="close-help">Close Conversation</x-fruit::button>
                         </x-fruit::tooltip>
                     @endif
                 </header>
@@ -400,12 +400,12 @@ new class extends Component
 
                     @island(name: 'history', lazy: true)
                         @placeholder
-                            <section class="f-stack" aria-label="Earlier conversations" aria-busy="true">
+                            <section class="f-stack" aria-label="Earlier Conversations" aria-busy="true">
                                 <x-fruit::skeleton :lines="2" />
                             </section>
                         @endplaceholder
                         <section class="f-stack" aria-labelledby="history-title">
-                            <h2 id="history-title" style="font-size: var(--f-text-md)">Earlier conversations</h2>
+                            <h2 id="history-title" style="font-size: var(--f-text-md)">Earlier Conversations</h2>
                             @if ($this->history === [])
                                 <p class="f-help">No earlier conversations with {{ $this->ticket['name'] ?? 'this customer' }}.</p>
                             @else
@@ -425,7 +425,7 @@ new class extends Component
                     {{-- Keyed per ticket so enhanced controls start fresh; islands stay outside a changing key. --}}
                     <div class="f-stack" wire:key="conversation-{{ $ticket['id'] }}">
                         @if ($ticket['status'] === 'open')
-                            <x-fruit::field control-id="support-assignee" label="Assigned to">
+                            <x-fruit::field control-id="support-assignee" label="Assigned To">
                                 <x-fruit::combobox name="assignee" wire:model.live="assignee">
                                     <option value="">Unassigned</option>
                                     @foreach ($this::AGENTS as $agent => $name)
@@ -436,7 +436,7 @@ new class extends Component
 
                             {{-- Server search: each query re-renders the options, keeping the current choice. --}}
                             <form class="f-stack" wire:submit="merge" aria-label="Merge">
-                                <x-fruit::field control-id="support-merge" label="Merge into" description="Search by number, subject or customer.">
+                                <x-fruit::field control-id="support-merge" label="Merge Into" description="Search by number, subject or customer.">
                                     <x-fruit::combobox name="mergeInto" wire:model="mergeInto" search="server" placeholder="Search conversations"
                                         x-on:fruit-suggest.debounce.200ms="$wire.set('mergeSearch', $event.detail.query)">
                                         <option value="" hidden></option>
@@ -482,7 +482,7 @@ new class extends Component
                                     </x-fruit::autocomplete>
                                 </x-fruit::field>
                                 <footer class="f-composer__footer">
-                                    <x-fruit::button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="send">Send reply</x-fruit::button>
+                                    <x-fruit::button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="send">Send Reply</x-fruit::button>
                                 </footer>
                             </x-fruit::composer>
                         @else
@@ -502,7 +502,7 @@ new class extends Component
                                     <x-fruit::message layout="stacked" :direction="$message['author'] === $ticket['name'] ? 'incoming' : 'outgoing'" :mine="$message['author'] === 'Alex Morgan'" aria-label="Message from {{ $message['author'] }}">
                                         <x-slot:avatar><x-fruit::avatar>{{ \Illuminate\Support\Str::of($message['author'])->explode(' ')->map(fn ($word) => $word[0])->join('') }}</x-fruit::avatar></x-slot:avatar>
                                         <x-slot:author>{{ $message['author'] }}</x-slot:author>
-                                        <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to customer' }}</x-slot:meta>
+                                        <x-slot:meta>{{ $message['author'] === $ticket['name'] ? 'Customer' : 'Reply to Customer' }}</x-slot:meta>
                                         {{ $message['body'] }}
                                         @if ($ticket['status'] === 'open')
                                             <x-slot:actions>
@@ -541,11 +541,11 @@ new class extends Component
         </div>
         <footer class="f-dialog__footer">
             <form method="dialog"><x-fruit::button type="submit">Cancel</x-fruit::button></form>
-            <x-fruit::button variant="primary" wire:click="closeTicket">Close conversation</x-fruit::button>
+            <x-fruit::button variant="primary" wire:click="closeTicket">Close Conversation</x-fruit::button>
         </footer>
     </x-fruit::dialog>
 
-    <x-fruit::command-palette name="support-commands" shortcut="k" label="Go to" placeholder="Mailboxes and actions">
+    <x-fruit::command-palette name="support-commands" shortcut="k" label="Go To" placeholder="Mailboxes and actions">
         <x-fruit::command-group label="Mailboxes">
             @foreach ($this::MAILBOXES as $key => $label)
                 <x-fruit::command-link :href="url('/support/'.$key)" wire:navigate>{{ $label }}</x-fruit::command-link>
@@ -553,7 +553,7 @@ new class extends Component
         </x-fruit::command-group>
         @if ($this->ticket && $this->ticket['status'] === 'open')
             <x-fruit::command-group label="Conversation">
-                <x-fruit::command wire:click="confirmClose">Close conversation…</x-fruit::command>
+                <x-fruit::command wire:click="confirmClose">Close Conversation…</x-fruit::command>
             </x-fruit::command-group>
         @endif
     </x-fruit::command-palette>

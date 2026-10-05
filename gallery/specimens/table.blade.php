@@ -1,6 +1,6 @@
 <div class="f-table__scroll" tabindex="0" role="region" aria-label="Team member table">
     <x-fruit::table>
-        <caption>Team members</caption>
+        <caption>Team Members</caption>
         <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
         <tbody>
             @foreach (['Sophie Chen' => 'Designer', 'Alex Morgan' => 'Administrator'] as $name => $role)

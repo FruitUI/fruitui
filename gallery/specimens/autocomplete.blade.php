@@ -8,7 +8,7 @@
         </x-slot:options>
     </x-fruit::autocomplete>
 </x-fruit::field>
-<x-fruit::field label="Saved reply">
+<x-fruit::field label="Saved Reply">
     <x-fruit::autocomplete trigger="/">
         <x-fruit::input name="gallery_saved" placeholder="Type /thanks" />
         <x-slot:options>

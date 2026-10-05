@@ -103,7 +103,7 @@ test('token presentation, pending entry, translated removal and serialized maxle
 
 test('editor emits input while editing and change and blur once on leaving the widget', async ({ page }) => {
   await page.goto('/components.html');
-  const editor = page.getByRole('textbox', { name: 'Reply signature', exact: true });
+  const editor = page.getByRole('textbox', { name: 'Reply Signature', exact: true });
   await page.locator('#gallery-editor').evaluate(control => {
     window.events = [];
     for (const type of ['input', 'change', 'blur']) control.addEventListener(type, () => window.events.push(type));
@@ -114,7 +114,7 @@ test('editor emits input while editing and change and blur once on leaving the w
   expect(await page.evaluate(() => window.events.filter(type => type === 'change'))).toEqual([]);
   await page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true }).click();
   expect(await page.evaluate(() => window.events.filter(type => type === 'blur'))).toEqual([]);
-  await page.getByRole('button', { name: 'Set signature externally' }).focus();
+  await page.getByRole('button', { name: 'Set Signature Externally' }).focus();
   expect(await page.evaluate(() => window.events.filter(type => type === 'change'))).toEqual(['change']);
   expect(await page.evaluate(() => window.events.filter(type => type === 'blur'))).toEqual(['blur']);
 });

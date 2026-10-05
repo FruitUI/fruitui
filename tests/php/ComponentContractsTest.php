@@ -141,14 +141,14 @@ class ComponentContractsTest extends TestCase
     public function test_choices_carry_a_description_linked_to_the_control_but_not_its_name(): void
     {
         foreach (['checkbox', 'radio', 'switch'] as $component) {
-            $xpath = $this->xpath(Blade::render('<x-fruit::'.$component.' name="photos" value="1" wire:model="photos" description="From Gravatar, for customers without a photo.">Customer photos</x-fruit::'.$component.'>'));
+            $xpath = $this->xpath(Blade::render('<x-fruit::'.$component.' name="photos" value="1" wire:model="photos" description="From Gravatar, for customers without a photo.">Customer Photos</x-fruit::'.$component.'>'));
             $input = $xpath->query('//input')->item(0);
             $description = $xpath->query('//div[@class="f-choice"]/p[contains(@class, "f-choice__description")]')->item(0);
             $this->assertNotNull($description, $component);
             $this->assertSame('From Gravatar, for customers without a photo.', trim($description->textContent));
             $this->assertSame($description->getAttribute('id'), $input->getAttribute('aria-describedby'));
             // The label (the accessible name) holds only the title.
-            $this->assertSame('Customer photos', trim($xpath->query('//label')->item(0)->textContent));
+            $this->assertSame('Customer Photos', trim($xpath->query('//label')->item(0)->textContent));
             $this->assertSame('photos', $input->getAttribute('wire:model'));
         }
 
@@ -158,7 +158,7 @@ class ComponentContractsTest extends TestCase
         $this->assertFalse($plain->query('//input')->item(0)->hasAttribute('aria-describedby'));
 
         // Inside a Field the description joins the Field's own description; radios in one group stay distinct.
-        $field = $this->xpath(Blade::render('<x-fruit::field label="Photos" description="Shown in conversations."><x-fruit::switch name="photos" description="From Gravatar.">Customer photos</x-fruit::switch></x-fruit::field>'));
+        $field = $this->xpath(Blade::render('<x-fruit::field label="Photos" description="Shown in conversations."><x-fruit::switch name="photos" description="From Gravatar.">Customer Photos</x-fruit::switch></x-fruit::field>'));
         $described = explode(' ', $field->query('//input')->item(0)->getAttribute('aria-describedby'));
         $this->assertCount(2, $described);
         $this->assertSame('Shown in conversations.', trim($field->query('//*[@id="'.$described[0].'"]')->item(0)->textContent));
@@ -180,7 +180,7 @@ class ComponentContractsTest extends TestCase
     public function test_form_sections_group_row_fields_under_a_named_heading(): void
     {
         $xpath = $this->xpath(Blade::render(<<<'BLADE'
-            <x-fruit::form-section title="Automatic reply" footer="Sent once per conversation." :level="3">
+            <x-fruit::form-section title="Automatic Reply" footer="Sent once per conversation." :level="3">
                 <x-fruit::field label="Subject" layout="row" description="Shown in the customer's inbox.">
                     <x-fruit::input wire:model="settings.subject" />
                 </x-fruit::field>
@@ -289,7 +289,7 @@ class ComponentContractsTest extends TestCase
 
     public function test_a_list_header_holds_tools_and_the_selection_bar_for_a_selectable_list(): void
     {
-        $xpath = $this->xpath(Blade::render('<x-fruit::list-header><x-slot:leading><input type="checkbox" aria-label="Select all"></x-slot:leading><span>Newest first</span><x-slot:selection><x-fruit::selection-bar :count="2"><x-fruit::button>Close</x-fruit::button></x-fruit::selection-bar></x-slot:selection></x-fruit::list-header>'));
+        $xpath = $this->xpath(Blade::render('<x-fruit::list-header><x-slot:leading><input type="checkbox" aria-label="Select all"></x-slot:leading><span>Newest First</span><x-slot:selection><x-fruit::selection-bar :count="2"><x-fruit::button>Close</x-fruit::button></x-fruit::selection-bar></x-slot:selection></x-fruit::list-header>'));
         $header = $xpath->query('//div[@class="f-list-header"]')->item(0);
         $this->assertSame(['f-list-header__leading', 'f-list-header__tools', 'f-selection-bar'], array_map(fn ($node) => $node->getAttribute('class'), iterator_to_array($xpath->query('./div', $header))));
         $this->assertSame('2 selected', $xpath->query('.//span[@role="status"]', $header)->item(0)->textContent);
@@ -307,9 +307,9 @@ class ComponentContractsTest extends TestCase
 
     public function test_a_segmented_control_can_name_its_group_for_assistive_technology_only(): void
     {
-        $xpath = $this->xpath(Blade::render('<x-fruit::segmented legend="Conversation type" legend-hidden><x-fruit::segment name="type" value="email" checked>Email</x-fruit::segment></x-fruit::segmented>'));
+        $xpath = $this->xpath(Blade::render('<x-fruit::segmented legend="Conversation Type" legend-hidden><x-fruit::segment name="type" value="email" checked>Email</x-fruit::segment></x-fruit::segmented>'));
         $legend = $xpath->query('//legend')->item(0);
-        $this->assertSame('Conversation type', $legend->textContent);
+        $this->assertSame('Conversation Type', $legend->textContent);
         $this->assertSame('f-sr-only', $legend->getAttribute('class'));
         $this->assertFalse($this->xpath(Blade::render('<x-fruit::segmented legend="Type"><x-fruit::segment name="t" value="a">A</x-fruit::segment></x-fruit::segmented>'))->query('//legend')->item(0)->hasAttribute('class'));
         $this->assertRejected('<x-fruit::segmented legend="Type" legend-hidden="yes">A</x-fruit::segmented>', 'legend-hidden must be a boolean');
@@ -454,7 +454,7 @@ class ComponentContractsTest extends TestCase
         $date = $this->xpath(Blade::render('<x-fruit::date name="start" wire:model="start" />'));
         $wrapper = $date->query('//div[contains(@class, "f-date-picker")]')->item(0);
         $this->assertSame('fruitDatePicker', $wrapper->getAttribute('x-data'));
-        $this->assertSame('Choose date', $wrapper->getAttribute('data-fruit-label'));
+        $this->assertSame('Choose Date', $wrapper->getAttribute('data-fruit-label'));
         $input = $date->query('.//input', $wrapper)->item(0);
         $this->assertSame('dialog', $input->getAttribute('aria-haspopup'));
         $this->assertSame('start', $input->getAttribute('wire:model'));

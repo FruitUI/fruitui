@@ -23,7 +23,7 @@ const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <label class="f-field"><span class="f-label">Files</span><input class="f-input f-file" type="file" name="files[]" accept=".txt" multiple></label>
   <label class="f-field"><span class="f-label">Seats</span><input class="f-input" type="number" name="seats" min="1" max="9" step="2" value="3" required></label>
   <label class="f-field"><span class="f-label">Date</span><input class="f-input" type="date" name="date" value="2026-10-02" min="2026-10-01"></label>
-  <label class="f-field"><span class="f-label">Scheduled at</span><input class="f-input" type="datetime-local" name="scheduled" value="2026-10-02T09:30"></label>
+  <label class="f-field"><span class="f-label">Scheduled At</span><input class="f-input" type="datetime-local" name="scheduled" value="2026-10-02T09:30"></label>
   <label class="f-field"><span class="f-label">Month</span><input class="f-input" type="month" name="month" value="2026-10"></label>
   <label class="f-field"><span class="f-label">Week</span><input class="f-input" type="week" name="week" value="2026-W40"></label>
   <label class="f-field"><span class="f-label">Time</span><input class="f-input" type="time" name="time" value="18:30" step="60"></label>
@@ -31,7 +31,7 @@ const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
   <label class="f-field"><span class="f-label">Scale</span><input class="f-range" type="range" name="scale" min="0" max="100" step="10" value="40"></label>
   <div class="f-row"><button class="f-button" type="reset">Reset</button><button class="f-button" type="submit">Save</button></div>
 </form><div class="specimens">
-  <label class="f-field"><span class="f-label">Import progress</span><progress class="f-progress" value="4" max="10">4 of 10</progress></label>
+  <label class="f-field"><span class="f-label">Import Progress</span><progress class="f-progress" value="4" max="10">4 of 10</progress></label>
   <label class="f-field"><span class="f-label">Connecting</span><progress class="f-progress">Connecting</progress></label>
   <label class="f-field"><span class="f-label">Storage</span><meter class="f-meter" min="0" max="100" low="60" high="85" optimum="20" value="35">35 GB</meter></label>
   <p>Use <code>wire:model</code> or press <kbd>Return</kbd>.</p><blockquote><p>A quoted passage.</p></blockquote><hr><pre tabindex="0" role="region" aria-label="Code example"><code>const ready = true;</code></pre>
@@ -198,7 +198,7 @@ test.describe('CSS-only native forms', () => {
 
   test('progress and meter preserve their native measurement and indeterminate contracts', async ({ page }) => {
     await openFixture(page);
-    const progress = page.getByRole('progressbar', { name: 'Import progress', exact: true });
+    const progress = page.getByRole('progressbar', { name: 'Import Progress', exact: true });
     expect(await progress.evaluate(element => element.position)).toBe(0.4);
     const connecting = page.getByRole('progressbar', { name: 'Connecting', exact: true });
     expect(await connecting.evaluate(element => element.position)).toBe(-1);
@@ -231,7 +231,7 @@ test.describe('CSS-only native forms', () => {
     await choice.focus();
     await page.keyboard.press('Space');
     await expect(choice).not.toBeChecked();
-    const progress = page.getByRole('progressbar', { name: 'Import progress', exact: true });
+    const progress = page.getByRole('progressbar', { name: 'Import Progress', exact: true });
     await expect(progress).toHaveCSS('outline-style', 'solid');
     expect(await progress.evaluate(element => getComputedStyle(element).outlineColor)).not.toBe(
       await progress.evaluate(element => getComputedStyle(element).backgroundColor),
@@ -303,7 +303,7 @@ test('styled search cancellation updates the existing Alpine search', async ({ p
     !(await page.evaluate(() => CSS.supports('selector(input::-webkit-search-cancel-button)'))),
     'This browser retains its own search editing controls',
   );
-  const search = page.getByRole('searchbox', { name: 'Search customers', exact: true });
+  const search = page.getByRole('searchbox', { name: 'Search Customers', exact: true });
   await search.fill('Sophie');
   await expect(page.locator('tr[data-customer]')).toHaveCount(1);
   const box = await search.boundingBox();
@@ -386,7 +386,7 @@ test('the date picker replaces the browser popup with a calendar that keeps nati
   const changes = [];
   await page.exposeFunction('recordChange', value => changes.push(value));
   await date.evaluate(element => element.addEventListener('change', () => window.recordChange(element.value)));
-  const calendar = page.getByRole('dialog', { name: 'Choose date' }).first();
+  const calendar = page.getByRole('dialog', { name: 'Choose Date' }).first();
 
   // A click opens FruitUI's calendar instead of the browser's picker; focus stays in the field.
   await date.click();
@@ -432,7 +432,7 @@ test('a date-time picker keeps the typed time when a day is chosen', async ({ pa
   await page.goto('/components.html');
   const scheduled = page.locator('#component-date input[type=datetime-local]');
   await scheduled.click();
-  const calendar = page.getByRole('dialog', { name: 'Choose date' });
+  const calendar = page.getByRole('dialog', { name: 'Choose Date' });
   await calendar.getByRole('button', { name: /October 15, 2026/ }).click();
   await expect(scheduled).toHaveValue('2026-10-15T09:30');
 });
@@ -446,7 +446,7 @@ test('the color picker offers swatches and a custom editor in one popover', asyn
     };
   });
   const color = page.locator('#component-color input[type=color]');
-  const palette = page.getByRole('dialog', { name: 'Choose color' });
+  const palette = page.getByRole('dialog', { name: 'Choose Color' });
   await color.click();
   await expect(palette).toBeVisible();
   expect(await color.evaluate(element => element.matches(':open'))).toBe(false);
@@ -537,10 +537,10 @@ for (const colorScheme of ['light', 'dark']) {
 
 test('a fieldset stacks its choices and a choice description describes its control', async ({ page }) => {
   await page.goto('/components.html');
-  const group = page.getByRole('group', { name: 'Delivery preferences' });
-  const email = group.getByRole('checkbox', { name: 'Email updates', exact: true });
-  const push = group.getByRole('checkbox', { name: 'Push notifications', exact: true });
-  const photos = group.getByRole('switch', { name: 'Customer photos', exact: true });
+  const group = page.getByRole('group', { name: 'Delivery Preferences' });
+  const email = group.getByRole('checkbox', { name: 'Email Updates', exact: true });
+  const push = group.getByRole('checkbox', { name: 'Push Notifications', exact: true });
+  const photos = group.getByRole('switch', { name: 'Customer Photos', exact: true });
   await expect(email).toHaveAccessibleDescription('A summary of new conversations each morning.');
   await expect(photos).toHaveAccessibleDescription('From Gravatar, for customers without a photo.');
   // One choice per row, each below the previous one's description.

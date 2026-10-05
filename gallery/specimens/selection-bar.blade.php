@@ -9,7 +9,7 @@
     </x-fruit::item-list>
     {{-- Hidden at zero. Script sets data-count; with Livewire, pass :count="count($selected)" instead. --}}
     <x-fruit::selection-bar :count="1" x-bind:data-count="selected.length" aria-label="Selected conversations">
-        <x-fruit::button variant="ghost" size="small" x-on:click="selected = []">Clear selection</x-fruit::button>
-        <x-fruit::button size="small">Close selected</x-fruit::button>
+        <x-fruit::button variant="ghost" size="small" x-on:click="selected = []">Clear Selection</x-fruit::button>
+        <x-fruit::button size="small">Close Selected</x-fruit::button>
     </x-fruit::selection-bar>
 </div>

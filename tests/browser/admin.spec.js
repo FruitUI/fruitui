@@ -38,17 +38,17 @@ test('create and edit forms keep native values and update current stats, plans, 
     updates: true,
   });
   await expect(stats(page)).toHaveText(['$1,285', '15', '4', '21']);
-  await expect(page.getByRole('button', { name: 'Add customer', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Add Customer', exact: true })).toBeFocused();
   await expect(page.locator('.admin-plan-bars li').first()).toContainText('Starter5');
   await page.getByRole('button', { name: 'Edit Taylor Reed', exact: true }).click();
   const dialog = customerDialog(page);
-  await expect(dialog.getByLabel('Internal notes', { exact: true })).toHaveValue('Prefers a morning call.');
+  await expect(dialog.getByLabel('Internal Notes', { exact: true })).toHaveValue('Prefers a morning call.');
   await expect(dialog.getByLabel('Send product updates', { exact: true })).toBeChecked();
-  await dialog.getByLabel('Full name', { exact: true }).fill('Taylor Reed Jr.');
-  await dialog.getByLabel('Subscription status', { exact: true }).selectOption('trial');
+  await dialog.getByLabel('Full Name', { exact: true }).fill('Taylor Reed Jr.');
+  await dialog.getByLabel('Subscription Status', { exact: true }).selectOption('trial');
   await dialog.getByLabel('Plan', { exact: true }).selectOption('business');
   await dialog.getByLabel('Send product updates', { exact: true }).uncheck();
-  await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Save Changes', exact: true }).click();
   await expect(stats(page)).toHaveText(['$1,256', '14', '5', '21']);
   await expect(rows(page).first()).toContainText('Taylor Reed Jr.');
   await page.getByRole('button', { name: 'Edit Taylor Reed Jr.', exact: true }).click();
@@ -65,27 +65,27 @@ test('create and edit forms keep native values and update current stats, plans, 
 });
 
 test('native validation, whitespace, duplicate emails, and cancellation leave records intact', async ({ page }) => {
-  await page.getByRole('button', { name: 'Add customer', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Customer', exact: true }).click();
   const dialog = customerDialog(page);
-  await dialog.getByRole('button', { name: 'Create customer', exact: true }).click();
-  await expect(dialog.getByLabel('Full name', { exact: true })).toBeFocused();
+  await dialog.getByRole('button', { name: 'Create Customer', exact: true }).click();
+  await expect(dialog.getByLabel('Full Name', { exact: true })).toBeFocused();
   await fillCustomer(dialog, { name: 'New Customer', email: 'invalid', company: 'A Company' });
-  await dialog.getByRole('button', { name: 'Create customer', exact: true }).click();
-  expect(await dialog.getByLabel('Email address', { exact: true }).evaluate(input => input.validity.typeMismatch)).toBe(
+  await dialog.getByRole('button', { name: 'Create Customer', exact: true }).click();
+  expect(await dialog.getByLabel('Email Address', { exact: true }).evaluate(input => input.validity.typeMismatch)).toBe(
     true,
   );
-  await dialog.getByLabel('Email address', { exact: true }).fill('SOPHIE@STUDIONORTH.EXAMPLE');
-  await dialog.getByRole('button', { name: 'Create customer', exact: true }).click();
+  await dialog.getByLabel('Email Address', { exact: true }).fill('SOPHIE@STUDIONORTH.EXAMPLE');
+  await dialog.getByRole('button', { name: 'Create Customer', exact: true }).click();
   await expect(dialog.getByRole('alert')).toHaveText('A customer with this email address already exists.');
-  await expect(dialog.getByLabel('Email address', { exact: true })).toHaveAttribute('aria-invalid', 'true');
-  await dialog.getByLabel('Email address', { exact: true }).fill('new@company.example');
-  await dialog.getByLabel('Full name', { exact: true }).fill('   ');
-  await dialog.getByRole('button', { name: 'Create customer', exact: true }).click();
+  await expect(dialog.getByLabel('Email Address', { exact: true })).toHaveAttribute('aria-invalid', 'true');
+  await dialog.getByLabel('Email Address', { exact: true }).fill('new@company.example');
+  await dialog.getByLabel('Full Name', { exact: true }).fill('   ');
+  await dialog.getByRole('button', { name: 'Create Customer', exact: true }).click();
   await expect(dialog.getByRole('alert')).toHaveText('Enter a name and a company.');
   await page.keyboard.press('Escape');
   await expect(stats(page).last()).toHaveText('20');
   await page.getByRole('button', { name: 'Edit Sophie Chen', exact: true }).click();
-  await dialog.getByLabel('Full name', { exact: true }).fill('An unsaved name');
+  await dialog.getByLabel('Full Name', { exact: true }).fill('An unsaved name');
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Edit Sophie Chen', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Edit Sophie Chen', exact: true })).toBeFocused();
@@ -104,18 +104,18 @@ test('table sorting, search, status filters, empty state, and page size use the 
   await page.getByLabel('Status', { exact: true }).selectOption('trial');
   await expect(rows(page)).toHaveCount(4);
   await expect(page.locator('.admin-pagination')).toContainText('1–4 of 4 customers');
-  await page.getByLabel('Search customers', { exact: true }).fill('fieldwork');
+  await page.getByLabel('Search Customers', { exact: true }).fill('fieldwork');
   await expect(rows(page)).toHaveCount(1);
   await expect(rows(page).first()).toContainText('Oliver Park');
-  await page.getByLabel('Search customers', { exact: true }).fill('not-found');
+  await page.getByLabel('Search Customers', { exact: true }).fill('not-found');
   await expect(rows(page)).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'No customers found', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'No Customers Found', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Export CSV', exact: true })).toBeDisabled();
-  await page.getByRole('button', { name: 'Reset filters', exact: true }).click();
-  await page.getByLabel('Customers per page', { exact: true }).selectOption('10');
+  await page.getByRole('button', { name: 'Reset Filters', exact: true }).click();
+  await page.getByLabel('Customers per Page', { exact: true }).selectOption('10');
   await expect(rows(page)).toHaveCount(10);
   await expect(page.locator('.admin-page-controls')).toContainText('1 / 2');
-  await page.getByLabel('Search customers', { exact: true }).fill('mia@daybreak');
+  await page.getByLabel('Search Customers', { exact: true }).fill('mia@daybreak');
   await expect(rows(page)).toHaveCount(1);
   await expect(rows(page).first()).toContainText('Mia Patel');
 });
@@ -132,18 +132,18 @@ test('page selection is independent of rows, spans pages, and deletes exactly th
   await expect(page.locator('[x-ref="tableRegion"]')).toBeFocused();
   await expect(selectPage).not.toBeChecked();
   await page.getByRole('checkbox', { name: 'Select Lucas Martin', exact: true }).check();
-  await page.getByRole('button', { name: 'Delete selected', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete Selected', exact: true }).click();
   const confirmation = page.getByRole('dialog', { name: 'Delete customers?', exact: true });
   await expect(confirmation).toContainText('Delete 6 customers');
   await expect(confirmation.getByRole('button', { name: 'Cancel', exact: true })).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.locator('.admin-bulk-actions')).toContainText('6 selected');
-  await page.getByRole('button', { name: 'Delete selected', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete Selected', exact: true }).click();
   await confirmation.getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(stats(page)).toHaveText(['$850', '10', '2', '14']);
   await expect(page.locator('.admin-bulk-actions')).not.toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add customer', exact: true })).toBeFocused();
-  await page.getByLabel('Search customers', { exact: true }).fill('sophie');
+  await expect(page.getByRole('button', { name: 'Add Customer', exact: true })).toBeFocused();
+  await page.getByLabel('Search Customers', { exact: true }).fill('sophie');
   await expect(rows(page)).toHaveCount(0);
 });
 
@@ -151,7 +151,7 @@ test('deleting the last page clamps pagination and filtering clears stale select
   for (let index = 0; index < 3; index++) await page.getByRole('button', { name: 'Next page', exact: true }).click();
   await expect(page.locator('.admin-page-controls')).toContainText('4 / 4');
   await page.getByRole('checkbox', { name: 'Select all customers on this page', exact: true }).check();
-  await page.getByRole('button', { name: 'Delete selected', exact: true }).click();
+  await page.getByRole('button', { name: 'Delete Selected', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page.locator('.admin-pagination')).toContainText('11–15 of 15 customers');
   await expect(page.locator('.admin-page-controls')).toContainText('3 / 3');
@@ -178,31 +178,31 @@ test('CSV exports the full filtered result and preserves quoting while neutraliz
   expect(trial.split('\r\n')).toHaveLength(6);
   expect(trial).toContain('"Trial","0"');
   expect(trial).not.toContain('sophie@studionorth.example');
-  await page.getByLabel('Search customers', { exact: true }).fill('csv@company');
+  await page.getByLabel('Search Customers', { exact: true }).fill('csv@company');
   expect((await downloadCsv(page)).split('\r\n')).toHaveLength(2);
 });
 
 test('workspace settings save native switch values, reset to the saved values, and log changes', async ({ page }) => {
   await adminNav(page).getByRole('link', { name: 'Workspace', exact: true }).click();
-  await page.getByLabel('Workspace name', { exact: true }).fill('North Studio');
-  await page.getByLabel('Contact email', { exact: true }).fill('owner@north.example');
-  await page.getByRole('switch', { name: /^Weekly digest/ }).uncheck();
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
+  await page.getByLabel('Workspace Name', { exact: true }).fill('North Studio');
+  await page.getByLabel('Contact Email', { exact: true }).fill('owner@north.example');
+  await page.getByRole('switch', { name: /^Weekly Digest/ }).uncheck();
+  await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
   await expect(page.locator('.admin-team strong')).toHaveText('North Studio');
-  await page.getByLabel('Workspace name', { exact: true }).fill('Unsaved name');
-  await page.getByRole('switch', { name: /^Weekly digest/ }).check();
-  await page.getByRole('switch', { name: /^Security updates/ }).uncheck();
-  await page.getByRole('button', { name: 'Reset changes', exact: true }).click();
-  await expect(page.getByLabel('Workspace name', { exact: true })).toHaveValue('North Studio');
-  await expect(page.getByRole('switch', { name: /^Weekly digest/ })).not.toBeChecked();
-  await expect(page.getByRole('switch', { name: /^Security updates/ })).toBeChecked();
-  await page.getByLabel('Workspace name', { exact: true }).fill('   ');
-  await page.getByRole('button', { name: 'Save settings', exact: true }).click();
-  expect(await page.getByLabel('Workspace name', { exact: true }).evaluate(input => input.validity.customError)).toBe(
+  await page.getByLabel('Workspace Name', { exact: true }).fill('Unsaved name');
+  await page.getByRole('switch', { name: /^Weekly Digest/ }).check();
+  await page.getByRole('switch', { name: /^Security Updates/ }).uncheck();
+  await page.getByRole('button', { name: 'Reset Changes', exact: true }).click();
+  await expect(page.getByLabel('Workspace Name', { exact: true })).toHaveValue('North Studio');
+  await expect(page.getByRole('switch', { name: /^Weekly Digest/ })).not.toBeChecked();
+  await expect(page.getByRole('switch', { name: /^Security Updates/ })).toBeChecked();
+  await page.getByLabel('Workspace Name', { exact: true }).fill('   ');
+  await page.getByRole('button', { name: 'Save Settings', exact: true }).click();
+  expect(await page.getByLabel('Workspace Name', { exact: true }).evaluate(input => input.validity.customError)).toBe(
     true,
   );
-  await page.getByRole('button', { name: 'Reset changes', exact: true }).click();
-  expect(await page.getByLabel('Workspace name', { exact: true }).evaluate(input => input.validity.valid)).toBe(true);
+  await page.getByRole('button', { name: 'Reset Changes', exact: true }).click();
+  expect(await page.getByLabel('Workspace Name', { exact: true }).evaluate(input => input.validity.valid)).toBe(true);
   await adminNav(page)
     .getByRole('link', { name: /^Activity/ })
     .click();
@@ -217,7 +217,7 @@ test('revenue period, month inspection, and accessible chart data share the hist
     'aria-pressed',
     'true',
   );
-  await page.getByLabel('Revenue period', { exact: true }).selectOption('3');
+  await page.getByLabel('Revenue Period', { exact: true }).selectOption('3');
   await expect(page.locator('.admin-chart-months button')).toHaveCount(3);
   await expect(page.locator('.admin-chart-value')).toHaveText('$1,717September 2026');
   await page.locator('.admin-chart-data summary').focus();
@@ -242,10 +242,10 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await page.getByLabel('Status', { exact: true }).selectOption('trial');
   await page.getByRole('checkbox', { name: 'Select Oliver Park', exact: true }).check();
   await page.getByRole('button', { name: 'Edit Oliver Park', exact: true }).click();
-  await customerDialog(page).getByLabel('Internal notes', { exact: true }).fill('An unsaved draft across sizes.');
+  await customerDialog(page).getByLabel('Internal Notes', { exact: true }).fill('An unsaved draft across sizes.');
   for (const width of [320, 390, 720, 820, 1100, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
-    await expect(customerDialog(page).getByLabel('Internal notes', { exact: true })).toHaveValue(
+    await expect(customerDialog(page).getByLabel('Internal Notes', { exact: true })).toHaveValue(
       'An unsaved draft across sizes.',
     );
     await expectNoOverflow(page, '#admin');
@@ -260,7 +260,7 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
   await expect(adminNav(page).getByRole('link', { name: 'Overview', exact: true })).toBeFocused();
   await adminNav(page).getByRole('link', { name: 'Workspace', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Workspace settings', exact: true, level: 2 })).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Workspace Settings', exact: true, level: 2 })).toBeFocused();
   await expect(page.locator('.admin-sidebar')).not.toBeVisible();
   await expectNoOverflow(page, '#admin');
   await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
@@ -297,8 +297,8 @@ for (const appearance of ['light', 'dark']) {
     await expectAccessible(page);
     await page.getByRole('button', { name: 'Edit Sophie Chen', exact: true }).click();
     const dialog = customerDialog(page);
-    await dialog.getByLabel('Email address', { exact: true }).fill('mia@daybreak.example');
-    await dialog.getByRole('button', { name: 'Save changes', exact: true }).click();
+    await dialog.getByLabel('Email Address', { exact: true }).fill('mia@daybreak.example');
+    await dialog.getByRole('button', { name: 'Save Changes', exact: true }).click();
     await expect(dialog.getByRole('alert')).toBeVisible();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
@@ -306,19 +306,19 @@ for (const appearance of ['light', 'dark']) {
     await expectAccessible(page);
     await page.keyboard.press('Escape');
     await adminNav(page).getByRole('link', { name: 'Workspace', exact: true }).click();
-    await page.getByRole('switch', { name: /^Weekly digest/ }).uncheck();
+    await page.getByRole('switch', { name: /^Weekly Digest/ }).uncheck();
     await expectAccessible(page);
     await adminNav(page)
       .getByRole('link', { name: /^Activity/ })
       .click();
     await expectAccessible(page);
     await adminNav(page).getByRole('link', { name: 'Overview', exact: true }).click();
-    await page.getByLabel('Search customers', { exact: true }).fill('missing');
+    await page.getByLabel('Search Customers', { exact: true }).fill('missing');
     await expectAccessible(page);
-    await page.getByRole('button', { name: 'Reset filters', exact: true }).click();
+    await page.getByRole('button', { name: 'Reset Filters', exact: true }).click();
     await page.setViewportSize({ width: 390, height: 844 });
     await expectAccessible(page);
-    await page.getByRole('button', { name: 'Add customer', exact: true }).click();
+    await page.getByRole('button', { name: 'Add Customer', exact: true }).click();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Toggle admin navigation', exact: true }).click();
@@ -334,7 +334,7 @@ test('CSS-only Overview keeps native chart disclosure, sample records, and live 
     const page = await context.newPage();
     await page.goto('/admin.html');
     await expect(page.locator('.admin-table:not(.admin-subscription-table) tbody')).toContainText('Sophie Chen');
-    await expect(page.getByRole('button', { name: 'Add customer', exact: true })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Add Customer', exact: true })).toBeDisabled();
     await page.locator('.admin-chart-data summary').focus();
     await page.keyboard.press('Space');
     await expect(page.locator('.admin-chart-data')).toHaveAttribute('open', '');
@@ -366,19 +366,19 @@ function customerDialog(page) {
   return page.locator('dialog').filter({ has: page.locator('#admin-customer-dialog-title') });
 }
 async function fillCustomer(dialog, values) {
-  await dialog.getByLabel('Full name', { exact: true }).fill(values.name);
-  await dialog.getByLabel('Email address', { exact: true }).fill(values.email);
+  await dialog.getByLabel('Full Name', { exact: true }).fill(values.name);
+  await dialog.getByLabel('Email Address', { exact: true }).fill(values.email);
   await dialog.getByLabel('Company', { exact: true }).fill(values.company);
   if (values.plan) await dialog.getByLabel('Plan', { exact: true }).selectOption(values.plan);
-  if (values.status) await dialog.getByLabel('Subscription status', { exact: true }).selectOption(values.status);
-  if (values.notes) await dialog.getByLabel('Internal notes', { exact: true }).fill(values.notes);
+  if (values.status) await dialog.getByLabel('Subscription Status', { exact: true }).selectOption(values.status);
+  if (values.notes) await dialog.getByLabel('Internal Notes', { exact: true }).fill(values.notes);
   if (values.updates) await dialog.getByLabel('Send product updates', { exact: true }).check();
 }
 async function addCustomer(page, values) {
-  await page.getByRole('button', { name: 'Add customer', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Customer', exact: true }).click();
   const dialog = customerDialog(page);
   await fillCustomer(dialog, values);
-  await dialog.getByRole('button', { name: 'Create customer', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Create Customer', exact: true }).click();
   await expect(dialog).not.toBeVisible();
 }
 async function downloadCsv(page) {

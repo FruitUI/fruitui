@@ -10,7 +10,7 @@ test('single-file Mail preferences save and reload through the real Livewire hos
   await expect(sounds).not.toBeChecked();
   await previews.uncheck();
   await sounds.check();
-  await page.getByRole('button', { name: 'Save changes' }).click();
+  await page.getByRole('button', { name: 'Save Changes' }).click();
   await expect(page.getByRole('status')).toHaveText('Changes saved.');
   await page.reload();
   await expect(previews).not.toBeChecked();
@@ -36,7 +36,7 @@ test('real Laravel/Livewire host commits change and blur bindings and morphs enh
   await page.getByRole('heading').click();
   await expect(page.locator('#blur-commits')).toHaveText('1 blur commits');
   await expect(page.locator('#saved-blur-signature')).toHaveText('<p>Blur value</p>');
-  await page.getByRole('button', { name: 'Update from server' }).click();
+  await page.getByRole('button', { name: 'Update From Server' }).click();
   const choice = page.getByRole('combobox', { name: 'Owner', exact: true });
   await expect(choice).toHaveValue('Morgan');
   await choice.click();

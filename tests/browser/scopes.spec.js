@@ -31,10 +31,10 @@ test('Mail combines real accounts and scopes search, unread counts, flags, and m
   await nav.getByRole('button', { name: 'Work Inbox', exact: true }).click();
   await expect(rows).toHaveCount(4);
   await expect(nav.getByRole('button', { name: 'Work Inbox', exact: true })).toHaveAttribute('aria-current', 'page');
-  await page.getByRole('searchbox', { name: 'Search messages' }).fill('mountains');
+  await page.getByRole('searchbox', { name: 'Search Messages' }).fill('mountains');
   await expect(rows).toHaveCount(0);
   await nav.getByRole('button', { name: 'All Inboxes', exact: true }).click();
-  await expect(page.getByRole('searchbox', { name: 'Search messages' })).toHaveValue('');
+  await expect(page.getByRole('searchbox', { name: 'Search Messages' })).toHaveValue('');
   await mailRow(page, 2).click();
   await expect(nav.getByRole('button', { name: 'Work Inbox', exact: true }).locator('.f-badge')).toHaveText('1');
   await expect(nav.getByRole('button', { name: 'All Inboxes', exact: true }).locator('.f-badge')).toHaveText('2');
@@ -96,7 +96,7 @@ test('Mail account scope survives medium, phone, and desktop layouts and mark-al
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('.f-mail__large-title')).toHaveText('Personal Inbox');
   await page.getByLabel('Mailbox options', { exact: true }).click();
-  await page.getByRole('button', { name: 'Mark all as read' }).click();
+  await page.getByRole('button', { name: 'Mark All as Read' }).click();
   await page.getByRole('button', { name: 'Show mailboxes' }).click();
   await expect(page.locator('#mailboxes [data-scope="personal"]')).toHaveAttribute('open', '');
   await expect(
@@ -129,7 +129,7 @@ test('Support combines team mailboxes while local views, searches, and status co
   await nav.getByRole('button', { name: 'Billing Open' }).click();
   await expect(rows).toHaveCount(1);
   await expect(page.locator('.support-mailbox-detail')).toContainText('billing@forma.example');
-  await page.getByRole('searchbox', { name: 'Search conversations' }).fill('sso');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('sso');
   await expect(rows).toHaveCount(0);
   await nav.getByRole('button', { name: /^All Inboxes/ }).click();
   await expect(rows).toHaveCount(6);
@@ -138,7 +138,7 @@ test('Support combines team mailboxes while local views, searches, and status co
   await expect(rows).toHaveCount(3);
   await page.getByRole('button', { name: 'Show priority conversations' }).click();
   await expect(rows).toHaveCount(2);
-  await page.getByLabel('Conversation status').selectOption('waiting');
+  await page.getByLabel('Conversation Status').selectOption('waiting');
   await expect(nav.getByRole('button', { name: 'Support Waiting', exact: true })).toContainText('2');
   await expect(nav.getByRole('button', { name: /^Waiting/ })).toContainText('3');
   await nav.getByRole('button', { name: 'Billing Waiting', exact: true }).click();
@@ -154,7 +154,7 @@ test('Support preserves drafts across mailboxes and replies and new conversation
 }) => {
   await page.goto('/support.html');
   const nav = page.locator('#support-queues');
-  const reply = page.getByRole('textbox', { name: 'Reply message', exact: true });
+  const reply = page.getByRole('textbox', { name: 'Reply Message', exact: true });
   await reply.fill('A billing reply for Sophie.');
   await expand(page, '#support-queues', 'support');
   await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
@@ -164,21 +164,21 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   await nav.getByRole('button', { name: 'Billing Open', exact: true }).click();
   await expect(reply).toHaveValue('A billing reply for Sophie.');
   await expect(page.locator('#support-reply-help')).toHaveText('From billing@forma.example');
-  await page.getByRole('button', { name: 'Send reply', exact: true }).click();
+  await page.getByRole('button', { name: 'Send Reply', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).first()).toContainText(
     'A billing reply for Sophie.',
   );
   await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
   await expect(reply).toHaveValue('A support reply for Jordan.');
-  await page.getByRole('button', { name: 'New conversation', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'New conversation' });
+  await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'New Conversation' });
   await expect(dialog.getByLabel('Mailbox', { exact: true })).toHaveValue('support');
   await dialog.getByLabel('Mailbox', { exact: true }).selectOption('feedback');
-  await dialog.getByLabel('Customer name').fill('Casey Cooper');
-  await dialog.getByLabel('Customer email').fill('casey@example.com');
+  await dialog.getByLabel('Customer Name').fill('Casey Cooper');
+  await dialog.getByLabel('Customer Email').fill('casey@example.com');
   await dialog.getByLabel('Subject').fill('An idea for your app');
-  await dialog.getByLabel('Customer message').fill('Could we save our favorite views?');
-  await dialog.getByRole('button', { name: 'Create conversation' }).click();
+  await dialog.getByLabel('Customer Message').fill('Could we save our favorite views?');
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
   await expect(supportRow(page, 1043)).toHaveAttribute('aria-current', 'true');
   await expect(page.locator('.support-list-footer')).toContainText('feedback@forma.example');
   await expect(page.locator('button.support-ticket')).toHaveCount(3);
@@ -206,7 +206,7 @@ test('Support customer history can cross mailboxes and responsive navigation fol
   await expect(
     page.locator('#support-queues').getByRole('button', { name: 'Feedback Open', exact: true }),
   ).toHaveAttribute('aria-current', 'page');
-  await page.getByRole('textbox', { name: 'Reply message', exact: true }).fill('A draft about templates.');
+  await page.getByRole('textbox', { name: 'Reply Message', exact: true }).fill('A draft about templates.');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
   await page.getByRole('button', { name: 'Show support views', exact: true }).click();
@@ -215,7 +215,7 @@ test('Support customer history can cross mailboxes and responsive navigation fol
   await selected.click();
   await supportRow(page, 1034).click();
   await page.setViewportSize({ width: 820, height: 1100 });
-  await expect(page.getByRole('textbox', { name: 'Reply message', exact: true })).toHaveValue(
+  await expect(page.getByRole('textbox', { name: 'Reply Message', exact: true })).toHaveValue(
     'A draft about templates.',
   );
   await page.setViewportSize({ width: 1440, height: 1100 });
@@ -245,7 +245,7 @@ test('grouped navigation uses native keyboard disclosure and automatic themes wi
   try {
     const page = await context.newPage();
     await page.goto('/components.html');
-    const nav = page.getByRole('navigation', { name: 'Reference interfaces', exact: true });
+    const nav = page.getByRole('navigation', { name: 'Reference Interfaces', exact: true });
     const summary = nav.locator('summary');
     await summary.focus();
     await page.keyboard.press('Space');

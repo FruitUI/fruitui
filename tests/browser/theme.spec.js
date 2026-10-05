@@ -91,8 +91,8 @@ test.describe('CSS appearance with JavaScript disabled', () => {
       await expect(root).toHaveCSS('color-scheme', 'dark');
       await expect(root).toHaveCSS('background-color', 'rgb(25, 25, 28)');
       await expect(page.locator('.f-card').first()).toHaveCSS('background-color', 'rgb(37, 37, 40)');
-      await expect(page.getByLabel('Your name')).toHaveCSS('background-color', 'rgb(57, 57, 62)');
-      await expect(page.getByLabel('Default mailbox')).toHaveCSS('color-scheme', 'dark');
+      await expect(page.getByLabel('Your Name')).toHaveCSS('background-color', 'rgb(57, 57, 62)');
+      await expect(page.getByLabel('Default Mailbox')).toHaveCSS('color-scheme', 'dark');
       // Dialogs use the elevated surface, lighter than content in dark mode.
       await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(44, 44, 48)');
       expect(
@@ -148,7 +148,7 @@ for (const theme of ['light', 'dark']) {
   test(`gallery dialog is accessible in automatic ${theme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: theme });
     await page.goto('/components.html');
-    await page.getByRole('button', { name: 'Open dialog' }).click();
+    await page.getByRole('button', { name: 'Open Dialog' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCSS('color-scheme', theme);
     await expectAccessible(page);
@@ -160,13 +160,13 @@ for (const theme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: theme });
     await page.goto('/components.html');
     await page.locator('#component-toast').getByRole('button', { name: 'Error' }).click();
-    await page.locator('#component-copy-button').getByRole('button', { name: 'Copy invite link' }).click();
+    await page.locator('#component-copy-button').getByRole('button', { name: 'Copy Invite Link' }).click();
     await expect(page.locator('#component-suggestion').getByRole('region', { name: 'AI draft' })).toBeVisible();
-    await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge conversation…' }).click();
-    await expect(page.getByRole('dialog', { name: 'Merge conversation' }).getByRole('combobox')).toBeVisible();
+    await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
+    await expect(page.getByRole('dialog', { name: 'Merge Conversation' }).getByRole('combobox')).toBeVisible();
     await expectAccessible(page);
     await page.keyboard.press('Escape');
-    await page.locator('#component-confirm').getByRole('button', { name: 'Delete conversation…' }).click();
+    await page.locator('#component-confirm').getByRole('button', { name: 'Delete Conversation…' }).click();
     await expect(page.getByRole('alertdialog')).toHaveCSS('color-scheme', theme);
     await expectAccessible(page);
   });
@@ -192,7 +192,7 @@ async function appearanceSnapshot(page) {
 
 test('text follows the reader’s browser text size and a pixel-root host can pin it', async ({ page }) => {
   await page.goto('/components.html');
-  const input = page.getByLabel('Your name');
+  const input = page.getByLabel('Your Name');
   // An html scope must not redefine rem through its own font size.
   await expect(page.locator('html')).toHaveCSS('font-size', '16px');
   await expect(page.locator('body')).toHaveCSS('font-size', '16px');
@@ -211,7 +211,7 @@ test('text follows the reader’s browser text size and a pixel-root host can pi
 
 test('Increase Contrast strengthens boundaries and secondary text in both appearances', async ({ page }) => {
   await page.goto('/components.html');
-  const input = page.getByLabel('Your name');
+  const input = page.getByLabel('Your Name');
   // Firefox applies contrast emulation only to newly loaded documents.
   const emulate = async media => {
     await page.emulateMedia(media);
@@ -393,11 +393,11 @@ test('the compat build keeps code, keyboard keys and code blocks in the text col
 test('components rendered as links need no host link reset in either build', async ({ page }) => {
   // No host stylesheet at all: the browser's own underlined, blue links are all that remain to override.
   const links = `
-    <a class="f-item-row" href="#"><span class="f-item-row__top"><span class="f-item-row__title">Sophie</span><span class="f-item-row__time">10:42</span></span><span class="f-item-row__subtitle">Team plan</span><span class="f-item-row__preview">Preview</span><span class="f-item-row__meta">Work</span></a>
+    <a class="f-item-row" href="#"><span class="f-item-row__top"><span class="f-item-row__title">Sophie</span><span class="f-item-row__time">10:42</span></span><span class="f-item-row__subtitle">Team Plan</span><span class="f-item-row__preview">Preview</span><span class="f-item-row__meta">Work</span></a>
     <div class="f-menu__items" role="menu"><a class="f-menu-item" role="menuitem" href="#">Open</a></div>
     <nav class="f-sidebar"><a class="f-sidebar__item" href="#">Inbox</a></nav>
     <nav class="f-section-nav"><a href="#" aria-current="page">General</a><a href="#">Connection</a></nav>
-    <a class="f-button" href="#">Edit</a><a class="f-button f-button--primary" href="#">New conversation</a>
+    <a class="f-button" href="#">Edit</a><a class="f-button f-button--primary" href="#">New Conversation</a>
     <a class="f-button f-button--ghost f-back" href="#"><span>Back</span></a>
     <nav class="f-breadcrumbs"><ol><li><a href="#">Customers</a></li></ol></nav>
     <div role="listbox"><a class="f-command" role="option" href="#">Support</a></div>

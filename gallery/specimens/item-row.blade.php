@@ -5,11 +5,11 @@
         <x-slot:trailing>10:42</x-slot:trailing>
         <x-slot:subtitle>A fresh start for FruitUI</x-slot:subtitle>
         <x-slot:preview>Open this conversation to see its current state.</x-slot:preview>
-        <x-slot:meta>Work mailbox</x-slot:meta>
+        <x-slot:meta>Work Mailbox</x-slot:meta>
     </x-fruit::item-row>
     <x-fruit::checkbox name="selected-conversation" value="42">Select this conversation for a bulk action</x-fruit::checkbox>
     <p class="f-help" x-text="opened ? 'Conversation open. The checkbox keeps its own value.' : 'Conversation closed.'">Conversation closed.</p>
-    <x-fruit::item-row disabled>Unavailable conversation</x-fruit::item-row>
+    <x-fruit::item-row disabled>Unavailable Conversation</x-fruit::item-row>
     {{-- A destination row with a leading selection checkbox and a trailing toggle of its own. --}}
     <x-fruit::item-list aria-label="Linked conversations" x-data="{ starred: false }">
         <li>

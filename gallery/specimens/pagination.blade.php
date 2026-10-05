@@ -4,6 +4,6 @@
 
 {{-- Or compose your own page controls. --}}
 <x-fruit::pagination aria-label="Activity pages">
-    <span>Newest activity</span>
-    <div class="f-pagination__controls"><a class="f-button" href="/admin.html#/customers">Older activity</a></div>
+    <span>Newest Activity</span>
+    <div class="f-pagination__controls"><a class="f-button" href="/admin.html#/customers">Older Activity</a></div>
 </x-fruit::pagination>

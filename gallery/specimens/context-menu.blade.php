@@ -6,7 +6,7 @@
                 <x-slot:subtitle>{{ $subject }}</x-slot:subtitle>
             </x-fruit::item-row>
             <x-fruit::context-menu title="Conversation actions">
-                <x-fruit::menu-item @click="$toast('Marked {{ $name }} as unread.')" shortcut="⇧⌘U">Mark as unread</x-fruit::menu-item>
+                <x-fruit::menu-item @click="$toast('Marked {{ $name }} as unread.')" shortcut="⇧⌘U">Mark as Unread</x-fruit::menu-item>
                 <x-fruit::menu-item @click="$toast('Archived {{ $name }}.')">Archive</x-fruit::menu-item>
                 <x-fruit::menu-separator />
                 <x-fruit::menu-item variant="danger" @click="$toast('Deleted {{ $name }}.')">Delete</x-fruit::menu-item>

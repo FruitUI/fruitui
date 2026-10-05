@@ -17,7 +17,7 @@ const titles = {
   plans: 'Plans',
   revenue: 'Revenue',
   activity: 'Activity',
-  settings: 'Workspace settings',
+  settings: 'Workspace Settings',
 };
 const groups = {
   customers: 'customers',

@@ -1,6 +1,6 @@
 {{-- One toaster per layout. The server calls Fruit::toast('…') or Fruit::toast('…', tone: 'danger'); Alpine code calls $toast('…', { tone: 'success' }). --}}
 <div class="f-row">
-    <x-fruit::button @click="$toast('Conversation archived.')">Show toast</x-fruit::button>
+    <x-fruit::button @click="$toast('Conversation archived.')">Show Toast</x-fruit::button>
     <x-fruit::button @click="$toast('Settings saved.', { tone: 'success' })">Success</x-fruit::button>
     <x-fruit::button @click="$toast('Could not connect to the IMAP server.', { tone: 'danger' })">Error</x-fruit::button>
 </div>

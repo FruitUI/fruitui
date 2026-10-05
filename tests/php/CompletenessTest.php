@@ -20,7 +20,7 @@ class CompletenessTest extends TestCase
     {
         $xpath = $this->xpath(Blade::render(<<<'BLADE'
             <x-fruit::menu title="View">
-                <x-fruit::menu-group label="Sort by">
+                <x-fruit::menu-group label="Sort By">
                     <x-fruit::menu-radio checked wire:click="sortBy('date')">Date</x-fruit::menu-radio>
                     <x-fruit::menu-radio wire:click="sortBy('sender')">Sender</x-fruit::menu-radio>
                 </x-fruit::menu-group>
@@ -33,7 +33,7 @@ class CompletenessTest extends TestCase
         $radios = $xpath->query('//button[@role="menuitemradio"]');
         $this->assertSame('true', $radios->item(0)->getAttribute('aria-checked'));
         $this->assertSame('false', $radios->item(1)->getAttribute('aria-checked'));
-        $this->assertSame('Sort by', $xpath->query('//div[@role="group"]')->item(0)->getAttribute('aria-label'));
+        $this->assertSame('Sort By', $xpath->query('//div[@role="group"]')->item(0)->getAttribute('aria-label'));
         $this->assertSame(1, $xpath->query('//div[@role="separator" and @class="f-menu__separator"]')->length);
         $checkbox = $xpath->query('//button[@role="menuitemcheckbox"]')->item(0);
         $this->assertFalse($checkbox->hasAttribute('aria-checked'), 'A client binding owns aria-checked.');
@@ -80,7 +80,7 @@ class CompletenessTest extends TestCase
     {
         $xpath = $this->xpath(Blade::render(<<<'BLADE'
             <x-fruit::skeleton :lines="2" />
-            <x-fruit::divider tone="accent">New messages</x-fruit::divider>
+            <x-fruit::divider tone="accent">New Messages</x-fruit::divider>
             <x-fruit::divider />
             <x-fruit::timeline aria-label="History">
                 <x-fruit::timeline-item datetime="2026-10-02T10:42">Assigned to Alex<x-slot:detail>By Mia</x-slot:detail><x-slot:time>10:42</x-slot:time></x-fruit::timeline-item>
@@ -94,7 +94,7 @@ class CompletenessTest extends TestCase
         $this->assertSame('true', $skeleton->getAttribute('aria-hidden'));
         $this->assertSame(2, $xpath->query('.//div[@class="f-skeleton__line"]', $skeleton)->length);
         $dividers = $xpath->query('//div[@role="separator"]');
-        $this->assertSame('New messages', $dividers->item(0)->getAttribute('aria-label'));
+        $this->assertSame('New Messages', $dividers->item(0)->getAttribute('aria-label'));
         $this->assertSame('f-divider f-divider--accent', $dividers->item(0)->getAttribute('class'));
         $this->assertFalse($dividers->item(1)->hasAttribute('aria-label'));
         $this->assertSame('History', $xpath->query('//ol[@class="f-timeline"]')->item(0)->getAttribute('aria-label'));
@@ -108,10 +108,10 @@ class CompletenessTest extends TestCase
     public function test_messages_render_identity_body_attachments_and_footer(): void
     {
         $xpath = $this->xpath(Blade::render(<<<'BLADE'
-            <x-fruit::message layout="stacked" variant="note" datetime="2026-10-02T10:48" aria-label="Internal note">
+            <x-fruit::message layout="stacked" variant="note" datetime="2026-10-02T10:48" aria-label="Internal Note">
                 <x-slot:avatar><x-fruit::avatar>MP</x-fruit::avatar></x-slot:avatar>
                 <x-slot:author>Mia Patel</x-slot:author>
-                <x-slot:meta>Internal note</x-slot:meta>
+                <x-slot:meta>Internal Note</x-slot:meta>
                 <x-slot:time>10:48</x-slot:time>
                 Existing projects stay in place.
                 <x-slot:attachments><a class="f-attachment" href="/notes.txt">Notes</a></x-slot:attachments>
@@ -121,7 +121,7 @@ class CompletenessTest extends TestCase
             BLADE));
         $message = $xpath->query('//article')->item(0);
         $this->assertSame('f-message f-message--stacked f-message--note', $message->getAttribute('class'));
-        $this->assertSame('Internal note', $message->getAttribute('aria-label'));
+        $this->assertSame('Internal Note', $message->getAttribute('aria-label'));
         $this->assertSame('Mia Patel', $xpath->query('.//strong[@class="f-message__author"]', $message)->item(0)->textContent);
         $this->assertSame('2026-10-02T10:48', $xpath->query('.//time[@class="f-message__time"]', $message)->item(0)->getAttribute('datetime'));
         $this->assertSame('Existing projects stay in place.', trim($xpath->query('.//div[@class="f-message__body"]', $message)->item(0)->textContent));
@@ -141,7 +141,7 @@ class CompletenessTest extends TestCase
         $this->assertSame('fruitSelectionBar', $hidden->getAttribute('x-data'));
         $this->assertSame('selected.length', $hidden->getAttribute('x-bind:data-count'));
         $this->assertRejected('<x-fruit::selection-bar x-data="{}" />', 'owns its fruitSelectionBar helper');
-        $xpath = $this->xpath(Blade::render('<x-fruit::selection-bar :count="3" aria-label="Selected conversations"><x-fruit::button>Close selected</x-fruit::button></x-fruit::selection-bar>'));
+        $xpath = $this->xpath(Blade::render('<x-fruit::selection-bar :count="3" aria-label="Selected conversations"><x-fruit::button>Close Selected</x-fruit::button></x-fruit::selection-bar>'));
         $bar = $xpath->query('//div[@role="region"]')->item(0);
         $this->assertSame('Selected conversations', $bar->getAttribute('aria-label'));
         $this->assertSame('3 selected', $xpath->query('.//span[@role="status"]', $bar)->item(0)->textContent);
@@ -172,15 +172,15 @@ class CompletenessTest extends TestCase
     public function test_command_palette_renders_a_named_dialog_with_a_combobox_and_options(): void
     {
         $xpath = $this->xpath(Blade::render(<<<'BLADE'
-            <x-fruit::command-palette name="commands" shortcut="k" label="Go to">
+            <x-fruit::command-palette name="commands" shortcut="k" label="Go To">
                 <x-fruit::command-group label="Pages"><x-fruit::command-link href="/inbox" wire:navigate>Inbox</x-fruit::command-link></x-fruit::command-group>
-                <x-fruit::command wire:click="compose" shortcut="⌘N">New message</x-fruit::command>
+                <x-fruit::command wire:click="compose" shortcut="⌘N">New Message</x-fruit::command>
             </x-fruit::command-palette>
             BLADE));
         $dialog = $xpath->query('//dialog')->item(0);
         $this->assertSame('commands', $dialog->getAttribute('data-fruit-dialog'));
         $this->assertSame('k', $dialog->getAttribute('data-fruit-shortcut'));
-        $this->assertSame('Go to', $dialog->getAttribute('aria-label'));
+        $this->assertSame('Go To', $dialog->getAttribute('aria-label'));
         $input = $xpath->query('.//input[@role="combobox"]', $dialog)->item(0);
         $this->assertSame('commands-commands', $input->getAttribute('aria-controls'));
         $this->assertSame('listbox', $xpath->query('//*[@id="commands-commands"]')->item(0)->getAttribute('role'));

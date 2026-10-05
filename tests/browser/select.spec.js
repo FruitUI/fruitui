@@ -10,7 +10,7 @@ const fixture = `<!doctype html><html class="fruit-ui" lang="en"><head>
     <select class="f-input" name="mailbox" required>
       <option value="">Choose a mailbox</option>
       <optgroup label="Accounts"><option value="all">All Inboxes</option><option value="work">Work</option><option value="personal">Personal</option></optgroup>
-      <optgroup label="Offline accounts" disabled><option value="offline">Offline account</option></optgroup>
+      <optgroup label="Offline accounts" disabled><option value="offline">Offline Account</option></optgroup>
     </select>
   </label></div>
   <label class="f-field"><span class="f-label">Folders</span>
@@ -249,7 +249,7 @@ for (const appearance of ['light', 'dark']) {
 test('real native picker selection updates status through the existing Alpine support form', async ({ page }) => {
   await page.goto('/support.html');
   await requireStyledPicker(page);
-  const select = page.getByRole('combobox', { name: 'Conversation status', exact: true });
+  const select = page.getByRole('combobox', { name: 'Conversation Status', exact: true });
   await select.click();
   await select.locator('option[value="waiting"]').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(5);

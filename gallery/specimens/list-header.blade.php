@@ -2,7 +2,7 @@
      selected the selection bar takes the tools' place in the same row. --}}
 <div x-data="{ selected: [] }">
     <x-fruit::list-header>
-        <span>Newest first</span>
+        <span>Newest First</span>
         <span class="f-toolbar__spacer"></span>
         <x-fruit::button variant="ghost" size="small" data-fruit-select-toggle aria-controls="gallery-selectable" aria-pressed="false">Select</x-fruit::button>
         <x-slot:selection>
@@ -10,10 +10,10 @@
                 <x-fruit::button variant="ghost" class="f-button--icon" aria-label="Archive selected" title="Archive selected"><svg class="f-icon" aria-hidden="true"><use href="#i-archive"/></svg></x-fruit::button>
                 <x-fruit::menu title="More actions for selected conversations">
                     <x-slot:trigger class="f-button--ghost f-button--icon" aria-label="More" title="More"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></x-slot:trigger>
-                    <x-fruit::menu-item>Mark as unread</x-fruit::menu-item>
+                    <x-fruit::menu-item>Mark as Unread</x-fruit::menu-item>
                     <x-fruit::menu-item>Move to Waiting</x-fruit::menu-item>
                 </x-fruit::menu>
-                <x-fruit::button variant="ghost" class="f-button--icon" x-on:click="selected = []" aria-label="Clear selection" title="Clear selection"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></x-fruit::button>
+                <x-fruit::button variant="ghost" class="f-button--icon" x-on:click="selected = []" aria-label="Clear Selection" title="Clear Selection"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></x-fruit::button>
             </x-fruit::selection-bar>
         </x-slot:selection>
     </x-fruit::list-header>
