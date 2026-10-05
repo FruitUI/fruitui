@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 function editor(page) {
-  const root = page.locator('#component-editor');
+  const root = page.locator('#editor-example');
   return { root, surface: root.locator('.f-editor__surface > .tiptap') };
 }
 
@@ -171,4 +171,38 @@ test('plain paste drops formatting and can be switched at runtime', async ({ pag
   await page.keyboard.press('ControlOrMeta+a');
   await paste();
   await expect.poll(() => value(page)).toContain('<strong>Bold</strong>');
+});
+
+test('a channel’s formats limit the toolbar and the markup that shortcuts and paste can produce', async ({ page }) => {
+  const root = page.locator('#editor-formats-example');
+  const surface = root.locator('.f-editor__surface > .tiptap');
+  const value = () => page.locator('#gallery-chat-editor').inputValue();
+  const commands = await root
+    .locator('[data-fruit-command]')
+    .evaluateAll(buttons => buttons.map(button => button.dataset.fruitCommand));
+  expect(commands).toEqual(['bold', 'italic', 'link', 'clear', 'undo', 'redo']);
+  await surface.click();
+  // Allowed: the bold shortcut. Not allowed: a heading or list typed as Markdown.
+  await page.keyboard.press('ControlOrMeta+b');
+  await page.keyboard.type('Hello');
+  await page.keyboard.press('ControlOrMeta+b');
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('# Not a heading');
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('- not a list');
+  await expect.poll(value).toBe('<p><strong>Hello</strong></p><p># Not a heading</p><p>- not a list</p>');
+  // Pasted markup keeps what the channel supports and drops the rest.
+  await page.keyboard.press('ControlOrMeta+a');
+  // ProseMirror's own paste path; Firefox ignores data on a synthetic paste event.
+  await surface.evaluate(element =>
+    element.editor.view.pasteHTML(
+      '<h1>Title</h1><ul><li><em>One</em></li></ul><blockquote>Quote</blockquote><p><a href="https://example.com">Site</a> <s>gone</s></p>',
+    ),
+  );
+  await expect
+    .poll(value)
+    .toBe(
+      '<p>Title</p><p><em>One</em></p><p>Quote</p><p><a target="_blank" rel="noopener noreferrer nofollow" href="https://example.com">Site</a> gone</p>',
+    );
+  await expectAccessible(page, '#component-editor');
 });

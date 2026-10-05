@@ -404,6 +404,14 @@ test('the history opens at the newest message, follows arrivals, and leaves a re
   await expect(history.getByText('Back to the present.')).toBeVisible();
   await expect.poll(fromEnd).toBeLessThan(2);
   await expect(composer).toBeFocused();
+  // A second message straight after joins the first: the name and avatar show once.
+  await composer.fill('And one more thing.');
+  await composer.press('Enter');
+  const own = history.locator('.chat-message').filter({ hasText: 'And one more thing.' });
+  await expect(own).toHaveClass(/f-message--continued/);
+  await expect(history.locator('.chat-message').filter({ hasText: 'Back to the present.' })).not.toHaveClass(
+    /f-message--continued/,
+  );
 });
 
 test('jump to latest appears after scrolling back and returns to the newest message', async ({ page }) => {

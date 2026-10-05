@@ -242,6 +242,17 @@ class ComponentContractsTest extends TestCase
         $this->assertStringContainsString('data-fruit-paste="plain"', Blade::render('<x-fruit::editor name="body" paste="plain" />'));
         $this->assertStringContainsString('data-fruit-paste="rich"', Blade::render('<x-fruit::editor name="body" />'));
         $this->assertRejected('<x-fruit::editor name="body" paste="markdown" />', 'editor paste must be one of');
+        // A channel's formats: only those commands, plus Remove Formatting, Undo and Redo.
+        $limited = $this->xpath(Blade::render('<x-fruit::editor name="body" :formats="[\'bold\', \'link\']" />'));
+        $this->assertSame('bold link', $limited->query('//div[contains(@class, "f-editor")]')->item(0)->getAttribute('data-fruit-formats'));
+        $this->assertSame(['bold', 'link', 'clear', 'undo', 'redo'], array_map(fn ($button) => $button->getAttribute('data-fruit-command'), iterator_to_array($limited->query('//button[@data-fruit-command]'))));
+        $this->assertSame(2, $limited->query('//span[@class="f-editor__separator"]')->length);
+        $plain = $this->xpath(Blade::render('<x-fruit::editor name="body" :formats="[]" />'));
+        $this->assertSame('', $plain->query('//div[contains(@class, "f-editor")]')->item(0)->getAttribute('data-fruit-formats'));
+        $this->assertSame(['undo', 'redo'], array_map(fn ($button) => $button->getAttribute('data-fruit-command'), iterator_to_array($plain->query('//button[@data-fruit-command]'))));
+        $this->assertStringNotContainsString('data-fruit-formats', Blade::render('<x-fruit::editor name="body" />'));
+        $this->assertRejected('<x-fruit::editor name="body" :formats="[\'bold\', \'heading\']" />', 'editor formats must be a list of');
+        $this->assertRejected('<x-fruit::editor name="body" formats="bold" />', 'editor formats must be a list of');
     }
 
     public function test_threads_list_messages_that_name_their_direction(): void
@@ -256,6 +267,12 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('f-thread f-thread--compact extra', $compact->getAttribute('class'));
         $this->assertSame('f-thread', $this->xpath(Blade::render('<x-fruit::thread density="comfortable"><li>A</li></x-fruit::thread>'))->query('//ol')->item(0)->getAttribute('class'));
         $this->assertRejected('<x-fruit::thread density="chat"><li>A</li></x-fruit::thread>', 'density must be one of');
+        // A run of messages from one person: the later ones are continued, keeping their author for screen readers.
+        $continued = Blade::render('<x-fruit::message continued aria-label="Message from Mia">Second<x-slot:author>Mia</x-slot:author><x-slot:time>9:13 AM</x-slot:time></x-fruit::message>');
+        $this->assertStringContainsString('class="f-message f-message--continued"', $continued);
+        $this->assertStringContainsString('<strong class="f-message__author">Mia</strong>', $continued);
+        $this->assertRejected('<x-fruit::message continued variant="note" aria-label="Note">A</x-fruit::message>', 'notes and generated text keep their own header');
+        $this->assertRejected('<x-fruit::message :continued="1" aria-label="A">A</x-fruit::message>', 'continued must be a boolean');
 
         $this->assertStringContainsString('class="f-message f-message--stacked f-message--outgoing"', Blade::render('<x-fruit::message layout="stacked" direction="outgoing" aria-label="Reply">Yes</x-fruit::message>'));
         $this->assertStringContainsString('class="f-message"', Blade::render('<x-fruit::message direction="incoming" aria-label="Question">Hi</x-fruit::message>'));

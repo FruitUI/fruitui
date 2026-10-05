@@ -15,3 +15,10 @@
         <x-fruit::button type="reset">Reset Signature</x-fruit::button>
     </div>
 </form>
+{{-- A channel's formats: Telegram supports bold, italic and links, so the toolbar offers only those, and
+     shortcuts and pasted content cannot add other markup. Undo and Redo always stay. --}}
+<form class="f-stack" id="editor-formats-example" @submit.prevent>
+    <label class="f-label" for="gallery-chat-editor">Telegram Message</label>
+    <x-fruit::editor id="gallery-chat-editor" name="message" :formats="['bold', 'italic', 'link']" aria-describedby="gallery-chat-editor-help"></x-fruit::editor>
+    <p class="f-help" id="gallery-chat-editor-help">Bold, italic and links, as this channel supports.</p>
+</form>

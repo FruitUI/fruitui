@@ -112,7 +112,7 @@ test('editor emits input while editing and change and blur once on leaving the w
   await editor.press('ControlOrMeta+a');
   await editor.pressSequentially('Hello');
   expect(await page.evaluate(() => window.events.filter(type => type === 'change'))).toEqual([]);
-  await page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true }).click();
+  await page.locator('#editor-example').getByRole('button', { name: 'Bold', exact: true }).click();
   expect(await page.evaluate(() => window.events.filter(type => type === 'blur'))).toEqual([]);
   await page.getByRole('button', { name: 'Set Signature Externally' }).focus();
   expect(await page.evaluate(() => window.events.filter(type => type === 'change'))).toEqual(['change']);

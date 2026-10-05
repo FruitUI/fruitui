@@ -221,7 +221,7 @@ test('in-page tabs change panels with keyboard while section links stay links', 
 test('rich editing submits HTML and supports formatting, external updates, reset and readonly', async ({ page }) => {
   await signature(page).fill('Hello Sophie');
   await signature(page).press('ControlOrMeta+a');
-  await page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true }).click();
+  await page.locator('#editor-example').getByRole('button', { name: 'Bold', exact: true }).click();
   await expect(signature(page).locator('strong')).toHaveText('Hello Sophie');
   expect(await value(page, '#editor-example', 'signature')).toContain('<strong>Hello Sophie</strong>');
   await page.getByRole('button', { name: 'Set Signature Externally' }).click();
@@ -232,7 +232,7 @@ test('rich editing submits HTML and supports formatting, external updates, reset
     textarea.readOnly = true;
   });
   await expect(signature(page)).toHaveAttribute('contenteditable', 'false');
-  await expect(page.locator('#component-editor').getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+  await expect(page.locator('#editor-example').getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
   await page.locator('#gallery-editor').evaluate(textarea => {
     textarea.disabled = true;
   });
@@ -290,7 +290,7 @@ for (const scheme of ['light', 'dark']) {
 
 test('helper destruction restores the native controls and removes generated UI', async ({ page }) => {
   await page
-    .locator('#component-combobox .f-combobox, #component-token-field .f-token-field, #component-editor .f-editor')
+    .locator('#component-combobox .f-combobox, #component-token-field .f-token-field, #editor-example .f-editor')
     .evaluateAll(async roots => {
       const { default: Alpine } = await import('/node_modules/alpinejs/dist/module.esm.js');
       for (const root of roots) Alpine.destroyTree(root);
@@ -303,7 +303,7 @@ test('helper destruction restores the native controls and removes generated UI',
   await expect(page.locator('#gallery-invites')).toHaveAttribute('name', 'invites');
   await expect(page.locator('#token-list-example input[type=hidden]')).toHaveCount(0);
   await expect(page.locator('#gallery-editor')).toBeVisible();
-  await expect(page.locator('#component-editor .tiptap')).toHaveCount(0);
+  await expect(page.locator('#editor-example .tiptap')).toHaveCount(0);
 });
 
 test('a busy button covers its label with a spinner, keeps its width and name, and ignores clicks', async ({

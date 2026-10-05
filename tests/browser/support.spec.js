@@ -264,6 +264,10 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
   await expect(entries.last()).toContainText('I’ll give that a try');
   const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
   await expect.poll(fromEnd).toBeLessThan(2);
+  // Alex's two quick replies: the name and avatar show once.
+  await expect(entries.nth(1).locator('.f-message')).not.toHaveClass(/f-message--continued/);
+  await expect(entries.nth(2).locator('.f-message')).toHaveClass(/f-message--continued/);
+  await expect(entries.nth(2).locator('.f-avatar')).toHaveCSS('visibility', 'hidden');
   // Compact rows: no line between messages.
   expect(await entries.nth(1).evaluate(element => getComputedStyle(element).borderTopStyle)).toBe('none');
   // Enter sends; the reply lands last, in view, and the composer keeps focus.

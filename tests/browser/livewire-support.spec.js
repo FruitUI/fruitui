@@ -504,6 +504,16 @@ test('a chat-channel conversation opens in the Chat view at its newest message a
   const messages = history.getByRole('article');
   await expect(messages.first()).toContainText('Since Monday new events no longer appear');
   await expect(messages.last()).toContainText('last week’s are still missing');
+  // A run from one person shows the name once; the second message keeps it for screen readers.
+  const followUp = messages.filter({ hasText: 'Let me ask Noah' });
+  await expect(followUp).toHaveClass(/f-message--continued/);
+  await expect(followUp.locator('.f-message__author')).toHaveText('Alex Morgan');
+  expect(
+    await followUp.locator('.f-message__identity').evaluate(element => element.getBoundingClientRect().width),
+  ).toBeLessThanOrEqual(1);
+  await expect(followUp.locator('.f-message__time')).toHaveCSS('opacity', '0');
+  await followUp.hover();
+  await expect(followUp.locator('.f-message__time')).toHaveCSS('opacity', '1');
   await expect.poll(fromEnd).toBeLessThan(2);
   // Enter sends from the docked composer; Livewire's re-render adds the reply at the bottom, in view.
   const composer = conversation(page).getByRole('textbox', { name: 'Message Lena Wilson' });
