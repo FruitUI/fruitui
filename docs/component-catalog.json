@@ -728,7 +728,7 @@
         "element": "`div`; optional status, alert or group role chosen by caller.",
         "state": "Message presence owned by application.",
         "keyboard": "Independent actions retain native behavior.",
-        "options": "Tone: info, success, warning, danger; content, icon, actions slots."
+        "options": "Tone: info, success, warning, danger; content, icon, actions slots. Actions sit beside the text; when they don't fit beside a readable width of text, they wrap to a row under it."
       }
     }
   },

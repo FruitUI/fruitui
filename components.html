@@ -1108,6 +1108,11 @@
     <div class="f-alert f-alert--warning">
         <div class="f-alert__body"><strong>Reconnect your mailbox</strong><br>Mail delivery is paused until you reconnect.</div>
     </div>
+    
+    <div class="f-alert f-alert--warning">
+        <div class="f-alert__body">Images from other servers are not shown.</div>
+    <div class="f-alert__actions"><button type="button" class="f-button f-button--ghost f-button--small">Show Images</button>
+            <button type="button" class="f-button f-button--ghost f-button--small">Always Show Images From sophie@example.com</button></div></div>
     <div class="f-alert f-alert--danger">
         <div class="f-alert__body"><strong>Could not save</strong><br>Check your connection and try again.</div>
     </div>
@@ -1115,6 +1120,14 @@
     &lt;x-fruit::alert&gt;&lt;strong&gt;A little context&lt;/strong&gt;&lt;br&gt;Messages are saved for this visit.&lt;/x-fruit::alert&gt;
     &lt;x-fruit::alert tone=&quot;success&quot;&gt;&lt;strong&gt;All set&lt;/strong&gt;&lt;br&gt;Your changes have been saved.&lt;/x-fruit::alert&gt;
     &lt;x-fruit::alert tone=&quot;warning&quot;&gt;&lt;strong&gt;Reconnect your mailbox&lt;/strong&gt;&lt;br&gt;Mail delivery is paused until you reconnect.&lt;/x-fruit::alert&gt;
+    {{-- Actions sit beside the text; when they don&apos;t fit, they wrap to a row under it. --}}
+    &lt;x-fruit::alert tone=&quot;warning&quot;&gt;
+        Images from other servers are not shown.
+        &lt;x-slot:actions&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; size=&quot;small&quot;&gt;Show Images&lt;/x-fruit::button&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; size=&quot;small&quot;&gt;Always Show Images From sophie@example.com&lt;/x-fruit::button&gt;
+        &lt;/x-slot:actions&gt;
+    &lt;/x-fruit::alert&gt;
     &lt;x-fruit::alert tone=&quot;danger&quot;&gt;&lt;strong&gt;Could not save&lt;/strong&gt;&lt;br&gt;Check your connection and try again.&lt;/x-fruit::alert&gt;
 &lt;/div&gt;</pre></details></section>
 <section id="component-menu" data-component="menu" class="f-card component-card"><h2>Action Menu</h2><p>Arrow keys, Home/End, type-ahead, Escape, and outside dismissal through the existing Alpine instance.</p><!-- blade:menu --><div x-data="{ action: 'No action yet' }">

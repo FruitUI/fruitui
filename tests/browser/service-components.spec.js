@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import { expectAccessible } from './helpers.js';
 
 const combo = page => page.getByRole('combobox', { name: 'Assign Conversation' });
@@ -559,6 +560,61 @@ test('a split button menu trigger matches the height of the button beside it', a
         }),
       );
       for (const edge of edges) expect(edge, path).toEqual(edges[0]);
+    }
+  }
+});
+
+test('alert actions wrap below the text when they don’t fit beside it, never squeezing it', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  const actions =
+    '<div class="f-alert__actions"><button class="f-button f-button--ghost f-button--small" type="button">Show Images</button><button class="f-button f-button--ghost f-button--small" type="button">Always Show Images From sophie@example.com</button></div>';
+  const icon = '<span class="f-alert__icon" aria-hidden="true"><svg class="f-icon" viewBox="0 0 24 24"></svg></span>';
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    ${[900, 500, 320, 240]
+      .flatMap(width => [
+        `<div style="width: ${width}px" data-width="${width}"><div class="f-alert f-alert--warning"><div class="f-alert__body">Images from other servers are not shown.</div>${actions}</div></div>`,
+        `<div style="width: ${width}px" data-width="${width}" data-icon><div class="f-alert f-alert--warning">${icon}<div class="f-alert__body">Images from other servers are not shown.</div>${actions}</div></div>`,
+      ])
+      .join('')}</body></html>`);
+  const layouts = await page.locator('[data-width]').evaluateAll(frames =>
+    frames.map(frame => {
+      const box = selector => frame.querySelector(selector).getBoundingClientRect();
+      const [alert, body, actions] = [box('.f-alert'), box('.f-alert__body'), box('.f-alert__actions')];
+      return {
+        width: Number(frame.dataset.width),
+        icon: frame.hasAttribute('data-icon'),
+        body: body.width,
+        beside: Math.abs(actions.top - body.top) < 1,
+        below: actions.top >= body.bottom,
+        trailing: alert.right - actions.right,
+        aligned: Math.abs(actions.left - body.left) < 1,
+        iconLine: frame.querySelector('.f-alert__icon') ? Math.abs(box('.f-alert__icon').top - body.top) < 1 : true,
+      };
+    }),
+  );
+  // A label longer than the alert wraps inside its button instead of widening it.
+  expect(
+    await page
+      .locator('[data-width] .f-alert')
+      .evaluateAll(alerts =>
+        alerts.every(
+          alert => alert.scrollWidth <= alert.clientWidth && alert.offsetWidth <= alert.parentElement.clientWidth,
+        ),
+      ),
+  ).toBe(true);
+  for (const layout of layouts) {
+    const name = `${layout.width}px${layout.icon ? ' with an icon' : ''}`;
+    // The text keeps a readable width and stays beside the icon.
+    expect(layout.body, name).toBeGreaterThan(Math.min(250, layout.width - 90));
+    expect(layout.iconLine, name).toBe(true);
+    // Wide: the actions sit beside the text, at the trailing edge; narrower: on a row under the text,
+    // lined up with it past the icon.
+    if (layout.width === 900) {
+      expect(layout.beside, name).toBe(true);
+      expect(layout.trailing, name).toBeLessThan(20);
+    } else {
+      expect(layout.below, name).toBe(true);
+      expect(layout.aligned, name).toBe(true);
     }
   }
 });
