@@ -49,6 +49,12 @@
     justify-content: space-between;
     gap: 8px 16px;
   }
+  /* A Back Link above the title goes to the parent page, as settings drill down; its chevron lines
+     up with the title. */
+  .f-page__heading > .f-back {
+    margin-inline-start: -4px;
+    margin-bottom: 2px;
+  }
   .f-page__title {
     font-size: var(--f-text-2xl);
     font-weight: 700;

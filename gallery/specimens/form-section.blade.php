@@ -11,6 +11,8 @@
             <x-fruit::checkbox name="permissions[]" value="tags" checked>Manage tags</x-fruit::checkbox>
             <x-fruit::checkbox name="permissions[]" value="folders">Manage custom folders</x-fruit::checkbox>
         </x-fruit::fieldset>
+        {{-- A row that opens a sub-page, with its current value: a link, as settings drill down. --}}
+        <a class="f-form-row f-form-row--link" href="#component-form-section"><span>Connection</span><span class="f-form-row__value">SMTP · smtp.forma.example</span></a>
         <div class="f-form-row">
             <div>
                 <strong class="f-headline">Delete Mailbox</strong>

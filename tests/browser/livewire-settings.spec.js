@@ -4,11 +4,11 @@ import { expectAccessible } from './helpers.js';
 // Mailbox settings as a real Livewire 4 component (examples/laravel/settings.blade.php).
 const host = 'http://127.0.0.1:5180';
 
-async function openSettings(page, query = '') {
+async function openSettings(page, query = '', heading = 'Support Mailbox') {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${host}/settings${query}`);
-  await expect(page.getByRole('heading', { name: 'Support Mailbox', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible();
   return errors;
 }
 
@@ -34,20 +34,29 @@ test('grouped Field rows save through Livewire, report errors in place and show 
   expect(errors).toEqual([]);
 });
 
-test('mailbox tabs live in the URL and choices change the rows that follow', async ({ page }) => {
+test('the mailbox’s rows open its pages in the URL, and Back returns with the row showing the change', async ({
+  page,
+}) => {
   const errors = await openSettings(page);
-  const tabs = page.getByRole('navigation', { name: 'Mailbox settings' });
-  await tabs.getByRole('link', { name: 'Connection' }).click();
-  await expect(page).toHaveURL(/tab=connection/);
-  await expect(tabs.getByRole('link', { name: 'Connection' })).toHaveAttribute('aria-current', 'page');
+  // Each further page is a row with its current value: a link that opens in a new tab too.
+  const connection = page.getByRole('link', { name: /^Connection/ });
+  await expect(connection).toHaveText(/SMTP · smtp\.forma\.example/);
+  await expect(connection).toHaveAttribute('href', '?section=connection');
+  await expect(page.getByRole('link', { name: /^Auto Reply/ })).toHaveText(/Off/);
+  await connection.click();
+  await expect(page).toHaveURL(/section=connection/);
+  await expect(page.getByRole('heading', { name: 'Connection', level: 1 })).toBeVisible();
   await expect(page.getByRole('radio', { name: 'The server’s mail' })).toHaveAccessibleDescription(
     'Simple, but more likely to reach spam.',
   );
   await expect(page.getByLabel('Server', { exact: true })).toBeVisible();
   await page.getByRole('radio', { name: 'The server’s mail' }).check();
   await expect(page.getByLabel('Server', { exact: true })).toHaveCount(0);
-
-  await openSettings(page, '?tab=auto-reply');
+  // Back, above the title, goes to the mailbox; its row shows the unsaved choice.
+  await page.getByRole('link', { name: 'Support Mailbox' }).click();
+  await expect(page.getByRole('heading', { name: 'Support Mailbox', level: 1 })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Connection/ })).toHaveText(/The server’s mail/);
+  await openSettings(page, '?section=auto-reply', 'Auto Reply');
   const reply = page.getByRole('switch', { name: 'Send an automatic reply' });
   await expect(reply).toHaveAccessibleDescription('To the first message of every new conversation.');
   await expect(page.getByLabel('Subject', { exact: true })).toBeDisabled();
@@ -68,8 +77,12 @@ test('mailbox tabs live in the URL and choices change the rows that follow', asy
 for (const colorScheme of ['light', 'dark']) {
   test(`the Livewire settings are accessible in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
-    for (const tab of ['general', 'connection', 'auto-reply']) {
-      await openSettings(page, `?tab=${tab}`);
+    for (const [query, heading] of [
+      ['', 'Support Mailbox'],
+      ['?section=connection', 'Connection'],
+      ['?section=auto-reply', 'Auto Reply'],
+    ]) {
+      await openSettings(page, query, heading);
       await expectAccessible(page);
     }
   });
@@ -92,7 +105,7 @@ test('Delete Mailbox asks with the layout confirmer before calling Livewire', as
 test('the forwarding address copies from its joined field', async ({ page, context, browserName }) => {
   test.skip(browserName !== 'chromium', 'Clipboard permissions are a Chromium feature.');
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  const errors = await openSettings(page, '?tab=connection');
+  const errors = await openSettings(page, '?section=connection', 'Connection');
   await expect(page.getByLabel('Forwarding address', { exact: true })).toHaveValue(
     'support-7f3a@inbound.forma.example',
   );

@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/settings.html');
 });
 
-test('Settings is linked from every example and its pages and mailbox tabs follow the URL', async ({ page }) => {
+test('Settings is linked from every example, and its pages follow the URL', async ({ page }) => {
   for (const path of ['/', '/support.html', '/chat.html', '/admin.html', '/components.html']) {
     await page.goto(path);
     await expect(
@@ -19,24 +19,70 @@ test('Settings is linked from every example and its pages and mailbox tabs follo
   await page.goto('/settings.html');
   await expect(sidebar(page).getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('region', { name: 'Company' })).toBeVisible();
-  await sidebar(page).getByRole('link', { name: 'Support Mailbox' }).click();
-  await expect(page).toHaveURL(/#\/mailbox$/);
-  const tabs = page.getByRole('navigation', { name: 'Mailbox settings' });
-  await expect(tabs.getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
-  // The page spaces its section tabs from the content.
-  const gap = await page.evaluate(() => {
-    const nav = document.querySelector('.f-page__nav').getBoundingClientRect();
-    return document.querySelector('.f-page__body .f-form-section').getBoundingClientRect().top - nav.bottom;
-  });
-  expect(gap).toBe(24);
-  await tabs.getByRole('link', { name: 'Connection' }).click();
-  await expect(page).toHaveURL(/#\/mailbox\/connection$/);
-  await expect(page.getByRole('region', { name: 'Sending' })).toBeVisible();
+  await sidebar(page).getByRole('link', { name: 'Profile' }).click();
+  await expect(page).toHaveURL(/#\/profile$/);
+  await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeVisible();
+});
+
+test('mailbox settings live in one place: Mailboxes, a mailbox, then its pages, with Back a level up', async ({
+  page,
+}) => {
+  const links = sidebar(page).getByRole('link');
+  const count = await links.count();
+  const mailboxes = sidebar(page).getByRole('link', { name: 'Mailboxes' });
+  const back = workspace(page).locator('.settings-toolbar .f-back');
+  const title = page.getByRole('heading', { level: 2 });
+  await mailboxes.click();
+  await expect(page).toHaveURL(/#\/mailboxes$/);
+  await expect(title).toHaveText('Mailboxes');
+  // Beside the sidebar, the top level needs no Back.
+  await expect(back).toBeHidden();
+  const list = page.getByRole('region', { name: 'Mailboxes' });
+  await expect(list.getByRole('link')).toHaveText([
+    /Support.*support@forma\.example.*2 people/,
+    /Billing.*billing@forma\.example.*1 person/,
+    /Feedback.*feedback@forma\.example.*3 people/,
+  ]);
+  await list.getByRole('link', { name: /^Billing/ }).click();
+  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
+  await expect(title).toHaveText('Billing');
+  await expect(title).toBeFocused();
+  await expect(back).toHaveText('Mailboxes');
+  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('billing@forma.example');
+  await expect(page.getByRole('link', { name: 'Open Mailbox' })).toBeVisible();
+  // A row per further page, with its current value.
+  const row = name => page.getByRole('link', { name: new RegExp(`^${name}`) });
+  await expect(row('Connection')).toHaveText(/SMTP · smtp\.forma\.example/);
+  await expect(row('Permissions')).toHaveText(/1 person/);
+  await expect(row('Auto Reply')).toHaveText(/On/);
+  await row('Connection').click();
+  await expect(page).toHaveURL(/#\/mailboxes\/billing\/connection$/);
+  await expect(title).toHaveText('Connection');
+  await expect(back).toHaveText('Billing');
+  await expect(page.getByRole('link', { name: 'Open Mailbox' })).toBeHidden();
   // The SMTP rows follow the radio choice.
   await page.getByRole('radio', { name: 'The server’s mail' }).check();
   await expect(page.getByLabel('Server', { exact: true })).toHaveCount(0);
-  await page.getByRole('radio', { name: 'SMTP', exact: true }).check();
-  await expect(page.getByLabel('Server', { exact: true })).toHaveValue('smtp.forma.example');
+  // Back goes up a level, to the row you came from, which shows the change.
+  await back.click();
+  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
+  await expect(row('Connection')).toBeFocused();
+  await expect(row('Connection')).toHaveText(/The server’s mail/);
+  await back.click();
+  await expect(page).toHaveURL(/#\/mailboxes$/);
+  await expect(list.getByRole('link', { name: /^Billing/ })).toBeFocused();
+  // The sidebar never changes on the way: Mailboxes stays current, and nothing is added to it.
+  await expect(mailboxes).toHaveAttribute('aria-current', 'page');
+  await expect(links).toHaveCount(count);
+  // Each mailbox keeps its own values, saved together.
+  await list.getByRole('link', { name: /^Support/ }).click();
+  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('support@forma.example');
+  await expect(row('Connection')).toHaveText(/SMTP/);
+  await expect(workspace(page).locator('.settings-save [role="status"]')).toHaveText('You have unsaved changes.');
+  // Links to the earlier single mailbox open the Support mailbox.
+  await page.goto('/settings.html#/mailbox/connection');
+  await expect(page).toHaveURL(/#\/mailboxes\/support\/connection$/);
+  await expect(title).toHaveText('Connection');
 });
 
 test('rows label their controls and describe them, and the save bar saves, reverts and validates', async ({ page }) => {
@@ -84,6 +130,14 @@ test('compact layouts show the category list, then one page with a way back', as
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(sidebar(page).getByRole('link', { name: 'Profile' })).toBeFocused();
   await expectNoOverflow(page, '#settings');
+  // Within Mailboxes, Back goes up one level at a time, then to the category list.
+  await sidebar(page).getByRole('link', { name: 'Mailboxes' }).click();
+  await page.getByRole('link', { name: /^Feedback/ }).click();
+  await page.getByRole('link', { name: /^Permissions/ }).click();
+  await expect(page.getByRole('heading', { name: 'Permissions', level: 2 })).toBeVisible();
+  await expectNoOverflow(page, '#settings');
+  for (const parent of ['Feedback', 'Mailboxes', 'Settings']) await page.getByRole('button', { name: parent }).click();
+  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toBeFocused();
 });
 
 test('the destructive action asks first', async ({ page }) => {
@@ -101,9 +155,11 @@ for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });
     for (const hash of [
       '#/general',
-      '#/mailbox/general',
-      '#/mailbox/connection',
-      '#/mailbox/auto-reply',
+      '#/mailboxes',
+      '#/mailboxes/support',
+      '#/mailboxes/support/connection',
+      '#/mailboxes/support/permissions',
+      '#/mailboxes/support/auto-reply',
       '#/profile',
     ]) {
       await page.goto(`/settings.html${hash}`);
@@ -243,7 +299,7 @@ for (const colorScheme of ['light', 'dark']) {
 }
 
 test('a mailbox has a color from the named accents, saved and reverted with the page', async ({ page }) => {
-  await page.goto('/settings.html#/mailbox');
+  await page.goto('/settings.html#/mailboxes/support');
   const group = page.getByRole('radiogroup', { name: 'Color' });
   await expect(group.getByRole('radio')).toHaveCount(8);
   await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();

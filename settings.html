@@ -22,12 +22,12 @@
     <main x-data="settingsDemo">
       <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Settings that feel settled.</h1><p>Grouped, labelled and saved with care.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 05</span><fieldset class="f-segmented" aria-label="Settings Preview Size"><legend class="f-sr-only">Settings Preview Size</legend><label><input type="radio" name="settings-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="settings-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
       <div class="settings-container" :data-preview="preview">
-        <section id="settings" class="f-workspace settings-workspace" aria-label="Settings example" data-screen="list" :data-screen="screen">
+        <section id="settings" class="f-workspace settings-workspace" aria-label="Settings example" data-screen="list" :data-screen="screen" :data-nested="nested ? '' : null">
           <aside class="f-pane f-pane--column f-pane--scroll f-pane--border-end f-sidebar settings-sidebar">
             <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="saved.name">Alex Morgan</strong><small>Forma Account</small></div></div>
             <nav aria-label="Settings" x-ref="navigation">
               <a class="f-sidebar__item" href="#/general" @click="show()" :aria-current="page === 'general' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
-              <a class="f-sidebar__item" href="#/mailbox" @click="show()" :aria-current="page === 'mailbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Support Mailbox</a>
+              <a class="f-sidebar__item" href="#/mailboxes" @click="show()" :aria-current="page === 'mailboxes' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Mailboxes</a>
               <a class="f-sidebar__item" href="#/profile" @click="show()" :aria-current="page === 'profile' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
               <p class="f-sidebar__heading">Manage</p>
               <a class="f-sidebar__item" href="#/status" @click="show()" :aria-current="page === 'status' ? 'page' : null" :aria-label="'Status' + (problems.length ? ', ' + problems.length + ' need attention' : '')"><svg class="f-icon" aria-hidden="true"><use href="#i-activity"/></svg>Status<span class="f-badge f-badge--warning" x-show="problems.length" x-text="problems.length"></span></a>
@@ -36,14 +36,9 @@
           </aside>
 
           <form class="f-pane f-pane--column settings-content" x-ref="form" @submit.prevent="save()" novalidate>
-            <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="back()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2></header>
+            <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="up()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="parentTitle">Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2><span class="f-toolbar__spacer"></span><a class="f-button f-button--small" href="/support.html" x-show="mailboxId && !section" x-cloak>Open Mailbox</a></header>
             <div class="f-pane__scroll settings-scroll">
               <div class="f-page f-page--narrow settings-page" :class="{ 'f-page--narrow': page !== 'logs', 'f-page--wide': page === 'logs' }">
-                <template x-if="page === 'mailbox'"><div class="f-page__nav">
-                  <nav class="f-section-nav settings-tabs" aria-label="Mailbox settings">
-                    <template x-for="(label, key) in mailboxTabs" :key="key"><a :href="'#/mailbox/' + key" :aria-current="tab === key ? 'page' : null" x-text="label"></a></template>
-                  </nav>
-                </div></template>
                 <div class="f-page__body">
 
                 <template x-if="page === 'general'"><div class="settings-sections">
@@ -70,61 +65,75 @@
                   </section>
                 </div></template>
 
-                <template x-if="page === 'mailbox'"><div class="settings-sections">
-                  <template x-if="tab === 'general'"><div class="settings-sections">
-                    <section class="f-form-section" aria-labelledby="settings-mailbox-title">
-                      <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>
-                      <div class="f-form-section__rows">
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-name">Name</label><input class="f-input" id="settings-mailbox-name" name="mailboxName" x-model="draft.mailboxName" required maxlength="40"></div>
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email Address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="draft.mailboxEmail" required></div>
-                        <div class="f-form-row"><div><span class="f-label" id="settings-mailbox-color-label">Color</span><p class="f-help">Marks this mailbox’s conversations in All Inboxes and its icon in the sidebar.</p></div><div class="f-accent-picker" role="radiogroup" aria-labelledby="settings-mailbox-color-label"><label class="f-accent-picker__option" data-fruit-accent="blue" title="Blue"><input type="radio" name="mailboxColor" value="blue" x-model="draft.mailboxColor"><span class="f-sr-only">Blue</span></label><label class="f-accent-picker__option" data-fruit-accent="purple" title="Purple"><input type="radio" name="mailboxColor" value="purple" x-model="draft.mailboxColor"><span class="f-sr-only">Purple</span></label><label class="f-accent-picker__option" data-fruit-accent="pink" title="Pink"><input type="radio" name="mailboxColor" value="pink" x-model="draft.mailboxColor"><span class="f-sr-only">Pink</span></label><label class="f-accent-picker__option" data-fruit-accent="red" title="Red"><input type="radio" name="mailboxColor" value="red" x-model="draft.mailboxColor"><span class="f-sr-only">Red</span></label><label class="f-accent-picker__option" data-fruit-accent="orange" title="Orange"><input type="radio" name="mailboxColor" value="orange" x-model="draft.mailboxColor"><span class="f-sr-only">Orange</span></label><label class="f-accent-picker__option" data-fruit-accent="yellow" title="Yellow"><input type="radio" name="mailboxColor" value="yellow" x-model="draft.mailboxColor"><span class="f-sr-only">Yellow</span></label><label class="f-accent-picker__option" data-fruit-accent="green" title="Green"><input type="radio" name="mailboxColor" value="green" x-model="draft.mailboxColor"><span class="f-sr-only">Green</span></label><label class="f-accent-picker__option" data-fruit-accent="graphite" title="Graphite"><input type="radio" name="mailboxColor" value="graphite" x-model="draft.mailboxColor"><span class="f-sr-only">Graphite</span></label></div></div>
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-signature">Signature</label><textarea class="f-input" id="settings-signature" name="signature" rows="4" x-model="draft.signature" aria-describedby="settings-signature-help"></textarea><p class="f-help" id="settings-signature-help">Added below every reply from this mailbox.</p></div>
-                      </div>
-                    </section>
-                    <section class="f-form-section" aria-labelledby="settings-danger-title">
-                      <h3 class="f-form-section__title" id="settings-danger-title">Danger Zone</h3>
-                      <div class="f-form-section__rows">
-                        <div class="f-form-row"><div><strong class="f-headline">Delete Mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
-                      </div>
-                    </section>
-                  </div></template>
-                  <template x-if="tab === 'connection'"><div class="settings-sections">
-                    <section class="f-form-section" aria-labelledby="settings-sending-title">
-                      <h3 class="f-form-section__title" id="settings-sending-title">Sending</h3>
-                      <div class="f-form-section__rows">
-                        <fieldset class="f-fieldset"><legend>Send email with</legend>
-                          <div class="f-choice"><label class="f-check"><input type="radio" name="sending" value="php" x-model="draft.sending" aria-describedby="settings-php-help"><span>The server’s mail</span></label><p class="f-help f-choice__description" id="settings-php-help">Simple, but more likely to reach spam.</p></div>
-                          <label class="f-check"><input type="radio" name="sending" value="smtp" x-model="draft.sending"><span>SMTP</span></label>
-                        </fieldset>
-                        <template x-if="draft.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-host">Server</label><input class="f-input" id="settings-smtp-host" name="smtpHost" x-model="draft.smtpHost" required></div></template>
-                        <template x-if="draft.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-port">Port</label><input class="f-input" id="settings-smtp-port" type="number" name="smtpPort" x-model.number="draft.smtpPort" min="1" max="65535" required></div></template>
-                      </div>
-                      <p class="f-form-section__footer">Use port 587 with STARTTLS, or 465 with TLS.</p>
-                    </section>
-                  </div></template>
-                  <template x-if="tab === 'permissions'"><div class="settings-sections">
-                    <section class="f-form-section" aria-labelledby="settings-agents-title">
-                      <h3 class="f-form-section__title" id="settings-agents-title">Who Can Use This Mailbox</h3>
-                      <div class="f-form-section__rows">
-                        <fieldset class="f-fieldset"><legend class="f-sr-only">Agents</legend>
-                          <label class="f-check"><input type="checkbox" name="agents[]" value="alex" x-model="draft.agents"><span>Alex Morgan</span></label>
-                          <label class="f-check"><input type="checkbox" name="agents[]" value="mia" x-model="draft.agents"><span>Mia Patel</span></label>
-                          <label class="f-check"><input type="checkbox" name="agents[]" value="noah" x-model="draft.agents"><span>Noah Williams</span></label>
-                        </fieldset>
-                      </div>
-                      <p class="f-form-section__footer">Administrators can always open every mailbox.</p>
-                    </section>
-                  </div></template>
-                  <template x-if="tab === 'auto-reply'"><div class="settings-sections">
-                    <section class="f-form-section" aria-labelledby="settings-auto-title">
-                      <h3 class="f-form-section__title" id="settings-auto-title">Automatic Reply</h3>
-                      <div class="f-form-section__rows">
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-reply">Send an automatic reply</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-auto-reply" name="autoReply" x-model="draft.autoReply" aria-describedby="settings-auto-reply-help"><span></span></label><p class="f-help" id="settings-auto-reply-help">To the first message of every new conversation.</p></div>
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="draft.autoSubject" :disabled="!draft.autoReply" :required="draft.autoReply"></div>
-                        <div class="f-field f-field--row"><label class="f-label" for="settings-auto-body">Message</label><textarea class="f-input" id="settings-auto-body" name="autoBody" rows="4" x-model="draft.autoBody" :disabled="!draft.autoReply"></textarea></div>
-                      </div>
-                    </section>
-                  </div></template>
+                <!-- Mailboxes: one place for every mailbox's settings. The list opens a mailbox; its page
+                     holds the everyday settings and a row per further page with its current value, as
+                     settings drill down. Back (in the toolbar) goes up a level. -->
+                <template x-if="page === 'mailboxes' && !mailboxId"><div class="settings-sections">
+                  <section class="f-form-section" aria-label="Mailboxes">
+                    <div class="f-form-section__rows">
+                      <template x-for="(entry, id) in draft.mailboxes" :key="id"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + id" @click="show()" :data-mailbox="id"><span class="settings-mailbox"><svg class="f-icon settings-mailbox__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span><span x-text="entry.name"></span><small class="f-help" x-text="entry.email"></small></span></span><span class="f-form-row__value" x-text="people(entry)"></span></a></template>
+                    </div>
+                    <p class="f-form-section__footer">Each mailbox has its own address, signature, connection and people.</p>
+                  </section>
+                </div></template>
+                <template x-if="mailboxId && !section"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-mailbox-title">
+                    <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-name">Name</label><input class="f-input" id="settings-mailbox-name" name="mailboxName" x-model="box.name" required maxlength="40"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email Address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="box.email" required></div>
+                      <div class="f-form-row"><div><span class="f-label" id="settings-mailbox-color-label">Color</span><p class="f-help">Marks this mailbox’s conversations in All Inboxes and its icon in the sidebar.</p></div><div class="f-accent-picker" role="radiogroup" aria-labelledby="settings-mailbox-color-label"><label class="f-accent-picker__option" data-fruit-accent="blue" title="Blue"><input type="radio" name="mailboxColor" value="blue" x-model="box.color"><span class="f-sr-only">Blue</span></label><label class="f-accent-picker__option" data-fruit-accent="purple" title="Purple"><input type="radio" name="mailboxColor" value="purple" x-model="box.color"><span class="f-sr-only">Purple</span></label><label class="f-accent-picker__option" data-fruit-accent="pink" title="Pink"><input type="radio" name="mailboxColor" value="pink" x-model="box.color"><span class="f-sr-only">Pink</span></label><label class="f-accent-picker__option" data-fruit-accent="red" title="Red"><input type="radio" name="mailboxColor" value="red" x-model="box.color"><span class="f-sr-only">Red</span></label><label class="f-accent-picker__option" data-fruit-accent="orange" title="Orange"><input type="radio" name="mailboxColor" value="orange" x-model="box.color"><span class="f-sr-only">Orange</span></label><label class="f-accent-picker__option" data-fruit-accent="yellow" title="Yellow"><input type="radio" name="mailboxColor" value="yellow" x-model="box.color"><span class="f-sr-only">Yellow</span></label><label class="f-accent-picker__option" data-fruit-accent="green" title="Green"><input type="radio" name="mailboxColor" value="green" x-model="box.color"><span class="f-sr-only">Green</span></label><label class="f-accent-picker__option" data-fruit-accent="graphite" title="Graphite"><input type="radio" name="mailboxColor" value="graphite" x-model="box.color"><span class="f-sr-only">Graphite</span></label></div></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-signature">Signature</label><textarea class="f-input" id="settings-signature" name="signature" rows="4" x-model="box.signature" aria-describedby="settings-signature-help"></textarea><p class="f-help" id="settings-signature-help">Added below every reply from this mailbox.</p></div>
+                    </div>
+                  </section>
+                  <div class="f-form-section">
+                    <div class="f-form-section__rows">
+                      <template x-for="(label, key) in mailboxSections" :key="key"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + mailboxId + '/' + key" @click="show()" :data-section="key"><span x-text="label"></span><span class="f-form-row__value" x-text="summary(key)"></span></a></template>
+                    </div>
+                  </div>
+                  <section class="f-form-section" aria-labelledby="settings-danger-title">
+                    <h3 class="f-form-section__title" id="settings-danger-title">Danger Zone</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-form-row"><div><strong class="f-headline">Delete Mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
+                    </div>
+                  </section>
+                </div></template>
+                <template x-if="section === 'connection'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-sending-title">
+                    <h3 class="f-form-section__title" id="settings-sending-title">Sending</h3>
+                    <div class="f-form-section__rows">
+                      <fieldset class="f-fieldset"><legend>Send email with</legend>
+                        <div class="f-choice"><label class="f-check"><input type="radio" name="sending" value="php" x-model="box.sending" aria-describedby="settings-php-help"><span>The server’s mail</span></label><p class="f-help f-choice__description" id="settings-php-help">Simple, but more likely to reach spam.</p></div>
+                        <label class="f-check"><input type="radio" name="sending" value="smtp" x-model="box.sending"><span>SMTP</span></label>
+                      </fieldset>
+                      <template x-if="box.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-host">Server</label><input class="f-input" id="settings-smtp-host" name="smtpHost" x-model="box.smtpHost" required></div></template>
+                      <template x-if="box.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-port">Port</label><input class="f-input" id="settings-smtp-port" type="number" name="smtpPort" x-model.number="box.smtpPort" min="1" max="65535" required></div></template>
+                    </div>
+                    <p class="f-form-section__footer">Use port 587 with STARTTLS, or 465 with TLS.</p>
+                  </section>
+                </div></template>
+                <template x-if="section === 'permissions'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-agents-title">
+                    <h3 class="f-form-section__title" id="settings-agents-title">Who Can Use This Mailbox</h3>
+                    <div class="f-form-section__rows">
+                      <fieldset class="f-fieldset"><legend class="f-sr-only">Agents</legend>
+                        <label class="f-check"><input type="checkbox" name="agents[]" value="alex" x-model="box.agents"><span>Alex Morgan</span></label>
+                        <label class="f-check"><input type="checkbox" name="agents[]" value="mia" x-model="box.agents"><span>Mia Patel</span></label>
+                        <label class="f-check"><input type="checkbox" name="agents[]" value="noah" x-model="box.agents"><span>Noah Williams</span></label>
+                      </fieldset>
+                    </div>
+                    <p class="f-form-section__footer">Administrators can always open every mailbox.</p>
+                  </section>
+                </div></template>
+                <template x-if="section === 'auto-reply'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-auto-title">
+                    <h3 class="f-form-section__title" id="settings-auto-title">Automatic Reply</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-auto-reply">Send an automatic reply</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-auto-reply" name="autoReply" x-model="box.autoReply" aria-describedby="settings-auto-reply-help"><span></span></label><p class="f-help" id="settings-auto-reply-help">To the first message of every new conversation.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="box.autoSubject" :disabled="!box.autoReply" :required="box.autoReply"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-auto-body">Message</label><textarea class="f-input" id="settings-auto-body" name="autoBody" rows="4" x-model="box.autoBody" :disabled="!box.autoReply"></textarea></div>
+                    </div>
+                  </section>
                 </div></template>
 
                 <template x-if="page === 'profile'"><div class="settings-sections">

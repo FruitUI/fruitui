@@ -4,13 +4,29 @@
  */
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
 
-const pages = { general: 'General', mailbox: 'Support Mailbox', profile: 'Profile', status: 'Status', logs: 'Logs' };
-const mailboxTabs = {
-  general: 'General',
-  connection: 'Connection',
-  permissions: 'Permissions',
-  'auto-reply': 'Auto reply',
-};
+const pages = { general: 'General', mailboxes: 'Mailboxes', profile: 'Profile', status: 'Status', logs: 'Logs' };
+/**
+ * A mailbox's settings live in one place: Settings › Mailboxes › the mailbox. Its page holds the
+ * everyday settings and a row for each further page, with that page's current value, as settings
+ * drill down; Back goes up one level. Nothing is added to the sidebar on the way.
+ */
+const mailboxSections = { connection: 'Connection', permissions: 'Permissions', 'auto-reply': 'Auto Reply' };
+const agents = { alex: 'Alex Morgan', mia: 'Mia Patel', noah: 'Noah Williams' };
+
+const mailbox = (name, email, color, details = {}) => ({
+  name,
+  email,
+  color,
+  signature: 'Thanks,\nThe Forma team',
+  sending: 'smtp',
+  smtpHost: 'smtp.forma.example',
+  smtpPort: 587,
+  agents: ['alex', 'mia'],
+  autoReply: false,
+  autoSubject: 'We received your message',
+  autoBody: 'Thanks for writing. We usually reply within a day.',
+  ...details,
+});
 
 const defaults = () => ({
   company: 'Forma',
@@ -21,17 +37,14 @@ const defaults = () => ({
   manageTags: true,
   manageFolders: false,
   deleteConversations: false,
-  mailboxName: 'Support',
-  mailboxEmail: 'support@forma.example',
-  mailboxColor: 'blue',
-  signature: 'Thanks,\nThe Forma team',
-  sending: 'smtp',
-  smtpHost: 'smtp.forma.example',
-  smtpPort: 587,
-  agents: ['alex', 'mia'],
-  autoReply: false,
-  autoSubject: 'We received your message',
-  autoBody: 'Thanks for writing. We usually reply within a day.',
+  mailboxes: {
+    support: mailbox('Support', 'support@forma.example', 'blue'),
+    billing: mailbox('Billing', 'billing@forma.example', 'green', { agents: ['alex'], autoReply: true }),
+    feedback: mailbox('Feedback', 'feedback@forma.example', 'purple', {
+      sending: 'php',
+      agents: ['alex', 'mia', 'noah'],
+    }),
+  },
   name: 'Alex Morgan',
   email: 'alex@forma.example',
   language: 'en',
@@ -42,13 +55,16 @@ const defaults = () => ({
 export function settingsDemo() {
   return {
     page: 'general',
-    tab: 'general',
+    // Under Mailboxes: the open mailbox, and which of its further pages ('' for its own page).
+    mailboxId: null,
+    section: '',
     // Compact layouts show the category list or one page.
     screen: 'list',
     saved: defaults(),
     draft: defaults(),
     pages,
-    mailboxTabs,
+    mailboxSections,
+    agents,
     // System: Status reports problems with their fixes; Logs shows what happened.
     systemInfo,
     requirements,
@@ -107,8 +123,31 @@ export function settingsDemo() {
       const query = this.logQuery.trim().toLowerCase();
       return (this.logs.app.files[this.logFile] ?? []).filter(line => !query || line.toLowerCase().includes(query));
     },
+    /** The open mailbox's draft, which its fields edit. */
+    get box() {
+      return this.draft.mailboxes[this.mailboxId];
+    },
+    /** A mailbox or one of its pages: Back goes up a level, also where the sidebar is in view. */
+    get nested() {
+      return Boolean(this.mailboxId);
+    },
     get title() {
-      return this.page === 'mailbox' ? `${pages.mailbox} · ${mailboxTabs[this.tab]}` : pages[this.page];
+      if (this.section) return mailboxSections[this.section];
+      return this.mailboxId ? this.box.name || 'Mailbox' : pages[this.page];
+    },
+    get parentTitle() {
+      if (!this.nested) return 'Settings';
+      return this.section ? this.box.name || 'Mailbox' : pages.mailboxes;
+    },
+    people(box) {
+      return box.agents.length === 1 ? '1 person' : `${box.agents.length} people`;
+    },
+    /** The current value a mailbox's page row shows for one of its further pages. */
+    summary(section) {
+      const box = this.box;
+      if (section === 'connection') return box.sending === 'smtp' ? `SMTP · ${box.smtpHost}` : 'The server’s mail';
+      if (section === 'permissions') return this.people(box);
+      return box.autoReply ? 'On' : 'Off';
     },
     get dirty() {
       return JSON.stringify(this.saved) !== JSON.stringify(this.draft);
@@ -122,13 +161,26 @@ export function settingsDemo() {
       window.addEventListener('hashchange', () => this.route());
     },
     route() {
-      const [, page, tab] = location.hash.split('/');
+      const [, page, id, section] = location.hash.split('/');
+      // Links to the single mailbox of earlier versions open the Support mailbox.
+      if (page === 'mailbox') return location.replace(`#/mailboxes/support${mailboxSections[id] ? `/${id}` : ''}`);
       this.page = pages[page] ? page : 'general';
-      this.tab = this.page === 'mailbox' && mailboxTabs[tab] ? tab : 'general';
+      this.mailboxId = this.page === 'mailboxes' && this.draft.mailboxes[id] ? id : null;
+      this.section = this.mailboxId && mailboxSections[section] ? section : '';
     },
     show() {
       this.screen = 'page';
       this.$nextTick(() => this.$refs.pageTitle.focus({ preventScroll: true }));
+    },
+    /** Back: up a level within Mailboxes, returning to the row you came from; else the category list. */
+    up() {
+      if (!this.nested) return this.back();
+      const [from, row] = this.section ? [this.section, 'section'] : [this.mailboxId, 'mailbox'];
+      location.hash = this.section ? `#/mailboxes/${this.mailboxId}` : '#/mailboxes';
+      this.route();
+      this.$nextTick(() =>
+        (this.$root.querySelector(`[data-${row}="${from}"]`) ?? this.$refs.pageTitle).focus({ preventScroll: true }),
+      );
     },
     back() {
       this.screen = 'list';

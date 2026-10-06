@@ -456,6 +456,14 @@ class ComponentContractsTest extends TestCase
         $plain = $this->xpath(Blade::render('<x-fruit::page><p>Rows</p></x-fruit::page>'));
         $this->assertSame(0, $plain->query('//header|//footer|//div[@class="f-page__nav"]')->length);
         $this->assertSame('f-page', $plain->query('//div[contains(@class, "f-page")]')->item(0)->getAttribute('class'));
+        // A Back Link to the parent page sits above the title, in the header.
+        $nested = $this->xpath(Blade::render('<x-fruit::page title="Connection"><x-slot:back><x-fruit::back-link href="/mailboxes/support">Support</x-fruit::back-link></x-slot:back><p>Rows</p></x-fruit::page>'));
+        $heading = $nested->query('//header[@class="f-page__header"]/div[@class="f-page__heading"]')->item(0);
+        $this->assertSame('a', $heading->firstElementChild->tagName);
+        $this->assertSame('/mailboxes/support', $heading->firstElementChild->getAttribute('href'));
+        $this->assertStringContainsString('f-back', $heading->firstElementChild->getAttribute('class'));
+        $this->assertSame('Connection', $heading->getElementsByTagName('h1')->item(0)->textContent);
+        $this->assertSame(1, $this->xpath(Blade::render('<x-fruit::page><x-slot:back><x-fruit::back-link href="/">Home</x-fruit::back-link></x-slot:back><p>Rows</p></x-fruit::page>'))->query('//header[@class="f-page__header"]//a')->length);
         $this->assertRejected('<x-fruit::page width="full">Rows</x-fruit::page>', 'page width must be one of');
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
     }

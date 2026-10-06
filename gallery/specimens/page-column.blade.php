@@ -1,7 +1,8 @@
-{{-- A page's content column, centered in its pane: title, description and actions, section tabs, the
+{{-- A page's content column, centered in its pane: a Back Link, title, description and actions, section tabs, the
      content, and a save bar that stays in view, all one width. width: narrow (forms, settings), medium, wide (tables). --}}
 <div style="max-height: 420px; overflow: auto; border: 1px solid var(--f-border); border-radius: var(--f-radius); background: var(--f-grouped-background)">
     <x-fruit::page width="narrow" title="Notifications" description="Choose what reaches you, and where." :level="3" style="--f-page-background: var(--f-grouped-background)">
+        <x-slot:back><x-fruit::back-link href="#component-page-column">Settings</x-fruit::back-link></x-slot:back>
         <x-slot:actions><x-fruit::button variant="ghost" size="small">Restore Defaults</x-fruit::button></x-slot:actions>
         <x-slot:nav>
             <x-fruit::section-nav aria-label="Preferences">

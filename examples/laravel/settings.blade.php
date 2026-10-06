@@ -1,7 +1,10 @@
 <?php
 
 /*
- * Mailbox settings as a Livewire 4 single-file component, in grouped sections: Section Nav links for the mailbox's pages, form sections of Field rows, and a save bar.
+ * Mailbox settings as a Livewire 4 single-file component, in grouped sections: the mailbox's page
+ * holds its everyday settings and a row for each further page with that page's current value, as
+ * settings drill down; a further page has a Back Link to the mailbox. Form sections of Field rows,
+ * and a save bar.
  * wire:dirty shows unsaved changes; Save validates on the server and confirms with a toast through
  * the page layout's single <x-fruit::toaster />. Delete Mailbox asks first through the layout's
  * <x-fruit::confirmer />.
@@ -13,19 +16,20 @@ use Livewire\Component;
 
 new class extends Component
 {
-    public const TABS = ['general' => 'General', 'connection' => 'Connection', 'auto-reply' => 'Auto reply'];
+    /** The mailbox's further pages, each opened from a row on its page. */
+    public const SECTIONS = ['connection' => 'Connection', 'auto-reply' => 'Auto Reply'];
 
     /** The address that receives this mailbox's forwarded email. */
     public const FORWARDING = 'support-7f3a@inbound.forma.example';
 
     #[Url]
-    public string $tab = 'general';
+    public string $section = '';
 
     public array $settings = [];
 
     public function mount(): void
     {
-        $this->tab = array_key_exists($this->tab, self::TABS) ? $this->tab : 'general';
+        $this->section = array_key_exists($this->section, self::SECTIONS) ? $this->section : '';
         $this->settings = session('fruit-settings', [
             'name' => 'Support',
             'email' => 'support@forma.example',
@@ -59,6 +63,16 @@ new class extends Component
         $this->mount();
     }
 
+    /** The current value a row shows for one of the mailbox's further pages. */
+    public function summary(string $section): string
+    {
+        if ($section === 'connection') {
+            return $this->settings['sending'] === 'smtp' ? 'SMTP · '.$this->settings['host'] : 'The server’s mail';
+        }
+
+        return $this->settings['autoReply'] ? 'On' : 'Off';
+    }
+
     public function deleteMailbox(): void
     {
         Fruit::toast('This sample mailbox stays.');
@@ -68,17 +82,15 @@ new class extends Component
 
 {{-- A narrow page column on the grouped background: the title, sections and save bar line up. --}}
 <form class="fruit-settings" wire:submit="save" style="min-height: 100dvh; background: var(--f-grouped-background)">
-<x-fruit::page width="narrow" title="Support Mailbox" style="--f-page-background: var(--f-grouped-background)">
+<x-fruit::page width="narrow" :title="$section ? $this::SECTIONS[$section] : 'Support Mailbox'" style="--f-page-background: var(--f-grouped-background)">
 
-    <x-slot:nav>
-        <x-fruit::section-nav aria-label="Mailbox settings">
-            @foreach ($this::TABS as $key => $label)
-                <a href="?tab={{ $key }}" wire:click.prevent="$set('tab', '{{ $key }}')" @if ($tab === $key) aria-current="page" @endif>{{ $label }}</a>
-            @endforeach
-        </x-fruit::section-nav>
-    </x-slot:nav>
+    @if ($section)
+        <x-slot:back>
+            <x-fruit::back-link :href="request()->url()" wire:click.prevent="$set('section', '')">Support Mailbox</x-fruit::back-link>
+        </x-slot:back>
+    @endif
 
-    @if ($tab === 'general')
+    @if ($section === '')
         <x-fruit::form-section title="Mailbox">
             <x-fruit::field label="Name" layout="row">
                 <x-fruit::input wire:model="settings.name" required maxlength="40" />
@@ -91,6 +103,13 @@ new class extends Component
             </x-fruit::field>
         </x-fruit::form-section>
 
+        {{-- A row per further page, with its current value; each is a link, so it opens in a new tab too. --}}
+        <x-fruit::form-section>
+            @foreach ($this::SECTIONS as $key => $label)
+                <a class="f-form-row f-form-row--link" href="?section={{ $key }}" wire:click.prevent="$set('section', '{{ $key }}')"><span>{{ $label }}</span><span class="f-form-row__value">{{ $this->summary($key) }}</span></a>
+            @endforeach
+        </x-fruit::form-section>
+
         <x-fruit::form-section title="Danger Zone">
             <div class="f-form-row">
                 <div>
@@ -100,7 +119,7 @@ new class extends Component
                 <x-fruit::button variant="danger" x-on:click="$confirm({ title: 'Delete this mailbox?', message: 'Its conversations are removed for everyone.', confirm: 'Delete Mailbox', tone: 'danger' }).then(confirmed => confirmed && $wire.deleteMailbox())">Delete Mailbox…</x-fruit::button>
             </div>
         </x-fruit::form-section>
-    @elseif ($tab === 'connection')
+    @elseif ($section === 'connection')
         <x-fruit::form-section title="Receiving">
             <x-fruit::field label="Forwarding address" layout="row" description="Forward this mailbox’s email here.">
                 <div class="f-input-group">

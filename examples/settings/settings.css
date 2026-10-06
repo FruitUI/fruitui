@@ -37,6 +37,11 @@
 .settings-toolbar .f-back {
   display: none;
 }
+/* Within Mailboxes, Back goes up a level (to the mailbox, or to the list), so it shows beside the
+   sidebar too. */
+.settings-workspace[data-nested] .settings-toolbar .f-back {
+  display: inline-flex;
+}
 .settings-scroll {
   padding: 0;
 }
@@ -46,6 +51,19 @@
 .settings-sections {
   display: grid;
   gap: 24px;
+}
+/* A mailbox row: its color (the mark the inbox uses), then its name over its address. */
+.settings-mailbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.settings-mailbox__icon {
+  color: var(--f-mark);
+}
+.settings-mailbox small {
+  display: block;
 }
 
 /* Compact layouts show the category list, then one page with a way back. */
