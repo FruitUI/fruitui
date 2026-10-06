@@ -1,6 +1,6 @@
 {{-- A chat column: a compact thread in a history that opens at the newest message and follows new ones;
      the composer stays docked below it. Scroll back to see Jump to Latest; sending returns to the newest message. --}}
-<div class="f-pane f-pane--column" style="height: 400px; border: 1px solid var(--f-border); border-radius: var(--f-radius)" x-data="{ sent: [], draft: '' }">
+<div class="f-pane f-pane--column" style="height: 400px; overflow: clip; border: 1px solid var(--f-border); border-radius: var(--f-radius)" x-data="{ sent: [], draft: '' }">
     <x-fruit::history aria-label="Conversation with Sophie Chen" style="--f-pane-scroll-padding: 16px">
         <x-fruit::divider>Yesterday</x-fruit::divider>
         <x-fruit::thread density="compact">

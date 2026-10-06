@@ -695,8 +695,17 @@
 }
 
 @layer fruit.components {
-  /* A message history read from the bottom up. Jump to Latest floats over the bottom of the scrolling
-     history once the reader has scrolled back. */
+  /* A message history read from the bottom up. It sits on the grouped background, and so do the
+     typing line and composer docked below it, so a chat reads as one at a glance, apart from a
+     letter-like email thread on the plain surface. Jump to Latest floats over the bottom of the
+     scrolling history once the reader has scrolled back. */
+  .f-history,
+  .f-history ~ .f-typing {
+    background: var(--f-history-background, var(--f-grouped-background));
+  }
+  .f-history ~ .f-composer {
+    --f-composer-background: var(--f-history-background, var(--f-grouped-background));
+  }
   .f-history__latest {
     position: sticky;
     bottom: 12px;

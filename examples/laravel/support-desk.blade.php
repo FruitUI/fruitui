@@ -399,9 +399,17 @@ new class extends Component
         <x-fruit::pane class="f-pane--column" role="region" aria-label="Conversation">
             @if ($ticket = $this->ticket)
                 <header class="f-toolbar">
-                    <div class="f-toolbar__group">
+                    <div class="f-toolbar__group" style="gap: 10px">
                         <x-fruit::avatar>{{ $ticket['initials'] }}</x-fruit::avatar>
-                        <h1 style="font-size: var(--f-text-xl)">{{ $ticket['subject'] }}</h1>
+                        @if (($ticket['channel'] ?? 'email') === 'chat')
+                            {{-- A chat leads with the person and the channel, as messaging apps do; an email with its subject. --}}
+                            <div>
+                                <h1 style="font-size: var(--f-text-lg)">{{ $ticket['name'] }}</h1>
+                                <p class="f-muted" style="font-size: var(--f-text-sm)">Website Chat</p>
+                            </div>
+                        @else
+                            <h1 style="font-size: var(--f-text-xl)">{{ $ticket['subject'] }}</h1>
+                        @endif
                         <x-fruit::badge>{{ $ticket['status'] === 'open' ? 'Open' : 'Closed' }}</x-fruit::badge>
                     </div>
                     <span class="f-toolbar__spacer"></span>

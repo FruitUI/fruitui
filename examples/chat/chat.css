@@ -771,7 +771,7 @@
 }
 .chat-typing {
   min-height: 28px;
-  margin: 0 20px;
+  padding-inline: 20px;
 }
 
 /* Stays at the bottom of the history while you read older messages. */

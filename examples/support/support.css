@@ -235,13 +235,29 @@
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
-/* A chat names the customer, not a subject, and keeps its heading short. */
+/* A chat leads with the person, as messaging apps do: their avatar and name, then the channel. An
+   email leads with its subject, like a letter. The status is in the toolbar above. */
 .support-conversation-heading.support-conversation-heading--chat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
   padding-block: 12px;
 }
+.support-conversation-avatar {
+  grid-row: span 2;
+  --f-avatar-size: 40px;
+}
 .support-conversation-heading.support-conversation-heading--chat h2 {
-  font-size: var(--f-text-xl);
+  font-size: var(--f-text-lg);
   letter-spacing: 0;
+  line-height: 1.3;
+}
+.support-conversation-heading.support-conversation-heading--chat .support-mailbox-detail {
+  margin-top: 2px;
+}
+.support-conversation-heading--chat .support-mailbox-detail .f-icon {
+  --f-icon-size: 14px;
 }
 .support-conversation-heading p {
   margin-top: 8px;
@@ -984,7 +1000,7 @@
   white-space: pre-line;
 }
 .support-mention {
-  color: var(--f-accent);
+  color: var(--f-accent-text);
   font-weight: 600;
 }
 .support-room-files {

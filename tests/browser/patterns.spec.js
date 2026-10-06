@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 test('Mail and Support consume the same conversation styles and preserve their variants', async ({ page }) => {
   for (const [path, listName, variant] of [
@@ -735,6 +735,16 @@ test('a message history opens at its newest message and follows what the docked 
   await expect.poll(fromEnd).toBeLessThan(2);
   await expect(jump).toBeHidden();
   await expect(history).toBeFocused();
+  // A chat sits on the grouped background, and so does the composer docked below it, apart from an
+  // email thread on the plain surface; --f-history-background chooses another surface for both.
+  const grouped = await tokenColor(page, '--f-grouped-background');
+  const composer = card.locator('.f-composer');
+  await expect(history).toHaveCSS('background-color', grouped);
+  await expect(composer).toHaveCSS('background-color', grouped);
+  await card.evaluate(element => element.style.setProperty('--f-history-background', 'rgb(1, 2, 3)'));
+  await expect(history).toHaveCSS('background-color', 'rgb(1, 2, 3)');
+  await expect(composer).toHaveCSS('background-color', 'rgb(1, 2, 3)');
+  await card.evaluate(element => element.style.removeProperty('--f-history-background'));
   await expectAccessible(page, '#component-history');
 });
 

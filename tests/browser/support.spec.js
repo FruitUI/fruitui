@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/support.html');
@@ -251,12 +251,25 @@ function ticket(page, id) {
   return page.locator(`button.support-ticket[data-ticket-id="${id}"]`);
 }
 test('a website-chat conversation opens in the Chat view, oldest first, at its newest message', async ({ page }) => {
+  // An email reads like a letter: its subject and status lead, on the plain surface.
+  const email = page.locator('#support-conversation');
+  await expect(email.locator('.support-conversation-overline')).toContainText('Open Conversation');
+  await expect(email.locator('.support-conversation-avatar')).toBeHidden();
+  await expect(email.locator('.support-thread')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await queue(page, 'Waiting').click();
   await page.locator('button.support-ticket', { hasText: 'Inviting a client' }).click();
   const conversation = page.locator('#support-conversation');
   await expect(conversation.getByRole('heading', { level: 2 })).toHaveText('Lena Wilson');
-  await expect(conversation).toContainText('Support · Website Chat');
+  // The header leads with the person and the channel; an email's leads with its subject and status.
+  const heading = conversation.locator('.support-conversation-heading');
+  await expect(heading.locator('.support-conversation-avatar')).toHaveText('LW');
+  await expect(heading.locator('.support-mailbox-detail')).toHaveText('Website Chat · Support');
+  await expect(heading.locator('.support-conversation-overline')).toBeHidden();
   const history = conversation.getByRole('region', { name: 'Chat with Lena Wilson' });
+  // The chat sits on the grouped background; an email thread stays on the plain surface.
+  const grouped = await tokenColor(page, '--f-grouped-background');
+  await expect(history).toHaveCSS('background-color', grouped);
+  await expect(conversation.locator('.support-chat-composer')).toHaveCSS('background-color', grouped);
   const messages = history.getByRole('list', { name: 'Messages' });
   await expect(messages).toHaveClass(/f-thread--compact/);
   const entries = messages.locator(':scope > li');

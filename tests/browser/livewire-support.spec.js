@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 // The Support reference interface as a real Livewire 4 component (examples/laravel/support-desk.blade.php).
 const host = 'http://127.0.0.1:5180';
@@ -498,6 +498,13 @@ test('a chat-channel conversation opens in the Chat view at its newest message a
     .click();
   const history = conversation(page).getByRole('region', { name: 'Chat with Lena Wilson' });
   await expect(history).toBeVisible();
+  // A chat's header leads with the person and the channel, not a subject; its history and composer
+  // sit on the chat surface, apart from an email's plain one.
+  await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('Lena Wilson');
+  await expect(conversation(page).locator('.f-toolbar')).toContainText('Website Chat');
+  const surface = await tokenColor(page, '--f-grouped-background');
+  await expect(history).toHaveCSS('background-color', surface);
+  await expect(conversation(page).locator('.f-composer')).toHaveCSS('background-color', surface);
   expect(await history.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
   const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
   // Oldest first; the history opens at the newest message.
