@@ -79,6 +79,15 @@ test('mailbox settings live in one place: Mailboxes, a mailbox, then its pages, 
   await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('support@forma.example');
   await expect(row('Connection')).toHaveText(/SMTP/);
   await expect(workspace(page).locator('.settings-save [role="status"]')).toHaveText('You have unsaved changes.');
+  // The toolbar keeps one height whether Back and Open Mailbox show or not.
+  const toolbar = workspace(page).locator('.settings-toolbar');
+  const heights = [];
+  for (const hash of ['#/general', '#/mailboxes', '#/mailboxes/support', '#/mailboxes/support/connection']) {
+    await page.goto(`/settings.html${hash}`);
+    await expect(title).toBeVisible();
+    heights.push(await toolbar.evaluate(element => element.getBoundingClientRect().height));
+  }
+  expect(new Set(heights).size).toBe(1);
   // Links to the earlier single mailbox open the Support mailbox.
   await page.goto('/settings.html#/mailbox/connection');
   await expect(page).toHaveURL(/#\/mailboxes\/support\/connection$/);

@@ -27,8 +27,11 @@
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
 }
+/* One height on every page: a 36px Back or Open Mailbox button fits within it, so the bar doesn't
+   grow when they appear. */
 .settings-toolbar {
   min-height: 52px;
+  padding-block: 8px;
   gap: 6px;
 }
 .settings-toolbar > h2 {
