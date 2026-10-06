@@ -301,3 +301,26 @@ test('a splitter changes only the cursor for a pointer and shows its line for ke
   expect(await line()).not.toBe('rgba(0, 0, 0, 0)');
   await expect(handle).not.toHaveCSS('outline-style', 'none');
 });
+
+test('an anchor deep in a pane scrolls only that pane, never the workspace frame', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setViewportSize({ width: 1000, height: 500 });
+  const messages = Array.from(
+    { length: 40 },
+    (_, index) => `<p id="thread-${index}" style="height: 80px">Message ${index}</p>`,
+  ).join('');
+  await page.setContent(`<!doctype html><html class="fruit-ui"><head><style>${css}</style></head><body style="margin: 0">
+    <div class="f-workspace f-workspace--fill" style="--f-workspace-rows: 64px minmax(0, 1fr); --f-workspace-columns: 200px minmax(0, 1fr)">
+      <header class="f-toolbar" style="grid-column: 1 / -1">Toolbar</header>
+      <nav class="f-sidebar" style="height: 900px">A column taller than the window makes the frame overflow.</nav>
+      <section class="f-pane f-pane--column"><div class="f-pane__scroll" id="pane">${messages}<button id="last">Last</button></div></section>
+    </div></body></html>`);
+  const frame = page.locator('.f-workspace');
+  // Fragment navigation, scrollIntoView and focus all scroll every scrollable ancestor.
+  await page.evaluate(() => (location.hash = '#thread-30'));
+  await page.evaluate(() => document.getElementById('thread-35').scrollIntoView());
+  await page.locator('#last').focus();
+  expect(await page.locator('#pane').evaluate(element => element.scrollTop)).toBeGreaterThan(1000);
+  expect(await frame.evaluate(element => element.scrollTop)).toBe(0);
+  await expect(page.locator('.f-toolbar')).toBeInViewport();
+});

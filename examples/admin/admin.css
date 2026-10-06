@@ -436,7 +436,7 @@
 }
 .admin-records {
   padding: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 .admin-records-heading {
   display: flex;
@@ -764,7 +764,7 @@
 }
 .admin-customer-detail {
   padding: 0;
-  overflow: hidden;
+  overflow: clip;
 }
 .admin-detail-heading {
   display: flex;
