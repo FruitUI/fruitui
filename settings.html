@@ -217,7 +217,7 @@
                 </div></template>
 
               </div>
-              <footer class="f-page__footer settings-save" :data-dirty="dirty" x-show="!systemPage">
+              <footer class="f-page__footer settings-save" :data-dirty="dirty" :hidden="systemPage">
                 <p class="f-help" role="status" x-text="dirty ? 'You have unsaved changes.' : 'All changes saved.'">All changes saved.</p>
                 <button class="f-button" type="button" @click="revert()" :disabled="!dirty" disabled>Revert</button>
                 <button class="f-button f-button--primary" type="submit" :disabled="!dirty" disabled>Save</button>

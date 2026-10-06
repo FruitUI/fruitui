@@ -154,8 +154,14 @@ test('Status lists what needs attention with its fix, until everything is workin
   await expect(status).toHaveAccessibleName('Status, 3 need attention');
   await status.click();
   await expect(page).toHaveURL(/#\/status$/);
-  // No save bar: Status changes nothing to save.
+  // No save bar: Status changes nothing to save, and its last section keeps the page's end spacing.
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeHidden();
+  const end = await page.locator('.settings-scroll').evaluate(scroller => {
+    scroller.scrollTop = scroller.scrollHeight;
+    const last = scroller.querySelector('.settings-sections > :last-child').getBoundingClientRect();
+    return scroller.getBoundingClientRect().bottom - last.bottom;
+  });
+  expect(end).toBeGreaterThanOrEqual(24);
   const attention = page.getByRole('region', { name: 'Needs Attention' });
   await expect(attention.locator('.settings-problem')).toHaveCount(3);
   await expect(attention.getByText('* * * * * php /var/www/forma/artisan schedule:run')).toBeVisible();
