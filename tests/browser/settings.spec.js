@@ -148,3 +148,90 @@ test('the accent color previews on the whole page and Revert restores it', async
   await expect.poll(fill).toBe(blue);
   await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
 });
+
+test('Status lists what needs attention with its fix, until everything is working', async ({ page }) => {
+  const status = sidebar(page).getByRole('link', { name: /^Status/ });
+  await expect(status).toHaveAccessibleName('Status, 3 need attention');
+  await status.click();
+  await expect(page).toHaveURL(/#\/status$/);
+  // No save bar: Status changes nothing to save.
+  await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeHidden();
+  const attention = page.getByRole('region', { name: 'Needs Attention' });
+  await expect(attention.locator('.settings-problem')).toHaveCount(3);
+  await expect(attention.getByText('* * * * * php /var/www/forma/artisan schedule:run')).toBeVisible();
+  // Each fix sits beside its problem.
+  await attention.getByRole('button', { name: 'Update Database' }).click();
+  await expect(attention.locator('.settings-problem')).toHaveCount(2);
+  const maintenance = page.getByRole('region', { name: 'Maintenance' });
+  await expect(maintenance.getByRole('button', { name: 'Update Database' })).toBeDisabled();
+  await expect(maintenance).toContainText('The database is up to date.');
+  await attention.getByRole('button', { name: 'Retry All' }).click();
+  await expect(page.getByRole('region', { name: 'Failed Jobs' })).toContainText('No failed jobs.');
+  await attention.getByRole('button', { name: 'Check Again' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Everything is working.' })).toBeVisible();
+  await expect(attention).toBeHidden();
+  await expect(status).toHaveAccessibleName('Status');
+  await expect(page.getByRole('region', { name: 'Background Tasks' })).toContainText('Last ran 1 minute ago');
+});
+
+test('Fetch Now runs with its options in a sheet, and Sign Out Everyone asks first', async ({ page }) => {
+  await page.goto('/settings.html#/status');
+  await page.getByRole('button', { name: 'Fetch Now…' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Fetch Emails Now' });
+  await expect(sheet.getByRole('spinbutton', { name: 'Days' })).toHaveValue('3');
+  await sheet.locator('label').filter({ hasText: /^All$/ }).click();
+  await expect(sheet.getByRole('radio', { name: 'All' })).toBeChecked();
+  await sheet.getByRole('switch', { name: 'Show Debug Output' }).check();
+  await sheet.getByRole('button', { name: 'Fetch', exact: true }).click();
+  await expect(sheet.getByRole('status')).toContainText('Fetching all emails from the last 3 days');
+  await expect(sheet.getByRole('status')).toContainText('[debug] Connecting');
+  await sheet.getByRole('button', { name: 'Done' }).click();
+  await expect(sheet).toBeHidden();
+  await page.getByRole('button', { name: 'Sign Out Everyone…' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Sign out everyone?' });
+  await expect(confirm.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  await confirm.getByRole('button', { name: 'Sign Out Everyone' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Everyone was signed out.' })).toBeVisible();
+});
+
+test('Logs shows one log at a time on a wide page, with details and a confirmed clear', async ({ page }) => {
+  await page.goto('/settings.html#/status');
+  const narrow = await page.locator('.settings-page').evaluate(element => element.getBoundingClientRect().width);
+  await sidebar(page).getByRole('link', { name: 'Logs' }).click();
+  // Tables get the wide column; settings pages keep the narrow one.
+  await expect
+    .poll(() => page.locator('.settings-page').evaluate(element => element.getBoundingClientRect().width))
+    .toBeGreaterThan(narrow);
+  const table = page.getByRole('table', { name: 'Outgoing Emails' });
+  await expect(table.getByRole('row')).toHaveCount(6);
+  await table.getByRole('button', { name: 'Details for Reply, Oct 6, 09:12' }).click();
+  const details = page.getByRole('dialog', { name: 'Reply · Oct 6, 09:12' });
+  await expect(details).toContainText('Retrying in 5 minutes.');
+  await details.getByRole('button', { name: 'Done' }).click();
+  await page.getByRole('combobox', { name: 'Log' }).selectOption('send-errors');
+  await expect(page.getByRole('table', { name: 'Send Errors' }).getByRole('row')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Clear Log…' }).click();
+  await page
+    .getByRole('alertdialog', { name: 'Clear Send Errors?' })
+    .getByRole('button', { name: 'Clear Log' })
+    .click();
+  await expect(page.getByRole('heading', { name: 'This log is empty.' })).toBeVisible();
+  // App logs are files: choose one and search its lines.
+  await page.getByRole('combobox', { name: 'Log' }).selectOption('app');
+  await page.getByRole('searchbox', { name: 'Search the Log' }).fill('certificate');
+  await expect(page.locator('.settings-page .settings-log-lines')).toHaveText(/IMAP certificate expired/);
+  await expect(page.locator('.settings-page .settings-log-lines')).not.toContainText('quota');
+  await expectNoOverflow(page.locator('#settings .f-pane__scroll'));
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`Status and Logs are accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/settings.html#/status');
+    await expect(page.getByRole('region', { name: 'Needs Attention' })).toBeVisible();
+    await expectAccessible(page, '#settings');
+    await page.goto('/settings.html#/logs');
+    await expect(page.getByRole('table', { name: 'Outgoing Emails' })).toBeVisible();
+    await expectAccessible(page, '#settings');
+  });
+}

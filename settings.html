@@ -28,13 +28,16 @@
               <a class="f-sidebar__item" href="#/general" @click="show()" :aria-current="page === 'general' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
               <a class="f-sidebar__item" href="#/mailbox" @click="show()" :aria-current="page === 'mailbox' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Support Mailbox</a>
               <a class="f-sidebar__item" href="#/profile" @click="show()" :aria-current="page === 'profile' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
+              <p class="f-sidebar__heading">Manage</p>
+              <a class="f-sidebar__item" href="#/status" @click="show()" :aria-current="page === 'status' ? 'page' : null" :aria-label="'Status' + (problems.length ? ', ' + problems.length + ' need attention' : '')"><svg class="f-icon" aria-hidden="true"><use href="#i-activity"/></svg>Status<span class="f-badge f-badge--warning" x-show="problems.length" x-text="problems.length"></span></a>
+              <a class="f-sidebar__item" href="#/logs" @click="show()" :aria-current="page === 'logs' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-logs"/></svg>Logs</a>
             </nav>
           </aside>
 
           <form class="f-pane f-pane--column settings-content" x-ref="form" @submit.prevent="save()" novalidate>
             <header class="f-toolbar settings-toolbar"><button class="f-button f-button--ghost f-back" type="button" @click="back()"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></button><h2 class="f-headline" x-ref="pageTitle" tabindex="-1" x-text="title">General</h2></header>
             <div class="f-pane__scroll settings-scroll">
-              <div class="f-page f-page--narrow settings-page">
+              <div class="f-page f-page--narrow settings-page" :class="{ 'f-page--narrow': page !== 'logs', 'f-page--wide': page === 'logs' }">
                 <template x-if="page === 'mailbox'"><div class="f-page__nav">
                   <nav class="f-section-nav settings-tabs" aria-label="Mailbox settings">
                     <template x-for="(label, key) in mailboxTabs" :key="key"><a :href="'#/mailbox/' + key" :aria-current="tab === key ? 'page' : null" x-text="label"></a></template>
@@ -141,8 +144,80 @@
                   </section>
                 </div></template>
 
+                <!-- Status: is everything working? Problems come first, each with its fix; then what the
+                     server is, the background tasks and jobs, and rarely used maintenance at the end. -->
+                <template x-if="page === 'status'"><div class="settings-sections">
+                  <p class="settings-status-ok" role="status" x-show="!problems.length"><svg class="f-icon" aria-hidden="true"><use href="#i-check-circle"/></svg>Everything is working.</p>
+                  <section class="f-form-section" aria-labelledby="settings-attention-title" x-show="problems.length">
+                    <h3 class="f-form-section__title" id="settings-attention-title">Needs Attention</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="problem in problems" :key="problem.id">
+                        <div class="f-form-row settings-problem"><svg class="f-icon settings-problem__icon" aria-hidden="true"><use href="#i-alert"/></svg><div><strong class="f-headline" x-text="problem.text"></strong><p class="f-help" x-text="problem.detail"></p><template x-if="problem.command"><div class="settings-command"><code x-text="problem.command"></code><span class="f-copy" x-data="fruitCopy" data-fruit-copied-message="Copied" data-fruit-failed-message="Could not copy"><button class="f-button f-button--ghost f-button--small" type="button" :data-fruit-copy="problem.command">Copy</button><span class="f-sr-only" role="status"></span></span></div></template></div><button class="f-button" type="button" @click="problem.run()" x-text="problem.action"></button></div>
+                      </template>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-info-title">
+                    <h3 class="f-form-section__title" id="settings-info-title">Info</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="row in systemInfo" :key="row[0]"><div class="f-form-row"><span x-text="row[0]"></span><span class="settings-value" x-text="row[1]"></span></div></template>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-requirements-title">
+                    <h3 class="f-form-section__title" id="settings-requirements-title">Requirements</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="requirement in requirements" :key="requirement.name"><div class="f-form-row"><span x-text="requirement.name"></span><span class="settings-value"><svg class="f-icon settings-ok-icon" aria-hidden="true"><use href="#i-check-circle"/></svg><span x-text="requirement.summary"></span></span></div></template>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-tasks-title">
+                    <h3 class="f-form-section__title" id="settings-tasks-title">Background Tasks</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="task in tasks" :key="task.id"><div class="f-form-row"><div><span x-text="task.name"></span><p class="f-help" x-text="task.detail"></p></div><div class="settings-row-end"><span class="settings-value" :class="{ 'settings-value--warning': task.id === 'fetch' && !fetchRunning }" x-text="taskStatus(task)"></span><template x-if="task.id === 'fetch'"><button class="f-button f-button--small" type="button" @click="openFetch">Fetch Now…</button></template></div></div></template>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-jobs-title">
+                    <h3 class="f-form-section__title" id="settings-jobs-title">Failed Jobs</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="job in failedJobs" :key="job.id"><div class="f-form-row"><div><span x-text="job.title"></span> <a :href="'/support.html#conversation-' + job.conversation" x-text="'#' + job.conversation"></a><p class="f-help" x-text="job.failed + ' · ' + job.error"></p></div><button class="f-button f-button--small" type="button" @click="retryJob(job.id)" :aria-label="'Retry ' + job.title">Retry</button></div></template>
+                      <div class="f-form-row" x-show="!failedJobs.length"><span class="f-help">No failed jobs.</span></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-maintenance-title">
+                    <h3 class="f-form-section__title" id="settings-maintenance-title">Maintenance</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-form-row"><div><span>Clear Cache</span><p class="f-help">Rebuilds cached settings and pages. Safe at any time.</p></div><button class="f-button" type="button" @click="clearCache">Clear Cache</button></div>
+                      <div class="f-form-row"><div><span>Update Database</span><p class="f-help" x-text="migrationsPending ? 'Updates are waiting to be applied.' : 'The database is up to date.'"></p></div><button class="f-button" type="button" @click="updateDatabase" :disabled="!migrationsPending">Update Database</button></div>
+                      <div class="f-form-row"><div><span>Sign Out Everyone</span><p class="f-help">Ends every session, including yours.</p></div><button class="f-button f-button--danger" type="button" @click="signOutEveryone">Sign Out Everyone…</button></div>
+                    </div>
+                  </section>
+                </div></template>
+
+                <!-- Logs: one log at a time, chosen from a menu rather than a second row of tabs; a wide page,
+                     since tables need the room. A row's details open in a sheet. -->
+                <template x-if="page === 'logs'"><div class="settings-sections">
+                  <div class="settings-log-bar">
+                    <label class="f-label" for="settings-log">Log</label>
+                    <select class="f-input settings-log-select" id="settings-log" x-model="logName"><template x-for="(log, key) in logs" :key="key"><option :value="key" x-text="log.label" :selected="key === logName"></option></template></select>
+                    <template x-if="logName === 'app'"><span class="settings-log-files"><label class="f-sr-only" for="settings-log-file">File</label><select class="f-input" id="settings-log-file" x-model="logFile"><template x-for="file in Object.keys(logs.app.files)" :key="file"><option :value="file" x-text="file" :selected="file === logFile"></option></template></select><label class="f-sr-only" for="settings-log-search">Search the Log</label><input class="f-input" id="settings-log-search" type="search" placeholder="Search" x-model="logQuery"></span></template>
+                    <span class="f-toolbar__spacer"></span>
+                    <button class="f-button" type="button" @click="clearLog">Clear Log…</button>
+                  </div>
+                  <template x-if="logName !== 'app'"><div>
+                    <div class="f-table__scroll" x-show="currentLog.entries.length">
+                      <table class="f-table settings-log-table" :aria-label="currentLog.label">
+                        <thead><tr><th scope="col">Date</th><th scope="col">Type</th><th scope="col" x-text="currentLog.who"></th><th scope="col">Status</th><th scope="col">Conversation</th><th scope="col"><span class="f-sr-only">Details</span></th></tr></thead>
+                        <tbody><template x-for="entry in currentLog.entries" :key="entry.id"><tr><td class="settings-nowrap" x-text="entry.date"></td><td x-text="entry.type"></td><td x-text="entry.who"></td><td class="settings-log-status" :title="entry.status"><span x-text="entry.status"></span></td><td><template x-if="entry.conversation"><a :href="'/support.html#conversation-' + entry.conversation" x-text="'#' + entry.conversation"></a></template></td><td><button class="f-button f-button--ghost f-button--small" type="button" @click="showLogEntry(entry)" :aria-label="'Details for ' + entry.type + ', ' + entry.date">Details</button></td></tr></template></tbody>
+                      </table>
+                    </div>
+                    <div class="f-empty-state" x-show="!currentLog.entries.length"><svg class="f-icon f-empty-state__icon" aria-hidden="true"><use href="#i-logs"/></svg><h3 class="f-empty-state__title">This log is empty.</h3></div>
+                  </div></template>
+                  <template x-if="logName === 'app'"><div>
+                    <pre class="settings-log-lines" x-show="logLines.length" x-text="logLines.join('\n')" tabindex="0" :aria-label="logFile"></pre>
+                    <div class="f-empty-state" x-show="!logLines.length"><svg class="f-icon f-empty-state__icon" aria-hidden="true"><use href="#i-logs"/></svg><h3 class="f-empty-state__title" x-text="logQuery ? 'No matching lines.' : 'This log is empty.'"></h3></div>
+                  </div></template>
+                </div></template>
+
               </div>
-              <footer class="f-page__footer settings-save" :data-dirty="dirty">
+              <footer class="f-page__footer settings-save" :data-dirty="dirty" x-show="!systemPage">
                 <p class="f-help" role="status" x-text="dirty ? 'You have unsaved changes.' : 'All changes saved.'">All changes saved.</p>
                 <button class="f-button" type="button" @click="revert()" :disabled="!dirty" disabled>Revert</button>
                 <button class="f-button f-button--primary" type="submit" :disabled="!dirty" disabled>Save</button>
@@ -155,6 +230,29 @@
             <header class="f-dialog__header"><h2 id="settings-delete-title">Delete your account?</h2></header>
             <div class="f-dialog__body"><p>We’ll email you a link to confirm. Your conversations stay with your team.</p></div>
             <footer class="f-dialog__footer"><form method="dialog"><button class="f-button" type="submit" autofocus>Cancel</button></form><button class="f-button f-button--danger" type="button" @click="deleteAccount()">Delete Account</button></footer>
+          </dialog>
+          <dialog class="f-dialog" x-ref="fetchDialog" aria-labelledby="settings-fetch-title">
+            <form x-ref="fetchForm" @submit.prevent="runFetch">
+              <header class="f-dialog__header"><h2 id="settings-fetch-title">Fetch Emails Now</h2></header>
+              <div class="f-dialog__body f-stack">
+                <div class="f-field f-field--row"><label class="f-label" for="settings-fetch-days">Days</label><input class="f-input settings-fetch-days" id="settings-fetch-days" type="number" min="1" max="30" required x-model="fetchDays"></div>
+                <fieldset class="f-fieldset"><legend class="f-label">Messages</legend><div class="f-segmented"><label><input type="radio" name="fetch-scope" value="unread" x-model="fetchScope"><span>Unread Only</span></label><label><input type="radio" name="fetch-scope" value="all" x-model="fetchScope"><span>All</span></label></div></fieldset>
+                <div class="f-field f-field--row"><label class="f-label" for="settings-fetch-debug">Show Debug Output</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-fetch-debug" x-model="fetchDebug"><span></span></label></div>
+                <pre class="settings-log-lines" role="status" x-show="fetchOutput" x-text="fetchOutput"></pre>
+              </div>
+              <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.fetchDialog.close()" x-text="fetchOutput ? 'Done' : 'Cancel'">Cancel</button><button class="f-button f-button--primary" type="submit" :aria-busy="String(fetching)">Fetch</button></footer>
+            </form>
+          </dialog>
+          <dialog class="f-dialog" x-ref="logDialog" aria-labelledby="settings-entry-title">
+            <header class="f-dialog__header"><h2 id="settings-entry-title" x-text="logEntry ? logEntry.type + ' · ' + logEntry.date : 'Entry'">Entry</h2></header>
+            <div class="f-dialog__body"><template x-if="logEntry"><dl class="f-description-list"><div><dt x-text="currentLog.who"></dt><dd x-text="logEntry.who"></dd></div><div><dt>Status</dt><dd x-text="logEntry.status"></dd></div><template x-if="logEntry.conversation"><div><dt>Conversation</dt><dd><a :href="'/support.html#conversation-' + logEntry.conversation" x-text="'#' + logEntry.conversation"></a></dd></div></template></dl></template></div>
+            <footer class="f-dialog__footer"><form method="dialog"><button class="f-button f-button--primary" type="submit" autofocus>Done</button></form></footer>
+          </dialog>
+          <dialog role="alertdialog" id="fruit-confirm" aria-labelledby="fruit-confirm-title" aria-describedby="fruit-confirm-message" data-fruit-confirm-label="OK" data-fruit-cancel-label="Cancel" class="f-dialog f-confirm" x-data="fruitConfirmer">
+            <form method="dialog">
+              <div class="f-confirm__body"><h2 class="f-confirm__title" id="fruit-confirm-title" x-text="request.title"></h2><p class="f-confirm__message" id="fruit-confirm-message" x-text="request.message" x-show="request.message"></p></div>
+              <div class="f-confirm__actions"><button class="f-button" type="submit" value="cancel" x-text="request.cancel"></button><button class="f-button" type="submit" value="confirm" :class="request.tone === 'danger' ? 'f-button--danger' : 'f-button--primary'" x-text="request.confirm"></button></div>
+            </form>
           </dialog>
           <div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice" x-cloak></div>
         </section>

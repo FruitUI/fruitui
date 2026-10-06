@@ -66,7 +66,102 @@
   .settings-page {
     --f-page-padding-inline: 16px;
   }
+  /* On a phone the log table scrolls sideways, and the status keeps a readable width. */
+  .settings-log-status {
+    min-width: 14rem;
+  }
 }
 .settings-container[data-preview='phone'] .settings-workspace {
   --f-workspace-height: 800px;
+}
+
+/* System › Status: problems first, each with its fix; values at the end of their rows. */
+.settings-status-ok {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--f-success);
+  font-weight: 600;
+}
+.settings-problem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 4px 12px;
+}
+.settings-problem__icon {
+  margin-top: 2px;
+  color: var(--f-warning);
+}
+.settings-command {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.settings-command code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.settings-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--f-secondary);
+  text-align: end;
+}
+.settings-value--warning {
+  color: var(--f-warning);
+}
+.settings-ok-icon {
+  color: var(--f-success);
+}
+.settings-row-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+/* System › Logs: one log at a time, a single-line status that opens in full from Details. */
+.settings-log-bar,
+.settings-log-files {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.settings-log-select {
+  width: auto;
+}
+.settings-nowrap {
+  white-space: nowrap;
+}
+/* The status takes the room the other columns leave, on one line; Details shows it in full. */
+.settings-log-status {
+  width: 100%;
+  max-width: 0;
+}
+.settings-sections > * {
+  min-width: 0;
+}
+.settings-log-status > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.settings-log-lines {
+  max-height: 24rem;
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  border-radius: var(--f-radius-md);
+  background: var(--f-surface-secondary);
+  font-size: var(--f-text-sm);
+  white-space: pre-wrap;
+}
+.settings-fetch-days {
+  width: 6rem;
 }
