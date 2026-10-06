@@ -1448,8 +1448,8 @@
 <section id="component-prose" data-component="prose" class="f-card component-card"><h2>Message Content</h2><p>Scoped paragraphs, lists, quotes, images, and tables. Applications sanitize supplied HTML before rendering it.</p><div class="f-prose"><p>Hello Sophie,</p><p>Here is what’s included in your <strong>Team Plan</strong>:</p><ul><li>Shared Projects</li><li>Annual Billing</li></ul><blockquote><p>Your existing projects stay right where they are.</p></blockquote><div class="f-prose__scroll" role="region" tabindex="0" aria-label="Plan Comparison"><table><caption>Plan Comparison</caption><thead><tr><th scope="col">Plan</th><th scope="col">Members</th></tr></thead><tbody><tr><th scope="row">Team</th><td>12</td></tr></tbody></table></div><p>Thanks,<br>Alex</p></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-prose&quot;&gt;&lt;p&gt;Hello Sophie,&lt;/p&gt;&lt;p&gt;Here is what’s included in your &lt;strong&gt;Team plan&lt;/strong&gt;:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Shared projects&lt;/li&gt;&lt;li&gt;Annual billing&lt;/li&gt;&lt;/ul&gt;&lt;blockquote&gt;&lt;p&gt;Your existing projects stay right where they are.&lt;/p&gt;&lt;/blockquote&gt;&lt;div class=&quot;f-prose__scroll&quot; role=&quot;region&quot; tabindex=&quot;0&quot; aria-label=&quot;Plan comparison&quot;&gt;&lt;table&gt;&lt;caption&gt;Plan comparison&lt;/caption&gt;&lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Plan&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Members&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;Team&lt;/th&gt;&lt;td&gt;12&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;&lt;p&gt;Thanks,&lt;br&gt;Alex&lt;/p&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code">&lt;div class=&quot;f-prose&quot;&gt;{!! $sanitizedMessageHtml !!}&lt;/div&gt;</pre></details></section>
 <section id="component-editor" data-component="editor" class="f-card component-card"><h2>Rich Text Editor</h2><p>Optional Tiptap integration, loaded separately. The native textarea stores HTML and remains editable without JavaScript.</p><!-- blade:editor --><form class="f-stack" id="editor-example" x-data="{ signature: '&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;' }" @submit.prevent>
     <label class="f-label" for="gallery-editor">Reply Signature</label>
-    <div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" x-data="fruitEditor">
-    <div class="f-editor__toolbar" wire:ignore hidden aria-label="Text formatting">
+    <div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="newline" x-data="fruitEditor">
+    <div class="f-editor__toolbar" id="gallery-editor-formatting" wire:ignore hidden aria-label="Text formatting">
                 
                             
                                                                             <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button>
@@ -1473,9 +1473,9 @@
                 <button type="button" role="menuitem" class="f-menu-item" x-on:click="$dispatch('fruit-editor-insert', { html: '{%mailbox.email%}' })">Mailbox Email</button></div>
 </details>
             </div>
-    <textarea data-fruit-control class="f-input" id="gallery-editor" name="signature" x-model="signature" required="required">&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;</textarea>
+    <textarea data-fruit-control class="f-input" id="gallery-editor" name="signature" x-model="signature" required="required" >&lt;p&gt;Thanks,&lt;br&gt;&lt;strong&gt;Alex Morgan&lt;/strong&gt;&lt;/p&gt;</textarea>
     <div class="f-editor__surface" wire:ignore hidden></div>
-</div>
+    </div>
     <div class="f-row">
         <button type="button" class="f-button" @click="signature = '&lt;p&gt;Mia Patel&lt;/p&gt;'">Set Signature Externally</button>
         <button type="reset" class="f-button">Reset Signature</button>
@@ -1484,8 +1484,8 @@
 
 <form class="f-stack" id="editor-formats-example" @submit.prevent>
     <label class="f-label" for="gallery-chat-editor">Telegram Message</label>
-    <div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-formats="bold italic link" x-data="fruitEditor">
-    <div class="f-editor__toolbar" wire:ignore hidden aria-label="Text formatting">
+    <div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="newline" data-fruit-formats="bold italic link" x-data="fruitEditor">
+    <div class="f-editor__toolbar" id="gallery-chat-editor-formatting" wire:ignore hidden aria-label="Text formatting">
                 
                             
                                                                             <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button>
@@ -1498,10 +1498,39 @@
                                     <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
                             <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
                                         </div>
-    <textarea data-fruit-control class="f-input" id="gallery-chat-editor" name="message" aria-describedby="gallery-chat-editor-help"></textarea>
+    <textarea data-fruit-control class="f-input" id="gallery-chat-editor" name="message" aria-describedby="gallery-chat-editor-help" ></textarea>
     <div class="f-editor__surface" wire:ignore hidden></div>
-</div>
+    </div>
     <p class="f-help" id="gallery-chat-editor-help">Bold, italic and links, as this channel supports.</p>
+</form>
+
+<form class="f-composer" id="editor-inline-example" x-data="{ message: '', sent: '' }" @submit.prevent="if (message.trim()) { sent = message; message = '' }">
+    <label class="f-sr-only" for="gallery-inline-editor">Message Lena Wilson</label>
+    <div class="f-editor f-editor--inline" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="submit" data-fruit-formats="bold italic link" x-data="fruitEditor">
+    <div class="f-editor__toolbar" id="gallery-inline-editor-formatting" wire:ignore hidden aria-label="Text formatting">
+                
+                            
+                                                                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg></button>
+                                
+                                    
+                                    <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove Formatting" title="Remove Formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/></svg></button>
+                                
+                                    <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
+                                        </div>
+    <textarea data-fruit-control class="f-input" id="gallery-inline-editor" name="message" x-model="message" placeholder="Message Lena Wilson" aria-describedby="gallery-inline-editor-help"  rows="1" ></textarea>
+    <div class="f-editor__surface" wire:ignore hidden></div>
+            
+        <div class="f-editor__actions">
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-formatting aria-expanded="false" aria-controls="gallery-inline-editor-formatting" aria-label="Formatting" title="Formatting" hidden wire:ignore><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 16 2.536-7.328a1.02 1.02 1 0 1 1.928 0L22 16"/><path d="M15.697 14h5.606"/><path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16"/><path d="M3.304 13h6.392"/></svg></button>
+                        <button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Attach Files" title="Attach Files"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg></button>
+            <button type="submit" class="f-button f-button--primary f-button--icon f-composer__send" aria-label="Send"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></button>
+        </div>
+    </div>
+    <p class="f-sr-only" id="gallery-inline-editor-help">Enter to send, Shift+Enter for a new line.</p>
+    <p class="f-help" x-show="sent" x-cloak>Sent: <code x-text="sent"></code></p>
 </form><!-- /blade:editor --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &#x27;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&#x27; }&quot; @submit.prevent&gt;&lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply signature&lt;/label&gt;&lt;div class=&quot;f-editor&quot; x-data=&quot;fruitEditor&quot;&gt;&lt;div class=&quot;f-editor__toolbar&quot; hidden aria-label=&quot;Text formatting&quot;&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bold&quot;&gt;Bold&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;italic&quot;&gt;Italic&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;bulletList&quot;&gt;Bullets&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;orderedList&quot;&gt;Numbered list&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;blockquote&quot;&gt;Quote&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;undo&quot;&gt;Undo&lt;/button&gt;&lt;button class=&quot;f-button f-button--ghost&quot; type=&quot;button&quot; data-fruit-command=&quot;redo&quot;&gt;Redo&lt;/button&gt;&lt;/div&gt;&lt;textarea class=&quot;f-input&quot; id=&quot;gallery-editor&quot; data-fruit-control name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&lt;/textarea&gt;&lt;div class=&quot;f-editor__surface&quot; hidden&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;f-row&quot;&gt;&lt;button class=&quot;f-button&quot; type=&quot;button&quot; @click=&quot;signature = &#x27;&amp;lt;p&amp;gt;Mia Patel&amp;lt;/p&amp;gt;&#x27;&quot;&gt;Set signature externally&lt;/button&gt;&lt;button class=&quot;f-button&quot; type=&quot;reset&quot;&gt;Reset signature&lt;/button&gt;&lt;/div&gt;&lt;/form&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="editor">&lt;form class=&quot;f-stack&quot; id=&quot;editor-example&quot; x-data=&quot;{ signature: &apos;&amp;lt;p&amp;gt;Thanks,&amp;lt;br&amp;gt;&amp;lt;strong&amp;gt;Alex Morgan&amp;lt;/strong&amp;gt;&amp;lt;/p&amp;gt;&apos; }&quot; @submit.prevent&gt;
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-editor&quot;&gt;Reply Signature&lt;/label&gt;
     &lt;x-fruit::editor id=&quot;gallery-editor&quot; name=&quot;signature&quot; x-model=&quot;signature&quot; required&gt;
@@ -1525,6 +1554,19 @@
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-chat-editor&quot;&gt;Telegram Message&lt;/label&gt;
     &lt;x-fruit::editor id=&quot;gallery-chat-editor&quot; name=&quot;message&quot; :formats=&quot;[&apos;bold&apos;, &apos;italic&apos;, &apos;link&apos;]&quot; aria-describedby=&quot;gallery-chat-editor-help&quot;&gt;&lt;/x-fruit::editor&gt;
     &lt;p class=&quot;f-help&quot; id=&quot;gallery-chat-editor-help&quot;&gt;Bold, italic and links, as this channel supports.&lt;/p&gt;
+&lt;/form&gt;
+{{-- Inline: a chat&apos;s message field. One line that grows; Aa shows the channel&apos;s formatting bar above it;
+     Enter sends and Shift+Enter breaks the line; Send shows only on touch screens. --}}
+&lt;form class=&quot;f-composer&quot; id=&quot;editor-inline-example&quot; x-data=&quot;{ message: &apos;&apos;, sent: &apos;&apos; }&quot; @submit.prevent=&quot;if (message.trim()) { sent = message; message = &apos;&apos; }&quot;&gt;
+    &lt;label class=&quot;f-sr-only&quot; for=&quot;gallery-inline-editor&quot;&gt;Message Lena Wilson&lt;/label&gt;
+    &lt;x-fruit::editor id=&quot;gallery-inline-editor&quot; name=&quot;message&quot; layout=&quot;inline&quot; enter=&quot;submit&quot; :formats=&quot;[&apos;bold&apos;, &apos;italic&apos;, &apos;link&apos;]&quot; x-model=&quot;message&quot; placeholder=&quot;Message Lena Wilson&quot; aria-describedby=&quot;gallery-inline-editor-help&quot;&gt;
+        &lt;x-slot:extras&gt;
+            &lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; aria-label=&quot;Attach Files&quot; title=&quot;Attach Files&quot;&gt;&lt;svg class=&quot;f-icon&quot; viewBox=&quot;0 0 24 24&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+            &lt;x-fruit::button type=&quot;submit&quot; variant=&quot;primary&quot; class=&quot;f-button--icon f-composer__send&quot; aria-label=&quot;Send&quot;&gt;&lt;svg class=&quot;f-icon&quot; viewBox=&quot;0 0 24 24&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z&quot;/&gt;&lt;path d=&quot;m21.854 2.147-10.94 10.939&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
+        &lt;/x-slot:extras&gt;
+    &lt;/x-fruit::editor&gt;
+    &lt;p class=&quot;f-sr-only&quot; id=&quot;gallery-inline-editor-help&quot;&gt;Enter to send, Shift+Enter for a new line.&lt;/p&gt;
+    &lt;p class=&quot;f-help&quot; x-show=&quot;sent&quot; x-cloak&gt;Sent: &lt;code x-text=&quot;sent&quot;&gt;&lt;/code&gt;&lt;/p&gt;
 &lt;/form&gt;</pre></details></section>
 <section id="component-skeleton" data-component="skeleton" class="f-card component-card"><h2>Loading Placeholders</h2><p>Placeholder lines while content loads. The loading container sets aria-busy; reduced motion stops the shimmer.</p><!-- blade:skeleton --><section aria-busy="true" aria-label="Loading conversations">
     <div class="f-skeleton" aria-hidden="true">

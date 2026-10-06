@@ -253,6 +253,23 @@ class ComponentContractsTest extends TestCase
         $this->assertStringNotContainsString('data-fruit-formats', Blade::render('<x-fruit::editor name="body" />'));
         $this->assertRejected('<x-fruit::editor name="body" :formats="[\'bold\', \'heading\']" />', 'editor formats must be a list of');
         $this->assertRejected('<x-fruit::editor name="body" formats="bold" />', 'editor formats must be a list of');
+        // Inline: a chat's field, the formatting bar on demand, the application's buttons in the line.
+        $inline = $this->xpath(Blade::render('<x-fruit::editor id="chat" name="body" layout="inline" enter="submit" :formats="[\'bold\']"><x-slot:extras><button type="button">Attach</button></x-slot:extras></x-fruit::editor>'));
+        $root = $inline->query('//div[contains(@class, "f-editor")]')->item(0);
+        $this->assertSame('f-editor f-editor--inline', $root->getAttribute('class'));
+        $this->assertSame('submit', $root->getAttribute('data-fruit-enter'));
+        $this->assertSame('1', $inline->query('//textarea')->item(0)->getAttribute('rows'));
+        $toggle = $inline->query('//div[@class="f-editor__actions"]/button[@data-fruit-formatting]')->item(0);
+        $this->assertSame('chat-formatting', $toggle->getAttribute('aria-controls'));
+        $this->assertSame('false', $toggle->getAttribute('aria-expanded'));
+        $this->assertSame('chat-formatting', $inline->query('//div[@class="f-editor__toolbar"]')->item(0)->getAttribute('id'));
+        $this->assertSame('Attach', $inline->query('//div[@class="f-editor__actions"]/button[not(@data-fruit-formatting)]')->item(0)->textContent);
+        $this->assertSame(0, $inline->query('//div[@class="f-editor__toolbar"]//button[text()="Attach"]')->length);
+        $plain = $this->xpath(Blade::render('<x-fruit::editor name="body" layout="inline" :formats="[]" />'));
+        $this->assertSame(0, $plain->query('//button[@data-fruit-formatting]')->length);
+        $this->assertSame('newline', $this->xpath(Blade::render('<x-fruit::editor name="body" />'))->query('//div[contains(@class, "f-editor")]')->item(0)->getAttribute('data-fruit-enter'));
+        $this->assertRejected('<x-fruit::editor name="body" layout="chat" />', 'editor layout must be one of');
+        $this->assertRejected('<x-fruit::editor name="body" enter="send" />', 'editor enter must be one of');
     }
 
     public function test_threads_list_messages_that_name_their_direction(): void

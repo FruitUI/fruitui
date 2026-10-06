@@ -206,3 +206,36 @@ test('a channel’s formats limit the toolbar and the markup that shortcuts and 
     );
   await expectAccessible(page, '#component-editor');
 });
+
+test('an inline editor is a chat field: one line, formatting on demand, Enter sends', async ({ page }) => {
+  const form = page.locator('#editor-inline-example');
+  const surface = form.locator('.f-editor__surface > .tiptap');
+  const toolbar = form.locator('.f-editor__toolbar');
+  const formatting = form.getByRole('button', { name: 'Formatting', exact: true });
+  await expect(surface).toHaveAttribute('aria-placeholder', 'Message Lena Wilson');
+  await expect(surface).toHaveAttribute('data-empty', '');
+  expect(await surface.evaluate(element => element.getBoundingClientRect().height)).toBeLessThan(44);
+  await expect(form.getByRole('button', { name: 'Send' })).toBeHidden();
+  // The channel's formatting bar shows on demand.
+  await expect(toolbar).toBeHidden();
+  await expect(formatting).toHaveAttribute('aria-expanded', 'false');
+  await formatting.click();
+  await expect(toolbar).toBeVisible();
+  await expect(formatting).toHaveAttribute('aria-expanded', 'true');
+  const commands = await toolbar
+    .locator('[data-fruit-command]')
+    .evaluateAll(buttons => buttons.map(button => button.dataset.fruitCommand));
+  expect(commands).toEqual(['bold', 'italic', 'link', 'clear', 'undo', 'redo']);
+  // Shift+Enter breaks the line; Enter sends the form and the field empties.
+  await surface.click();
+  await page.keyboard.press('ControlOrMeta+b');
+  await page.keyboard.type('Bold');
+  await page.keyboard.press('ControlOrMeta+b');
+  await page.keyboard.press('Shift+Enter');
+  await page.keyboard.type('next line');
+  await expect(surface).not.toHaveAttribute('data-empty');
+  await page.keyboard.press('Enter');
+  await expect(form.locator('code')).toHaveText('<p><strong>Bold</strong><br>next line</p>');
+  await expect(surface).toHaveAttribute('data-empty', '');
+  await expectAccessible(page, '#component-editor');
+});
