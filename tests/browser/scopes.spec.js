@@ -117,13 +117,22 @@ test('Support combines team mailboxes while local views, searches, and status co
   const rows = page.locator('button.support-ticket');
   const nav = page.locator('#support-queues');
   await expect(rows).toHaveCount(6);
-  await expect(rows.locator('.support-ticket-origin')).toHaveText([
-    'Billing',
-    'Support',
-    'Support',
-    'Support',
-    'Feedback',
-    'Feedback',
+  // Each row names its mailbox (for screen readers) and carries the mailbox's color.
+  await expect(rows.getByText(/ mailbox$/)).toHaveText([
+    'Billing mailbox',
+    'Support mailbox',
+    'Support mailbox',
+    'Support mailbox',
+    'Feedback mailbox',
+    'Feedback mailbox',
+  ]);
+  expect(await rows.evaluateAll(buttons => buttons.map(button => button.dataset.fruitMark))).toEqual([
+    'green',
+    'blue',
+    'blue',
+    'blue',
+    'purple',
+    'purple',
   ]);
   await expand(page, '#support-queues', 'billing');
   await nav.getByRole('button', { name: 'Billing Open' }).click();

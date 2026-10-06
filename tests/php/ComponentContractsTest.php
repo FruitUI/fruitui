@@ -237,6 +237,36 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
     }
 
+    public function test_marks_name_what_a_row_or_sidebar_item_belongs_to(): void
+    {
+        $row = $this->xpath(Blade::render('<x-fruit::item-row mark="green" mark-label="Billing mailbox">Sophie Chen</x-fruit::item-row>'));
+        $this->assertSame('green', $row->query('//button')->item(0)->getAttribute('data-fruit-mark'));
+        $this->assertSame('Billing mailbox', $row->query('//button/span[@class="f-sr-only"]')->item(0)->textContent);
+
+        $link = $this->xpath(Blade::render('<x-fruit::item-link href="/conversations/41" mark="purple" mark-label="Feedback mailbox">Jordan Lee</x-fruit::item-link>'));
+        $this->assertSame('purple', $link->query('//a')->item(0)->getAttribute('data-fruit-mark'));
+        $this->assertSame('Feedback mailbox', $link->query('//a/span[@class="f-sr-only"]')->item(0)->textContent);
+
+        // Without a mark a row renders neither the attribute nor the label.
+        $plain = $this->xpath(Blade::render('<x-fruit::item-row>Sophie Chen</x-fruit::item-row>'));
+        $this->assertFalse($plain->query('//button')->item(0)->hasAttribute('data-fruit-mark'));
+        $this->assertSame(0, $plain->query('//span[@class="f-sr-only"]')->length);
+
+        // A sidebar item and group summary name themselves, so their mark needs no label.
+        $item = $this->xpath(Blade::render('<x-fruit::sidebar-item href="/support" mark="blue">Support</x-fruit::sidebar-item>'));
+        $this->assertSame('blue', $item->query('//a')->item(0)->getAttribute('data-fruit-mark'));
+        $group = $this->xpath(Blade::render('<x-fruit::sidebar-group title="Billing" mark="green"><x-fruit::sidebar-item href="/billing">Open</x-fruit::sidebar-item></x-fruit::sidebar-group>'));
+        $this->assertSame('green', $group->query('//summary')->item(0)->getAttribute('data-fruit-mark'));
+        $this->assertFalse($group->query('//details')->item(0)->hasAttribute('data-fruit-mark'));
+        $this->assertFalse($this->xpath(Blade::render('<x-fruit::sidebar-group title="Work">A</x-fruit::sidebar-group>'))->query('//summary')->item(0)->hasAttribute('data-fruit-mark'));
+
+        $this->assertRejected('<x-fruit::item-row mark="teal" mark-label="Billing mailbox">A</x-fruit::item-row>', 'mark must be one of');
+        $this->assertRejected('<x-fruit::item-row mark="green">A</x-fruit::item-row>', 'needs a mark-label');
+        $this->assertRejected('<x-fruit::item-link href="/a" mark="green" mark-label=" ">A</x-fruit::item-link>', 'needs a mark-label');
+        $this->assertRejected('<x-fruit::sidebar-item href="/a" mark="#ff0000">A</x-fruit::sidebar-item>', 'mark must be one of');
+        $this->assertRejected('<x-fruit::sidebar-group title="A" mark="Blue">A</x-fruit::sidebar-group>', 'mark must be one of');
+    }
+
     public function test_the_editor_paste_mode_is_an_explicit_option(): void
     {
         $this->assertStringContainsString('data-fruit-paste="plain"', Blade::render('<x-fruit::editor name="body" paste="plain" />'));

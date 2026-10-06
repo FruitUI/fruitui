@@ -170,11 +170,6 @@
   margin-top: 8px;
   font-size: var(--f-text-xs);
 }
-.support-ticket-origin {
-  padding: 1px 5px;
-  border: 1px solid var(--f-border);
-  border-radius: var(--f-radius-sm);
-}
 .support-ticket-meta > .f-badge {
   margin-left: auto;
   padding: 0 5px;

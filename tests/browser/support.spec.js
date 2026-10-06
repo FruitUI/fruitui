@@ -481,3 +481,27 @@ test('a reply that failed to send shows one status line with Retry, View log and
   await actions.getByRole('button', { name: 'Remove sso-setup-notes.txt' }).click();
   await expect(reply.locator('.f-attachment')).toHaveCount(0);
 });
+
+test('All Inboxes marks each conversation with its mailbox’s color, named for screen readers', async ({ page }) => {
+  // The mark replaces a visible mailbox tag: a bar in the mailbox's color, its name as text.
+  await expect(ticket(page, 1042)).toHaveAttribute('data-fruit-mark', 'green');
+  await expect(ticket(page, 1041)).toHaveAttribute('data-fruit-mark', 'blue');
+  await expect(ticket(page, 1042)).toHaveAccessibleName(/Billing mailbox/);
+  await expect(ticket(page, 1042).getByText('Billing mailbox')).toHaveClass('f-sr-only');
+  const bar = id => ticket(page, id).evaluate(row => getComputedStyle(row, '::before').backgroundColor);
+  expect(await bar(1042)).not.toBe(await bar(1041));
+  // The sidebar's mailbox icons are the legend, in the same colors.
+  const icon = mailbox =>
+    page
+      .locator(`#support-queues [data-scope="${mailbox}"] > summary > .f-icon`)
+      .first()
+      .evaluate(element => getComputedStyle(element).color);
+  expect(await icon('billing')).toBe(await bar(1042));
+  expect(await icon('support')).toBe(await bar(1041));
+  // In one mailbox every row would share the color, so none is marked.
+  await page.locator('#support-queues [data-scope="support"] > summary').click();
+  await page.getByRole('button', { name: 'Support Open', exact: true }).click();
+  await expect(ticket(page, 1041)).toBeVisible();
+  await expect(page.locator('button.support-ticket[data-fruit-mark]')).toHaveCount(0);
+  await expect(ticket(page, 1041)).not.toHaveAccessibleName(/Support mailbox/);
+});

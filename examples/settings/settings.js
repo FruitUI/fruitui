@@ -23,6 +23,7 @@ const defaults = () => ({
   deleteConversations: false,
   mailboxName: 'Support',
   mailboxEmail: 'support@forma.example',
+  mailboxColor: 'blue',
   signature: 'Thanks,\nThe Forma team',
   sending: 'smtp',
   smtpHost: 'smtp.forma.example',

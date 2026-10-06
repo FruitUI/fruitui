@@ -541,3 +541,68 @@ test('accent text follows each named accent and keeps 4.5:1 on toolbars, also on
     }
   }
 });
+
+test('every mark keeps 3:1 on its row, hovered or current, and as a sidebar icon, in both appearances', async ({
+  page,
+}) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    for (const mark of ['blue', 'purple', 'pink', 'red', 'orange', 'yellow', 'green', 'graphite']) {
+      await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+        <nav class="f-sidebar"><a class="f-sidebar__item" href="#" data-fruit-mark="${mark}"><svg class="f-icon" id="icon"></svg><span>Billing</span><svg class="f-icon f-sidebar__chevron" id="chevron"></svg></a></nav>
+        <ul class="f-item-list"><li><button class="f-item-row" type="button" id="rest" data-fruit-mark="${mark}">A</button></li>
+        <li><button class="f-item-row" type="button" id="current" data-fruit-mark="${mark}" aria-current="true">B</button></li>
+        <li><span id="hover" style="background: var(--f-hover)">x</span></li></ul></body></html>`);
+      const contrast = await page.evaluate(() => {
+        const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        const paint = (...layers) => {
+          for (const color of layers) {
+            context.fillStyle = color;
+            context.fillRect(0, 0, 1, 1);
+          }
+          return [...context.getImageData(0, 0, 1, 1).data].slice(0, 3);
+        };
+        const luminance = rgb =>
+          rgb
+            .map(value => value / 255)
+            .map(value => (value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4))
+            .reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+        const ratio = (a, b) => {
+          const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+          return (light + 0.05) / (dark + 0.05);
+        };
+        const style = (selector, pseudo) => getComputedStyle(document.querySelector(selector), pseudo);
+        const page = style('body').backgroundColor;
+        const bar = id => paint(style(id, '::before').backgroundColor);
+        return {
+          rest: ratio(bar('#rest'), paint(page)),
+          hover: ratio(bar('#rest'), paint(page, style('#hover').backgroundColor)),
+          current: ratio(bar('#current'), paint(page, style('#current').backgroundColor)),
+          icon: ratio(paint(style('#icon').color), paint(page, style('.f-sidebar').backgroundColor)),
+        };
+      });
+      for (const surface of ['rest', 'hover', 'current', 'icon'])
+        expect(contrast[surface], `${colorScheme} ${mark} ${surface}`).toBeGreaterThanOrEqual(3);
+      // The chevron keeps its own secondary color; only the leading icon takes the mark.
+      expect(await page.locator('#chevron').evaluate(icon => getComputedStyle(icon).color)).not.toBe(
+        await page.locator('#icon').evaluate(icon => getComputedStyle(icon).color),
+      );
+    }
+  }
+});
+
+test('a filled current row turns its mark the fill’s text color while its list has focus', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/core.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <ul class="f-item-list"><li><button class="f-item-row f-item-row--filled" type="button" data-fruit-mark="blue" aria-current="true">A</button></li></ul>
+    <button type="button" id="elsewhere">Elsewhere</button></body></html>`);
+  const row = page.locator('.f-item-row');
+  const bar = () => row.evaluate(element => getComputedStyle(element, '::before').backgroundColor);
+  const fillText = () => row.evaluate(element => getComputedStyle(element).color);
+  const unfocused = await bar();
+  await row.focus();
+  await expect.poll(bar).toBe(await fillText());
+  await page.locator('#elsewhere').focus();
+  await expect.poll(bar).toBe(unfocused);
+});

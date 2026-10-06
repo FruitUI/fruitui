@@ -541,7 +541,7 @@
     <div class="f-sidebar__header"><span class="f-avatar"  aria-hidden="true" >F</span>
 <span><strong>FruitUI</strong><small>Reference Interfaces</small></span></div>    <p class="f-sidebar__heading">Workspaces</p>
     <details class="f-sidebar__group">
-    <summary class="f-sidebar__item">
+    <summary class="f-sidebar__item" >
         <svg class="f-icon" aria-hidden="true"><use href="#i-folder"/></svg>                    <span class="f-sidebar__identity"><strong>Examples</strong><small>Reference Interfaces</small></span>
                 <svg class="f-icon f-sidebar__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
     </summary>
@@ -822,11 +822,12 @@
     @endforeach
 &lt;/x-fruit::item-list&gt;</pre></details></section>
         <section id="component-item-row" data-component="item-row" class="f-card component-card"><h2>Item Row</h2><p>A button opens one conversation. Quiet and filled are visual variants; selection controls stay outside the button.</p><!-- blade:item-row --><div x-data="{ opened: false }" class="f-stack">
-    <button type="button" class="f-item-row f-item-row--filled" @click="opened = !opened" :aria-current="opened ? 'true' : null">
+    
+    <button type="button" class="f-item-row f-item-row--filled" data-fruit-mark="green" @click="opened = !opened" :aria-current="opened ? 'true' : null">
     <span class="f-item-row__leading f-avatar" aria-hidden="true">SC</span><span class="f-item-row__top">
     <span class="f-item-row__title">Sophie Chen</span>
     <span class="f-item-row__time">10:42</span></span>
-<span class="f-item-row__subtitle">A fresh start for FruitUI</span><span class="f-item-row__preview">Open this conversation to see its current state.</span><span class="f-item-row__meta">Work Mailbox</span></button>
+<span class="f-item-row__subtitle">A fresh start for FruitUI</span><span class="f-item-row__preview">Open this conversation to see its current state.</span><span class="f-item-row__meta">#1042</span><span class="f-sr-only">Billing mailbox</span></button>
     <label class="f-check">
     <input type="checkbox" role="checkbox" name="selected-conversation" value="42">
     <span>Select this conversation for a bulk action</span>
@@ -843,11 +844,11 @@
     <input type="checkbox" role="checkbox" name="selected[]" value="41">
     <span><span class="f-sr-only">Select Jordan Lee</span></span>
 </label>
-            <a class="f-item-row" aria-current="page" href="#component-item-row">
+            <a class="f-item-row" aria-current="page" data-fruit-mark="purple" href="#component-item-row">
     <span class="f-item-row__top">
     <span class="f-item-row__title">Jordan Lee</span>
     <span class="f-item-row__time">9:30</span></span>
-<span class="f-item-row__subtitle">Sign-in after changing our domain</span></a>
+<span class="f-item-row__subtitle">Sign-in after changing our domain</span><span class="f-sr-only">Feedback mailbox</span></a>
             <button type="button" class="f-button f-button--ghost f-button--small f-button--icon" x-on:click="starred = !starred" x-bind:aria-pressed="String(starred)" aria-pressed="false" aria-label="Star Jordan Lee"><svg class="f-icon" aria-hidden="true"><use href="#i-star"/></svg></button>
         </li></ul>
 </div><!-- /blade:item-row --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;button class=&quot;f-item-row f-item-row--filled&quot; type=&quot;button&quot; aria-current=&quot;true&quot;&gt;
@@ -860,13 +861,14 @@
   &lt;span class=&quot;f-item-row__preview&quot;&gt;A few thoughts…&lt;/span&gt;
   &lt;span class=&quot;f-item-row__meta&quot;&gt;Work mailbox&lt;/span&gt;
 &lt;/button&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="item-row">&lt;div x-data=&quot;{ opened: false }&quot; class=&quot;f-stack&quot;&gt;
-    &lt;x-fruit::item-row variant=&quot;filled&quot; @click=&quot;opened = !opened&quot; ::aria-current=&quot;opened ? &apos;true&apos; : null&quot;&gt;
+    {{-- A mark says which mailbox a row belongs to, as in a view across mailboxes; its label names it. --}}
+    &lt;x-fruit::item-row variant=&quot;filled&quot; mark=&quot;green&quot; mark-label=&quot;Billing mailbox&quot; @click=&quot;opened = !opened&quot; ::aria-current=&quot;opened ? &apos;true&apos; : null&quot;&gt;
         Sophie Chen
         &lt;x-slot:leading class=&quot;f-avatar&quot; aria-hidden=&quot;true&quot;&gt;SC&lt;/x-slot:leading&gt;
         &lt;x-slot:trailing&gt;10:42&lt;/x-slot:trailing&gt;
         &lt;x-slot:subtitle&gt;A fresh start for FruitUI&lt;/x-slot:subtitle&gt;
         &lt;x-slot:preview&gt;Open this conversation to see its current state.&lt;/x-slot:preview&gt;
-        &lt;x-slot:meta&gt;Work Mailbox&lt;/x-slot:meta&gt;
+        &lt;x-slot:meta&gt;#1042&lt;/x-slot:meta&gt;
     &lt;/x-fruit::item-row&gt;
     &lt;x-fruit::checkbox name=&quot;selected-conversation&quot; value=&quot;42&quot;&gt;Select this conversation for a bulk action&lt;/x-fruit::checkbox&gt;
     &lt;p class=&quot;f-help&quot; x-text=&quot;opened ? &apos;Conversation open. The checkbox keeps its own value.&apos; : &apos;Conversation closed.&apos;&quot;&gt;Conversation closed.&lt;/p&gt;
@@ -875,7 +877,7 @@
     &lt;x-fruit::item-list aria-label=&quot;Linked conversations&quot; x-data=&quot;{ starred: false }&quot;&gt;
         &lt;li&gt;
             &lt;x-fruit::checkbox name=&quot;selected[]&quot; value=&quot;41&quot;&gt;&lt;span class=&quot;f-sr-only&quot;&gt;Select Jordan Lee&lt;/span&gt;&lt;/x-fruit::checkbox&gt;
-            &lt;x-fruit::item-link href=&quot;#component-item-row&quot; current&gt;
+            &lt;x-fruit::item-link href=&quot;#component-item-row&quot; current mark=&quot;purple&quot; mark-label=&quot;Feedback mailbox&quot;&gt;
                 Jordan Lee
                 &lt;x-slot:trailing&gt;9:30&lt;/x-slot:trailing&gt;
                 &lt;x-slot:subtitle&gt;Sign-in after changing our domain&lt;/x-slot:subtitle&gt;

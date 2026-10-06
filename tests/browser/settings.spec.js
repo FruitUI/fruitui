@@ -241,3 +241,16 @@ for (const colorScheme of ['light', 'dark']) {
     await expectAccessible(page, '#settings');
   });
 }
+
+test('a mailbox has a color from the named accents, saved and reverted with the page', async ({ page }) => {
+  await page.goto('/settings.html#/mailbox');
+  const group = page.getByRole('radiogroup', { name: 'Color' });
+  await expect(group.getByRole('radio')).toHaveCount(8);
+  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
+  await group.getByRole('radio', { name: 'Green' }).check();
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  await expect(save).toBeEnabled();
+  await page.getByRole('button', { name: 'Revert' }).click();
+  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
+  await expect(save).toBeDisabled();
+});
