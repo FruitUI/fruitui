@@ -52,10 +52,20 @@ test('the mailbox’s rows open its pages in the URL, and Back returns with the 
   await expect(page.getByLabel('Server', { exact: true })).toBeVisible();
   await page.getByRole('radio', { name: 'The server’s mail' }).check();
   await expect(page.getByLabel('Server', { exact: true })).toHaveCount(0);
-  // Back, above the title, goes to the mailbox; its row shows the unsaved choice.
+  // Back starts the title's row, so the header keeps its height; it goes to the mailbox, whose row
+  // shows the unsaved choice.
+  const header = () => page.locator('.f-page__header').evaluate(element => element.getBoundingClientRect().height);
+  const subHeight = await header();
+  await expect(page.getByRole('link', { name: 'Support Mailbox' })).toHaveText('Support Mailbox');
+  expect(
+    await page
+      .getByRole('link', { name: 'Support Mailbox' })
+      .evaluate(link => link.querySelector('span').scrollWidth <= link.querySelector('span').clientWidth),
+  ).toBe(true);
   await page.getByRole('link', { name: 'Support Mailbox' }).click();
   await expect(page.getByRole('heading', { name: 'Support Mailbox', level: 1 })).toBeVisible();
   await expect(page.getByRole('link', { name: /^Connection/ })).toHaveText(/The server’s mail/);
+  expect(await header()).toBe(subHeight);
   await openSettings(page, '?section=auto-reply', 'Auto Reply');
   const reply = page.getByRole('switch', { name: 'Send an automatic reply' });
   await expect(reply).toHaveAccessibleDescription('To the first message of every new conversation.');
