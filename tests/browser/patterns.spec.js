@@ -250,9 +250,10 @@ test('a thread separates messages, and sent, own, note and generated messages ea
     const before = getComputedStyle(element, '::before');
     return [before.borderInlineStartWidth, before.borderInlineStartColor];
   };
+  // The bar is the accent, softened: it runs the message's whole length.
   const accent = await page.evaluate(() => {
     const probe = document.createElement('span');
-    probe.style.color = 'var(--f-accent)';
+    probe.style.color = 'color-mix(in srgb, var(--f-accent) 55%, transparent)';
     document.querySelector('.fruit-ui body, body').append(probe);
     const color = getComputedStyle(probe).color;
     probe.remove();
@@ -261,7 +262,7 @@ test('a thread separates messages, and sent, own, note and generated messages ea
   // Sent: your own in the accent, a teammate's in a neutral color; customers have no bar.
   const [ownWidth, ownColor] = await style('Your reply', bar);
   const [teamWidth, teamColor] = await style('Reply from Mia Patel', bar);
-  expect([ownWidth, teamWidth]).toEqual(['3px', '3px']);
+  expect([ownWidth, teamWidth]).toEqual(['2px', '2px']);
   expect(ownColor).toBe(accent);
   expect(teamColor).not.toBe(accent);
   expect((await style('Customer Message', bar))[0]).toBe('0px');
