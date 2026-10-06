@@ -505,3 +505,21 @@ test('All Inboxes marks each conversation with its mailbox’s color, named for 
   await expect(page.locator('button.support-ticket[data-fruit-mark]')).toHaveCount(0);
   await expect(ticket(page, 1041)).not.toHaveAccessibleName(/Support mailbox/);
 });
+
+test('the list leaves conversation numbers to search results and the open conversation', async ({ page }) => {
+  // People find a conversation by who and what; its number is in its header.
+  await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();
+  await expect(page.locator('.support-ticket-number')).toHaveText('#1042');
+  // A row with nothing else to say has no meta line; High priority keeps its own.
+  await expect(ticket(page, 1042).locator('.f-item-row__meta')).toBeHidden();
+  await expect(ticket(page, 1041).getByText('High priority')).toBeVisible();
+  await expect(ticket(page, 1041).getByText('#1041', { exact: true })).toBeHidden();
+  // Search results show it, whether the search was for the number or for words.
+  const search = page.getByRole('searchbox', { name: 'Search Conversations' });
+  await search.fill('1038');
+  await expect(ticket(page, 1038).getByText('#1038', { exact: true })).toBeVisible();
+  await search.fill('invite');
+  await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeVisible();
+  await search.fill('');
+  await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();
+});
