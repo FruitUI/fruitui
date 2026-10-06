@@ -89,12 +89,12 @@ test.describe('CSS appearance with JavaScript disabled', () => {
 
       await page.emulateMedia({ colorScheme: 'dark' });
       await expect(root).toHaveCSS('color-scheme', 'dark');
-      await expect(root).toHaveCSS('background-color', 'rgb(25, 25, 28)');
-      await expect(page.locator('.f-card').first()).toHaveCSS('background-color', 'rgb(37, 37, 40)');
-      await expect(page.getByLabel('Your Name')).toHaveCSS('background-color', 'rgb(57, 57, 62)');
+      await expect(root).toHaveCSS('background-color', 'rgb(18, 18, 20)');
+      await expect(page.locator('.f-card').first()).toHaveCSS('background-color', 'rgb(28, 28, 30)');
+      await expect(page.getByLabel('Your Name')).toHaveCSS('background-color', 'rgb(46, 46, 50)');
       await expect(page.getByLabel('Default Mailbox')).toHaveCSS('color-scheme', 'dark');
       // Dialogs use the elevated surface, lighter than content in dark mode.
-      await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(44, 44, 48)');
+      await expect(page.locator('dialog[open]')).toHaveCSS('background-color', 'rgb(35, 35, 38)');
       expect(
         await page.locator('dialog[open]').evaluate(element => getComputedStyle(element, '::backdrop').backgroundColor),
       ).toBe('rgba(0, 0, 0, 0.5)');
@@ -137,7 +137,7 @@ test.describe('CSS appearance with JavaScript disabled', () => {
         await expect(scope.locator('select')).toHaveCSS('color-scheme', expected);
         await expect(scope).toHaveCSS(
           'background-color',
-          expected === 'dark' ? 'rgb(25, 25, 28)' : 'rgb(246, 245, 243)',
+          expected === 'dark' ? 'rgb(18, 18, 20)' : 'rgb(246, 245, 243)',
         );
       }
     }
@@ -308,7 +308,7 @@ test('one brand tint recolors every accent shade in both appearances', async ({ 
   // The default tint reproduces the previously hand-tuned shades.
   const tuned = {
     light: ['#006cde', '#0064d0', '#0055b5', '#e2edff', '#0759b1'],
-    dark: ['#3c96ff', '#0064d0', '#0055b5', '#263e5a', '#9dcbff'],
+    dark: ['#3c96ff', '#0064d0', '#0055b5', '#1a3553', '#9dcbff'],
   };
   for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });

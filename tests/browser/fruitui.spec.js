@@ -201,7 +201,7 @@ test('appearance persists and system dark mode works without an explicit overrid
     probe.style.backgroundColor = 'var(--f-surface)';
     return getComputedStyle(probe).backgroundColor;
   });
-  expect(surface).toBe('rgb(37, 37, 40)');
+  expect(surface).toBe('rgb(28, 28, 30)');
 });
 
 for (const theme of ['light', 'dark']) {

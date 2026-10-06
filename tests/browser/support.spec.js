@@ -240,7 +240,7 @@ test('read-only Support retains automatic CSS dark mode without JavaScript', asy
     await expect(page.locator('#support')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
     await expect(page.getByRole('heading', { name: 'A little help with our team plan', exact: true })).toBeVisible();
     await page.emulateMedia({ colorScheme: 'dark' });
-    await expect(page.locator('#support')).toHaveCSS('background-color', 'rgb(37, 37, 40)');
+    await expect(page.locator('#support')).toHaveCSS('background-color', 'rgb(28, 28, 30)');
     await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark');
   } finally {
     await context.close();

@@ -46,10 +46,10 @@ const palette = {
     disabled: 'rgb(118, 118, 125)',
   },
   dark: {
-    control: 'rgb(57, 57, 62)',
-    text: 'rgb(243, 243, 245)',
-    secondary: 'rgb(176, 176, 184)',
-    disabled: 'rgb(161, 161, 171)',
+    control: 'rgb(46, 46, 50)',
+    text: 'rgb(204, 204, 207)',
+    secondary: 'rgb(160, 160, 168)',
+    disabled: 'rgb(143, 143, 151)',
   },
 };
 

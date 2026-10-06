@@ -25,11 +25,11 @@ for (const colorScheme of ['light', 'dark'])
     await expect(page.locator('.f-label')).toHaveCSS('font-weight', '500');
     await expect(page.locator('.f-sidebar__item')).toHaveCSS(
       'color',
-      colorScheme === 'dark' ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)',
+      colorScheme === 'dark' ? 'rgb(204, 204, 207)' : 'rgb(34, 34, 37)',
     );
     await expect(page.locator('.f-input')).toHaveCSS(
       'background-color',
-      colorScheme === 'dark' ? 'rgb(57, 57, 62)' : 'rgb(255, 255, 255)',
+      colorScheme === 'dark' ? 'rgb(46, 46, 50)' : 'rgb(255, 255, 255)',
     );
     await expect(page.locator('.f-prose')).toHaveCSS('line-height', '26.4px');
   });

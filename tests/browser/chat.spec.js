@@ -322,7 +322,7 @@ test('the CSS-only sample keeps native disclosure and follows system appearance 
       await expect(page.locator('html')).toHaveCSS('color-scheme', scheme);
       await expect(page.locator('#chat')).toHaveCSS(
         'background-color',
-        scheme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(37, 37, 40)',
+        scheme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(28, 28, 30)',
       );
     }
   } finally {

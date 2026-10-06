@@ -148,28 +148,28 @@ test.describe('CSS-only native forms', () => {
         const dark = appearance === 'dark';
         await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS(
           'background-color',
-          dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)',
+          dark ? 'rgb(36, 36, 39)' : 'rgb(243, 243, 245)',
         );
         await expect(page.getByLabel('Workspace ID', { exact: true })).toHaveCSS(
           'color',
-          dark ? 'rgb(176, 176, 184)' : 'rgb(101, 101, 108)',
+          dark ? 'rgb(160, 160, 168)' : 'rgb(101, 101, 108)',
         );
         for (const name of ['Files', 'Seats', 'Date', 'Time', 'Color']) {
           await expect(page.getByLabel(name, { exact: true })).toHaveCSS('color-scheme', appearance);
           await expect(page.getByLabel(name, { exact: true })).toHaveCSS(
             'background-color',
-            dark ? 'rgb(57, 57, 62)' : 'rgb(255, 255, 255)',
+            dark ? 'rgb(46, 46, 50)' : 'rgb(255, 255, 255)',
           );
         }
         await expect(page.locator('pre')).toHaveCSS(
           'background-color',
-          dark ? 'rgb(45, 45, 49)' : 'rgb(243, 243, 245)',
+          dark ? 'rgb(36, 36, 39)' : 'rgb(243, 243, 245)',
         );
-        await expect(page.locator('blockquote')).toHaveCSS('color', dark ? 'rgb(176, 176, 184)' : 'rgb(101, 101, 108)');
+        await expect(page.locator('blockquote')).toHaveCSS('color', dark ? 'rgb(160, 160, 168)' : 'rgb(101, 101, 108)');
         const fileButton = await page
           .getByLabel('Files', { exact: true })
           .evaluate(element => getComputedStyle(element, '::file-selector-button').color);
-        expect(fileButton).toBe(dark ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)');
+        expect(fileButton).toBe(dark ? 'rgb(204, 204, 207)' : 'rgb(34, 34, 37)');
         const sound = page.getByRole('checkbox', { name: 'Sound', exact: true });
         await expect(sound).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
         expect(await sound.evaluate(element => getComputedStyle(element, '::before').visibility)).toBe('visible');
@@ -285,11 +285,11 @@ test('autofill keeps the shared palette and remains editable', async ({ page, br
     await page.emulateMedia({ colorScheme: theme });
     await expect(email).toHaveCSS(
       '-webkit-text-fill-color',
-      theme === 'dark' ? 'rgb(243, 243, 245)' : 'rgb(34, 34, 37)',
+      theme === 'dark' ? 'rgb(204, 204, 207)' : 'rgb(34, 34, 37)',
     );
     await expect(email).toHaveCSS(
       'box-shadow',
-      `rgb(${theme === 'dark' ? '57, 57, 62' : '255, 255, 255'}) 0px 0px 0px 1000px inset`,
+      `rgb(${theme === 'dark' ? '46, 46, 50' : '255, 255, 255'}) 0px 0px 0px 1000px inset`,
     );
   }
   await cdp.send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });

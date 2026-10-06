@@ -344,7 +344,7 @@ test('CSS-only Overview keeps native chart disclosure, sample records, and live 
       await expect(page.locator('html')).toHaveCSS('color-scheme', scheme);
       await expect(page.locator('#admin')).toHaveCSS(
         'background-color',
-        scheme === 'light' ? 'rgb(243, 243, 245)' : 'rgb(45, 45, 49)',
+        scheme === 'light' ? 'rgb(243, 243, 245)' : 'rgb(36, 36, 39)',
       );
       await expectNoOverflow(page, '#admin');
     }
