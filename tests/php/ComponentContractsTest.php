@@ -430,6 +430,14 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
     }
 
+    public function test_component_attributes_take_echoed_js_values_not_directives(): void
+    {
+        // Blade leaves directives inside a component tag uncompiled; the documented echo works.
+        $name = "Sophie's log";
+        $this->assertStringContainsString('x-on:click="clear(@js($name))"', Blade::render('<x-fruit::button x-on:click="clear(@js($name))">Clear</x-fruit::button>', compact('name')));
+        $this->assertStringContainsString("x-on:click=\"clear('Sophie\\u0027s log')\"", Blade::render('<x-fruit::button x-on:click="clear({{ Js::from($name) }})">Clear</x-fruit::button>', compact('name')));
+    }
+
     public function test_a_divider_is_named_by_its_text_or_a_fuller_aria_label(): void
     {
         $named = $this->xpath(Blade::render('<x-fruit::divider>Today</x-fruit::divider>'))->query('//div[@role="separator"]')->item(0);
