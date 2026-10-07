@@ -216,6 +216,14 @@ test('in-page tabs change panels with keyboard while section links stay links', 
   await expect(profile).toBeFocused();
   await expect(profile).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#component-section-nav a')).toHaveCount(3);
+  // A leading icon sits on the label's line, so a tab with one is as tall as one without.
+  const tabs = page.locator('#component-section-nav a');
+  const box = locator => locator.evaluate(element => element.getBoundingClientRect().toJSON());
+  const [plain, flagged] = [await box(tabs.nth(0)), await box(tabs.nth(2))];
+  expect(flagged.height).toBe(plain.height);
+  const icon = await box(tabs.nth(2).locator('svg'));
+  expect(Math.abs(icon.top + icon.height / 2 - (flagged.top + flagged.height / 2))).toBeLessThan(2);
+  await expect(tabs.nth(2)).toHaveAccessibleName(/^Reports ?, needs attention$/);
   await expect(page.locator('#component-section-nav [role=tab]')).toHaveCount(0);
 });
 
