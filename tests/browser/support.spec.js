@@ -258,6 +258,9 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
   await expect(email.locator('.support-thread')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await queue(page, 'Waiting').click();
   await page.locator('button.support-ticket', { hasText: 'Inviting a client' }).click();
+  await expect(
+    page.locator('button.support-ticket', { hasText: 'Inviting a client' }).locator('.support-channel'),
+  ).toHaveAttribute('title', 'Website Chat, 6 messages');
   const conversation = page.locator('#support-conversation');
   await expect(conversation.getByRole('heading', { level: 2 })).toHaveText('Lena Wilson');
   // The header leads with the person and the channel; an email's leads with its subject and status.
@@ -523,8 +526,12 @@ test('the list leaves conversation numbers to search results and the open conver
   // People find a conversation by who and what; its number is in its header.
   await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();
   await expect(page.locator('.support-ticket-number')).toHaveText('#1042');
-  // A row with nothing else to say has no meta line; High priority keeps its own.
-  await expect(ticket(page, 1042).locator('.f-item-row__meta')).toBeHidden();
+  // The last line leads with how the conversation came in and how long it is: one small icon and a count,
+  // in place of a channel label beside the subject. A single message shows the icon alone.
+  await expect(ticket(page, 1042).locator('.support-channel')).toHaveAttribute('title', 'Email, 5 messages');
+  await expect(ticket(page, 1042)).toHaveAccessibleName(/Email, 5 messages/);
+  await expect(ticket(page, 1040).locator('.support-channel .f-sr-only')).toHaveText('Email, 1 message');
+  await expect(ticket(page, 1040).locator('.support-channel [aria-hidden="true"]:not(svg)')).toBeHidden();
   await expect(ticket(page, 1041).getByText('High priority')).toBeVisible();
   await expect(ticket(page, 1041).getByText('#1041', { exact: true })).toBeHidden();
   // Search results show it, whether the search was for the number or for words.

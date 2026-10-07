@@ -175,6 +175,14 @@
   padding: 0 5px;
   font-size: var(--f-text-2xs);
 }
+.support-channel {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.support-channel .f-icon {
+  --f-icon-size: 12px;
+}
 .support-priority {
   display: inline-flex;
   align-items: center;
