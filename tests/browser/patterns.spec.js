@@ -545,6 +545,13 @@ test('a selectable list selects with modifier clicks and keys and the header swa
   await page.keyboard.press('Escape');
   expect(await values()).toEqual([]);
   await expect(select).toBeVisible();
+  // Outside select mode the checkboxes take no Tab stop; the optional Select toggle gives them one.
+  const tabStops = () =>
+    card.locator('input[type=checkbox]').evaluateAll(boxes => boxes.map(box => box.getAttribute('tabindex')));
+  expect(new Set(await tabStops())).toEqual(new Set(['-1']));
+  await select.click();
+  expect(new Set(await tabStops())).toEqual(new Set([null]));
+  await select.click();
 
   await row('Jordan Lee').focus();
   await page.keyboard.press('Shift+ArrowDown');
@@ -573,11 +580,11 @@ test('a selectable list selects with modifier clicks and keys and the header swa
   await card.getByRole('button', { name: 'Clear Selection' }).click();
   await select.click();
   expect(await shown()).toBe(false);
-  // A checkbox reached with Tab shows while it has focus.
+  // Outside select mode Tab passes the checkboxes by, so they never show: the rows' keys select.
   await row('Sophie Chen').focus();
   await page.keyboard.press('Shift+Tab');
-  await expect(card.getByRole('checkbox', { name: 'Select Sophie Chen' })).toBeFocused();
-  expect(await shown()).toBe(true);
+  await expect(card.getByRole('checkbox', { name: 'Select Sophie Chen' })).not.toBeFocused();
+  expect(await shown()).toBe(false);
 });
 
 test('a link opens its content in a loaded dialog that closes, cleans up and returns focus', async ({ page }) => {

@@ -257,8 +257,8 @@ test('Cmd/Ctrl+click and Shift+click select conversations and the list header be
   const bar = page.getByRole('region', { name: 'Selected conversations' });
   const row = name => list(page).getByRole('button', { name: new RegExp(name) });
   await expect(bar).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Select', exact: true })).toBeVisible();
-  // The checkboxes stay out of sight until Select is pressed.
+  // No Select button: modifier clicks and keys select, and the checkboxes stay out of sight.
+  await expect(page.getByRole('button', { name: 'Select', exact: true })).toHaveCount(0);
   const shown = name =>
     page.getByRole('checkbox', { name }).evaluate(input => input.closest('.f-check').getBoundingClientRect().width > 1);
   expect(await shown('Select Jordan Lee')).toBe(false);
@@ -272,7 +272,6 @@ test('Cmd/Ctrl+click and Shift+click select conversations and the list header be
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A little help with our team plan');
   await row('Daniel Brooks').click({ modifiers: ['Shift'] });
   await expect(bar.getByRole('status')).toHaveText('4 selected');
-  await expect(page.getByRole('button', { name: 'Select', exact: true })).toBeHidden();
   await bar.getByRole('button', { name: 'Assign' }).click();
   await page.getByRole('menuitem', { name: 'Mia Patel' }).click();
   await expect(page.getByRole('status').filter({ hasText: '4 conversations assigned to Mia Patel.' })).toBeVisible();
@@ -291,17 +290,19 @@ test('Cmd/Ctrl+click and Shift+click select conversations and the list header be
   expect(errors).toEqual([]);
 });
 
-test('Select shows the checkboxes, a plain click toggles, and the chosen conversations close', async ({ page }) => {
+test('the chosen conversations close from the selection bar; checkboxes never show or take a Tab stop', async ({
+  page,
+}) => {
   const errors = await openDesk(page);
-  const select = page.getByRole('button', { name: 'Select', exact: true });
-  await select.click();
-  await expect(select).toHaveAttribute('aria-pressed', 'true');
   const jordan = page.getByRole('checkbox', { name: 'Select Jordan Lee' });
-  expect(await jordan.evaluate(input => input.closest('.f-check').getBoundingClientRect().width)).toBeGreaterThan(1);
+  const hidden = () =>
+    jordan.evaluate(
+      input => input.closest('.f-check').getBoundingClientRect().width <= 1 && input.getAttribute('tabindex') === '-1',
+    );
+  expect(await hidden()).toBe(true);
   await list(page)
-    .getByRole('button', { name: /Daniel Brooks/ })
-    .click();
-  await jordan.check();
+    .getByRole('button', { name: /Jordan Lee/ })
+    .click({ modifiers: ['ControlOrMeta'] });
   const bar = page.getByRole('region', { name: 'Selected conversations' });
   await expect(bar.getByRole('status')).toHaveText('2 selected');
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A little help with our team plan');
@@ -309,8 +310,9 @@ test('Select shows the checkboxes, a plain click toggles, and the chosen convers
   await expect(page.getByRole('status').filter({ hasText: '2 conversations closed.' })).toBeVisible();
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Closed/ }).locator('.f-badge')).toHaveText('2');
-  // Select mode survives the server re-render.
-  await expect(select).toHaveAttribute('aria-pressed', 'true');
+  // After the server re-render, the remaining checkboxes are still hidden and out of the Tab order.
+  const daniel = page.getByRole('checkbox', { name: 'Select Daniel Brooks' });
+  await expect(daniel).toHaveAttribute('tabindex', '-1');
   expect(errors).toEqual([]);
 });
 

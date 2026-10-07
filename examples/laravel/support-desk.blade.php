@@ -348,7 +348,6 @@ new class extends Component
             <x-fruit::list-header>
                 <span>{{ $this->tickets->total() }} conversations · Newest first</span>
                 <span class="f-toolbar__spacer"></span>
-                <x-fruit::button variant="ghost" size="small" data-fruit-select-toggle aria-controls="support-tickets" aria-pressed="false">Select</x-fruit::button>
                 <x-slot:selection>
                     <x-fruit::selection-bar :count="count($selected)" aria-label="Selected conversations">
                         <x-fruit::menu title="Assign selected conversations">
