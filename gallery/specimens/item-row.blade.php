@@ -15,7 +15,7 @@
     <x-fruit::item-list aria-label="Linked conversations" x-data="{ starred: false }">
         <li>
             <x-fruit::checkbox name="selected[]" value="41"><span class="f-sr-only">Select Jordan Lee</span></x-fruit::checkbox>
-            <x-fruit::item-link href="#component-item-row" current mark="purple" mark-label="Feedback mailbox">
+            <x-fruit::item-link href="#component-item-row" current unread mark="purple" mark-label="Feedback mailbox">
                 Jordan Lee
                 <x-slot:trailing>9:30</x-slot:trailing>
                 <x-slot:subtitle>Sign-in after changing our domain</x-slot:subtitle>

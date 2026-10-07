@@ -237,6 +237,25 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
     }
 
+    public function test_an_unread_row_shows_the_dot_after_the_time_and_names_it(): void
+    {
+        $row = $this->xpath(Blade::render('<x-fruit::item-link href="/c/41" unread>Jordan Lee<x-slot:trailing>9:30</x-slot:trailing></x-fruit::item-link>'));
+        $top = $row->query('//span[@class="f-item-row__top"]')->item(0);
+        // Title, time, then the decorative dot and its screen reader text, on the top line.
+        $classes = array_map(fn ($node) => $node->getAttribute('class'), iterator_to_array($row->query('./*', $top)));
+        $this->assertSame(['f-item-row__title', 'f-item-row__time', 'f-item-row__unread', 'f-sr-only'], $classes);
+        $this->assertSame('true', $row->query('//span[@class="f-item-row__unread"]')->item(0)->getAttribute('aria-hidden'));
+        $this->assertSame(__('Unread'), $row->query('//span[@class="f-item-row__top"]/span[@class="f-sr-only"]')->item(0)->textContent);
+
+        $named = $this->xpath(Blade::render('<x-fruit::item-row :unread="true" unread-label="New reply">Sophie Chen</x-fruit::item-row>'));
+        $this->assertSame('New reply', $named->query('//span[@class="f-sr-only"]')->item(0)->textContent);
+        $read = $this->xpath(Blade::render('<x-fruit::item-row :unread="false">Sophie Chen</x-fruit::item-row>'));
+        $this->assertSame(0, $read->query('//span[@class="f-item-row__unread"]')->length);
+
+        $this->assertRejected('<x-fruit::item-row unread="yes">A</x-fruit::item-row>', 'unread must be a boolean');
+        $this->assertRejected('<x-fruit::item-link href="/a" unread unread-label=" ">A</x-fruit::item-link>', 'unread-label must be text');
+    }
+
     public function test_marks_name_what_a_row_or_sidebar_item_belongs_to(): void
     {
         $row = $this->xpath(Blade::render('<x-fruit::item-row mark="green" mark-label="Billing mailbox">Sophie Chen</x-fruit::item-row>'));
