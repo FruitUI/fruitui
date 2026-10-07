@@ -427,14 +427,71 @@ export function supportDemo() {
       this.syncSelection();
       if (!this.ticket) this.backToList();
     },
-    /** Apply a change to every checked conversation, then clear the selection and report it. */
-    bulk(change, message) {
-      const chosen = this.tickets.filter(ticket => this.checked.includes(ticket.id));
+    /** Apply a change to every checked conversation (or the given ones), then clear the selection and report it. */
+    bulk(change, message, ids = this.checked) {
+      const chosen = this.tickets.filter(ticket => ids.includes(ticket.id));
       if (!chosen.length) return;
       chosen.forEach(change);
       this.checked = [];
       this.syncSelection();
       this.$toast(message(chosen.length === 1 ? '1 conversation' : `${chosen.length} conversations`));
+    },
+    /**
+     * What a row's context menu acts on: the whole selection when the row is part of it, as in mail
+     * apps; otherwise that row alone, leaving the selection as it is.
+     */
+    menuTargets(item) {
+      return this.checked.length > 1 && this.checked.includes(item.id) ? [...this.checked] : [item.id];
+    },
+    menuLabel(item) {
+      const count = this.menuTargets(item).length;
+      return count > 1 ? `Actions for ${count} conversations` : `Actions for ${item.customer.name}`;
+    },
+    /** A single unread row offers Mark as Read; otherwise the menu marks as unread, as the selection bar does. */
+    rowMarksRead(item) {
+      return item.unread && this.menuTargets(item).length === 1;
+    },
+    /** A single closed row offers Reopen; otherwise the menu closes. */
+    rowReopens(item) {
+      return item.status === 'closed' && this.menuTargets(item).length === 1;
+    },
+    toggleRowRead(item) {
+      const read = this.rowMarksRead(item);
+      this.rowAction(
+        item,
+        ticket => (ticket.unread = !read),
+        count => `${count} marked as ${read ? 'read' : 'unread'}`,
+      );
+    },
+    assignRowToMe(item) {
+      this.rowAction(
+        item,
+        ticket => (ticket.assignee = 'alex'),
+        count => `${count} assigned to you`,
+      );
+    },
+    waitRow(item) {
+      this.rowAction(
+        item,
+        ticket => (ticket.status = 'waiting'),
+        count => `${count} moved to Waiting`,
+      );
+    },
+    closeRow(item) {
+      const reopen = this.rowReopens(item);
+      this.rowAction(
+        item,
+        ticket => (ticket.status = reopen ? 'open' : 'closed'),
+        count => `${count} ${reopen ? 'reopened' : 'closed'}`,
+      );
+    },
+    rowAction(item, change, message) {
+      const ids = this.menuTargets(item);
+      const keep = ids.length === 1 && !this.checked.includes(item.id) ? [...this.checked] : [];
+      this.bulk(change, message, ids);
+      // A row acted on alone leaves the rest of the selection in place.
+      this.checked = keep;
+      this.syncSelection();
     },
     assignChecked(id) {
       if (id && !this.agents.some(agent => agent.id === id)) return;

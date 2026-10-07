@@ -76,7 +76,16 @@
                   <span class="f-item-row__subtitle support-ticket-subject" x-text="item.subject"></span><span class="f-item-row__preview support-ticket-preview" x-text="item.preview"></span>
                   <span class="f-item-row__meta support-ticket-meta" x-show="query || item.priority !== 'normal' || item.status !== 'open'"><span x-show="query" x-text="'#' + item.id"></span><span class="support-priority" x-show="item.priority !== 'normal'"><svg class="f-icon" aria-hidden="true"><use href="#i-flag"/></svg><span x-text="item.priority === 'urgent' ? 'Urgent' : 'High priority'"></span></span><span class="f-badge" x-show="item.status !== 'open'" x-text="item.status === 'waiting' ? 'Waiting' : 'Closed'"></span></span>
                   <span class="f-sr-only" x-show="mailboxId === 'all'" x-text="mailbox(item.mailboxId).name + ' mailbox'"></span>
-                </button></li>
+                </button>
+                <!-- Right-click (or Shift+F10, or the menu key): the selection bar's commands for this row,
+                     or for the whole selection when the row is part of it. -->
+                <div class="f-menu__items f-context-menu" role="menu" :aria-label="menuLabel(item)" x-data="fruitContextMenu" hidden>
+                  <button class="f-menu-item" role="menuitem" type="button" @click="toggleRowRead(item)" x-text="rowMarksRead(item) ? 'Mark as Read' : 'Mark as Unread'">Mark as Unread</button>
+                  <button class="f-menu-item" role="menuitem" type="button" @click="assignRowToMe(item)">Assign to Me</button>
+                  <button class="f-menu-item" role="menuitem" type="button" @click="waitRow(item)">Move to Waiting</button>
+                  <div class="f-menu__separator" role="separator"></div>
+                  <button class="f-menu-item" role="menuitem" type="button" @click="closeRow(item)" x-text="rowReopens(item) ? 'Reopen' : 'Close'">Close</button>
+                </div></li>
               </template>
               <li x-show="filtered.length === 0" x-cloak><div class="f-empty-state support-empty"><svg class="f-icon f-empty-state__icon" aria-hidden="true"><use href="#i-inbox"/></svg><h3 class="f-empty-state__title">No Conversations</h3><p class="f-empty-state__description" x-text="query ? 'Try another name, subject, or tag.' : priorityOnly ? 'No priority conversations in this view.' : 'You’re all caught up.'"></p><button class="f-button" type="button" x-show="query || priorityOnly" @click="clearFilters">Clear Filters</button></div></li>
               <noscript>

@@ -525,6 +525,8 @@ A context menu holds commands for the element it sits in: put it inside a list i
 
 Context menus are hidden by nature, so offer every command somewhere visible as well: a toolbar, a Menu, or the selection bar. Without JavaScript the browser's own context menu remains.
 
+In a list with multiple selection, a context menu on a selected item acts on the whole selection, as mail apps do; say so in its label ("Actions for 3 conversations"). On any other item it acts on that item alone and leaves the selection as it is. A command that toggles (Mark as Read or Unread, Close or Reopen) names what it will do to the one item, or the selection bar's own wording for several. The Support example's conversation rows show it.
+
 ```blade
 <li wire:key="ticket-{{ $ticket->id }}">
     <x-fruit::item-row wire:click="open({{ $ticket->id }})">{{ $ticket->subject }}</x-fruit::item-row>

@@ -536,3 +536,43 @@ test('the list leaves conversation numbers to search results and the open conver
   await search.fill('');
   await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();
 });
+
+test('a row’s context menu holds the selection bar’s commands, for the row or the whole selection', async ({
+  page,
+}) => {
+  const toast = text => page.getByRole('status').filter({ hasText: text });
+  const menu = page.getByRole('menu', { name: /^Actions for/ }).filter({ visible: true });
+  // A right-click opens it at the pointer, for that row alone; an unread row offers Mark as Read.
+  await ticket(page, 1041).click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Jordan Lee');
+  await expect(menu.getByRole('menuitem')).toHaveText(['Mark as Read', 'Assign to Me', 'Move to Waiting', 'Close']);
+  await expect(menu.getByRole('menuitem').first()).toBeFocused();
+  await menu.getByRole('menuitem', { name: 'Mark as Read' }).click();
+  await expect(toast('1 conversation marked as read')).toBeVisible();
+  await expect(ticket(page, 1041).locator('.support-unread')).toBeHidden();
+  // From the keyboard: Shift+F10 on the focused row, Escape returns to it.
+  await ticket(page, 1040).focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(menu).toHaveAccessibleName('Actions for Emma Thompson');
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(ticket(page, 1040)).toBeFocused();
+  // On a selected row it acts on the whole selection, as mail apps do.
+  await ticket(page, 1040).click({ modifiers: ['ControlOrMeta'] });
+  await ticket(page, 1038).click({ modifiers: ['ControlOrMeta'] });
+  const checked = () => page.locator('#support-tickets input[type="checkbox"]:checked').count();
+  expect(await checked()).toBeGreaterThanOrEqual(2);
+  const selected = await checked();
+  // A row outside the selection is acted on alone, and the selection stays.
+  await ticket(page, 1041).click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Jordan Lee');
+  await menu.getByRole('menuitem', { name: 'Assign to Me' }).click();
+  await expect(toast('1 conversation assigned to you')).toBeVisible();
+  expect(await checked()).toBe(selected);
+  await ticket(page, 1040).click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName(`Actions for ${selected} conversations`);
+  await expect(menu.getByRole('menuitem').first()).toHaveText('Mark as Unread');
+  await menu.getByRole('menuitem', { name: 'Move to Waiting' }).click();
+  await expect(toast(`${selected} conversations moved to Waiting`)).toBeVisible();
+  expect(await checked()).toBe(0);
+});
