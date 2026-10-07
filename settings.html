@@ -28,6 +28,7 @@
             <nav aria-label="Settings" x-ref="navigation">
               <a class="f-sidebar__item" href="#/general" @click="show()" :aria-current="page === 'general' ? 'page' : null" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
               <a class="f-sidebar__item" href="#/mailboxes" @click="show()" :aria-current="page === 'mailboxes' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Mailboxes</a>
+              <a class="f-sidebar__item" href="#/ai" @click="show()" :aria-current="page === 'ai' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-sparkles"/></svg>AI Assistant</a>
               <a class="f-sidebar__item" href="#/profile" @click="show()" :aria-current="page === 'profile' ? 'page' : null"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
               <p class="f-sidebar__heading">Manage</p>
               <a class="f-sidebar__item" href="#/status" @click="show()" :aria-current="page === 'status' ? 'page' : null" :aria-label="'Status' + (problems.length ? ', ' + problems.length + ' need attention' : '')"><svg class="f-icon" aria-hidden="true"><use href="#i-activity"/></svg>Status<span class="f-badge f-badge--warning" x-show="problems.length" x-text="problems.length"></span></a>
@@ -133,6 +134,63 @@
                       <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="box.autoSubject" :disabled="!box.autoReply" :required="box.autoReply"></div>
                       <div class="f-field f-field--row"><label class="f-label" for="settings-auto-body">Message</label><textarea class="f-input" id="settings-auto-body" name="autoBody" rows="4" x-model="box.autoBody" :disabled="!box.autoReply"></textarea></div>
                     </div>
+                  </section>
+                </div></template>
+
+                <!-- A mailbox's AI Assistant: what it does here, in which language, and what it knows when
+                     drafting. Providers, models and limits are installation-wide, under Settings › AI Assistant. -->
+                <template x-if="section === 'ai'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-ai-features-title">
+                    <h3 class="f-form-section__title" id="settings-ai-features-title">Features</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-summaries">Summaries</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-summaries" name="aiSummaries" x-model="box.aiSummaries" aria-describedby="settings-ai-summaries-help"><span></span></label><p class="f-help" id="settings-ai-summaries-help">A short summary at the top of each conversation.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-translations">Translations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-translations" name="aiTranslations" x-model="box.aiTranslations" aria-describedby="settings-ai-translations-help"><span></span></label><p class="f-help" id="settings-ai-translations-help">Customer messages in another language, translated for agents.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-drafts">Drafts</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-drafts" name="aiDrafts" x-model="box.aiDrafts" aria-describedby="settings-ai-drafts-help"><span></span></label><p class="f-help" id="settings-ai-drafts-help">Reply drafts for agents to review and send.</p></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-ai-language-title">
+                    <h3 class="f-form-section__title" id="settings-ai-language-title">Language</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-language">Language</label><select class="f-input" id="settings-ai-language" name="aiLanguage" x-model="box.aiLanguage" aria-describedby="settings-ai-language-help"><template x-for="(label, code) in languages" :key="code"><option :value="code" :selected="code === box.aiLanguage" x-text="code === 'default' ? 'Default (' + languages[draft.aiDefaultLanguage] + ')' : label"></option></template></select><p class="f-help" id="settings-ai-language-help">Summaries and translations use this language, unless an agent has chosen their own.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-glossary">Glossary</label><textarea class="f-input" id="settings-ai-glossary" name="aiGlossary" rows="4" x-model="box.aiGlossary" placeholder="12VPX&#10;server = Server" aria-describedby="settings-ai-glossary-help"></textarea><p class="f-help" id="settings-ai-glossary-help">One term per line: kept as written, or translated a fixed way (term = translation).</p></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-chat-translation-title">
+                    <h3 class="f-form-section__title" id="settings-chat-translation-title">Chat Translation</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-chat-translation">Translate Chats</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-chat-translation" name="chatTranslation" x-model="box.chatTranslation" aria-describedby="settings-chat-translation-help"><span></span></label><p class="f-help" id="settings-chat-translation-help">Telegram and Nostr chats, both ways: agents read and write in their own language, and see a reply’s translation before it’s sent.</p></div>
+                      <div class="f-choice"><label class="f-check"><input type="checkbox" name="markTranslated" x-model="box.markTranslated" :disabled="!box.chatTranslation" aria-describedby="settings-mark-translated-help"><span>Mark Translated Replies</span></label><p class="f-help f-choice__description" id="settings-mark-translated-help">Chat replies sent translated end with “Translated automatically”, in the customer’s language.</p></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-context-title">
+                    <h3 class="f-form-section__title" id="settings-context-title">Customer Context</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-context-url">URL</label><input class="f-input" id="settings-context-url" type="url" name="contextUrl" x-model="box.contextUrl" placeholder="https://" :disabled="!box.aiDrafts"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-context-key">Secret Key</label><input class="f-input" id="settings-context-key" type="password" name="contextKey" autocomplete="new-password" x-model="box.contextKey" :disabled="!box.aiDrafts"></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-context-header">Signature Header</label><select class="f-input" id="settings-context-header" name="contextHeader" x-model="box.contextHeader" :disabled="!box.aiDrafts"><option value="none">None</option><option value="x-signature">X-Signature (HMAC SHA-256)</option></select></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-reply-guidance">Reply Guidance</label><textarea class="f-input" id="settings-reply-guidance" name="replyGuidance" rows="4" maxlength="6000" x-model="box.replyGuidance" :disabled="!box.aiDrafts" aria-describedby="settings-reply-guidance-help"></textarea><p class="f-help" id="settings-reply-guidance-help">How replies should sound, and what to avoid. Up to 6,000 characters.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-test">Test</label><div class="f-input-group"><input class="f-input" id="settings-ai-test" type="email" placeholder="customer@example.com" x-model="contextEmail" @input="$el.setCustomValidity('')" @blur="$el.setCustomValidity('')" :disabled="!box.aiDrafts" aria-describedby="settings-ai-test-help"><button class="f-button" type="button" @click="testContext()" :disabled="!box.aiDrafts">Test</button></div><p class="f-help" id="settings-ai-test-help">Asks the URL about this customer and shows the answer.</p></div>
+                      <pre class="settings-log-lines settings-context-result" role="status" aria-label="Test result" x-show="contextResult" x-text="contextResult"></pre>
+                    </div>
+                    <p class="f-form-section__footer" x-text="box.aiDrafts ? 'When drafting a reply, the assistant asks this URL about the customer, signed with the key, and uses the answer.' : 'Used when drafting replies. Turn on Drafts to use it.'"></p>
+                  </section>
+                </div></template>
+                <!-- AI Assistant for the whole installation; each mailbox's own AI settings are on its page,
+                     linked here, so they live in one place with a way in from both. -->
+                <template x-if="page === 'ai'"><div class="settings-sections">
+                  <section class="f-form-section" aria-labelledby="settings-ai-title">
+                    <h3 class="f-form-section__title" id="settings-ai-title">Assistant</h3>
+                    <div class="f-form-section__rows">
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-default-language">Default Language</label><select class="f-input" id="settings-ai-default-language" name="aiDefaultLanguage" x-model="draft.aiDefaultLanguage" aria-describedby="settings-ai-default-language-help"><template x-for="(label, code) in installationLanguages" :key="code"><option :value="code" :selected="code === draft.aiDefaultLanguage" x-text="label"></option></template></select><p class="f-help" id="settings-ai-default-language-help">For mailboxes set to Default.</p></div>
+                      <div class="f-field f-field--row"><label class="f-label" for="settings-ai-tokens">Daily Tokens Per Mailbox</label><input class="f-input" id="settings-ai-tokens" type="number" name="aiDailyTokens" min="1000" step="1000" x-model.number="draft.aiDailyTokens" required aria-describedby="settings-ai-tokens-help"><p class="f-help" id="settings-ai-tokens-help">A mailbox stops using the assistant for the day when it reaches this.</p></div>
+                    </div>
+                  </section>
+                  <section class="f-form-section" aria-labelledby="settings-ai-mailboxes-title">
+                    <h3 class="f-form-section__title" id="settings-ai-mailboxes-title">Mailboxes</h3>
+                    <div class="f-form-section__rows">
+                      <template x-for="(entry, id) in draft.mailboxes" :key="id"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + id + '/ai'" @click="show()"><span class="settings-mailbox"><svg class="f-icon settings-mailbox__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span x-text="entry.name"></span></span><span class="f-form-row__value" x-text="aiSummary(entry)"></span></a></template>
+                    </div>
+                    <p class="f-form-section__footer">Each mailbox’s language, features, chat translation and customer context are on its own page, under Mailboxes.</p>
                   </section>
                 </div></template>
 

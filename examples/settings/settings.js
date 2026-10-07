@@ -4,13 +4,34 @@
  */
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
 
-const pages = { general: 'General', mailboxes: 'Mailboxes', profile: 'Profile', status: 'Status', logs: 'Logs' };
+const pages = {
+  general: 'General',
+  mailboxes: 'Mailboxes',
+  ai: 'AI Assistant',
+  profile: 'Profile',
+  status: 'Status',
+  logs: 'Logs',
+};
 /**
  * A mailbox's settings live in one place: Settings › Mailboxes › the mailbox. Its page holds the
  * everyday settings and a row for each further page, with that page's current value, as settings
  * drill down; Back goes up one level. Nothing is added to the sidebar on the way.
  */
-const mailboxSections = { connection: 'Connection', permissions: 'Permissions', 'auto-reply': 'Auto Reply' };
+const mailboxSections = {
+  connection: 'Connection',
+  permissions: 'Permissions',
+  'auto-reply': 'Auto Reply',
+  ai: 'AI Assistant',
+};
+const languages = {
+  default: 'Default',
+  en: 'English',
+  nl: 'Dutch',
+  de: 'German',
+  fr: 'French',
+  es: 'Spanish',
+  ja: 'Japanese',
+};
 const agents = { alex: 'Alex Morgan', mia: 'Mia Patel', noah: 'Noah Williams' };
 
 const mailbox = (name, email, color, details = {}) => ({
@@ -25,6 +46,18 @@ const mailbox = (name, email, color, details = {}) => ({
   autoReply: false,
   autoSubject: 'We received your message',
   autoBody: 'Thanks for writing. We usually reply within a day.',
+  // The AI Assistant for this mailbox; providers and limits are installation-wide (Settings › AI Assistant).
+  aiLanguage: 'default',
+  aiSummaries: true,
+  aiTranslations: true,
+  aiDrafts: true,
+  chatTranslation: false,
+  markTranslated: true,
+  aiGlossary: '',
+  contextUrl: '',
+  contextKey: '',
+  contextHeader: 'none',
+  replyGuidance: '',
   ...details,
 });
 
@@ -39,12 +72,22 @@ const defaults = () => ({
   deleteConversations: false,
   mailboxes: {
     support: mailbox('Support', 'support@forma.example', 'blue'),
-    billing: mailbox('Billing', 'billing@forma.example', 'green', { agents: ['alex'], autoReply: true }),
+    billing: mailbox('Billing', 'billing@forma.example', 'green', {
+      agents: ['alex'],
+      autoReply: true,
+      aiLanguage: 'nl',
+      chatTranslation: true,
+    }),
     feedback: mailbox('Feedback', 'feedback@forma.example', 'purple', {
       sending: 'php',
       agents: ['alex', 'mia', 'noah'],
+      aiSummaries: false,
+      aiTranslations: false,
+      aiDrafts: false,
     }),
   },
+  aiDefaultLanguage: 'en',
+  aiDailyTokens: 200000,
   name: 'Alex Morgan',
   email: 'alex@forma.example',
   language: 'en',
@@ -65,6 +108,10 @@ export function settingsDemo() {
     pages,
     mailboxSections,
     agents,
+    languages,
+    // Customer Context's test: not a setting, so not in the draft.
+    contextEmail: '',
+    contextResult: '',
     // System: Status reports problems with their fixes; Logs shows what happened.
     systemInfo,
     requirements,
@@ -142,12 +189,40 @@ export function settingsDemo() {
     people(box) {
       return box.agents.length === 1 ? '1 person' : `${box.agents.length} people`;
     },
+    /** The installation's default language is a real language, not Default. */
+    get installationLanguages() {
+      return Object.fromEntries(Object.entries(languages).filter(([code]) => code !== 'default'));
+    },
+    /** A mailbox's AI Assistant at a glance: its language while any feature is on. */
+    aiSummary(box) {
+      if (![box.aiSummaries, box.aiTranslations, box.aiDrafts, box.chatTranslation].some(Boolean)) return 'Off';
+      return `On · ${languages[box.aiLanguage === 'default' ? this.draft.aiDefaultLanguage : box.aiLanguage]}`;
+    },
     /** The current value a mailbox's page row shows for one of its further pages. */
     summary(section) {
       const box = this.box;
       if (section === 'connection') return box.sending === 'smtp' ? `SMTP · ${box.smtpHost}` : 'The server’s mail';
       if (section === 'permissions') return this.people(box);
+      if (section === 'ai') return this.aiSummary(box);
       return box.autoReply ? 'On' : 'Off';
+    },
+    /** Asks the Customer Context URL about one customer and shows the answer, as the assistant would. */
+    testContext() {
+      const input = this.$root.querySelector('#settings-ai-test');
+      // The message stays until the field changes or loses focus, so it never blocks Save.
+      input.setCustomValidity(this.contextEmail ? '' : 'Enter a customer’s email address.');
+      if (!input.reportValidity()) return;
+      this.contextResult = JSON.stringify(
+        {
+          email: this.contextEmail,
+          name: 'Sophie Chen',
+          company: 'Studio North',
+          plan: 'Team',
+          customerSince: '2024-03',
+        },
+        null,
+        2,
+      );
     },
     get dirty() {
       return JSON.stringify(this.saved) !== JSON.stringify(this.draft);

@@ -183,6 +183,10 @@
   font-size: var(--f-text-sm);
   white-space: pre-wrap;
 }
+/* Customer Context's test answer: the group's last row, on the secondary surface to its corners. */
+.f-form-section__rows > .settings-context-result {
+  border-radius: 0 0 calc(var(--f-radius) - 1px) calc(var(--f-radius) - 1px);
+}
 .settings-fetch-days {
   width: 6rem;
 }

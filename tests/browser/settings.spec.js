@@ -169,6 +169,8 @@ for (const colorScheme of ['light', 'dark']) {
       '#/mailboxes/support/connection',
       '#/mailboxes/support/permissions',
       '#/mailboxes/support/auto-reply',
+      '#/mailboxes/support/ai',
+      '#/ai',
       '#/profile',
     ]) {
       await page.goto(`/settings.html${hash}`);
@@ -318,4 +320,50 @@ test('a mailbox has a color from the named accents, saved and reverted with the 
   await page.getByRole('button', { name: 'Revert' }).click();
   await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
   await expect(save).toBeDisabled();
+});
+
+test('a mailbox’s AI Assistant is one of its pages, and Settings › AI Assistant links to each', async ({ page }) => {
+  await page.goto('/settings.html#/mailboxes/billing');
+  const row = name => page.locator('.settings-content').getByRole('link', { name: new RegExp(`^${name}`) });
+  await expect(row('AI Assistant')).toHaveText(/On · Dutch/);
+  await row('AI Assistant').click();
+  await expect(page.getByRole('heading', { name: 'AI Assistant', level: 2 })).toBeVisible();
+  await expect(workspace(page).locator('.settings-toolbar .f-back')).toHaveText('Billing');
+  // Settings that only matter while a feature is on stay in view, disabled, and say why.
+  const mark = page.getByRole('checkbox', { name: 'Mark Translated Replies' });
+  await expect(mark).toBeEnabled();
+  await page.getByRole('switch', { name: 'Translate Chats' }).uncheck();
+  await expect(mark).toBeDisabled();
+  const url = page.getByLabel('URL', { exact: true });
+  await expect(url).toBeEnabled();
+  await page.getByRole('switch', { name: 'Drafts' }).uncheck();
+  await expect(url).toBeDisabled();
+  await expect(page.getByRole('region', { name: 'Customer Context' })).toContainText('Turn on Drafts to use it.');
+  await page.getByRole('switch', { name: 'Drafts' }).check();
+  // The test asks for an email first, then shows the answer.
+  const test = page.getByRole('button', { name: 'Test', exact: true });
+  await test.click();
+  expect(await page.locator('#settings-ai-test').evaluate(input => input.validationMessage)).toBe(
+    'Enter a customer’s email address.',
+  );
+  await page.getByLabel('Test', { exact: true }).fill('sophie@example.com');
+  await test.click();
+  await expect(page.getByRole('status', { name: 'Test result' })).toContainText('"name": "Sophie Chen"');
+  // With every feature off, the mailbox's row says so.
+  for (const name of ['Summaries', 'Translations', 'Drafts']) await page.getByRole('switch', { name }).uncheck();
+  await workspace(page).locator('.settings-toolbar .f-back').click();
+  await expect(row('AI Assistant')).toHaveText(/Off/);
+  await expect(row('AI Assistant')).toBeFocused();
+
+  // The installation's page keeps providers and limits, and a row per mailbox that opens its AI page.
+  await sidebar(page).getByRole('link', { name: 'AI Assistant' }).click();
+  const mailboxes = page.getByRole('region', { name: 'Mailboxes' });
+  await expect(mailboxes.getByRole('link')).toHaveText([/Support.*On · English/, /Billing.*Off/, /Feedback.*Off/]);
+  await page.getByLabel('Default Language', { exact: true }).selectOption('de');
+  await expect(mailboxes.getByRole('link', { name: /^Support/ })).toHaveText(/On · German/);
+  await mailboxes.getByRole('link', { name: /^Support/ }).click();
+  await expect(page).toHaveURL(/#\/mailboxes\/support\/ai$/);
+  await expect(page.getByRole('combobox', { name: 'Language', exact: true })).toHaveValue('default');
+  await expect(page.getByRole('option', { name: 'Default (German)' })).toBeAttached();
+  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toHaveAttribute('aria-current', 'page');
 });
