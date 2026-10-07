@@ -324,3 +324,28 @@ test('an anchor deep in a pane scrolls only that pane, never the workspace frame
   expect(await frame.evaluate(element => element.scrollTop)).toBe(0);
   await expect(page.locator('.f-toolbar')).toBeInViewport();
 });
+
+test('a wide table in a page scrolls in its own scroller instead of widening the page on a phone', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setViewportSize({ width: 390, height: 700 });
+  const rows = Array.from(
+    { length: 4 },
+    (_, index) =>
+      `<tr><td>Oct 7, 08:4${index}:15</td><td>Translations</td><td>xAI · grok-4-fast-reasoning</td><td>1,204 tokens</td><td>0.82 s</td><td>OK</td></tr>`,
+  ).join('');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <div class="f-page"><div class="f-page__body"><div class="wrapper">
+      <div class="f-table__scroll" tabindex="0" role="region" aria-label="AI log"><table class="f-table" style="--f-table-min-width: 900px"><thead><tr><th>Date</th><th>Feature</th><th>Model</th><th>Tokens</th><th>Time</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div></div></div></body></html>`);
+  const sizes = await page.evaluate(() => {
+    const scroller = document.querySelector('.f-table__scroll');
+    return {
+      page: document.documentElement.scrollWidth,
+      wrapper: Math.round(document.querySelector('.wrapper').getBoundingClientRect().width),
+      scrolls: scroller.scrollWidth > scroller.clientWidth,
+    };
+  });
+  expect(sizes.page).toBeLessThanOrEqual(390);
+  expect(sizes.wrapper).toBeLessThanOrEqual(390);
+  expect(sizes.scrolls).toBe(true);
+});
