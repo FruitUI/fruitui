@@ -812,3 +812,29 @@ test('a chat’s message field is one line that grows, with Send only on touch s
   await expect(touch.locator('#component-history').getByRole('button', { name: 'Send' })).toBeVisible();
   await context.close();
 });
+
+test('an item row’s subject takes one line, or as many as --f-item-row-subtitle-lines allows', async ({ page }) => {
+  await page.goto('/components.html');
+  const lines = await page.evaluate(() => {
+    const row = document.createElement('button');
+    row.className = 'f-item-row';
+    row.style.width = '280px';
+    row.innerHTML =
+      '<span class="f-item-row__title">Sophie Chen</span><span class="f-item-row__subtitle">' +
+      'A very long subject that tells the whole story of what happened with the invoice, the plan and the team'.repeat(
+        2,
+      ) +
+      '</span>';
+    document.querySelector('main').append(row);
+    const subject = row.querySelector('.f-item-row__subtitle');
+    const count = () =>
+      Math.round(subject.getBoundingClientRect().height / parseFloat(getComputedStyle(subject).lineHeight));
+    const one = count();
+    row.style.setProperty('--f-item-row-subtitle-lines', '2');
+    const two = count();
+    const clipped = subject.scrollHeight > subject.clientHeight;
+    row.remove();
+    return { one, two, clipped };
+  });
+  expect(lines).toEqual({ one: 1, two: 2, clipped: true });
+});

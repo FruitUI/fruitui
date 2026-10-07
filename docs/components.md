@@ -195,6 +195,7 @@ Apply layout overrides for the available row width when composing side-by-side c
 | `--f-item-row-padding` | `14px 12px`; row padding. |
 | `--f-item-row-leading-inset` | `62px` when a leading cue exists, otherwise `12px`; content and separator start inset. |
 | `--f-item-row-radius` | `9px`; row corner radius. |
+| `--f-item-row-subtitle-lines` | `1`; lines the subtitle (a subject) may take before it ends with an ellipsis. Support uses 2. |
 | `--f-item-separator-end` | `12px`; trailing separator inset. |
 | `--f-item-current-background`, `--f-item-current-hover` | Current-row surface and hover appearance. |
 | `--f-item-current-color`, `--f-item-current-secondary`, `--f-item-current-unread`, `--f-item-current-mark`, `--f-item-current-border` | Current-row text, supporting text, unread cue, mark, and separator appearance. |

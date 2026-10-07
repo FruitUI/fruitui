@@ -155,11 +155,12 @@
   width: 6px;
   height: 6px;
 }
+.support-ticket {
+  --f-item-row-subtitle-lines: 2;
+}
 .support-ticket-subject {
   margin-top: 4px;
-  font-weight: 550;
   line-height: 1.45;
-  white-space: normal;
 }
 .support-ticket-preview {
   margin-top: 4px;
