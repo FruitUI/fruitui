@@ -299,7 +299,9 @@ test('a splitter changes only the cursor for a pointer and shows its line for ke
   await page.keyboard.press('Shift+Tab');
   await expect(handle).toBeFocused();
   expect(await line()).not.toBe('rgba(0, 0, 0, 0)');
-  await expect(handle).not.toHaveCSS('outline-style', 'none');
+  // The divider line is the focus indicator, centered on the divider rather than a ring beside it.
+  await expect(handle).toHaveCSS('outline-style', 'none');
+  expect(await handle.evaluate(element => getComputedStyle(element, '::after').width)).toBe('3px');
 });
 
 test('an anchor deep in a pane scrolls only that pane, never the workspace frame', async ({ page }) => {
@@ -349,3 +351,60 @@ test('a wide table in a page scrolls in its own scroller instead of widening the
   expect(sizes.wrapper).toBeLessThanOrEqual(390);
   expect(sizes.scrolls).toBe(true);
 });
+
+for (const dir of ['ltr', 'rtl']) {
+  test(`a splitter's handle lies beside the line, never over a scroll area's scrollbar, in ${dir}`, async ({
+    page,
+  }) => {
+    for (const [, path, frameSelector] of examples) {
+      await page.goto(path);
+      await page.locator(frameSelector).evaluate((frame, dir) => (frame.dir = dir), dir);
+      await expect(page.locator(`${frameSelector} .f-splitter[data-ready]`).first()).toBeVisible();
+      const clashes = await page.evaluate(
+        ({ frameSelector, dir }) => {
+          const frame = document.querySelector(frameSelector);
+          const scrollers = [...frame.querySelectorAll('*')].filter(element =>
+            /(auto|scroll)/.test(getComputedStyle(element).overflowY),
+          );
+          const found = [];
+          for (const handle of frame.querySelectorAll('.f-splitter[data-ready]')) {
+            const h = handle.getBoundingClientRect();
+            // A scroll area's scrollbar (overlay or classic) sits at its inline end, against the line.
+            for (const scroller of scrollers) {
+              const r = scroller.getBoundingClientRect();
+              if (!r.width || r.bottom <= h.top || r.top >= h.bottom) continue;
+              const end = dir === 'rtl' ? r.left : r.right;
+              if (end > h.left + 0.5 && end < h.right - 0.5)
+                found.push(`${handle.getAttribute('aria-label')} covers the end of ${scroller.className}`);
+            }
+            // Just inside the line, on the scrollbar side, a pointer reaches the pane, not the handle.
+            const x = dir === 'rtl' ? h.right + 3 : h.left - 3;
+            const hit = document.elementFromPoint(x, (h.top + h.bottom) / 2);
+            if (hit === handle) found.push(`${handle.getAttribute('aria-label')} takes the point beside the line`);
+            // Nor does it lie over a control, such as a button in a toolbar that spans the divider.
+            for (const control of frame.querySelectorAll('button, a[href], input, select, summary')) {
+              const r = control.getBoundingClientRect();
+              const left = Math.max(r.left, h.left);
+              const right = Math.min(r.right, h.right);
+              const top = Math.max(r.top, h.top);
+              const bottom = Math.min(r.bottom, h.bottom);
+              if (right - left < 1 || bottom - top < 1 || getComputedStyle(control).visibility === 'hidden') continue;
+              // A row as wide as its pane meets the handle at the pane's edge; a fair share or its middle may not.
+              const middle = document.elementFromPoint((r.left + r.right) / 2, (top + bottom) / 2) === handle;
+              const share =
+                document.elementFromPoint((left + right) / 2, (top + bottom) / 2) === handle &&
+                right - left > r.width / 4;
+              if (middle || share)
+                found.push(
+                  `${handle.getAttribute('aria-label')} covers ${control.getAttribute('aria-label') || control.textContent.trim()}`,
+                );
+            }
+          }
+          return found;
+        },
+        { frameSelector, dir },
+      );
+      expect(clashes, path).toEqual([]);
+    }
+  });
+}
