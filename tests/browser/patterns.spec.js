@@ -774,6 +774,36 @@ test('a message history opens at its newest message and follows what the docked 
   await expectAccessible(page, '#component-history');
 });
 
+test('a bounded history keeps its visible message in place and lets a host load the actual latest page', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-history');
+  await card.scrollIntoViewIfNeeded();
+  const history = card.getByRole('region', { name: 'Conversation with Sophie Chen' });
+  await history.evaluate(element => element.scrollTo({ top: 0 }));
+  const anchor = history.locator('[data-fruit-history-anchor="yesterday-1"]');
+  const top = () => anchor.evaluate(element => element.getBoundingClientRect().top);
+  const before = await top();
+  await history.getByRole('button', { name: 'Load earlier messages' }).click();
+  await expect(history.getByText('I started the export this afternoon.')).toBeVisible();
+  await expect.poll(top).toBeGreaterThan(before - 2);
+  expect(Math.abs((await top()) - before)).toBeLessThan(2);
+
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  const jump = history.getByRole('button', { name: 'Jump to Latest' });
+  await history.evaluate(element => element.scrollBy({ top: -50 }));
+  await expect.poll(fromEnd).toBeGreaterThan(160);
+  await expect(jump).toBeVisible();
+  await history.evaluate(element =>
+    element.addEventListener('fruit-history-latest', event => event.preventDefault(), { once: true }),
+  );
+  await jump.click();
+  expect(await fromEnd()).toBeGreaterThan(160);
+  await jump.click();
+  await expect.poll(fromEnd).toBeLessThan(2);
+});
+
 test('an inline message keeps its time beside the name, and a run’s sent bar is unbroken', async ({ page }) => {
   await page.goto('/components.html');
   await page.evaluate(() => {
