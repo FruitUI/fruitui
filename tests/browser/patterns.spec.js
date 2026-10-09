@@ -677,6 +677,101 @@ test('a loaded dialog that fails offers to try again', async ({ page }) => {
   await expect(dialog.getByRole('combobox', { name: 'Merge Into' })).toBeVisible();
 });
 
+test('a dialog rejects JSON and loads the fragment on retry', async ({ page }) => {
+  let returnJson = true;
+  await page.route('**/fragments/merge-conversation.html', route =>
+    returnJson
+      ? route.fulfill({ status: 200, contentType: 'application/json', body: '{"message":"Not a dialog"}' })
+      : route.continue(),
+  );
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    window.dialogErrors = [];
+    document.addEventListener('fruit-dialog-error', event =>
+      window.dialogErrors.push({ reason: event.detail.reason, response: event.detail.response }),
+    );
+  });
+  const trigger = page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
+  await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
+  await expect(dialog).not.toContainText('Not a dialog');
+  expect(await page.evaluate(() => window.dialogErrors[0])).toMatchObject({
+    reason: 'content-type',
+    response: { status: 200, redirected: false, contentType: 'application/json' },
+  });
+  returnJson = false;
+  await dialog.getByRole('button', { name: 'Try Again' }).click();
+  await expect(dialog.getByRole('combobox', { name: 'Merge Into' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+test('a dialog reports a followed redirect without embedding the destination', async ({ page }) => {
+  await page.route('**/fragments/merge-conversation.html', route =>
+    route.fulfill({ status: 302, headers: { Location: '/dialog-login' }, body: '' }),
+  );
+  await page.route('**/dialog-login', route =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><body><h1>Sign In</h1></body></html>' }),
+  );
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    window.dialogErrors = [];
+    document.addEventListener('fruit-dialog-error', event =>
+      window.dialogErrors.push({ reason: event.detail.reason, response: event.detail.response }),
+    );
+  });
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
+  await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
+  await expect(dialog).not.toContainText('Sign In');
+  const error = await page.evaluate(() => window.dialogErrors[0]);
+  expect(error).toMatchObject({ reason: 'redirect', response: { status: 200, redirected: true } });
+  expect(new URL(error.response.url).pathname).toBe('/dialog-login');
+});
+
+test('a dialog rejects a full HTML document at the requested URL', async ({ page }) => {
+  await page.route('**/fragments/merge-conversation.html', route =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><html><body><h1>Full Page</h1></body></html>' }),
+  );
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    window.dialogErrorReasons = [];
+    document.addEventListener('fruit-dialog-error', event => window.dialogErrorReasons.push(event.detail.reason));
+  });
+  await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
+  await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
+  await expect(dialog).not.toContainText('Full Page');
+  expect(await page.evaluate(() => window.dialogErrorReasons)).toEqual(['document']);
+});
+
+test('a network failure keeps the dialog retryable and closeable', async ({ page }) => {
+  let offline = true;
+  await page.route('**/fragments/merge-conversation.html', route =>
+    offline ? route.abort('failed') : route.continue(),
+  );
+  await page.goto('/components.html');
+  await page.evaluate(() => {
+    window.dialogErrors = [];
+    document.addEventListener('fruit-dialog-error', event =>
+      window.dialogErrors.push({ reason: event.detail.reason, response: event.detail.response }),
+    );
+  });
+  const trigger = page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Merge Conversation' });
+  await expect(dialog.getByRole('alert')).toHaveText('Could not load this content.');
+  expect(await page.evaluate(() => window.dialogErrors[0])).toEqual({ reason: 'network', response: null });
+  offline = false;
+  await dialog.getByRole('button', { name: 'Try Again' }).click();
+  await expect(dialog.getByRole('combobox', { name: 'Merge Into' })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Close' }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
 test('a translation stays inside the message it translates, outlined and announced as a translation', async ({
   page,
 }) => {
