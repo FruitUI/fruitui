@@ -20,6 +20,7 @@ Route::get('/shell/{page}', fn (string $page) => view('shell', ['page' => $page]
 
 // The same desk with Livewire's injected scripts and FruitUI's self-registering entry, as in starter kits.
 Route::get('/injected/support/{mailbox?}', fn (string $mailbox = 'all') => view('injected', ['mailbox' => $mailbox]));
+Route::get('/toast-action', fn () => view('toast-action'));
 
 // Test-only native form endpoint verifies real received bytes, not a browser protocol approximation.
 Route::post('/native-submit', function (Request $request) {

@@ -113,6 +113,11 @@ async function loadStandalone(page) {
 
 test('named dialogs and the toaster respond to browser events without Livewire', async ({ page }) => {
   await page.goto('/components.html');
+  await expect
+    .poll(() =>
+      page.getByRole('button', { name: 'Open Named Dialog' }).evaluate(button => !!button.parentElement._x_dataStack),
+    )
+    .toBe(true);
   await page.getByRole('button', { name: 'Open Named Dialog' }).click();
   const dialog = page.getByRole('dialog', { name: 'Archive this conversation?' });
   await expect(dialog).toBeVisible();
@@ -127,6 +132,20 @@ test('named dialogs and the toaster respond to browser events without Livewire',
     window.dispatchEvent(new CustomEvent('fruit-dialog-open', { detail: { name: 'missing' } })),
   );
   await expect(page.locator('dialog[open]')).toHaveCount(0);
+});
+
+test('an initial toast action submits natively and is not reused for later notices', async ({ page }) => {
+  await page.goto('http://127.0.0.1:5180/toast-action');
+  const toaster = page.getByRole('status').filter({ hasText: 'Reply sent.' });
+  await expect(toaster).toBeVisible();
+  await expect(toaster.getByRole('button', { name: 'Undo' })).toBeVisible();
+  await toaster.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.locator('#received')).toContainText('"reply":"undo"');
+
+  await page.goto('http://127.0.0.1:5180/toast-action');
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent('fruit-toast', { detail: { message: 'Saved.' } })));
+  await expect(page.getByRole('status').filter({ hasText: 'Saved.' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Undo' })).toBeHidden();
 });
 
 test('a toast announced while a modal dialog is open appears above it', async ({ page }) => {

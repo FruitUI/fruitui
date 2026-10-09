@@ -641,13 +641,16 @@
     <button type="button" class="f-button" @click="$toast('Could not connect to the IMAP server.', { tone: 'danger' })">Error</button>
 </div>
 <div role="status" aria-live="polite" class="f-toast"
-    x-data="fruitToast({&quot;duration&quot;:4000,&quot;message&quot;:null,&quot;tone&quot;:&quot;neutral&quot;})"
-    x-show="notice" x-text="notice" x-cloak></div>
+    x-data="fruitToast({&quot;duration&quot;:4000,&quot;message&quot;:null,&quot;tone&quot;:&quot;neutral&quot;,&quot;action&quot;:false})"
+    x-show="notice" x-cloak>
+    <span x-text="notice"></span>
+    </div>
 
 <div class="f-stack" aria-hidden="true">
     <div class="f-toast gallery-toast">Conversation archived.</div>
     <div class="f-toast gallery-toast" data-tone="success">Settings saved.</div>
     <div class="f-toast gallery-toast" data-tone="danger">Could not connect to the IMAP server.</div>
+    <div class="f-toast gallery-toast" data-tone="success">Reply sent.<div class="f-toast__action"><span class="f-button f-button--ghost f-button--small">Undo</span></div></div>
 </div><!-- /blade:toast --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;Conversation archived.&lt;/div&gt;
 &lt;div class=&quot;f-toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot; data-tone=&quot;success&quot;&gt;Settings saved.&lt;/div&gt;
 &lt;div class=&quot;f-toast&quot; role=&quot;status&quot; aria-live=&quot;assertive&quot; data-tone=&quot;danger&quot;&gt;Could not connect to the IMAP server.&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="toast">{{-- One toaster per layout. The server calls Fruit::toast(&apos;…&apos;) or Fruit::toast(&apos;…&apos;, tone: &apos;danger&apos;); Alpine code calls $toast(&apos;…&apos;, { tone: &apos;success&apos; }). --}}
@@ -662,6 +665,7 @@
     &lt;div class=&quot;f-toast gallery-toast&quot;&gt;Conversation archived.&lt;/div&gt;
     &lt;div class=&quot;f-toast gallery-toast&quot; data-tone=&quot;success&quot;&gt;Settings saved.&lt;/div&gt;
     &lt;div class=&quot;f-toast gallery-toast&quot; data-tone=&quot;danger&quot;&gt;Could not connect to the IMAP server.&lt;/div&gt;
+    &lt;div class=&quot;f-toast gallery-toast&quot; data-tone=&quot;success&quot;&gt;Reply sent.&lt;div class=&quot;f-toast__action&quot;&gt;&lt;span class=&quot;f-button f-button--ghost f-button--small&quot;&gt;Undo&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;/div&gt;</pre></details></section>
         <section id="component-confirm" data-component="confirm" class="f-card component-card" x-data><h2>Confirmation</h2><p>Asks once before an action, from script: a title, an optional message, Cancel and the action. Destructive questions focus Cancel first.</p><!-- blade:confirm --><div class="f-row" x-data="{ answer: '' }">
     <button type="button" class="f-button f-button--danger" @click="$confirm({ title: 'Delete this conversation?', message: 'It moves to Trash, where it stays for 30 days.', confirm: 'Delete', tone: 'danger' }).then(confirmed => answer = confirmed ? 'Deleted.' : 'Kept.')">Delete Conversation…</button>

@@ -192,6 +192,18 @@ class LaravelIntegrationTest extends TestCase
         $this->assertSame('notice', $toaster->getAttribute('x-show'));
     }
 
+    public function test_toaster_action_is_a_native_control_for_the_initial_message(): void
+    {
+        $html = Blade::render('<x-fruit::toaster message="Reply sent." :duration="15000"><x-slot:action><form method="POST" action="/undo"><button type="submit">Undo</button></form></x-slot:action></x-fruit::toaster>');
+        $xpath = $this->xpath($html);
+        $toaster = $xpath->query('//div[@role="status"]')->item(0);
+
+        $this->assertStringContainsString('"action":true', $toaster->getAttribute('x-data'));
+        $this->assertSame('notice', $xpath->query('//div[@role="status"]/span')->item(0)->getAttribute('x-text'));
+        $this->assertSame('showAction', $xpath->query('//div[contains(@class, "f-toast__action")]')->item(0)->getAttribute('x-show'));
+        $this->assertSame('POST', $xpath->query('//div[contains(@class, "f-toast__action")]//form')->item(0)->getAttribute('method'));
+    }
+
     public function test_token_fields_and_comboboxes_offer_server_search(): void
     {
         $html = Blade::render('<x-fruit::token-field name="cc" submit="list" search="server" x-on:fruit-suggest="find($event.detail.query)">ann@example.com<x-slot:options><option value="bob@example.com">Bob</option></x-slot:options></x-fruit::token-field>');

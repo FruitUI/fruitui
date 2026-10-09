@@ -10,4 +10,5 @@
     <div class="f-toast gallery-toast">Conversation archived.</div>
     <div class="f-toast gallery-toast" data-tone="success">Settings saved.</div>
     <div class="f-toast gallery-toast" data-tone="danger">Could not connect to the IMAP server.</div>
+    <div class="f-toast gallery-toast" data-tone="success">Reply sent.<div class="f-toast__action"><span class="f-button f-button--ghost f-button--small">Undo</span></div></div>
 </div>
