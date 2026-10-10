@@ -933,6 +933,56 @@ test('an inline message keeps its time beside the name, and a run’s sent bar i
   expect((await box(continued)).top - (await box(first)).bottom).toBeLessThan(1);
 });
 
+test('a composer’s message has no box: its text and an editor’s icons are on the composer’s edges', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const edges = form =>
+    form.evaluate(element => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+      return [box.left + parseFloat(style.paddingLeft), box.right - parseFloat(style.paddingRight)];
+    });
+  const textEdges = text =>
+    text.evaluate(element => {
+      const style = getComputedStyle(element);
+      const box = element.getBoundingClientRect();
+      const inset = side => parseFloat(style[`padding${side}`]) + parseFloat(style[`border${side}Width`]);
+      return [box.left + inset('Left'), box.right - inset('Right')];
+    });
+  const near = (actual, expected) =>
+    actual.forEach((value, index) => expect(Math.abs(value - expected[index])).toBeLessThan(2));
+
+  const plain = page.getByRole('form', { name: 'Composer preview' });
+  const message = plain.getByRole('textbox', { name: 'Message to the Team' });
+  near(await textEdges(message), await edges(plain));
+  await expect(message).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(message).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(message).toHaveCSS('resize', 'none');
+  // An error shows in its message; the text keeps no box.
+  await message.evaluate(element => element.setAttribute('aria-invalid', 'true'));
+  await expect(message).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  // The caret shows where typing goes.
+  await message.focus();
+  await expect(message).toHaveCSS('outline-style', 'none');
+
+  const rich = page.getByRole('form', { name: 'Reply preview' });
+  const editor = rich.locator('.f-editor');
+  const surface = rich.locator('.tiptap');
+  await expect(surface).toBeVisible();
+  near(await textEdges(surface), await edges(rich));
+  await expect(editor).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await expect(editor).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  // The toolbar's first icon lines up with the text; its button's padding is outside it.
+  const icon = await rich
+    .locator('.f-editor__toolbar svg')
+    .first()
+    .evaluate(svg => svg.getBoundingClientRect().left);
+  near([icon], (await textEdges(surface)).slice(0, 1));
+  await surface.click();
+  await expect(editor).toHaveCSS('outline-style', 'none');
+});
+
 test('a chat’s message field is one line that grows, with Send only on touch screens', async ({ page, browser }) => {
   await page.goto('/components.html');
   const card = page.locator('#component-history');

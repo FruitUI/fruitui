@@ -34,6 +34,33 @@ for (const colorScheme of ['light', 'dark'])
     await expect(page.locator('.f-prose')).toHaveCSS('line-height', '26.4px');
   });
 
+test('compatibility CSS keeps a composer’s message without a box, a resize handle or an error border', async ({
+  page,
+}) => {
+  const editor = readFileSync(new URL('../../build/editor.compat.css', import.meta.url), 'utf8');
+  await page.route('**/compatibility-composer', route =>
+    route.fulfill({
+      contentType: 'text/html',
+      body: `<!doctype html><html lang="en"><head><title>Legacy host</title><style>${legacy}</style><style>${css}${editor}</style></head><body class="fruit-ui"><form class="f-composer"><textarea class="f-input f-composer__input" aria-label="Reply" aria-invalid="true"></textarea><div class="f-editor"><textarea class="f-input" aria-label="Formatted reply"></textarea></div><div class="f-composer__field"><textarea class="f-input f-composer__input" aria-label="Message"></textarea></div></form></body></html>`,
+    }),
+  );
+  await page.goto('/compatibility-composer');
+  for (const name of ['Reply', 'Message']) {
+    const box = page.getByRole('textbox', { name, exact: true });
+    await expect(box).toHaveCSS('resize', 'none');
+    await expect(box).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await box.focus();
+    await expect(box).toHaveCSS('outline-style', 'none');
+  }
+  await expect(page.getByRole('textbox', { name: 'Reply', exact: true })).toHaveCSS(
+    'border-top-color',
+    'rgba(0, 0, 0, 0)',
+  );
+  await expect(page.locator('.f-editor')).toHaveCSS('border-top-color', 'rgba(0, 0, 0, 0)');
+  await page.getByRole('textbox', { name: 'Formatted reply' }).focus();
+  await expect(page.locator('.f-editor')).toHaveCSS('outline-style', 'none');
+});
+
 test('core stylesheet includes shared rich content but excludes optional editor and Mail presentation', () => {
   expect(css).toContain('.f-prose');
   expect(css).not.toContain('.f-editor');

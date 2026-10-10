@@ -13,11 +13,24 @@
             <x-fruit::token-field name="gallery_bcc" placeholder="Add a recipient" />
         </x-fruit::field>
     </div>
-    <label class="f-label" for="gallery-compose">Message to the Team</label>
-    <x-fruit::textarea id="gallery-compose" class="f-composer__input" name="message" rows="3" required x-model="draft" aria-describedby="gallery-compose-help" />
+    {{-- The message is written on the composer itself: no box, its text on the composer's edges. --}}
+    <label class="f-sr-only" for="gallery-compose">Message to the Team</label>
+    <x-fruit::textarea id="gallery-compose" class="f-composer__input" name="message" rows="3" required x-model="draft" placeholder="Message to the Team" aria-describedby="gallery-compose-help" />
     <footer class="f-composer__footer">
         <span class="f-help" id="gallery-compose-help">Enter inserts a new line.</span>
         <x-fruit::button type="submit" variant="primary">Send Preview</x-fruit::button>
+    </footer>
+    <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
+</x-fruit::composer>
+{{-- With formatting: an Editor in a composer drops its box too; its icons line up with the text. --}}
+<x-fruit::composer aria-label="Reply preview" x-data="{ reply: '', sent: '' }" @submit.prevent="sent = reply; reply = ''" style="--f-composer-padding: 16px">
+    <x-fruit::field label="To" layout="inline">
+        <x-fruit::input type="email" name="reply_to" value="sophie@example.com" />
+    </x-fruit::field>
+    <x-fruit::editor id="gallery-compose-reply" name="reply" x-model="reply" aria-label="Reply to Sophie Chen" placeholder="Reply to Sophie Chen" />
+    <footer class="f-composer__footer">
+        <span class="f-help">From billing@forma.example</span>
+        <x-fruit::button type="submit" variant="primary">Send Reply</x-fruit::button>
     </footer>
     <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
 </x-fruit::composer>

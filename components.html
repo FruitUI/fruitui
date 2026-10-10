@@ -1022,16 +1022,50 @@
 </div>
         </div>
     </div>
-    <label class="f-label" for="gallery-compose">Message to the Team</label>
-    <textarea class="f-input f-composer__input" id="gallery-compose" name="message" rows="3" required="required" x-model="draft" aria-describedby="gallery-compose-help"></textarea>
+    
+    <label class="f-sr-only" for="gallery-compose">Message to the Team</label>
+    <textarea class="f-input f-composer__input" id="gallery-compose" name="message" rows="3" required="required" x-model="draft" placeholder="Message to the Team" aria-describedby="gallery-compose-help"></textarea>
     <footer class="f-composer__footer">
         <span class="f-help" id="gallery-compose-help">Enter inserts a new line.</span>
         <button type="submit" class="f-button f-button--primary">Send Preview</button>
     </footer>
     <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
+</form>
+
+<form class="f-composer" style="--f-composer-padding: 16px;" aria-label="Reply preview" x-data="{ reply: '', sent: '' }" @submit.prevent="sent = reply; reply = ''">
+    <div class="f-field f-field--inline">
+    <label class="f-label" for="field-reply_to">To</label>
+    <input type="email" class="f-input" id="field-reply_to" name="reply_to" value="sophie@example.com">
+        </div>
+    <div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="newline" x-data="fruitEditor">
+    <div class="f-editor__toolbar" id="gallery-compose-reply-formatting" wire:ignore hidden aria-label="Text formatting">
+                
+                            
+                                                                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg></button>
+                                
+                                    <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bulletList" aria-label="Bullets" title="Bullets"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="orderedList" aria-label="Numbered List" title="Numbered List"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="blockquote" aria-label="Quote" title="Quote"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5H3"/><path d="M21 12H8"/><path d="M21 19H8"/><path d="M3 12v7"/></svg></button>
+                                
+                                    <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="image" aria-label="Image" title="Image"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove Formatting" title="Remove Formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/></svg></button>
+                                
+                                    <span class="f-editor__separator" role="separator" aria-orientation="vertical"></span>                                        <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button>
+                            <button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button>
+                                        </div>
+    <textarea data-fruit-control class="f-input" id="gallery-compose-reply" name="reply" x-model="reply" aria-label="Reply to Sophie Chen" placeholder="Reply to Sophie Chen" ></textarea>
+    <div class="f-editor__surface" wire:ignore hidden></div>
+    </div>
+    <footer class="f-composer__footer">
+        <span class="f-help">From billing@forma.example</span>
+        <button type="submit" class="f-button f-button--primary">Send Reply</button>
+    </footer>
+    <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
 </form><!-- /blade:composer --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;form class=&quot;f-composer&quot; action=&quot;/messages&quot; method=&quot;post&quot;&gt;
-  &lt;label for=&quot;message&quot;&gt;Reply&lt;/label&gt;
-  &lt;textarea class=&quot;f-input f-composer__input&quot; id=&quot;message&quot; name=&quot;message&quot; required&gt;&lt;/textarea&gt;
+  &lt;label class=&quot;f-sr-only&quot; for=&quot;message&quot;&gt;Reply&lt;/label&gt;
+  &lt;textarea class=&quot;f-input f-composer__input&quot; id=&quot;message&quot; name=&quot;message&quot; placeholder=&quot;Reply&quot; required&gt;&lt;/textarea&gt;
   &lt;footer class=&quot;f-composer__footer&quot;&gt;&lt;span class=&quot;f-help&quot;&gt;Enter inserts a new line.&lt;/span&gt;
     &lt;button class=&quot;f-button f-button--primary&quot; type=&quot;submit&quot;&gt;Send&lt;/button&gt;
   &lt;/footer&gt;
@@ -1050,11 +1084,24 @@
             &lt;x-fruit::token-field name=&quot;gallery_bcc&quot; placeholder=&quot;Add a recipient&quot; /&gt;
         &lt;/x-fruit::field&gt;
     &lt;/div&gt;
-    &lt;label class=&quot;f-label&quot; for=&quot;gallery-compose&quot;&gt;Message to the Team&lt;/label&gt;
-    &lt;x-fruit::textarea id=&quot;gallery-compose&quot; class=&quot;f-composer__input&quot; name=&quot;message&quot; rows=&quot;3&quot; required x-model=&quot;draft&quot; aria-describedby=&quot;gallery-compose-help&quot; /&gt;
+    {{-- The message is written on the composer itself: no box, its text on the composer&apos;s edges. --}}
+    &lt;label class=&quot;f-sr-only&quot; for=&quot;gallery-compose&quot;&gt;Message to the Team&lt;/label&gt;
+    &lt;x-fruit::textarea id=&quot;gallery-compose&quot; class=&quot;f-composer__input&quot; name=&quot;message&quot; rows=&quot;3&quot; required x-model=&quot;draft&quot; placeholder=&quot;Message to the Team&quot; aria-describedby=&quot;gallery-compose-help&quot; /&gt;
     &lt;footer class=&quot;f-composer__footer&quot;&gt;
         &lt;span class=&quot;f-help&quot; id=&quot;gallery-compose-help&quot;&gt;Enter inserts a new line.&lt;/span&gt;
         &lt;x-fruit::button type=&quot;submit&quot; variant=&quot;primary&quot;&gt;Send Preview&lt;/x-fruit::button&gt;
+    &lt;/footer&gt;
+    &lt;output class=&quot;f-help&quot; x-show=&quot;sent&quot; x-text=&quot;&apos;Sent: &apos; + sent&quot; x-cloak&gt;&lt;/output&gt;
+&lt;/x-fruit::composer&gt;
+{{-- With formatting: an Editor in a composer drops its box too; its icons line up with the text. --}}
+&lt;x-fruit::composer aria-label=&quot;Reply preview&quot; x-data=&quot;{ reply: &apos;&apos;, sent: &apos;&apos; }&quot; @submit.prevent=&quot;sent = reply; reply = &apos;&apos;&quot; style=&quot;--f-composer-padding: 16px&quot;&gt;
+    &lt;x-fruit::field label=&quot;To&quot; layout=&quot;inline&quot;&gt;
+        &lt;x-fruit::input type=&quot;email&quot; name=&quot;reply_to&quot; value=&quot;sophie@example.com&quot; /&gt;
+    &lt;/x-fruit::field&gt;
+    &lt;x-fruit::editor id=&quot;gallery-compose-reply&quot; name=&quot;reply&quot; x-model=&quot;reply&quot; aria-label=&quot;Reply to Sophie Chen&quot; placeholder=&quot;Reply to Sophie Chen&quot; /&gt;
+    &lt;footer class=&quot;f-composer__footer&quot;&gt;
+        &lt;span class=&quot;f-help&quot;&gt;From billing@forma.example&lt;/span&gt;
+        &lt;x-fruit::button type=&quot;submit&quot; variant=&quot;primary&quot;&gt;Send Reply&lt;/x-fruit::button&gt;
     &lt;/footer&gt;
     &lt;output class=&quot;f-help&quot; x-show=&quot;sent&quot; x-text=&quot;&apos;Sent: &apos; + sent&quot; x-cloak&gt;&lt;/output&gt;
 &lt;/x-fruit::composer&gt;</pre></details></section>
