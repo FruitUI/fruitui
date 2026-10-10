@@ -906,8 +906,15 @@
     &lt;/x-fruit::item-list&gt;
 &lt;/div&gt;</pre></details></section>
         <section id="component-attachment" data-component="attachment" class="f-card component-card"><h2>Attachment Link</h2><p>Mail and Chat share the same native download link. Icons, file details, and the URL belong to the caller.</p><!-- blade:attachment --><a class="f-attachment" download="" href="/attachments/fruitui-design-notes.txt">
-    <span class="f-attachment__leading"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg></span>    <span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span>
-    <span class="f-attachment__trailing"><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg></span></a><!-- /blade:attachment --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-attachment&quot; href=&quot;/notes.txt&quot; download&gt;
+    
+        <span class="f-attachment__leading"><svg class="f-icon" aria-hidden="true"><use href="#i-file"/></svg></span>    <span class="f-attachment__body">FruitUI — design notes.txt<small class="f-attachment__detail">Text document · 1 KB</small></span>
+    <span class="f-attachment__trailing"><svg class="f-icon" aria-hidden="true"><use href="#i-download"/></svg></span></a>
+
+<span class="f-attachment__frame"><a class="f-attachment f-attachment--thumbnail" style="margin-top: 12px;" download="" href="/attachments/invite-link-expired.png">
+    
+    <span class="f-attachment__thumbnail"><img src="/attachments/invite-link-expired.png" alt="" width="256" height="160" loading="lazy"></span>        <span class="f-attachment__body">invite-link-expired.png<small class="f-attachment__detail">PNG image · 19 KB</small></span>
+    </a>
+<span class="f-attachment__actions" aria-label="Attachment actions" role="group"><button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Remove invite-link-expired.png" title="Remove"><svg class="f-icon" aria-hidden="true"><use href="#i-trash"/></svg></button></span></span><!-- /blade:attachment --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;a class=&quot;f-attachment&quot; href=&quot;/notes.txt&quot; download&gt;
   &lt;span class=&quot;f-attachment__body&quot;&gt;Design notes.txt
     &lt;small class=&quot;f-attachment__detail&quot;&gt;Text document · 1 KB&lt;/small&gt;
   &lt;/span&gt;
@@ -916,6 +923,13 @@
     &lt;x-slot:detail&gt;Text document · 1 KB&lt;/x-slot:detail&gt;
     &lt;x-slot:leading&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-file&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:leading&gt;
     &lt;x-slot:trailing&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-download&quot;/&gt;&lt;/svg&gt;&lt;/x-slot:trailing&gt;
+&lt;/x-fruit::attachment&gt;
+{{-- An image shows as itself: the thumbnail slot holds an img with alt=&quot;&quot;, since the name names the link. --}}
+&lt;x-fruit::attachment href=&quot;/attachments/invite-link-expired.png&quot; download style=&quot;margin-top: 12px&quot;&gt;
+    invite-link-expired.png
+    &lt;x-slot:detail&gt;PNG image · 19 KB&lt;/x-slot:detail&gt;
+    &lt;x-slot:thumbnail&gt;&lt;img src=&quot;/attachments/invite-link-expired.png&quot; alt=&quot;&quot; width=&quot;256&quot; height=&quot;160&quot; loading=&quot;lazy&quot;&gt;&lt;/x-slot:thumbnail&gt;
+    &lt;x-slot:actions&gt;&lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; aria-label=&quot;Remove invite-link-expired.png&quot; title=&quot;Remove&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-trash&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;&lt;/x-slot:actions&gt;
 &lt;/x-fruit::attachment&gt;</pre></details></section>
         <section id="component-empty-state" data-component="empty-state" class="f-card component-card"><h2>Empty State</h2><p>The same informational arrangement supports empty mailboxes, queues, channels, and customer results.</p><!-- blade:empty-state --><div class="f-empty-state">
     <span class="f-empty-state__icon"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg></span>    <div class="f-empty-state__title"><h3>You’re all caught up.</h3></div>    <div class="f-empty-state__description">New conversations will appear here.</div>
@@ -1695,7 +1709,8 @@
             <button type="button" class="f-button f-button--ghost">Retry</button>
             <button type="button" class="f-button f-button--ghost">View Log</button></span></div>        <div class="f-message__body">The attached notes show where to confirm your new domain.</div>
     <div class="f-message__attachments"><span class="f-attachment__frame"><a class="f-attachment" download="" href="attachments/fruitui-design-notes.txt">
-    <span class="f-attachment__leading"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg></span>    <span class="f-attachment__body">sso-setup-notes.txt<small class="f-attachment__detail">1 KB</small></span>
+    
+        <span class="f-attachment__leading"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"/></svg></span>    <span class="f-attachment__body">sso-setup-notes.txt<small class="f-attachment__detail">1 KB</small></span>
     </a>
 <span class="f-attachment__actions" aria-label="Attachment actions" role="group"><button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Remove sso-setup-notes.txt" title="Remove"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button></span></span></div>        </article>
     <div class="f-message-event"><span class="f-message-event__icon" aria-hidden="true"><svg class="f-icon"><use href="#i-person"/></svg></span><span class="f-message-event__text">Mia Patel assigned this to Alex Morgan</span><time class="f-message-event__time"  datetime="2026-10-02T10:45" >10:45 AM</time> </div>

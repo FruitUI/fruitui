@@ -237,6 +237,19 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
     }
 
+    public function test_an_image_attachment_shows_its_thumbnail_in_place_of_icons(): void
+    {
+        $card = $this->xpath(Blade::render('<x-fruit::attachment href="/a/shot.png" download>shot.png<x-slot:detail>19 KB</x-slot:detail><x-slot:thumbnail><img src="/a/shot.png" alt=""></x-slot:thumbnail><x-slot:actions><button type="button" aria-label="Remove shot.png">×</button></x-slot:actions></x-fruit::attachment>'));
+        $link = $card->query('//a')->item(0);
+        $this->assertSame('f-attachment f-attachment--thumbnail', $link->getAttribute('class'));
+        $this->assertSame('f-attachment__thumbnail', $card->query('//a/span[1]')->item(0)->getAttribute('class'));
+        $this->assertSame('', $card->query('//a/span[@class="f-attachment__thumbnail"]/img')->item(0)->getAttribute('alt'));
+        $this->assertSame(1, $card->query('//span[@class="f-attachment__frame"]/span[@role="group"]')->length);
+        $this->assertSame('f-attachment', $this->xpath(Blade::render('<x-fruit::attachment href="/a.txt">a.txt</x-fruit::attachment>'))->query('//a')->item(0)->getAttribute('class'));
+        $this->assertRejected('<x-fruit::attachment href="/a.png">a<x-slot:thumbnail><img src="/a.png" alt=""></x-slot:thumbnail><x-slot:leading>i</x-slot:leading></x-fruit::attachment>', 'thumbnail replaces the leading and trailing');
+        $this->assertRejected('<x-fruit::attachment href="/a.png">a<x-slot:thumbnail><img src="/a.png" alt=""></x-slot:thumbnail><x-slot:trailing>i</x-slot:trailing></x-fruit::attachment>', 'thumbnail replaces the leading and trailing');
+    }
+
     public function test_a_select_has_a_small_control_size_and_keeps_its_native_size(): void
     {
         $small = $this->xpath(Blade::render('<x-fruit::select name="language" control-size="small"><option>English</option></x-fruit::select>'))->query('//select')->item(0);

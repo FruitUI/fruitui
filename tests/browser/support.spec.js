@@ -583,3 +583,34 @@ test('a row’s context menu holds the selection bar’s commands, for the row o
   await expect(toast(`${selected} conversations moved to Waiting`)).toBeVisible();
   expect(await checked()).toBe(0);
 });
+
+test('an image attachment shows as a thumbnail, named by its file and removable', async ({ page }) => {
+  const card = page.locator('.support-thread a.f-attachment--thumbnail');
+  await expect(card).toHaveCount(1);
+  // The picture is decorative; the link reads as the file.
+  await expect(card).toHaveAccessibleName('invite-link-expired.png 19 KB');
+  await expect(card.locator('img')).toHaveAttribute('alt', '');
+  // It loads lazily, when scrolled into view.
+  await card.scrollIntoViewIfNeeded();
+  await expect.poll(() => card.locator('img').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
+  const layout = await card.evaluate(link => {
+    const box = element => element.getBoundingClientRect();
+    const image = box(link.querySelector('img'));
+    const body = box(link.querySelector('.f-attachment__body'));
+    const actions = box(link.parentElement.querySelector('.f-attachment__actions'));
+    return {
+      imageHeight: image.height,
+      nameBelow: body.top >= image.bottom,
+      nameWithin: body.width <= image.width + 9,
+      actionsOverCorner: actions.top >= image.top && actions.bottom <= image.bottom && actions.right <= image.right + 1,
+    };
+  });
+  expect(layout).toEqual({ imageHeight: 160, nameBelow: true, nameWithin: true, actionsOverCorner: true });
+  // Keyboard: the card and its Remove button are each a Tab stop; Remove takes the card away.
+  await card.focus();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Remove invite-link-expired.png' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(card).toHaveCount(0);
+  await expectAccessible(page, '.support-thread');
+});

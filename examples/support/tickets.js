@@ -125,9 +125,15 @@ export const tickets = [
         'All done. Studio North is on the Team plan with annual billing, and the new invoice is in Settings › Billing.\n\nFreelancers who only comment can join as guests. Guests are free, and they can view and comment on the projects you share with them.\n\nAlex',
         'Today, 10:24 AM',
       ),
-      customer(
-        'Perfect, thank you! I’ve invited the freelancers as guests, but Ana says her invite link has expired. Could you send her a fresh one?\n\nSophie',
-      ),
+      {
+        ...customer(
+          'Perfect, thank you! I’ve invited the freelancers as guests, but Ana says her invite link has expired. Could you send her a fresh one?\n\nSophie',
+        ),
+        // An image shows as itself: a thumbnail card.
+        attachments: [
+          { name: 'invite-link-expired.png', size: '19 KB', href: 'attachments/invite-link-expired.png', image: true },
+        ],
+      },
       summary(
         'Studio North moved to the Team plan with annual billing. Sophie invited three freelancers as guests; one invite link expired and needs to be sent again.',
         'Today, 10:43 AM',
