@@ -498,6 +498,48 @@ test('the command palette keeps search focus, rounds its search ring and keeps s
   expect(await menuShortcut.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
 });
 
+test('a panel that would cross the window’s edge lines up with its trigger’s other side', async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 600 });
+  // A sidebar's footer: a notifications button and an account menu at the start edge, opening above;
+  // and the same menu at the end edge, where the panel keeps its usual end alignment.
+  await page.evaluate(() =>
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      `<div id="edge-probe" style="position:fixed;z-index:50;inset:auto 0 12px;display:flex;justify-content:space-between;padding:0 16px">
+        <span style="display:flex;gap:4px">
+          <details class="f-floating-disclosure f-floating-disclosure--above" x-data="fruitFloatingDisclosure"><summary class="f-button" aria-label="Notifications">N</summary><div class="f-floating-disclosure__content" style="--f-floating-width: 300px">No notifications</div></details>
+          <details x-data="fruitMenu" class="f-menu f-menu--above"><summary role="button" class="f-button" aria-haspopup="menu">Me</summary><div class="f-menu__items" role="menu" aria-label="Account at the start" style="min-width:200px"><button type="button" role="menuitem" class="f-menu-item">Profile</button></div></details>
+        </span>
+        <details x-data="fruitMenu" class="f-menu f-menu--above"><summary role="button" class="f-button" aria-haspopup="menu">More</summary><div class="f-menu__items" role="menu" aria-label="Account at the end" style="min-width:200px"><button type="button" role="menuitem" class="f-menu-item">Profile</button></div></details>
+      </div>`,
+    ),
+  );
+  const probe = page.locator('#edge-probe');
+  const left = locator => locator.evaluate(element => element.getBoundingClientRect().left);
+  const right = locator => locator.evaluate(element => element.getBoundingClientRect().right);
+
+  const bell = probe.locator('.f-floating-disclosure > summary');
+  await bell.click();
+  const panel = probe.locator('.f-floating-disclosure__content');
+  await expect(panel).toBeVisible();
+  expect(Math.abs((await left(panel)) - (await left(bell)))).toBeLessThan(1);
+  expect(await right(panel)).toBeLessThan(800);
+  await page.keyboard.press('Escape');
+
+  const account = probe.getByRole('button', { name: 'Me' });
+  await account.click();
+  const start = probe.getByRole('menu', { name: 'Account at the start' });
+  await expect(start).toBeVisible();
+  expect(Math.abs((await left(start)) - (await left(account)))).toBeLessThan(1);
+  await page.keyboard.press('Escape');
+
+  const more = probe.getByRole('button', { name: 'More' });
+  await more.click();
+  const end = probe.getByRole('menu', { name: 'Account at the end' });
+  await expect(end).toBeVisible();
+  expect(Math.abs((await right(end)) - (await right(more)))).toBeLessThan(1);
+});
+
 test('a context menu opens at the pointer or from the keyboard and returns focus when it closes', async ({ page }) => {
   const card = page.locator('#component-context-menu');
   const row = card.getByRole('button', { name: /Sophie Chen/ });
