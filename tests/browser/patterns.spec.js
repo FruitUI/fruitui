@@ -981,6 +981,27 @@ test('a composer’s message has no box: its text and an editor’s icons are on
   near([icon], (await textEdges(surface)).slice(0, 1));
   await surface.click();
   await expect(editor).toHaveCSS('outline-style', 'none');
+
+  // A long message grows up to half the window's height, then scrolls; a phone allows all of it, and
+  // a chat's field keeps its few lines.
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  for (let line = 0; line < 40; line++) await page.keyboard.press('Enter');
+  const height = () => surface.evaluate(element => element.getBoundingClientRect().height);
+  const { innerHeight } = await page.evaluate(() => ({ innerHeight: window.innerHeight }));
+  expect(Math.abs((await height()) - innerHeight / 2)).toBeLessThan(2);
+  expect(await surface.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true);
+  await expect(message).toHaveCSS('max-height', `${innerHeight / 2}px`);
+  const chat = page.locator('#component-history .f-composer__field .f-composer__input');
+  await expect(chat).toHaveCSS('max-height', '160px');
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await expect(message).toHaveCSS('max-height', `${viewport.height}px`);
+    await expect(surface).toHaveCSS('max-height', `${viewport.height}px`);
+    await expect(chat).toHaveCSS('max-height', '160px');
+  }
 });
 
 test('a chat’s message field is one line that grows, with Send only on touch screens', async ({ page, browser }) => {

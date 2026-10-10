@@ -324,6 +324,9 @@
   --f-composer-action-gap: 10px;
   --f-composer-footer-margin: 11px;
   --f-composer-input-min-height: 96px;
+}
+/* A chat's field grows to a few more lines than FruitUI's default; a reply, to half the window. */
+.support-chat-composer {
   --f-composer-input-max-height: 200px;
 }
 /* Both views share the column; each view's own content fills it. */
