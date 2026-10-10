@@ -549,3 +549,29 @@ test('a fieldset stacks its choices and a choice description describes its contr
   expect(third.y).toBeGreaterThan(second.y + second.height);
   expect(Math.abs(second.x - first.x)).toBeLessThan(1);
 });
+
+test('a small select is as tall as a small button, with the small text size', async ({ page }) => {
+  await page.goto('/components.html');
+  const select = page.locator('#component-select #customer-language');
+  await expect(select).toHaveClass(/f-input--small/);
+  const height = await select.evaluate(element => element.getBoundingClientRect().height);
+  const button = await page.evaluate(() => {
+    const probe = document.createElement('button');
+    probe.className = 'f-button f-button--small';
+    probe.textContent = 'Save';
+    document.querySelector('#component-select').append(probe);
+    const box = probe.getBoundingClientRect().height;
+    probe.remove();
+    return box;
+  });
+  expect(Math.abs(height - button)).toBeLessThan(1);
+  const sizes = await select.evaluate(element => {
+    const probe = document.createElement('span');
+    probe.style.fontSize = 'var(--f-text-sm)';
+    element.parentElement.append(probe);
+    const small = getComputedStyle(probe).fontSize;
+    probe.remove();
+    return [getComputedStyle(element).fontSize, small];
+  });
+  expect(sizes[0]).toBe(sizes[1]);
+});

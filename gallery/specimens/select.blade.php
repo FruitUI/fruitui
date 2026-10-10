@@ -20,4 +20,11 @@
         <option value="junk" disabled>Junk (unavailable)</option>
     </x-fruit::select>
 </x-fruit::field>
+{{-- control-size="small": as tall as a small button, for a select inline in a row of details. --}}
+<dl class="f-description-list">
+    <div>
+        <dt><label for="customer-language">Language</label></dt>
+        <dd><x-fruit::select id="customer-language" name="language" control-size="small" style="width: auto"><option value="en">English</option><option value="nl" selected>Dutch</option><option value="de">German</option></x-fruit::select></dd>
+    </div>
+</dl>
 <p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p>

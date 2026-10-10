@@ -237,6 +237,18 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::workspace frame="window">Panes</x-fruit::workspace>', 'workspace frame must be one of');
     }
 
+    public function test_a_select_has_a_small_control_size_and_keeps_its_native_size(): void
+    {
+        $small = $this->xpath(Blade::render('<x-fruit::select name="language" control-size="small"><option>English</option></x-fruit::select>'))->query('//select')->item(0);
+        $this->assertSame('f-input f-input--small', $small->getAttribute('class'));
+        $this->assertFalse($small->hasAttribute('control-size'));
+        $this->assertSame('f-input', $this->xpath(Blade::render('<x-fruit::select name="a"><option>A</option></x-fruit::select>'))->query('//select')->item(0)->getAttribute('class'));
+        // The native size attribute still means rows of a list box.
+        $list = $this->xpath(Blade::render('<x-fruit::select name="folders[]" multiple size="3" control-size="small"><option>A</option></x-fruit::select>'))->query('//select')->item(0);
+        $this->assertSame('3', $list->getAttribute('size'));
+        $this->assertRejected('<x-fruit::select control-size="large"><option>A</option></x-fruit::select>', 'control-size must be one of');
+    }
+
     public function test_an_unread_row_shows_the_dot_after_the_time_and_names_it(): void
     {
         $row = $this->xpath(Blade::render('<x-fruit::item-link href="/c/41" unread>Jordan Lee<x-slot:trailing>9:30</x-slot:trailing></x-fruit::item-link>'));

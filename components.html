@@ -151,6 +151,14 @@
         <option value="archive">Archive</option>
         <option value="junk" disabled>Junk (unavailable)</option></select>
         </div>
+
+<dl class="f-description-list">
+    <div>
+        <dt><label for="customer-language">Language</label></dt>
+        <dd><select class="f-input f-input--small" style="width: auto;" id="customer-language" name="language"><option value="en">English</option><option value="nl" selected>Dutch</option><option value="de">German</option></select>
+</dd>
+    </div>
+</dl>
 <p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p><!-- /blade:select --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Default mailbox&lt;/span&gt;
   &lt;select class=&quot;f-input&quot; name=&quot;mailbox&quot;&gt;
@@ -182,6 +190,13 @@
         &lt;option value=&quot;junk&quot; disabled&gt;Junk (unavailable)&lt;/option&gt;
     &lt;/x-fruit::select&gt;
 &lt;/x-fruit::field&gt;
+{{-- control-size=&quot;small&quot;: as tall as a small button, for a select inline in a row of details. --}}
+&lt;dl class=&quot;f-description-list&quot;&gt;
+    &lt;div&gt;
+        &lt;dt&gt;&lt;label for=&quot;customer-language&quot;&gt;Language&lt;/label&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;x-fruit::select id=&quot;customer-language&quot; name=&quot;language&quot; control-size=&quot;small&quot; style=&quot;width: auto&quot;&gt;&lt;option value=&quot;en&quot;&gt;English&lt;/option&gt;&lt;option value=&quot;nl&quot; selected&gt;Dutch&lt;/option&gt;&lt;option value=&quot;de&quot;&gt;German&lt;/option&gt;&lt;/x-fruit::select&gt;&lt;/dd&gt;
+    &lt;/div&gt;
+&lt;/dl&gt;
 &lt;p class=&quot;f-help&quot;&gt;Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.&lt;/p&gt;</pre></details></section>
         <section id="component-fieldset" data-component="fieldset" class="f-card component-card"><h2>Fieldset and Legend</h2><p>A named group of independent controls. Native disabled state propagates to its fields.</p><!-- blade:fieldset --><fieldset class="f-fieldset"><legend>Delivery Preferences</legend>
     <div class="f-choice">
