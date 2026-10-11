@@ -301,6 +301,18 @@ for (const appearance of ['light', 'dark']) {
   });
 }
 
+for (const appearance of ['light', 'dark']) {
+  test(`a hovered attachment in a hovered message keeps its detail readable in ${appearance} appearance`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: appearance });
+    // The hover shades the card's own surface, not the message's hover behind it.
+    const attachment = page.locator('.chat-attachment').first();
+    await attachment.hover();
+    await expectAccessible(page, '.chat-attachment');
+  });
+}
+
 test('the CSS-only sample keeps native disclosure and follows system appearance without JavaScript', async ({
   browser,
 }) => {

@@ -708,7 +708,8 @@ test('a dialog rejects JSON and loads the fragment on retry', async ({ page }) =
   await expect(trigger).toBeFocused();
 });
 
-test('a dialog reports a followed redirect without embedding the destination', async ({ page }) => {
+test('a dialog reports a followed redirect without embedding the destination', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'Playwright cannot fulfill a request with a redirect status in WebKit.');
   await page.route('**/fragments/merge-conversation.html', route =>
     route.fulfill({ status: 302, headers: { Location: '/dialog-login' }, body: '' }),
   );
@@ -867,6 +868,26 @@ test('a message history opens at its newest message and follows what the docked 
   await expect(composer).toHaveCSS('background-color', 'rgb(1, 2, 3)');
   await card.evaluate(element => element.style.removeProperty('--f-history-background'));
   await expectAccessible(page, '#component-history');
+});
+
+test('a history whose content is replaced in place keeps following the newest message', async ({ page }) => {
+  await page.goto('/components.html');
+  const history = page.locator('#component-history').getByRole('region', { name: 'Conversation with Sophie Chen' });
+  await history.scrollIntoViewIfNeeded();
+  const fromEnd = () => history.evaluate(element => element.scrollHeight - element.scrollTop - element.clientHeight);
+  await expect.poll(fromEnd).toBeLessThan(2);
+  // As a template re-renders its groups: the content goes and returns longer. WebKit moves the
+  // position to the top as the nodes go; reading it here makes every engine do the same.
+  await history.evaluate(element => {
+    const latest = element.querySelector(':scope > .f-history__latest');
+    const content = [...element.children].filter(child => child !== latest);
+    content.forEach(child => child.remove());
+    if (element.scrollTop !== 0) throw new Error('The position should clamp to the top.');
+    const arrival = Object.assign(document.createElement('p'), { textContent: 'A new message.' });
+    arrival.style.minHeight = '120px';
+    for (const child of [...content, arrival]) element.insertBefore(child, latest);
+  });
+  await expect.poll(fromEnd).toBeLessThan(2);
 });
 
 test('a bounded history keeps its visible message in place and lets a host load the actual latest page', async ({

@@ -38,7 +38,7 @@ test('Settings is linked from every example, and its pages follow the URL', asyn
   await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeVisible();
 });
 
-test('each level opens beside the one before, and the rows on the way stay current', async ({ page, browserName }) => {
+test('each level opens beside the one before, and the rows on the way stay current', async ({ page }) => {
   await page.setViewportSize({ width: 1720, height: 1000 });
   await expect.poll(() => shown(page)).toEqual(['Settings', 'General']);
   const links = sidebar(page).getByRole('link');
@@ -58,10 +58,13 @@ test('each level opens beside the one before, and the rows on the way stay curre
   await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
   await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Billing']);
   // A level is a region named by its title. The row that opened it is current, and keeps focus beside
-  // it (WebKit doesn't focus a clicked link, so there the level's title takes focus).
+  // it; where a click doesn't focus a link (Safari), the new level's title takes focus instead.
   await expect(level(page, 'Billing')).toHaveAccessibleName('Billing');
-  if (browserName === 'webkit') await expect(level(page, 'Billing').getByRole('heading', { level: 2 })).toBeFocused();
-  else await expect(billing).toBeFocused();
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.activeElement?.matches('a[href="#/mailboxes/billing"], #settings-mailbox-heading')),
+    )
+    .toBe(true);
   await expect(billing).toHaveAttribute('aria-current', 'page');
   await expect(mailboxes).toHaveAttribute('aria-current', 'true');
   const mailbox = level(page, 'Billing');

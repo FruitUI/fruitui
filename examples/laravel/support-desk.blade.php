@@ -522,14 +522,15 @@ new class extends Component
                             </form>
 
                             <x-fruit::composer wire:submit="send" placement="top" aria-label="Reply">
-                                {{-- Mail-style recipient rows; Cc and Bcc show on demand, or when they already hold addresses. --}}
+                                {{-- Mail-style recipient rows; Cc and Bcc show on demand, or when they already hold addresses. A bound
+                                     hidden applies at once (x-show waits a frame), so the Cc entry can take focus on the next tick. --}}
                                 <div x-data="{ copies: @js($cc !== '' || $bcc !== '' || $errors->hasAny(['cc', 'bcc'])) }">
                                     <x-fruit::field control-id="support-to" label="To" layout="inline">
                                         <x-fruit::token-field readonly>{{ $ticket['email'] }}</x-fruit::token-field>
-                                        <x-fruit::button variant="ghost" size="small" x-show="!copies" aria-controls="support-cc-row support-bcc-row" aria-expanded="false"
+                                        <x-fruit::button variant="ghost" size="small" x-bind:hidden="copies" aria-controls="support-cc-row support-bcc-row" aria-expanded="false"
                                             x-on:click="copies = true; $nextTick(() => $root.querySelector('#support-cc-row input')?.focus())">Cc/Bcc</x-fruit::button>
                                     </x-fruit::field>
-                                    <x-fruit::field control-id="support-cc" label="Cc" layout="inline" id="support-cc-row" x-show="copies">
+                                    <x-fruit::field control-id="support-cc" label="Cc" layout="inline" id="support-cc-row" x-bind:hidden="!copies">
                                         {{-- The server searches contacts as the address is typed; options follow each re-render. --}}
                                         <x-fruit::token-field name="cc" wire:model="cc" placeholder="Add a recipient" search="server" x-on:fruit-suggest.debounce.200ms="$wire.set('ccSearch', $event.detail.query)">
                                             {{ $cc }}
@@ -540,7 +541,7 @@ new class extends Component
                                             </x-slot:options>
                                         </x-fruit::token-field>
                                     </x-fruit::field>
-                                    <x-fruit::field control-id="support-bcc" label="Bcc" layout="inline" id="support-bcc-row" x-show="copies">
+                                    <x-fruit::field control-id="support-bcc" label="Bcc" layout="inline" id="support-bcc-row" x-bind:hidden="!copies">
                                         <x-fruit::token-field name="bcc" wire:model="bcc" placeholder="Add a recipient">{{ $bcc }}</x-fruit::token-field>
                                     </x-fruit::field>
                                 </div>

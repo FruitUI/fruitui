@@ -180,6 +180,7 @@ export function mailDemo() {
       );
       this.$refs.composer.showModal();
     },
+    /** The rows bind hidden, which applies before the next tick (x-show waits a frame), so Cc can take focus. */
     revealCopies() {
       this.showCopies = true;
       this.$nextTick(() => this.$refs.composer.querySelector('#compose-cc-row input')?.focus());

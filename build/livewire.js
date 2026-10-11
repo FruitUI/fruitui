@@ -594,16 +594,19 @@ function te({ threshold: e = 160 } = {}) {
 	return {
 		awayFromLatest: !1,
 		init() {
-			t = this.$el, s = () => {
-				u || (t.scrollTop !== l && (c = d() < 24), c && (t.scrollTop = t.scrollHeight), l = t.scrollTop);
+			t = this.$el, s = ({ mutated: e = !1 } = {}) => {
+				u || (t.scrollTop !== l && !e && (c = d() < 24), c && (t.scrollTop = t.scrollHeight), l = t.scrollTop);
 			}, a = () => {
 				t.scrollTop !== l && (c = d() < 24, this.awayFromLatest = d() > e, l = t.scrollTop);
-			}, o = () => this.jumpToLatest({ smooth: !1 }), r = new ResizeObserver(s), r.observe(t);
+			}, o = () => this.jumpToLatest({ smooth: !1 }), r = new ResizeObserver(() => s()), r.observe(t);
 			for (let e of t.children) r.observe(e);
 			i = new MutationObserver((e) => {
-				for (let t of e) for (let e of t.addedNodes) e.nodeType === 1 && r.observe(e);
-				s();
-			}), i.observe(t, { childList: !0 }), t.addEventListener("scroll", a, { passive: !0 }), n = t.parentElement?.closest(".f-pane") ?? t.parentElement, n?.addEventListener("submit", o), s();
+				for (let n of e) if (n.target === t) for (let e of n.addedNodes) e.nodeType === 1 && r.observe(e);
+				s({ mutated: !0 });
+			}), i.observe(t, {
+				childList: !0,
+				subtree: !0
+			}), t.addEventListener("scroll", a, { passive: !0 }), n = t.parentElement?.closest(".f-pane") ?? t.parentElement, n?.addEventListener("submit", o), s();
 		},
 		async preservePosition(n) {
 			let r = t.getBoundingClientRect(), i = [...t.querySelectorAll("[data-fruit-history-anchor]")].find((e) => e.getBoundingClientRect().bottom > r.top), a = i?.getAttribute("data-fruit-history-anchor"), o = i?.getBoundingClientRect().top - r.top;

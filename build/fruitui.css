@@ -3368,8 +3368,10 @@
     text-decoration: none;
     font-size: var(--f-text-sm);
   }
+  /* Hover shades the card's own surface, so its detail text keeps its contrast over any background,
+     such as a hovered message. */
   .f-attachment:hover {
-    background: var(--f-hover);
+    background-image: linear-gradient(var(--f-hover), var(--f-hover));
   }
   .f-attachment__body {
     min-width: 0;
@@ -3405,7 +3407,7 @@
     background: transparent;
   }
   .f-attachment__frame:hover {
-    background: var(--f-hover);
+    background-image: linear-gradient(var(--f-hover), var(--f-hover));
   }
   .f-attachment__actions {
     display: flex;
