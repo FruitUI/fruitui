@@ -1035,10 +1035,11 @@ test('a chat’s message field is one line that grows, with Send only on touch s
   expect(oneLine).toBeLessThan(44);
   await expect(card.getByRole('button', { name: 'Send' })).toBeHidden();
   await expect(card.getByRole('button', { name: 'Attach Files' })).toBeVisible();
-  // The field carries the focus ring for the borderless textarea inside it.
-  await box.focus();
+  // The field carries the focus ring for the borderless textarea inside it. Back from Attach Files
+  // reaches it by keyboard without entering the history, which scrolls to show what takes focus.
+  await card.getByRole('button', { name: 'Attach Files' }).focus();
   await page.keyboard.press('Shift+Tab');
-  await page.keyboard.press('Tab');
+  await expect(box).toBeFocused();
   await expect(field).not.toHaveCSS('outline-style', 'none');
   await expect(box).toHaveAccessibleDescription('Enter to send, Shift+Enter for a new line.');
   // Lines grow the field where the browser sizes fields to their content.
