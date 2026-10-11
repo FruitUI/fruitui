@@ -525,7 +525,7 @@ new class extends Component
                                 {{-- Mail-style recipient rows; Cc and Bcc show on demand, or when they already hold addresses. --}}
                                 <div x-data="{ copies: @js($cc !== '' || $bcc !== '' || $errors->hasAny(['cc', 'bcc'])) }">
                                     <x-fruit::field control-id="support-to" label="To" layout="inline">
-                                        <x-fruit::input type="email" value="{{ $ticket['email'] }}" readonly />
+                                        <x-fruit::token-field readonly>{{ $ticket['email'] }}</x-fruit::token-field>
                                         <x-fruit::button variant="ghost" size="small" x-show="!copies" aria-controls="support-cc-row support-bcc-row" aria-expanded="false"
                                             x-on:click="copies = true; $nextTick(() => $root.querySelector('#support-cc-row input')?.focus())">Cc/Bcc</x-fruit::button>
                                     </x-fruit::field>

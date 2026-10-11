@@ -97,6 +97,46 @@ class LayoutPatternsTest extends TestCase
         $this->assertFalse($splitter->hasAttribute('data-ready'), 'Without Alpine the CSS hides the inert divider.');
     }
 
+    public function test_drilldown_levels_are_regions_named_by_their_titles_with_back_and_actions(): void
+    {
+        $html = Blade::render(<<<'BLADE'
+            <x-fruit::workspace aria-label="Settings">
+                <x-fruit::drilldown x-data="fruitDrilldown">
+                    <x-fruit::drilldown-column title="Mailboxes" optional>
+                        <a class="f-form-row f-form-row--link" href="/mailboxes/support" aria-current="page"><span>Support</span></a>
+                    </x-fruit::drilldown-column>
+                    <x-fruit::drilldown-column title="Connection" id="mailbox-connection" wire:key="connection">
+                        <x-slot:back><x-fruit::back-link href="/mailboxes/support" wire:navigate>Support</x-fruit::back-link></x-slot:back>
+                        <x-slot:actions class="custom"><x-fruit::button size="small" wire:click="test">Test</x-fruit::button></x-slot:actions>
+                        <x-fruit::input name="host" wire:model.live.blur="host" />
+                    </x-fruit::drilldown-column>
+                </x-fruit::drilldown>
+            </x-fruit::workspace>
+            BLADE);
+        $document = $this->document($html);
+        $xpath = new \DOMXPath($document);
+        $this->assertSame('fruitDrilldown', $xpath->query('//div[contains(@class, "f-drilldown")]')->item(0)->getAttribute('x-data'));
+        [$list, $page] = iterator_to_array($xpath->query('//section[contains(@class, "f-drilldown__column")]'));
+        // Each level is named by its h2 title, with ids rendered by the server so a morph keeps them.
+        $this->assertSame('f-drilldown__column f-drilldown__column--optional', $list->getAttribute('class'));
+        $this->assertSame('f-level-mailboxes-title', $list->getAttribute('aria-labelledby'));
+        $this->assertSame('mailbox-connection-title', $page->getAttribute('aria-labelledby'));
+        $title = $document->getElementById('mailbox-connection-title');
+        $this->assertSame(['h2', 'Connection', '-1'], [$title->tagName, $title->textContent, $title->getAttribute('tabindex')]);
+        $this->assertSame('connection', $page->getAttribute('wire:key'));
+        // The title row: the Back Link first, then the title, then the actions.
+        $header = $xpath->query('.//header[@class="f-drilldown__header"]', $page)->item(0);
+        $children = array_values(array_filter(iterator_to_array($header->childNodes), fn ($node) => $node instanceof \DOMElement));
+        $this->assertSame(['a', 'h2', 'div'], array_map(fn ($node) => $node->tagName, $children));
+        $this->assertSame('/mailboxes/support', $children[0]->getAttribute('href'));
+        $this->assertSame('f-drilldown__actions custom', $children[2]->getAttribute('class'));
+        $this->assertSame('test', $xpath->query('.//button', $children[2])->item(0)->getAttribute('wire:click'));
+        // The content scrolls on its own, and its controls keep their bindings.
+        $scroll = $xpath->query('./div[@class="f-pane__scroll"]', $page)->item(0);
+        $this->assertSame('host', $xpath->query('.//input', $scroll)->item(0)->getAttribute('wire:model.live.blur'));
+        $this->assertSame(0, $xpath->query('.//header', $list)->item(0)->getElementsByTagName('a')->length);
+    }
+
     #[DataProvider('invalidLayouts')]
     public function test_new_adapters_reject_semantic_overrides_and_invalid_width_options(string $template): void
     {
@@ -116,6 +156,9 @@ class LayoutPatternsTest extends TestCase
             $splitter.'edge="top" />', $splitter.'role="slider" />', $splitter.'aria-orientation="horizontal" />',
             $splitter.'tabindex="-1" />', $splitter.'x-bind:tabindex.camel="index" />', $splitter.'x-bind:aria-controls="pane" />', $splitter.'x-data="other" />', $splitter.'x-bind:role="role" />',
             '<x-fruit::splitter pane="nav" flexible="nav" variable="width" />',
+            '<x-fruit::drilldown role="navigation" />', '<x-fruit::drilldown as="nav" />',
+            '<x-fruit::drilldown-column />', '<x-fruit::drilldown-column title=" " />',
+            '<x-fruit::drilldown-column title="Mailboxes" optional="yes" />', '<x-fruit::drilldown-column title="Mailboxes" role="dialog" />',
         ]);
     }
 }

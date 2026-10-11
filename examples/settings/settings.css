@@ -3,7 +3,6 @@
   container: settings / inline-size;
 }
 .settings-workspace {
-  --f-workspace-columns: var(--f-sidebar-width, 230px) minmax(0, 1fr);
   --f-workspace-height: 780px;
   --f-workspace-background: var(--f-grouped-background);
 }
@@ -22,32 +21,6 @@
   color: var(--f-secondary);
   font-size: var(--f-text-xs);
 }
-.settings-content {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: 0;
-}
-/* One height on every page: a 36px Back or Open Mailbox button fits within it, so the bar doesn't
-   grow when they appear. */
-.settings-toolbar {
-  min-height: 52px;
-  padding-block: 8px;
-  gap: 6px;
-}
-.settings-toolbar > h2 {
-  outline-offset: 4px;
-}
-.settings-toolbar .f-back {
-  display: none;
-}
-/* Within Mailboxes, Back goes up a level (to the mailbox, or to the list), so it shows beside the
-   sidebar too. */
-.settings-workspace[data-nested] .settings-toolbar .f-back {
-  display: inline-flex;
-}
-.settings-scroll {
-  padding: 0;
-}
 .settings-page {
   --f-page-background: var(--f-grouped-background);
 }
@@ -55,45 +28,38 @@
   display: grid;
   gap: 24px;
 }
-/* A mailbox row: its color (the mark the inbox uses), then its name over its address. */
-.settings-mailbox {
+/* A mailbox or person row: its mark (the mailbox's color, the person's initials), then its name over
+   its address. */
+.settings-item {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
 }
-.settings-mailbox__icon {
+.settings-item > span:last-child {
+  min-width: 0;
+}
+.settings-item > span:last-child > * {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.settings-item__icon {
   color: var(--f-mark);
 }
-.settings-mailbox small {
-  display: block;
-}
-
-/* Compact layouts show the category list, then one page with a way back. */
-@container settings (max-width: 700px) {
-  .settings-workspace {
-    --f-workspace-columns: minmax(0, 1fr);
-  }
-  .settings-workspace[data-screen='list'] > .settings-content,
-  .settings-workspace[data-screen='page'] > .settings-sidebar {
-    display: none;
-  }
-  .settings-sidebar {
-    border-inline-end: 0;
-  }
-  .settings-toolbar .f-back {
-    display: inline-flex;
-  }
-  .settings-page {
-    --f-page-padding-inline: 16px;
-  }
-  /* On a phone the log table scrolls sideways, and the status keeps a readable width. */
-  .settings-log-status {
-    min-width: 14rem;
-  }
+.settings-item__avatar {
+  --f-avatar-size: 28px;
+  --f-avatar-font-size: var(--f-text-xs);
 }
 .settings-container[data-preview='phone'] .settings-workspace {
   --f-workspace-height: 800px;
+}
+/* On a phone the log table scrolls sideways, and the status keeps a readable width. */
+@container settings (max-width: 700px) {
+  .settings-log-status {
+    min-width: 14rem;
+  }
 }
 
 /* System › Status: problems first, each with its fix; values at the end of their rows. */

@@ -129,7 +129,10 @@ test('phone search, unread filtering, message navigation, and compose work', asy
   await page.getByRole('button', { name: 'Reply to message', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'New Message' });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole('textbox', { name: 'To', exact: true })).toHaveValue('sophie@example.com');
+  await expect(dialog.locator('#compose-to')).toHaveValue('sophie@example.com');
+  await expect(dialog.locator('.f-mail__recipients .f-field').first().locator('.f-chip')).toHaveText(
+    'sophie@example.com',
+  );
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Back to messages' }).click();
   await expect(page.getByRole('button', { name: /Sophie Chen/ })).toBeFocused();

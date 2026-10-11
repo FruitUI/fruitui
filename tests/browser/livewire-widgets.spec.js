@@ -63,7 +63,9 @@ test('Livewire model events and server morphs preserve widgets while updating na
   await editor.fill('Client signature');
   await page.getByRole('button', { name: 'Refresh from server' }).click();
   await expect(page.getByRole('combobox', { name: 'Conversation owner' })).toHaveValue('Alex Morgan');
-  await expect(page.getByRole('button', { name: 'Remove noah@example.com' })).toBeDisabled();
+  // A read-only morph keeps the server's tokens without remove buttons.
+  await expect(page.locator('.f-token-field .f-chip')).toHaveText(['noah@example.com']);
+  await expect(page.locator('.f-token-field').getByRole('button')).toHaveCount(0);
   await expect(recipients).toHaveAttribute('readonly');
   await expect(editor).toHaveText('Server signature');
   await expect(page.locator('#wire-choice')).toBeHidden();

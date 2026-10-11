@@ -1,9 +1,23 @@
 import { test, expect } from '@playwright/test';
 import { expectAccessible, expectNoOverflow } from './helpers.js';
 
-// The Settings example: grouped settings (settings.html).
+// The Settings example: grouped settings in a Drill-Down (settings.html).
 const workspace = page => page.locator('#settings');
 const sidebar = page => page.getByRole('navigation', { name: 'Settings', exact: true });
+// A level, by its title; and the titles of the levels in view, in order.
+const level = (page, name) =>
+  workspace(page)
+    .locator('.f-drilldown__column')
+    .filter({ has: page.locator('.f-drilldown__header').getByRole('heading', { name, exact: true }) });
+const shown = page =>
+  workspace(page)
+    .locator('.f-drilldown__column')
+    .evaluateAll(columns =>
+      columns
+        .filter(column => column.checkVisibility())
+        .map(column => column.querySelector('.f-drilldown__title')?.textContent ?? 'Settings'),
+    );
+const back = (page, name) => level(page, name).locator('.f-drilldown__header .f-back');
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/settings.html');
@@ -24,110 +38,96 @@ test('Settings is linked from every example, and its pages follow the URL', asyn
   await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeVisible();
 });
 
-test('mailbox settings live in one place: Mailboxes, a mailbox, then its pages, with Back a level up', async ({
-  page,
-}) => {
+test('each level opens beside the one before, and the rows on the way stay current', async ({ page, browserName }) => {
+  await page.setViewportSize({ width: 1720, height: 1000 });
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'General']);
   const links = sidebar(page).getByRole('link');
   const count = await links.count();
   const mailboxes = sidebar(page).getByRole('link', { name: 'Mailboxes' });
-  const back = workspace(page).locator('.settings-toolbar .f-back');
-  const title = page.getByRole('heading', { level: 2 });
   await mailboxes.click();
   await expect(page).toHaveURL(/#\/mailboxes$/);
-  await expect(title).toHaveText('Mailboxes');
-  // Beside the sidebar, the top level needs no Back.
-  await expect(back).toBeHidden();
-  const list = page.getByRole('region', { name: 'Mailboxes' });
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes']);
+  const list = level(page, 'Mailboxes').getByRole('region', { name: 'Mailboxes' });
   await expect(list.getByRole('link')).toHaveText([
-    /Support.*support@forma\.example.*2 people/,
-    /Billing.*billing@forma\.example.*1 person/,
-    /Feedback.*feedback@forma\.example.*3 people/,
+    /Support.*support@forma\.example/,
+    /Billing.*billing@forma\.example/,
+    /Feedback.*feedback@forma\.example/,
   ]);
-  await list.getByRole('link', { name: /^Billing/ }).click();
+  const billing = list.getByRole('link', { name: /^Billing/ });
+  await billing.click();
   await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
-  await expect(title).toHaveText('Billing');
-  await expect(title).toBeFocused();
-  await expect(back).toHaveText('Mailboxes');
-  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('billing@forma.example');
-  await expect(page.getByRole('link', { name: 'Open Mailbox' })).toBeVisible();
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Billing']);
+  // A level is a region named by its title. The row that opened it is current, and keeps focus beside
+  // it (WebKit doesn't focus a clicked link, so there the level's title takes focus).
+  await expect(level(page, 'Billing')).toHaveAccessibleName('Billing');
+  if (browserName === 'webkit') await expect(level(page, 'Billing').getByRole('heading', { level: 2 })).toBeFocused();
+  else await expect(billing).toBeFocused();
+  await expect(billing).toHaveAttribute('aria-current', 'page');
+  await expect(mailboxes).toHaveAttribute('aria-current', 'true');
+  const mailbox = level(page, 'Billing');
+  await expect(mailbox.getByLabel('Email Address', { exact: true })).toHaveValue('billing@forma.example');
+  await expect(mailbox.getByRole('link', { name: 'Open Mailbox' })).toBeVisible();
   // A row per further page, with its current value.
-  const row = name => page.getByRole('link', { name: new RegExp(`^${name}`) });
+  const row = name => mailbox.getByRole('link', { name: new RegExp(`^${name}`) });
   await expect(row('Connection')).toHaveText(/SMTP · smtp\.forma\.example/);
   await expect(row('Permissions')).toHaveText(/1 person/);
   await expect(row('Auto Reply')).toHaveText(/On/);
   await row('Connection').click();
   await expect(page).toHaveURL(/#\/mailboxes\/billing\/connection$/);
-  await expect(title).toHaveText('Connection');
-  await expect(back).toHaveText('Billing');
-  await expect(page.getByRole('link', { name: 'Open Mailbox' })).toBeHidden();
-  // The SMTP rows follow the radio choice.
-  await page.getByRole('radio', { name: 'The server’s mail' }).check();
-  await expect(page.getByLabel('Server', { exact: true })).toHaveCount(0);
-  // Back goes up a level, to the row you came from, which shows the change.
-  await back.click();
-  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
-  await expect(row('Connection')).toBeFocused();
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Billing', 'Connection']);
+  await expect(row('Connection')).toHaveAttribute('aria-current', 'page');
+  await expect(billing).toHaveAttribute('aria-current', 'true');
+  // With every level in view, none needs a way back.
+  for (const name of ['Mailboxes', 'Billing', 'Connection']) await expect(back(page, name)).toBeHidden();
+  // A change shows at once in the row beside it: there's nothing to save.
+  await level(page, 'Connection').getByRole('radio', { name: 'The server’s mail' }).check();
+  await expect(level(page, 'Connection').getByLabel('Server', { exact: true })).toHaveCount(0);
   await expect(row('Connection')).toHaveText(/The server’s mail/);
-  await back.click();
-  await expect(page).toHaveURL(/#\/mailboxes$/);
-  await expect(list.getByRole('link', { name: /^Billing/ })).toBeFocused();
-  // The sidebar never changes on the way: Mailboxes stays current, and nothing is added to it.
-  await expect(mailboxes).toHaveAttribute('aria-current', 'page');
+  await expect(workspace(page).getByRole('button', { name: 'Save' })).toHaveCount(0);
+  // The sidebar never grows on the way.
   await expect(links).toHaveCount(count);
-  // Each mailbox keeps its own values, saved together.
+  // Choosing another row closes the levels below it.
   await list.getByRole('link', { name: /^Support/ }).click();
-  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('support@forma.example');
-  await expect(row('Connection')).toHaveText(/SMTP/);
-  await expect(workspace(page).locator('.settings-save [role="status"]')).toHaveText('You have unsaved changes.');
-  // The toolbar keeps one height whether Back and Open Mailbox show or not.
-  const toolbar = workspace(page).locator('.settings-toolbar');
-  const heights = [];
-  for (const hash of ['#/general', '#/mailboxes', '#/mailboxes/support', '#/mailboxes/support/connection']) {
-    await page.goto(`/settings.html${hash}`);
-    await expect(title).toBeVisible();
-    heights.push(await toolbar.evaluate(element => element.getBoundingClientRect().height));
-  }
-  expect(new Set(heights).size).toBe(1);
+  await expect(page).toHaveURL(/#\/mailboxes\/support$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Support']);
+  await expect(level(page, 'Support').getByRole('link', { name: /^Connection/ })).toHaveText(/SMTP/);
   // Links to the earlier single mailbox open the Support mailbox.
   await page.goto('/settings.html#/mailbox/connection');
   await expect(page).toHaveURL(/#\/mailboxes\/support\/connection$/);
-  await expect(title).toHaveText('Connection');
+  await expect(level(page, 'Connection')).toBeVisible();
 });
 
-test('rows label their controls and describe them, and the save bar saves, reverts and validates', async ({ page }) => {
-  const status = workspace(page).locator('.settings-save [role="status"]');
-  const save = page.getByRole('button', { name: 'Save', exact: true });
-  await expect(status).toHaveText('All changes saved.');
-  await expect(save).toBeDisabled();
-  await expect(page.getByRole('switch', { name: 'Customer Photos' })).toHaveAccessibleDescription(
-    'From Gravatar, for customers without a photo.',
-  );
-  await expect(page.getByLabel('Date Format', { exact: true })).toHaveValue('long');
-
-  const company = page.getByLabel('Company Name', { exact: true });
-  await company.fill('North Studio');
-  await page.getByRole('switch', { name: 'Show Customer Email' }).check();
-  await expect(status).toHaveText('You have unsaved changes.');
-  await save.click();
-  await expect(status).toHaveText('All changes saved.');
-  await expect(page.getByRole('status').filter({ hasText: 'Settings saved.' })).toBeVisible();
-
-  // Revert returns to the saved values; an empty required field blocks saving.
-  await company.fill('Unsaved');
-  await page.getByRole('button', { name: 'Revert', exact: true }).click();
-  await expect(company).toHaveValue('North Studio');
-  await company.fill('');
-  await save.click();
-  await expect(status).toHaveText('You have unsaved changes.');
-  expect(await company.evaluate(input => input.validity.valueMissing)).toBe(true);
+test('where the levels don’t all fit, the deepest show and the first leads back', async ({ page }) => {
+  await page.goto('/settings.html#/mailboxes/billing/connection');
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await expect.poll(() => shown(page)).toEqual(['Mailboxes', 'Billing', 'Connection']);
+  await expect(back(page, 'Mailboxes')).toBeVisible();
+  await expect(back(page, 'Mailboxes')).toHaveText('Settings');
+  await expect(back(page, 'Billing')).toBeHidden();
+  await page.setViewportSize({ width: 800, height: 1000 });
+  await expect.poll(() => shown(page)).toEqual(['Billing', 'Connection']);
+  await expect(back(page, 'Billing')).toHaveText('Mailboxes');
+  // Back goes to that level's parent, focusing the row that leads where you were.
+  await back(page, 'Billing').click();
+  await expect(page).toHaveURL(/#\/mailboxes$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes']);
+  await expect(level(page, 'Mailboxes').getByRole('link', { name: /^Billing/ })).toBeFocused();
+  // Every level's title row keeps one height, with or without Back and actions.
+  const heights = [];
+  for (const hash of ['#/general', '#/mailboxes/support', '#/mailboxes/support/connection']) {
+    await page.goto(`/settings.html${hash}`);
+    for (const header of await workspace(page).locator('.f-drilldown__header').all())
+      if (await header.isVisible()) heights.push((await header.boundingBox()).height);
+  }
+  expect(new Set(heights).size).toBe(1);
 });
 
-test('compact layouts show the category list, then one page with a way back', async ({ page }) => {
+test('a phone shows one level at a time, from the list, with a way back', async ({ page }) => {
   await page.getByRole('radio', { name: 'Phone', exact: true }).check();
-  await expect(sidebar(page)).toBeVisible();
-  await expect(page.locator('.settings-content')).toBeHidden();
+  // At Settings' root a phone shows the list; General waits beside it for a wider window.
+  await expect.poll(() => shown(page)).toEqual(['Settings']);
   await sidebar(page).getByRole('link', { name: 'Profile' }).click();
-  await expect(sidebar(page)).toBeHidden();
+  await expect.poll(() => shown(page)).toEqual(['Profile']);
   await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeFocused();
   // Switch rows keep the control at the trailing edge; text rows stack.
   const twoFactor = await page.getByRole('switch', { name: 'Two-Factor Authentication' }).boundingBox();
@@ -136,17 +136,92 @@ test('compact layouts show the category list, then one page with a way back', as
   const name = await page.getByLabel('Name', { exact: true }).boundingBox();
   const nameLabel = await page.locator('label[for="settings-name"]').boundingBox();
   expect(name.y).toBeGreaterThan(nameLabel.y + nameLabel.height - 1);
-  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await back(page, 'Profile').click();
+  await expect.poll(() => shown(page)).toEqual(['Settings']);
   await expect(sidebar(page).getByRole('link', { name: 'Profile' })).toBeFocused();
   await expectNoOverflow(page, '#settings');
-  // Within Mailboxes, Back goes up one level at a time, then to the category list.
-  await sidebar(page).getByRole('link', { name: 'Mailboxes' }).click();
-  await page.getByRole('link', { name: /^Feedback/ }).click();
+  // Down through a person, one level at a time, and back up the same way.
+  await sidebar(page).getByRole('link', { name: 'Users' }).click();
+  await page.getByRole('link', { name: /^Noah Williams/ }).click();
+  await expect(page.getByRole('heading', { name: 'Noah Williams', level: 2 })).toBeFocused();
   await page.getByRole('link', { name: /^Permissions/ }).click();
-  await expect(page.getByRole('heading', { name: 'Permissions', level: 2 })).toBeVisible();
+  await expect.poll(() => shown(page)).toEqual(['Permissions']);
   await expectNoOverflow(page, '#settings');
-  for (const parent of ['Feedback', 'Mailboxes', 'Settings']) await page.getByRole('button', { name: parent }).click();
-  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toBeFocused();
+  for (const [from, parent] of [
+    ['Permissions', 'Noah Williams'],
+    ['Noah Williams', 'Users'],
+    ['Users', 'Settings'],
+  ]) {
+    await expect(back(page, from)).toHaveText(parent);
+    await back(page, from).click();
+  }
+  await expect(sidebar(page).getByRole('link', { name: 'Users' })).toBeFocused();
+});
+
+test('every change is saved as it’s made; an entry a field can’t take says why in place', async ({ page }) => {
+  await expect(workspace(page).getByRole('button', { name: /Save|Revert/ })).toHaveCount(0);
+  await expect(page.getByRole('switch', { name: 'Customer Photos' })).toHaveAccessibleDescription(
+    'From Gravatar, for customers without a photo.',
+  );
+  await expect(page.getByLabel('Date Format', { exact: true })).toHaveValue('long');
+  // A person's name is theirs everywhere at once: the list row and the level's title.
+  await page.goto('/settings.html#/users/mia');
+  const name = page.locator('#settings-user-name');
+  await name.fill('Mia Chen');
+  await expect(level(page, 'Mia Chen')).toBeVisible();
+  await expect(level(page, 'Users').getByRole('link', { name: /^Mia Chen/ })).toBeVisible();
+  // Emptied, the field says why when you leave it, and the message follows the entry until it's taken.
+  await name.fill('');
+  await name.blur();
+  await expect(name).toHaveAttribute('aria-invalid', 'true');
+  const message = await name.evaluate(input => input.validationMessage);
+  await expect(name).toHaveAccessibleDescription(message);
+  await expect(level(page, 'Person').locator('.f-error')).toHaveText(message);
+  await name.fill('Mia');
+  await expect(name).not.toHaveAttribute('aria-invalid');
+  await expect(level(page, 'Mia').locator('.f-error')).toHaveCount(0);
+  // Your own name is the account's, in the sidebar.
+  await page.goto('/settings.html#/profile');
+  await page.getByLabel('Name', { exact: true }).fill('Alex Kim');
+  await expect(workspace(page).locator('.settings-account strong')).toHaveText('Alex Kim');
+});
+
+test('a person’s permissions: the mailboxes they open, and what General lets everyone do', async ({ page }) => {
+  await page.goto('/settings.html#/users');
+  const users = level(page, 'Users');
+  await users.getByRole('link', { name: /^Mia Patel/ }).click();
+  const person = level(page, 'Mia Patel');
+  await expect(person.getByRole('link', { name: /^Permissions/ })).toHaveText(/2 mailboxes/);
+  await expect(person.getByRole('link', { name: /^Notifications/ })).toHaveText(/Email and Browser/);
+  await person.getByRole('link', { name: /^Permissions/ }).click();
+  await expect(page).toHaveURL(/#\/users\/mia\/permissions$/);
+  const permissions = level(page, 'Permissions');
+  // A mailbox's people, seen from the person: changing either changes both.
+  const billing = permissions.getByRole('checkbox', { name: 'Billing' });
+  await expect(billing).not.toBeChecked();
+  await billing.check();
+  await expect(person.getByRole('link', { name: /^Permissions/ })).toHaveText(/3 mailboxes/);
+  // Default names what General allows, and follows it.
+  const remove = permissions.getByRole('combobox', { name: 'Delete conversations' });
+  await expect(remove.locator('option:checked')).toHaveText('Default (Not Allowed)');
+  await page.goto('/settings.html#/general');
+  await page.getByRole('checkbox', { name: 'Delete conversations' }).check();
+  await page.goto('/settings.html#/mailboxes/billing/permissions');
+  await expect(level(page, 'Permissions').getByRole('checkbox', { name: 'Mia Patel' })).toBeChecked();
+  await page.goto('/settings.html#/users/mia/permissions');
+  await expect(remove.locator('option:checked')).toHaveText('Default (Allowed)');
+  await remove.selectOption('deny');
+  await expect(remove).toHaveValue('deny');
+  // Notifications are one more level of switches.
+  await page.goto('/settings.html#/users/mia/notifications');
+  await level(page, 'Notifications').getByRole('switch', { name: 'Desktop Notifications' }).uncheck();
+  await expect(level(page, 'Mia Patel').getByRole('link', { name: /^Notifications/ })).toHaveText(/Email$/);
+  // Removing someone asks first.
+  await level(page, 'Mia Patel').getByRole('button', { name: 'Remove…' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Remove Mia Patel?' });
+  await expect(confirm.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  await confirm.getByRole('button', { name: 'Remove' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'This sample person stays.' })).toBeVisible();
 });
 
 test('the destructive action asks first', async ({ page }) => {
@@ -160,7 +235,7 @@ test('the destructive action asks first', async ({ page }) => {
 });
 
 for (const colorScheme of ['light', 'dark']) {
-  test(`every settings page is accessible and fits in ${colorScheme} appearance`, async ({ page }) => {
+  test(`every settings level is accessible and fits in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
     for (const hash of [
       '#/general',
@@ -172,48 +247,54 @@ for (const colorScheme of ['light', 'dark']) {
       '#/mailboxes/support/ai',
       '#/ai',
       '#/profile',
+      '#/users',
+      '#/users/mia',
+      '#/users/mia/permissions',
+      '#/users/mia/notifications',
     ]) {
       await page.goto(`/settings.html${hash}`);
       await expect(page.locator('.settings-sections').first()).toBeVisible();
       await expectAccessible(page, '#settings');
     }
-    await page.setViewportSize({ width: 320, height: 800 });
-    await expectNoOverflow(page, '#settings');
+    // A row whose level is open is selected, in the accent while its level has focus.
+    await level(page, 'Mia Patel')
+      .getByRole('link', { name: /^Permissions/ })
+      .focus();
+    await expectAccessible(page, '#settings');
+    for (const width of [800, 320]) {
+      await page.setViewportSize({ width, height: 800 });
+      await expectNoOverflow(page, '#settings');
+    }
   });
 }
 
-test('the settings column holds its sections and save bar at one width in a wide window', async ({ page }) => {
+test('the deepest level keeps its sections at a readable width in a wide window', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
   await page.goto('/settings.html');
-  const column = page.locator('.settings-page');
-  const section = await column.locator('.f-form-section').first().boundingBox();
-  const save = await column.locator('.f-page__footer').boundingBox();
-  // Narrow: the content stays readable however wide the pane is, and the save bar lines up with it.
+  const section = await level(page, 'General').locator('.f-form-section').first().boundingBox();
   expect(section.width).toBeLessThanOrEqual(641);
-  expect(Math.abs(save.x - section.x)).toBeLessThanOrEqual(1);
-  expect(Math.abs(save.width - section.width)).toBeLessThanOrEqual(1);
-  await expect(column.getByRole('button', { name: 'Save' })).toBeVisible();
 });
 
-test('the accent color previews on the whole page and Revert restores it', async ({ page }) => {
+test('the accent color applies to the whole page at once', async ({ page }) => {
   await page.goto('/settings.html#/profile');
   const html = page.locator('html');
-  const save = page.getByRole('button', { name: 'Save', exact: true });
+  const link = sidebar(page).getByRole('link', { name: 'General' });
   await expect(html).toHaveAttribute('data-fruit-accent', 'blue');
-  const fill = () => save.evaluate(button => getComputedStyle(button).backgroundColor);
-  const blue = await fill();
+  const color = () => link.locator('.f-icon').evaluate(icon => getComputedStyle(icon).color);
+  const blue = await color();
   const group = page.getByRole('radiogroup', { name: 'Accent Color' });
   await group.getByRole('radio', { name: 'Blue' }).focus();
   // A native radio group: arrow keys move and select.
   await page.keyboard.press('ArrowRight');
   await expect(group.getByRole('radio', { name: 'Purple' })).toBeChecked();
   await expect(html).toHaveAttribute('data-fruit-accent', 'purple');
-  // The primary button follows the accent.
-  await expect.poll(fill).not.toBe(blue);
-  await page.getByRole('button', { name: 'Revert' }).click();
-  await expect(html).toHaveAttribute('data-fruit-accent', 'blue');
-  await expect.poll(fill).toBe(blue);
-  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
+  await expect.poll(color).not.toBe(blue);
+  // It stays chosen on the way through other pages.
+  await link.click();
+  await sidebar(page).getByRole('link', { name: 'Profile' }).click();
+  await expect(
+    page.getByRole('radiogroup', { name: 'Accent Color' }).getByRole('radio', { name: 'Purple' }),
+  ).toBeChecked();
 });
 
 test('Status lists what needs attention with its fix, until everything is working', async ({ page }) => {
@@ -221,13 +302,14 @@ test('Status lists what needs attention with its fix, until everything is workin
   await expect(status).toHaveAccessibleName('Status, 3 need attention');
   await status.click();
   await expect(page).toHaveURL(/#\/status$/);
-  // No save bar: Status changes nothing to save, and its last section keeps the page's end spacing.
-  await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeHidden();
-  const end = await page.locator('.settings-scroll').evaluate(scroller => {
-    scroller.scrollTop = scroller.scrollHeight;
-    const last = scroller.querySelector('.settings-sections > :last-child').getBoundingClientRect();
-    return scroller.getBoundingClientRect().bottom - last.bottom;
-  });
+  // The last section keeps the page's end spacing.
+  const end = await level(page, 'Status')
+    .locator('.f-pane__scroll')
+    .evaluate(scroller => {
+      scroller.scrollTop = scroller.scrollHeight;
+      const last = scroller.querySelector('.settings-sections > :last-child').getBoundingClientRect();
+      return scroller.getBoundingClientRect().bottom - last.bottom;
+    });
   expect(end).toBeGreaterThanOrEqual(24);
   const attention = page.getByRole('region', { name: 'Needs Attention' });
   await expect(attention.locator('.settings-problem')).toHaveCount(3);
@@ -294,7 +376,7 @@ test('Logs shows one log at a time on a wide page, with details and a confirmed 
   await page.getByRole('searchbox', { name: 'Search the Log' }).fill('certificate');
   await expect(page.locator('.settings-page .settings-log-lines')).toHaveText(/IMAP certificate expired/);
   await expect(page.locator('.settings-page .settings-log-lines')).not.toContainText('quota');
-  await expectNoOverflow(page.locator('#settings .f-pane__scroll'));
+  await expectNoOverflow(level(page, 'Logs').locator('.f-pane__scroll'));
 });
 
 for (const colorScheme of ['light', 'dark']) {
@@ -309,61 +391,61 @@ for (const colorScheme of ['light', 'dark']) {
   });
 }
 
-test('a mailbox has a color from the named accents, saved and reverted with the page', async ({ page }) => {
+test('a mailbox has a color from the named accents, which its row shows at once', async ({ page }) => {
   await page.goto('/settings.html#/mailboxes/support');
   const group = page.getByRole('radiogroup', { name: 'Color' });
   await expect(group.getByRole('radio')).toHaveCount(8);
   await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
   await group.getByRole('radio', { name: 'Green' }).check();
-  const save = page.getByRole('button', { name: 'Save', exact: true });
-  await expect(save).toBeEnabled();
-  await page.getByRole('button', { name: 'Revert' }).click();
-  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
-  await expect(save).toBeDisabled();
+  await expect(
+    level(page, 'Mailboxes')
+      .getByRole('link', { name: /^Support/ })
+      .locator('.settings-item__icon'),
+  ).toHaveAttribute('data-fruit-mark', 'green');
 });
 
 test('a mailbox’s AI Assistant is one of its pages, and Settings › AI Assistant links to each', async ({ page }) => {
   await page.goto('/settings.html#/mailboxes/billing');
-  const row = name => page.locator('.settings-content').getByRole('link', { name: new RegExp(`^${name}`) });
+  const row = name => level(page, 'Billing').getByRole('link', { name: new RegExp(`^${name}`) });
   await expect(row('AI Assistant')).toHaveText(/On · Dutch/);
   await row('AI Assistant').click();
-  await expect(page.getByRole('heading', { name: 'AI Assistant', level: 2 })).toBeVisible();
-  await expect(workspace(page).locator('.settings-toolbar .f-back')).toHaveText('Billing');
+  const ai = level(page, 'AI Assistant');
+  await expect(ai).toBeVisible();
   // Settings that only matter while a feature is on stay in view, disabled, and say why.
-  const mark = page.getByRole('checkbox', { name: 'Mark Translated Replies' });
+  const mark = ai.getByRole('checkbox', { name: 'Mark Translated Replies' });
   await expect(mark).toBeEnabled();
-  await page.getByRole('switch', { name: 'Translate Chats' }).uncheck();
+  await ai.getByRole('switch', { name: 'Translate Chats' }).uncheck();
   await expect(mark).toBeDisabled();
-  const url = page.getByLabel('URL', { exact: true });
+  const url = ai.getByLabel('URL', { exact: true });
   await expect(url).toBeEnabled();
-  await page.getByRole('switch', { name: 'Drafts' }).uncheck();
+  await ai.getByRole('switch', { name: 'Drafts' }).uncheck();
   await expect(url).toBeDisabled();
-  await expect(page.getByRole('region', { name: 'Customer Context' })).toContainText('Turn on Drafts to use it.');
-  await page.getByRole('switch', { name: 'Drafts' }).check();
+  await expect(ai.getByRole('region', { name: 'Customer Context' })).toContainText('Turn on Drafts to use it.');
+  await ai.getByRole('switch', { name: 'Drafts' }).check();
   // The test asks for an email first, then shows the answer.
-  const test = page.getByRole('button', { name: 'Test', exact: true });
+  const test = ai.getByRole('button', { name: 'Test', exact: true });
   await test.click();
   expect(await page.locator('#settings-ai-test').evaluate(input => input.validationMessage)).toBe(
     'Enter a customer’s email address.',
   );
-  await page.getByLabel('Test', { exact: true }).fill('sophie@example.com');
+  await ai.getByLabel('Test', { exact: true }).fill('sophie@example.com');
   await test.click();
-  await expect(page.getByRole('status', { name: 'Test result' })).toContainText('"name": "Sophie Chen"');
-  // With every feature off, the mailbox's row says so.
-  for (const name of ['Summaries', 'Translations', 'Drafts']) await page.getByRole('switch', { name }).uncheck();
-  await workspace(page).locator('.settings-toolbar .f-back').click();
+  await expect(ai.getByRole('status', { name: 'Test result' })).toContainText('"name": "Sophie Chen"');
+  // With every feature off, the mailbox's row beside it says so.
+  for (const name of ['Summaries', 'Translations', 'Drafts']) await ai.getByRole('switch', { name }).uncheck();
   await expect(row('AI Assistant')).toHaveText(/Off/);
-  await expect(row('AI Assistant')).toBeFocused();
 
   // The installation's page keeps providers and limits, and a row per mailbox that opens its AI page.
-  await sidebar(page).getByRole('link', { name: 'AI Assistant' }).click();
+  await page.goto('/settings.html#/ai');
   const mailboxes = page.getByRole('region', { name: 'Mailboxes' });
   await expect(mailboxes.getByRole('link')).toHaveText([/Support.*On · English/, /Billing.*Off/, /Feedback.*Off/]);
   await page.getByLabel('Default Language', { exact: true }).selectOption('de');
   await expect(mailboxes.getByRole('link', { name: /^Support/ })).toHaveText(/On · German/);
   await mailboxes.getByRole('link', { name: /^Support/ }).click();
   await expect(page).toHaveURL(/#\/mailboxes\/support\/ai$/);
-  await expect(page.getByRole('combobox', { name: 'Language', exact: true })).toHaveValue('default');
+  await expect(level(page, 'AI Assistant').getByRole('combobox', { name: 'Language', exact: true })).toHaveValue(
+    'default',
+  );
   await expect(page.getByRole('option', { name: 'Default (German)' })).toBeAttached();
-  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toHaveAttribute('aria-current', 'page');
+  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toHaveAttribute('aria-current', 'true');
 });

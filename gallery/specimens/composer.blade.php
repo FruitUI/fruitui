@@ -2,7 +2,7 @@
     {{-- Mail-style recipient rows: short labels, full-width controls, Cc and Bcc on demand. --}}
     <div>
         <x-fruit::field label="To" layout="inline">
-            <x-fruit::input type="email" name="to" value="team@forma.example" />
+            <x-fruit::token-field name="to" placeholder="Add a recipient">team@forma.example</x-fruit::token-field>
             <x-fruit::button variant="ghost" size="small" x-show="!copies" aria-controls="gallery-cc-row gallery-bcc-row" aria-expanded="false"
                 x-on:click="copies = true; $nextTick(() => document.querySelector('#gallery-cc-row input')?.focus())">Cc/Bcc</x-fruit::button>
         </x-fruit::field>
@@ -22,10 +22,11 @@
     </footer>
     <output class="f-help" x-show="sent" x-text="'Sent: ' + sent" x-cloak></output>
 </x-fruit::composer>
-{{-- With formatting: an Editor in a composer drops its box too; its icons line up with the text. --}}
+{{-- With formatting: an Editor in a composer drops its box too; its icons line up with the text.
+     A reply's fixed recipient is a read-only token: it selects and copies, but has no remove button. --}}
 <x-fruit::composer aria-label="Reply preview" x-data="{ reply: '', sent: '' }" @submit.prevent="sent = reply; reply = ''" style="--f-composer-padding: 16px">
     <x-fruit::field label="To" layout="inline">
-        <x-fruit::input type="email" name="reply_to" value="sophie@example.com" />
+        <x-fruit::token-field name="reply_to" readonly>Sophie Chen &lt;sophie@example.com&gt;</x-fruit::token-field>
     </x-fruit::field>
     <x-fruit::editor id="gallery-compose-reply" name="reply" x-model="reply" aria-label="Reply to Sophie Chen" placeholder="Reply to Sophie Chen" />
     <footer class="f-composer__footer">

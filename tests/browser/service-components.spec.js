@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { expectAccessible } from './helpers.js';
+import { expectAccessible, tokenColor } from './helpers.js';
 
 const combo = page => page.getByRole('combobox', { name: 'Assign Conversation' });
 const tokens = page => page.getByRole('textbox', { name: 'Recipients', exact: true });
@@ -83,6 +83,85 @@ test('token entry publishes a newline string, rejects invalid entries, and suppo
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
 });
 
+test('a clicked token is selected; Delete removes it and Copy and Cut take its value', async ({ page }) => {
+  const field = page.locator('#token-example .f-token-field');
+  await tokens(page).fill('mia@example.com');
+  await tokens(page).press('Enter');
+  await tokens(page).fill('noah@example.com');
+  await tokens(page).press('Enter');
+  const chip = name => field.locator('.f-chip', { hasText: name });
+  // Copy events report what they put on the clipboard.
+  await page.evaluate(() => {
+    window.clipboard = [];
+    document.addEventListener('copy', event => window.clipboard.push(event.clipboardData.getData('text/plain')));
+  });
+
+  await chip('mia@example.com').locator('span').click();
+  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeFocused();
+  // Attribute changes on the native control (a morph, a style) keep the selection.
+  await page.locator('#gallery-recipients').evaluate(textarea => textarea.setAttribute('style', 'color: inherit'));
+  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeFocused();
+  await expect(chip('mia@example.com')).toHaveCSS('color', await tokenColor(page, '--f-on-accent'));
+  await expect(chip('sophie@example.com')).not.toHaveCSS('color', await tokenColor(page, '--f-on-accent'));
+  expect(await page.evaluate(() => getSelection().toString())).toBe('mia@example.com');
+  await page.keyboard.press('ControlOrMeta+c');
+  expect(await page.evaluate(() => window.clipboard)).toEqual(['mia@example.com']);
+  expect(await value(page, '#token-example', 'recipients')).toContain('mia@example.com');
+
+  // Left/Right move the selection; Delete removes the selected token and returns to entry.
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByRole('button', { name: 'Remove sophie@example.com' })).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Delete');
+  await expect(tokens(page)).toBeFocused();
+  expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com\nnoah@example.com');
+  await expect(page.locator('#token-example [role=status]').first()).toHaveText('Removed mia@example.com');
+
+  // Backspace in the empty entry selects the last token; a second Backspace removes it.
+  await tokens(page).press('Backspace');
+  await expect(page.getByRole('button', { name: 'Remove noah@example.com' })).toBeFocused();
+  await page.keyboard.press('Backspace');
+  expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
+
+  // Cut copies and removes; typing on a selected token goes on in the entry.
+  await chip('sophie@example.com').locator('span').click();
+  await page.keyboard.press('ControlOrMeta+x');
+  expect(await value(page, '#token-example', 'recipients')).toBe('');
+  expect(await page.evaluate(() => window.clipboard)).toEqual(['mia@example.com', 'sophie@example.com']);
+  await tokens(page).fill('ava@example.com');
+  await tokens(page).press('Enter');
+  await chip('ava@example.com').locator('span').click();
+  await page.keyboard.type('liam');
+  await expect(tokens(page)).toBeFocused();
+  await expect(tokens(page)).toHaveValue('liam');
+});
+
+test('a read-only token field shows tokens that select and copy but do not remove', async ({ page }) => {
+  await page.locator('#gallery-recipients').evaluate(textarea => {
+    textarea.readOnly = true;
+  });
+  const field = page.locator('#token-example .f-token-field');
+  const chip = field.locator('.f-chip');
+  await expect(field.getByRole('button')).toHaveCount(0);
+  await expect(tokens(page)).toHaveAttribute('placeholder', '');
+  await page.evaluate(() => {
+    window.clipboard = [];
+    document.addEventListener('copy', event => window.clipboard.push(event.clipboardData.getData('text/plain')));
+  });
+  await chip.click();
+  await expect(chip).toBeFocused();
+  await expect(chip).toHaveCSS('color', await tokenColor(page, '--f-on-accent'));
+  await page.keyboard.press('Delete');
+  await page.keyboard.press('ControlOrMeta+c');
+  expect(await page.evaluate(() => window.clipboard)).toEqual(['sophie@example.com']);
+  expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
+  await page.keyboard.press('Escape');
+  await expect(tokens(page)).toBeFocused();
+  await tokens(page).press('Backspace');
+  await expect(chip).toBeFocused();
+  await expectAccessible(page, '#token-example');
+});
+
 test('pasted tokens deduplicate and external updates, readonly, and resets preserve native state', async ({ page }) => {
   await tokens(page).evaluate(input => {
     const clipboardData = new DataTransfer();
@@ -102,7 +181,8 @@ test('pasted tokens deduplicate and external updates, readonly, and resets prese
     textarea.readOnly = true;
   });
   await expect(tokens(page)).toHaveAttribute('readonly');
-  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toHaveCount(0);
+  await expect(page.locator('#token-example .f-chip')).toHaveText('mia@example.com');
   await page.getByRole('button', { name: 'Reset Recipients' }).click();
   expect(await value(page, '#token-example', 'recipients')).toBe('sophie@example.com');
 });

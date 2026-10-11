@@ -29,8 +29,9 @@ test('opening conversations re-renders enhanced controls without duplicating or 
   await expect(assignee).toHaveValue('Unassigned');
   // Assigned to and Merge into, each enhanced once.
   await expect(page.locator('.f-combobox input[role="combobox"]')).toHaveCount(2);
-  // Cc and Bcc, each enhanced once.
-  await expect(page.locator('.f-token-field__entry')).toHaveCount(2);
+  // To, Cc and Bcc, each enhanced once; the read-only To token follows the conversation.
+  await expect(page.locator('.f-token-field__entry')).toHaveCount(3);
+  await expect(page.locator('#support-to').locator('xpath=..').locator('.f-chip')).toHaveText('jordan@example.com');
   await expect(page.locator('#support-assignee')).toBeHidden();
   await expect(page.locator('#support-cc')).toBeHidden();
   expect(errors).toEqual([]);

@@ -42,7 +42,9 @@ test('real Laravel/Livewire host commits change and blur bindings and morphs enh
   await choice.click();
   await expect(page.getByRole('option', { name: 'Morgan', exact: true })).toBeVisible();
   await choice.press('Escape');
-  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toBeDisabled();
+  // The server made the recipients read-only: the token stays, without its remove button.
+  await expect(page.locator('.f-token-field .f-chip')).toContainText(['mia@example.com']);
+  await expect(page.getByRole('button', { name: 'Remove mia@example.com' })).toHaveCount(0);
   await expect(page.locator('#owner')).toBeHidden();
   await expect(page.locator('#signature')).toBeHidden();
   expect(errors).toEqual([]);

@@ -4,39 +4,46 @@ import { expectAccessible } from './helpers.js';
 // Mailbox settings as a real Livewire 4 component (examples/laravel/settings.blade.php).
 const host = 'http://127.0.0.1:5180';
 
-async function openSettings(page, query = '', heading = 'Support Mailbox') {
+async function openSettings(page, query = '', heading = 'Support') {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.goto(`${host}/settings${query}`);
-  await expect(page.getByRole('heading', { name: heading, level: 1 })).toBeVisible();
+  await expect(level(page, heading)).toBeVisible();
   return errors;
 }
+// A Drill-Down level, by its title.
+const level = (page, name) =>
+  page
+    .locator('.f-drilldown__column')
+    .filter({ has: page.locator('.f-drilldown__header').getByRole('heading', { name, exact: true, level: 2 }) });
 
-test('grouped Field rows save through Livewire, report errors in place and show unsaved changes', async ({ page }) => {
+test('each change saves through Livewire as it’s made, and an entry the server refuses says why in place', async ({
+  page,
+}) => {
   const errors = await openSettings(page);
-  await expect(page.getByRole('region', { name: 'Mailbox' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Mailbox', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Save|Revert/ })).toHaveCount(0);
   const name = page.getByLabel('Name', { exact: true });
   await expect(page.getByLabel('Signature', { exact: true })).toHaveAccessibleDescription(
     'Added below every reply from this mailbox.',
   );
-  await expect(page.getByText('Changes are saved when you press Save.')).toBeVisible();
+  // Leaving the field saves it: the level's title follows, and so does a reload.
   await name.fill('Help desk');
-  await expect(page.getByText('You have unsaved changes.')).toBeVisible();
-  // An empty required field is stopped by the browser before Livewire is called.
+  await name.blur();
+  await expect(level(page, 'Help desk')).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Help desk');
+  // The server refuses an empty name: the Field says why, and the saved name stays.
   await name.fill('');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-  expect(await name.evaluate(input => input.validity.valueMissing)).toBe(true);
-  await name.fill('Help desk');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await expect(page.locator('.f-toast')).toHaveText('Settings saved.');
+  await name.blur();
+  await expect(name).toHaveAttribute('aria-invalid', 'true');
+  await expect(name).toHaveAccessibleDescription(/name field is required/);
   await page.reload();
   await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Help desk');
   expect(errors).toEqual([]);
 });
 
-test('the mailbox’s rows open its pages in the URL, and Back returns with the row showing the change', async ({
-  page,
-}) => {
+test('the mailbox’s rows open its pages beside it in the URL, and a narrow window leads back', async ({ page }) => {
   const errors = await openSettings(page);
   // Each further page is a row with its current value: a link that opens in a new tab too.
   const connection = page.getByRole('link', { name: /^Connection/ });
@@ -45,27 +52,22 @@ test('the mailbox’s rows open its pages in the URL, and Back returns with the 
   await expect(page.getByRole('link', { name: /^Auto Reply/ })).toHaveText(/Off/);
   await connection.click();
   await expect(page).toHaveURL(/section=connection/);
-  await expect(page.getByRole('heading', { name: 'Connection', level: 1 })).toBeVisible();
+  await expect(level(page, 'Connection')).toBeVisible();
+  await expect(level(page, 'Support')).toBeVisible();
+  await expect(connection).toHaveAttribute('aria-current', 'page');
+  // Beside the mailbox, the page needs no Back.
+  await expect(level(page, 'Connection').locator('.f-back')).toBeHidden();
   await expect(page.getByRole('radio', { name: 'The server’s mail' })).toHaveAccessibleDescription(
     'Simple, but more likely to reach spam.',
   );
   await expect(page.getByLabel('Server', { exact: true })).toBeVisible();
+  // A choice saves at once, and the row beside it shows it.
   await page.getByRole('radio', { name: 'The server’s mail' }).check();
   await expect(page.getByLabel('Server', { exact: true })).toHaveCount(0);
-  // Back starts the title's row, so the header keeps its height; it goes to the mailbox, whose row
-  // shows the unsaved choice.
-  const header = () => page.locator('.f-page__header').evaluate(element => element.getBoundingClientRect().height);
-  const subHeight = await header();
-  await expect(page.getByRole('link', { name: 'Support Mailbox' })).toHaveText('Support Mailbox');
-  expect(
-    await page
-      .getByRole('link', { name: 'Support Mailbox' })
-      .evaluate(link => link.querySelector('span').scrollWidth <= link.querySelector('span').clientWidth),
-  ).toBe(true);
-  await page.getByRole('link', { name: 'Support Mailbox' }).click();
-  await expect(page.getByRole('heading', { name: 'Support Mailbox', level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: /^Connection/ })).toHaveText(/The server’s mail/);
-  expect(await header()).toBe(subHeight);
+  await expect(connection).toHaveText(/The server’s mail/);
+  await page.reload();
+  await expect(page.getByRole('radio', { name: 'The server’s mail' })).toBeChecked();
+
   await openSettings(page, '?section=auto-reply', 'Auto Reply');
   const reply = page.getByRole('switch', { name: 'Send an automatic reply' });
   await expect(reply).toHaveAccessibleDescription('To the first message of every new conversation.');
@@ -73,14 +75,25 @@ test('the mailbox’s rows open its pages in the URL, and Back returns with the 
   await reply.check();
   const subject = page.getByLabel('Subject', { exact: true });
   await expect(subject).toBeEnabled();
+  await expect(page.getByRole('link', { name: /^Auto Reply/ })).toHaveText(/On/);
   // A rule only the server knows: a subject is required once automatic replies are on.
   await subject.fill('');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await subject.blur();
   await expect(subject).toHaveAttribute('aria-invalid', 'true');
   await expect(subject).toHaveAccessibleDescription(/subject field is required/);
   await subject.fill('Thanks for writing');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await subject.blur();
   await expect(subject).not.toHaveAttribute('aria-invalid');
+
+  // A phone shows the page alone, with a Back Link to the mailbox that returns to its row.
+  await page.setViewportSize({ width: 390, height: 800 });
+  await expect(level(page, 'Support')).toBeHidden();
+  const back = level(page, 'Auto Reply').getByRole('link', { name: 'Support' });
+  await expect(back).toHaveAttribute('href', '?');
+  await back.click();
+  await expect(page).not.toHaveURL(/section=/);
+  await expect(level(page, 'Auto Reply')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /^Auto Reply/ })).toBeFocused();
   expect(errors).toEqual([]);
 });
 
@@ -88,7 +101,7 @@ for (const colorScheme of ['light', 'dark']) {
   test(`the Livewire settings are accessible in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
     for (const [query, heading] of [
-      ['', 'Support Mailbox'],
+      ['', 'Support'],
       ['?section=connection', 'Connection'],
       ['?section=auto-reply', 'Auto Reply'],
     ]) {

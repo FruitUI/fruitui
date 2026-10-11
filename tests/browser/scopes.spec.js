@@ -60,7 +60,7 @@ test('Mail replies use the source account and new mail is filed under the chosen
   await page.getByRole('button', { name: 'Reply to message', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'New Message' });
   await expect(dialog.getByLabel('From', { exact: true })).toHaveValue('personal');
-  await expect(dialog.getByLabel('To', { exact: true })).toHaveValue('maya@example.com');
+  await expect(dialog.locator('#compose-to')).toHaveValue('maya@example.com');
   await dialog.getByLabel('Message', { exact: true }).fill('Looking forward to the mountains.');
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
   await expand(page, '#mailboxes', 'work');
@@ -75,7 +75,7 @@ test('Mail replies use the source account and new mail is filed under the chosen
   await page.getByRole('button', { name: 'Compose message', exact: true }).click();
   await expect(dialog.getByLabel('From', { exact: true })).toHaveValue('personal');
   await dialog.getByLabel('From', { exact: true }).selectOption('work');
-  await dialog.getByLabel('To', { exact: true }).fill('team@example.com');
+  await dialog.getByRole('textbox', { name: 'To', exact: true }).fill('team@example.com');
   await dialog.getByLabel('Subject', { exact: true }).fill('A work message');
   await dialog.getByLabel('Message', { exact: true }).fill('Sending from my work account.');
   await dialog.getByRole('button', { name: 'Send', exact: true }).click();
