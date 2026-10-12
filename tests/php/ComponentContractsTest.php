@@ -311,6 +311,22 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::sidebar-group title="A" mark="Blue">A</x-fruit::sidebar-group>', 'mark must be one of');
     }
 
+    public function test_the_editor_writes_rich_text_or_markdown_in_the_same_textarea(): void
+    {
+        // Markdown mode: the same native textarea holds the Markdown, with its bindings and the same toolbar.
+        $markdown = $this->xpath(Blade::render('<x-fruit::editor name="body" mode="markdown" wire:model="body" placeholder="Write">**Hi** {%customer.first_name%}</x-fruit::editor>'));
+        $root = $markdown->query('//div[contains(@class, "f-editor")]')->item(0);
+        $this->assertSame('markdown', $root->getAttribute('data-fruit-mode'));
+        $textarea = $markdown->query('//textarea[@data-fruit-control]')->item(0);
+        $this->assertSame('**Hi** {%customer.first_name%}', $textarea->textContent);
+        $this->assertSame('body', $textarea->getAttribute('wire:model'));
+        $this->assertSame(['bold', 'italic', 'bulletList', 'orderedList', 'blockquote', 'link', 'image', 'clear', 'undo', 'redo'], array_map(fn ($button) => $button->getAttribute('data-fruit-command'), iterator_to_array($markdown->query('//button[@data-fruit-command]'))));
+        // Rich text, the default, has no mode attribute.
+        $this->assertStringNotContainsString('data-fruit-mode', Blade::render('<x-fruit::editor name="body" />'));
+        $this->assertStringNotContainsString('data-fruit-mode', Blade::render('<x-fruit::editor name="body" mode="rich" />'));
+        $this->assertRejected('<x-fruit::editor name="body" mode="html" />', 'editor mode must be one of');
+    }
+
     public function test_the_editor_paste_mode_is_an_explicit_option(): void
     {
         $this->assertStringContainsString('data-fruit-paste="plain"', Blade::render('<x-fruit::editor name="body" paste="plain" />'));

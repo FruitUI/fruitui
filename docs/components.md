@@ -731,6 +731,19 @@ Without a bundler, link the prebuilt `editor.global.js` (published with the othe
 </x-fruit::editor>
 ```
 
+**Markdown.** `mode="markdown"` lets people write Markdown instead: the editor's textarea is where they write, and its value is the Markdown as written, so that is what `wire:model` and a form post receive. Store it as Markdown and render it to HTML on the server where it's shown or sent, with a renderer that allows only the field's `formats`, treats a single line break as a line break (league/commonmark: `renderer.soft_break` `"<br />\n"`) and strips raw HTML (`html_input` `strip`, `allow_unsafe_links` false). The same toolbar writes the syntax around the selection (`**bold**`, `*italic*`, `- ` and `1. ` lists, `> ` quotes, `[text](address)`, `![](address)`), and again takes it off; Remove Formatting strips it from the selection. Enter continues a list or quote and ends it on an empty item; with `enter="submit"` Enter sends outside a list. Pasted formatting arrives as Markdown, read through the field's `formats` first; `paste="plain"` keeps the browser's own paste. Undo is the browser's. Nothing is converted when the editor opens or the form is sent, so give it Markdown.
+
+```blade
+<x-fruit::editor name="body" mode="markdown" wire:model="body" :formats="['bold', 'italic', 'link', 'bulletList']">
+    <x-slot:extras>
+        <x-fruit::menu title="Insert Variable">
+            <x-slot:trigger class="f-button--ghost">Insert Variable<span class="f-menu__chevron" aria-hidden="true"></span></x-slot:trigger>
+            <x-fruit::menu-item x-on:click="$dispatch('fruit-editor-insert', { markdown: '{%customer.firstName%}', html: '{%customer.firstName%}' })">Customer First Name</x-fruit::menu-item>
+        </x-fruit::menu>
+    </x-slot:extras>
+</x-fruit::editor>
+```
+
 **Pasted and dropped images.** When someone pastes or drops image files, the textarea dispatches a bubbling `fruit-editor-upload` event whose `detail` holds the `files` and an `insert(url, alt)` function. Upload the files, then call `insert` with each address; the image goes where it was pasted or dropped.
 
 ```blade
@@ -746,7 +759,7 @@ Without a bundler, link the prebuilt `editor.global.js` (published with the othe
 
 With Livewire, `$wire.upload('image', file, () => $wire.storeImage().then(url => insert(url)))` uploads through the component instead.
 
-**Inserting and replacing content.** Saved replies, drafts and signatures go through two events. `fruit-editor-insert` puts `{ html }` at the cursor and `fruit-editor-set` replaces the content with `{ html }`. Dispatch them from a button inside the editor (`$dispatch('fruit-editor-insert', { html })` in an app toolbar button), on the `.f-editor` element, or on `window` with `target` naming the editor's textarea `id` or `name`, as Livewire's `$this->dispatch('fruit-editor-set', target: 'reply', html: $draft)` does. Each request updates the native textarea with `input` and `change`, so `wire:model`, autosave listeners and form posts see it. Without the editor plugin the plain textarea answers the same requests.
+**Inserting and replacing content.** Saved replies, drafts and signatures go through two events. `fruit-editor-insert` puts its content at the cursor and `fruit-editor-set` replaces the content with it. A request carries `{ html }`, `{ markdown }` or both, and each editor takes the one it writes: a rich editor the HTML (Markdown alone as its text), one in Markdown mode the Markdown, inserted as it is, so placeholders such as `{%customer.first_name%}` land literally (HTML alone is read as Markdown). Replacing the content doesn't move focus. Dispatch them from a button inside the editor (`$dispatch('fruit-editor-insert', { html })` in an app toolbar button), on the `.f-editor` element, or on `window` with `target` naming the editor's textarea `id` or `name`, as Livewire's `$this->dispatch('fruit-editor-set', target: 'reply', html: $draft)` does. Each request updates the native textarea with `input` and `change`, so `wire:model`, autosave listeners and form posts see it. Without the editor plugin the plain textarea answers the same requests.
 
 ```blade
 <label for="signature">Reply Signature</label>

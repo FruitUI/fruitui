@@ -15,6 +15,22 @@
         <x-fruit::button type="reset">Reset Signature</x-fruit::button>
     </div>
 </form>
+{{-- Markdown mode: the textarea holds Markdown, as written, and submits it. The toolbar writes the syntax
+     around the selection, Enter continues a list, pasted formatting arrives as Markdown, and a content
+     request's { markdown } is inserted as it is. --}}
+<form class="f-stack" id="editor-markdown-example" @submit.prevent>
+    <label class="f-label" for="gallery-markdown-editor">Reply Template</label>
+    <x-fruit::editor id="gallery-markdown-editor" name="reply" mode="markdown" placeholder="Write in Markdown" aria-describedby="gallery-markdown-editor-help">{{ "Hi {%customer.first_name%},\n\nThanks for **writing**. We'll:\n- look into it\n- reply within a day" }}
+        <x-slot:extras>
+            <x-fruit::menu title="Insert Variable">
+                <x-slot:trigger class="f-button--ghost">Insert Variable<span class="f-menu__chevron" aria-hidden="true"></span></x-slot:trigger>
+                <x-fruit::menu-item x-on:click="$dispatch('fruit-editor-insert', { markdown: '{%customer.first_name%}', html: '{%customer.first_name%}' })">Customer First Name</x-fruit::menu-item>
+                <x-fruit::menu-item x-on:click="$dispatch('fruit-editor-insert', { markdown: '{%mailbox.email%}', html: '{%mailbox.email%}' })">Mailbox Email</x-fruit::menu-item>
+            </x-fruit::menu>
+        </x-slot:extras>
+    </x-fruit::editor>
+    <p class="f-help" id="gallery-markdown-editor-help">Markdown, as you write it: **bold**, *italic*, - lists, > quotes.</p>
+</form>
 {{-- A channel's formats: Telegram supports bold, italic and links, so the toolbar offers only those, and
      shortcuts and pasted content cannot add other markup. Undo and Redo always stay. --}}
 <form class="f-stack" id="editor-formats-example" @submit.prevent>
