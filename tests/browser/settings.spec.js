@@ -165,6 +165,26 @@ test('a level shows its current row after a page load, scrolling only itself', a
   expect(await page.evaluate(() => scrollY)).toBe(pageScroll);
 });
 
+test('only a row that leads to a level is brought into view, not a current page link', async ({ page }) => {
+  await page.evaluate(() => {
+    const filler = Array.from({ length: 40 }, (_, index) => `<p>Entry ${index + 1}</p>`).join('');
+    const level = (id, content) =>
+      `<section class="f-drilldown__column" aria-labelledby="${id}-title"><header class="f-drilldown__header"><h2 class="f-drilldown__title" id="${id}-title">${id}</h2></header><div class="f-pane__scroll" id="${id}">${content}</div></section>`;
+    const frame = document.createElement('section');
+    frame.className = 'f-workspace';
+    frame.style.setProperty('--f-workspace-height', '300px');
+    frame.innerHTML = `<div class="f-drilldown" x-data="fruitDrilldown">${level(
+      'Pages',
+      `<div class="f-form-section__rows"><a class="f-form-row f-form-row--link" href="#a">A</a>${filler}<a class="f-form-row f-form-row--link" href="#z" aria-current="page">Z</a></div>`,
+    )}${level('Log', `${filler}<nav class="f-pagination" aria-label="Log pages"><a href="#p1" aria-current="page">1</a><a href="#p2">2</a></nav>`)}</div>`;
+    document.body.append(frame);
+  });
+  const top = id => page.locator(`#${id}`).evaluate(element => element.scrollTop);
+  // The link row leading to the open level comes into view; the log's current page leaves it alone.
+  await expect.poll(() => top('Pages')).toBeGreaterThan(0);
+  expect(await top('Log')).toBe(0);
+});
+
 test('a phone shows one level at a time, from the list, with a way back', async ({ page }) => {
   await page.getByRole('radio', { name: 'Phone', exact: true }).check();
   // At Settings' root a phone shows the list; General waits beside it for a wider window.
