@@ -64,10 +64,14 @@
 .settings-container[data-preview='phone'] .settings-workspace {
   --f-workspace-height: 800px;
 }
-/* On a phone the log table scrolls sideways, and the status keeps a readable width. */
-@container settings (max-width: 700px) {
-  .settings-log-status {
-    min-width: 14rem;
+/* Where the log's rows are records (a phone), the status wraps in full. */
+@container fruit-table (width < 40rem) {
+  .settings-log-table .settings-log-status {
+    width: auto;
+    max-width: none;
+  }
+  .settings-log-table .settings-log-status > span {
+    white-space: normal;
   }
 }
 

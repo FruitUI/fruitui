@@ -273,12 +273,16 @@ test('navigation, forms, and table scrolling preserve state through narrow conta
   await expect(page.getByRole('heading', { name: 'Customers', exact: true, level: 2 })).toBeFocused();
   // x-show reveals the panel on the next frame; focus() doesn't await visibility.
   await expect(page.locator('[x-ref="tableRegion"]')).toBeVisible();
-  await page.locator('[x-ref="tableRegion"]').focus();
-  await expect(page.locator('[x-ref="tableRegion"]')).toBeFocused();
-  await page.keyboard.press('ArrowRight');
-  await expect
-    .poll(() => page.locator('[x-ref="tableRegion"]').evaluate(element => element.scrollLeft))
-    .toBeGreaterThan(0);
+  // On a phone each customer is a record, nothing to scroll sideways: the name with its checkbox and
+  // actions, then its values, each named.
+  const region = page.locator('[x-ref="tableRegion"]');
+  expect(await region.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  const row = region.locator('tbody tr').first();
+  await expect(row.getByRole('rowheader')).toBeVisible();
+  expect(
+    await row.locator('td[data-label="Plan"]').evaluate(cell => getComputedStyle(cell, '::before').content),
+  ).toContain('Plan');
+  await expect(region.getByRole('button', { name: 'Customer' })).toBeVisible();
   await expectNoOverflow(page, '#admin');
 });
 

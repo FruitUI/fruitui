@@ -232,10 +232,10 @@ test.describe('CSS-only extracted layouts', () => {
       await expect(history).toBeFocused();
       await page.keyboard.press('ArrowDown');
       await expect.poll(() => history.evaluate(e => e.scrollTop)).toBeGreaterThan(0);
+      // A narrow table doesn't scroll sideways: its rows are records.
       const records = page.getByRole('region', { name: 'Records', exact: true });
-      await records.focus();
-      await page.keyboard.press('ArrowRight');
-      await expect.poll(() => records.evaluate(e => e.scrollLeft)).toBeGreaterThan(0);
+      expect(await records.evaluate(e => e.scrollWidth <= e.clientWidth)).toBe(true);
+      await expect(records.getByRole('table')).toHaveCSS('display', 'block');
       const summary = page.locator('summary');
       await summary.click();
       await expect(page.locator('details')).toHaveAttribute('open', '');
@@ -327,7 +327,7 @@ test('an anchor deep in a pane scrolls only that pane, never the workspace frame
   await expect(page.locator('.f-toolbar')).toBeInViewport();
 });
 
-test('a wide table in a page scrolls in its own scroller instead of widening the page on a phone', async ({ page }) => {
+test('a wide table in a page neither widens the page nor scrolls sideways on a phone', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   await page.setViewportSize({ width: 390, height: 700 });
   const rows = Array.from(
@@ -349,7 +349,8 @@ test('a wide table in a page scrolls in its own scroller instead of widening the
   });
   expect(sizes.page).toBeLessThanOrEqual(390);
   expect(sizes.wrapper).toBeLessThanOrEqual(390);
-  expect(sizes.scrolls).toBe(true);
+  // Its rows are records instead.
+  expect(sizes.scrolls).toBe(false);
 });
 
 for (const dir of ['ltr', 'rtl']) {

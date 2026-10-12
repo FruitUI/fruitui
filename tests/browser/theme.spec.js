@@ -460,6 +460,43 @@ test('every form-section row spans the group, and a disclosure row has no box of
   await expect(page.locator('.f-choice')).toHaveCSS('border-top-width', '1px');
 });
 
+test('a table never scrolls sideways: where its columns don’t fit, each row is a record', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  const table =
+    width => `<div class="f-table__scroll" style="width: ${width}px" tabindex="0" role="region" aria-label="Pages ${width}">
+    <table class="f-table"><thead><tr><th scope="col"><input type="checkbox" aria-label="Select all"></th><th scope="col"><button type="button">Title</button></th><th scope="col">Status</th><th scope="col">Chunks</th><th scope="col">Indexed</th><th scope="col"><span class="f-sr-only">Actions</span></th></tr></thead>
+    <tbody><tr><td><input type="checkbox" aria-label="Select Setup"></td><th scope="row"><strong>Setup</strong><br><a href="https://docs.example/setup">https://docs.example/en/docs/setup-and-first-steps</a></th><td data-label="Status"><span class="f-badge">Indexed</span></td><td data-label="Chunks">3</td><td data-label="Indexed">Oct 10, 2026 03:40</td><td><button class="f-button f-button--small" type="button">Remove</button></td></tr>
+    <tr><td><input type="checkbox" aria-label="Select Guide"></td><th scope="row">Guide</th><td data-label="Status">Waiting</td><td data-label="Chunks"></td><td data-label="Indexed">Never</td><td><button class="f-button f-button--small" type="button">Remove</button></td></tr></tbody></table></div>`;
+  await page.setContent(
+    `<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">${table(360)}${table(900)}</body></html>`,
+  );
+  const narrow = page.getByRole('region', { name: 'Pages 360' });
+  const wide = page.getByRole('region', { name: 'Pages 900' });
+  await expect(wide.getByRole('table')).toHaveCSS('display', 'table');
+  await expect(narrow.getByRole('table')).toHaveCSS('display', 'block');
+  expect(await narrow.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  // Still a table for assistive technology: its headings and cells.
+  await expect(narrow.getByRole('columnheader')).toHaveCount(6);
+  await expect(narrow.getByRole('rowheader')).toHaveCount(2);
+  // The leading cell, the checkbox and the actions share the first line; the values follow, named.
+  const row = narrow.locator('tbody tr').first();
+  const top = async locator => (await locator.boundingBox()).y;
+  const lead = await row.getByRole('rowheader').boundingBox();
+  const action = await row.getByRole('button', { name: 'Remove' }).boundingBox();
+  expect(action.y).toBeLessThan(lead.y + lead.height);
+  expect(action.x).toBeGreaterThan(lead.x);
+  expect(await top(row.locator('[data-label="Status"]'))).toBeGreaterThan(lead.y + lead.height - 1);
+  expect(
+    await row.locator('[data-label="Status"]').evaluate(cell => getComputedStyle(cell, '::before').content),
+  ).toMatch(/Status/);
+  // An empty value leaves no label behind.
+  await expect(narrow.locator('tbody tr').nth(1).locator('[data-label="Chunks"]')).toBeHidden();
+  // Headings with controls stay in view as a bar; the others are for screen readers only.
+  await expect(narrow.getByRole('button', { name: 'Title' })).toBeVisible();
+  await expect(narrow.getByRole('checkbox', { name: 'Select all' })).toBeVisible();
+  expect((await narrow.getByRole('columnheader', { name: 'Status' }).boundingBox()).width).toBeLessThanOrEqual(1);
+});
+
 test('rows filtered out with hidden leave the group’s hairlines and corners to the rows shown', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   const row = name => `<a class="f-form-row f-form-row--link" href="#${name}"><span>${name}</span></a>`;

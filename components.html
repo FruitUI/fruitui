@@ -1143,10 +1143,10 @@
 <section id="component-table" data-component="table" class="f-card component-card"><h2>Table</h2><p>Native tabular data. Captions, headers, sorting actions, and independent selection controls stay in your markup.</p><!-- blade:table --><div class="f-table__scroll" tabindex="0" role="region" aria-label="Team member table">
     <table class="f-table">
     <caption>Team Members</caption>
-        <thead><tr><th scope="col">Name</th><th scope="col">Role</th></tr></thead>
+        <thead><tr><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Last Seen</th></tr></thead>
         <tbody>
-                            <tr><th scope="row">Sophie Chen</th><td>Designer</td></tr>
-                            <tr><th scope="row">Alex Morgan</th><td>Administrator</td></tr>
+                            <tr><th scope="row">Sophie Chen</th><td data-label="Role">Designer</td><td data-label="Last Seen">Today</td></tr>
+                            <tr><th scope="row">Alex Morgan</th><td data-label="Role">Administrator</td><td data-label="Last Seen">Yesterday</td></tr>
                     </tbody>
 </table>
 </div><!-- /blade:table --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Customers&quot;&gt;
@@ -1154,13 +1154,15 @@
     &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Plan&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
     &lt;tbody&gt;&lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;Sophie Chen&lt;/th&gt;&lt;td&gt;Team&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
   &lt;/table&gt;
-&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="table">&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Team member table&quot;&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="table">{{-- In a narrow place (a phone, a Drill-Down level) each row is a record: its row header, then each value
+     named by its data-label. Nothing scrolls sideways. --}}
+&lt;div class=&quot;f-table__scroll&quot; tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Team member table&quot;&gt;
     &lt;x-fruit::table&gt;
         &lt;caption&gt;Team Members&lt;/caption&gt;
-        &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Role&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+        &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;Name&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Role&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;Last Seen&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
         &lt;tbody&gt;
-            @foreach ([&apos;Sophie Chen&apos; =&gt; &apos;Designer&apos;, &apos;Alex Morgan&apos; =&gt; &apos;Administrator&apos;] as $name =&gt; $role)
-                &lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;{{ $name }}&lt;/th&gt;&lt;td&gt;{{ $role }}&lt;/td&gt;&lt;/tr&gt;
+            @foreach ([&apos;Sophie Chen&apos; =&gt; [&apos;Designer&apos;, &apos;Today&apos;], &apos;Alex Morgan&apos; =&gt; [&apos;Administrator&apos;, &apos;Yesterday&apos;]] as $name =&gt; [$role, $seen])
+                &lt;tr&gt;&lt;th scope=&quot;row&quot;&gt;{{ $name }}&lt;/th&gt;&lt;td data-label=&quot;Role&quot;&gt;{{ $role }}&lt;/td&gt;&lt;td data-label=&quot;Last Seen&quot;&gt;{{ $seen }}&lt;/td&gt;&lt;/tr&gt;
             @endforeach
         &lt;/tbody&gt;
     &lt;/x-fruit::table&gt;

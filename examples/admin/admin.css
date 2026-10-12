@@ -493,7 +493,8 @@
 }
 
 .admin-table {
-  --f-table-min-width: 730px;
+  /* Wide enough for its columns wherever it isn't stacked: below 40rem each row is a record. */
+  --f-table-min-width: 40rem;
   --f-table-font-size: var(--f-text-xs);
   --f-table-heading-size: var(--f-text-2xs);
 }
