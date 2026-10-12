@@ -475,6 +475,13 @@ test('a table never scrolls sideways: where its columns don’t fit, each row is
   await expect(wide.getByRole('table')).toHaveCSS('display', 'table');
   await expect(narrow.getByRole('table')).toHaveCSS('display', 'block');
   expect(await narrow.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  // A long address without breaks wraps inside the record, as on a phone.
+  await narrow
+    .locator('tbody tr')
+    .first()
+    .getByRole('link')
+    .evaluate(link => (link.textContent = 'https://docs.example/' + 'averylongpagenamewithoutanybreaks'.repeat(3)));
+  expect(await narrow.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   // Still a table for assistive technology: its headings and cells.
   await expect(narrow.getByRole('columnheader')).toHaveCount(6);
   await expect(narrow.getByRole('rowheader')).toHaveCount(2);
