@@ -13,11 +13,8 @@ import { settingsDemo } from './settings/settings.js';
 import { uploadDemo } from './shared/uploads.js';
 
 installIcons();
+// A page with a rich editor registers it first, in examples/editor.js.
 fruitUI(Alpine);
-if (document.querySelector('.f-editor')) {
-  const { default: fruitEditor } = await import('../src/js/editor.js');
-  fruitEditor(Alpine);
-}
 Alpine.data('appearance', appearance);
 Alpine.data('mailDemo', withPreview(mailDemo));
 Alpine.data('supportDemo', withPreview(supportDemo));
