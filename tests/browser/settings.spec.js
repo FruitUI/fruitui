@@ -102,19 +102,28 @@ test('each level opens beside the one before, and the rows on the way stay curre
 
 test('where the levels don’t all fit, the deepest show and the first leads back', async ({ page }) => {
   await page.goto('/settings.html#/mailboxes/billing/connection');
-  await page.setViewportSize({ width: 1280, height: 1000 });
+  // Levels are a large phone's width at least; 1440 fits three of them.
   await expect.poll(() => shown(page)).toEqual(['Mailboxes', 'Billing', 'Connection']);
-  await expect(back(page, 'Mailboxes')).toBeVisible();
+  const widths = await workspace(page)
+    .locator('.f-drilldown__column')
+    .evaluateAll(columns => columns.filter(column => column.checkVisibility()).map(column => column.offsetWidth));
+  for (const width of widths) expect(width).toBeGreaterThanOrEqual(440);
   await expect(back(page, 'Mailboxes')).toHaveText('Settings');
   await expect(back(page, 'Billing')).toBeHidden();
-  await page.setViewportSize({ width: 800, height: 1000 });
+  await page.setViewportSize({ width: 1280, height: 1000 });
   await expect.poll(() => shown(page)).toEqual(['Billing', 'Connection']);
   await expect(back(page, 'Billing')).toHaveText('Mailboxes');
+  await page.setViewportSize({ width: 800, height: 1000 });
+  await expect.poll(() => shown(page)).toEqual(['Connection']);
+  await expect(back(page, 'Connection')).toHaveText('Billing');
   // Back goes to that level's parent, focusing the row that leads where you were.
-  await back(page, 'Billing').click();
-  await expect(page).toHaveURL(/#\/mailboxes$/);
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes']);
-  await expect(level(page, 'Mailboxes').getByRole('link', { name: /^Billing/ })).toBeFocused();
+  await back(page, 'Connection').click();
+  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
+  await expect.poll(() => shown(page)).toEqual(['Billing']);
+  await expect(level(page, 'Billing').getByRole('link', { name: /^Connection/ })).toBeFocused();
+  // The sidebar counts at its own width, so the categories and a page share a tablet's width.
+  await page.goto('/settings.html#/general');
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'General']);
   // Every level's title row keeps one height, with or without Back and actions.
   const heights = [];
   for (const hash of ['#/general', '#/mailboxes/support', '#/mailboxes/support/connection']) {
@@ -134,7 +143,7 @@ test('a level shows its current row after a page load, scrolling only itself', a
     await route.fulfill({ response, body });
   });
   // A load, not a hash change: the page before this one is the same document.
-  await page.goto('/settings.html#/users/noah/permissions');
+  await page.goto('/settings.html#/users/noah');
   await page.reload();
   await expect(workspace(page)).toHaveCSS('height', '280px');
   const pageScroll = await page.evaluate(() => scrollY);
@@ -491,5 +500,9 @@ test('a mailbox’s AI Assistant is one of its pages, and Settings › AI Assist
     'default',
   );
   await expect(page.getByRole('option', { name: 'Default (German)' })).toBeAttached();
-  await expect(sidebar(page).getByRole('link', { name: 'Mailboxes' })).toHaveAttribute('aria-current', 'true');
+  // The sidebar, folded away beside three levels, still marks the way.
+  await expect(workspace(page).locator('.settings-sidebar a[href="#/mailboxes"]')).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
 });

@@ -2,6 +2,15 @@
 .settings-container {
   container: settings / inline-size;
 }
+/* Settings take the window's width, as an application's do, so their levels sit side by side as
+   they would there: on a large window the frame reaches past the page's column, up to 1920px. */
+@media (min-width: 1400px) {
+  .settings-container:not([data-preview='phone']) {
+    --settings-width: min(100vw - 96px, 1920px);
+    width: var(--settings-width);
+    margin-inline: calc((100% - var(--settings-width)) / 2);
+  }
+}
 .settings-workspace {
   --f-workspace-height: 780px;
   --f-workspace-background: var(--f-grouped-background);
