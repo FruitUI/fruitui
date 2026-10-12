@@ -5,11 +5,13 @@
  */
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
 
+// Your own pages first (Profile, Notifications), then the team's settings, then managing it.
 const pages = {
+  profile: 'Profile',
+  notifications: 'Notifications',
   general: 'General',
   mailboxes: 'Mailboxes',
   ai: 'AI Assistant',
-  profile: 'Profile',
   users: 'Users',
   status: 'Status',
   logs: 'Logs',
@@ -17,7 +19,9 @@ const pages = {
 /**
  * A mailbox's settings live in one place: Settings › Mailboxes › the mailbox. Its page holds the
  * everyday settings and a row for each further page, with that page's current value; each opens as
- * the next level. A person's settings work the same way, under Users.
+ * the next level. A person's account works the same way, under Users: what an administrator decides
+ * about it (role, sign-in, permissions). What a person sets for themselves (profile, notifications)
+ * is under their own Profile and Notifications, never under Users, also for the administrator's own.
  */
 const mailboxSections = {
   connection: 'Connection',
@@ -25,7 +29,7 @@ const mailboxSections = {
   'auto-reply': 'Auto Reply',
   ai: 'AI Assistant',
 };
-const userSections = { permissions: 'Permissions', notifications: 'Notifications' };
+const userSections = { permissions: 'Permissions' };
 /** What a person may do: General's “Users can” is the default, and a person's own choice wins. */
 const permissions = {
   deleteConversations: 'Delete conversations',
@@ -74,6 +78,7 @@ const person = (name, email, role, details = {}) => ({
   name,
   email,
   role,
+  canSignIn: true,
   permissions: { deleteConversations: 'default', manageTags: 'default', manageFolders: 'default' },
   notifyNew: true,
   notifyReplies: true,
@@ -125,11 +130,11 @@ const defaults = () => ({
 export function settingsDemo() {
   return {
     // The URL's levels: a page, then an item under it (a mailbox or a person), then one of its pages.
-    page: 'general',
+    page: 'profile',
     mailboxId: null,
     userId: null,
     section: '',
-    // At Settings' root no page is chosen: General shows beside the list where there's room.
+    // At Settings' root no page is chosen: the first, Profile, shows beside the list where there's room.
     chosen: false,
     settings: defaults(),
     pages,
@@ -244,15 +249,14 @@ export function settingsDemo() {
     defaultLabel(permission) {
       return `Default (${this.settings[permission] ? 'Allowed' : 'Not Allowed'})`;
     },
-    /** The current value a person's page row shows for one of their further pages. */
-    userSummary(section) {
-      const user = this.user;
-      if (section === 'permissions') {
-        const count = this.mailboxesOf(this.userId).length;
-        return count === 1 ? '1 mailbox' : `${count} mailboxes`;
-      }
-      const email = user.notifyNew || user.notifyReplies || user.notifyMentions;
-      return [email && 'Email', user.notifyBrowser && 'Browser'].filter(Boolean).join(' and ') || 'Off';
+    /** The current value a person's level shows for their Permissions. */
+    userSummary() {
+      const count = this.mailboxesOf(this.userId).length;
+      return count === 1 ? '1 mailbox' : `${count} mailboxes`;
+    },
+    /** The administrator's own account, under Users: what would lock them out isn't theirs to change. */
+    get isMe() {
+      return this.userId === this.me;
     },
     /** The installation's default language is a real language, not Default. */
     get installationLanguages() {
@@ -303,7 +307,7 @@ export function settingsDemo() {
       // Links to the single mailbox of earlier versions open the Support mailbox.
       if (page === 'mailbox') return location.replace(`#/mailboxes/support${mailboxSections[id] ? `/${id}` : ''}`);
       this.chosen = Boolean(pages[page]);
-      this.page = pages[page] ? page : 'general';
+      this.page = pages[page] ? page : 'profile';
       this.mailboxId = this.page === 'mailboxes' && this.settings.mailboxes[id] ? id : null;
       this.userId = this.page === 'users' && this.settings.users[id] ? id : null;
       const sections = this.mailboxId ? mailboxSections : this.userId ? userSections : {};
@@ -364,6 +368,9 @@ export function settingsDemo() {
         tone: 'danger',
       });
       if (confirmed) this.$toast('Everyone was signed out.');
+    },
+    resetPassword() {
+      this.$toast(`A link to choose a new password is on its way to ${this.user.email}.`);
     },
     async removeUser() {
       const confirmed = await this.$confirm({

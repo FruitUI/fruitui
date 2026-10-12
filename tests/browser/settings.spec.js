@@ -30,17 +30,18 @@ test('Settings is linked from every example, and its pages follow the URL', asyn
       page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Settings', exact: true }),
     ).toHaveAttribute('href', '/settings.html');
   }
+  // Your own pages come first: Settings opens on your Profile.
   await page.goto('/settings.html');
-  await expect(sidebar(page).getByRole('link', { name: 'General' })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('region', { name: 'Company' })).toBeVisible();
-  await sidebar(page).getByRole('link', { name: 'Profile' }).click();
-  await expect(page).toHaveURL(/#\/profile$/);
+  await expect(sidebar(page).getByRole('link', { name: 'Profile' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('heading', { name: 'Profile', level: 2 })).toBeVisible();
+  await sidebar(page).getByRole('link', { name: 'General' }).click();
+  await expect(page).toHaveURL(/#\/general$/);
+  await expect(page.getByRole('region', { name: 'Company' })).toBeVisible();
 });
 
 test('each level opens beside the one before, and the rows on the way stay current', async ({ page }) => {
   await page.setViewportSize({ width: 1720, height: 1000 });
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'General']);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Profile']);
   const links = sidebar(page).getByRole('link');
   const count = await links.count();
   const mailboxes = sidebar(page).getByRole('link', { name: 'Mailboxes' });
@@ -201,6 +202,7 @@ test('a phone shows one level at a time, from the list, with a way back', async 
 });
 
 test('every change is saved as it’s made; an entry a field can’t take says why in place', async ({ page }) => {
+  await page.goto('/settings.html#/general');
   await expect(workspace(page).getByRole('button', { name: /Save|Revert/ })).toHaveCount(0);
   await expect(page.getByRole('switch', { name: 'Customer Photos' })).toHaveAccessibleDescription(
     'From Gravatar, for customers without a photo.',
@@ -234,7 +236,6 @@ test('a person’s permissions: the mailboxes they open, and what General lets e
   await users.getByRole('link', { name: /^Mia Patel/ }).click();
   const person = level(page, 'Mia Patel');
   await expect(person.getByRole('link', { name: /^Permissions/ })).toHaveText(/2 mailboxes/);
-  await expect(person.getByRole('link', { name: /^Notifications/ })).toHaveText(/Email and Browser/);
   await person.getByRole('link', { name: /^Permissions/ }).click();
   await expect(page).toHaveURL(/#\/users\/mia\/permissions$/);
   const permissions = level(page, 'Permissions');
@@ -254,16 +255,54 @@ test('a person’s permissions: the mailboxes they open, and what General lets e
   await expect(remove.locator('option:checked')).toHaveText('Default (Allowed)');
   await remove.selectOption('deny');
   await expect(remove).toHaveValue('deny');
-  // Notifications are one more level of switches.
-  await page.goto('/settings.html#/users/mia/notifications');
-  await level(page, 'Notifications').getByRole('switch', { name: 'Desktop Notifications' }).uncheck();
-  await expect(level(page, 'Mia Patel').getByRole('link', { name: /^Notifications/ })).toHaveText(/Email$/);
   // Removing someone asks first.
   await level(page, 'Mia Patel').getByRole('button', { name: 'Remove…' }).click();
   const confirm = page.getByRole('alertdialog', { name: 'Remove Mia Patel?' });
   await expect(confirm.getByRole('button', { name: 'Cancel' })).toBeFocused();
   await confirm.getByRole('button', { name: 'Remove' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'This sample person stays.' })).toBeVisible();
+});
+
+test('your own settings are yours, under Profile; an administrator manages accounts under Users', async ({ page }) => {
+  // Under Users, an administrator decides about accounts: someone else's can be reset or removed.
+  await page.goto('/settings.html#/users/mia');
+  const mia = level(page, 'Mia Patel');
+  await expect(mia.getByRole('combobox', { name: 'Role' })).toBeEnabled();
+  await expect(mia.getByRole('switch', { name: 'Can Sign In' })).toBeEnabled();
+  await mia.getByRole('button', { name: 'Reset Password…' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'mia@forma.example' })).toBeVisible();
+  // What a person sets for themselves isn't there.
+  await expect(mia.getByRole('link', { name: /^Notifications/ })).toHaveCount(0);
+  // Your own account is one of the people, as an administrator sees it; what would lock you out is
+  // disabled and says why, and what you set for yourself is under Profile.
+  await page.goto('/settings.html#/users');
+  await level(page, 'Users')
+    .getByRole('link', { name: /^Alex Morgan \(You\)/ })
+    .click();
+  await expect(page).toHaveURL(/#\/users\/alex$/);
+  const me = level(page, 'Alex Morgan');
+  await expect(me.getByRole('combobox', { name: 'Role' })).toBeDisabled();
+  await expect(me.getByRole('combobox', { name: 'Role' })).toHaveAccessibleDescription(
+    'You can’t change your own role.',
+  );
+  await expect(me.getByRole('switch', { name: 'Can Sign In' })).toBeDisabled();
+  await expect(me.getByRole('switch', { name: 'Can Sign In' })).toHaveAccessibleDescription(
+    'You can’t turn off your own sign-in.',
+  );
+  await expect(me.getByRole('button', { name: 'Remove…' })).toBeDisabled();
+  await expect(me.getByRole('button', { name: 'Remove…' })).toHaveAccessibleDescription('You can’t remove yourself.');
+  await expect(me.getByRole('button', { name: 'Reset Password…' })).toHaveCount(0);
+  await me.getByRole('link', { name: /^Your Profile/ }).click();
+  await expect(page).toHaveURL(/#\/profile$/);
+  // Your notifications are your own page, beside Profile.
+  await sidebar(page).getByRole('link', { name: 'Notifications' }).click();
+  const notifications = level(page, 'Notifications');
+  const desktop = notifications.getByRole('switch', { name: 'Desktop Notifications' });
+  await expect(desktop).not.toBeChecked();
+  await desktop.check();
+  await sidebar(page).getByRole('link', { name: 'Profile' }).click();
+  await sidebar(page).getByRole('link', { name: 'Notifications' }).click();
+  await expect(level(page, 'Notifications').getByRole('switch', { name: 'Desktop Notifications' })).toBeChecked();
 });
 
 test('the destructive action asks first', async ({ page }) => {
@@ -292,13 +331,15 @@ for (const colorScheme of ['light', 'dark']) {
       '#/users',
       '#/users/mia',
       '#/users/mia/permissions',
-      '#/users/mia/notifications',
+      '#/users/alex',
+      '#/notifications',
     ]) {
       await page.goto(`/settings.html${hash}`);
       await expect(page.locator('.settings-sections').first()).toBeVisible();
       await expectAccessible(page, '#settings');
     }
     // A row whose level is open is selected, in the accent while its level has focus.
+    await page.goto('/settings.html#/users/mia/permissions');
     await level(page, 'Mia Patel')
       .getByRole('link', { name: /^Permissions/ })
       .focus();

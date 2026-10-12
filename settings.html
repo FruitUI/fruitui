@@ -29,10 +29,12 @@
             <aside class="f-pane--scroll f-sidebar f-drilldown__column settings-sidebar">
               <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="account.name">Alex Morgan</strong><small>Forma Account</small></div></div>
               <nav aria-label="Settings">
-                <a class="f-sidebar__item" href="#/general" :aria-current="current('#/general')" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
+                <a class="f-sidebar__item" href="#/profile" :aria-current="current('#/profile')" aria-current="page"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
+                <a class="f-sidebar__item" href="#/notifications" :aria-current="current('#/notifications')"><svg class="f-icon" aria-hidden="true"><use href="#i-bell"/></svg>Notifications</a>
+                <p class="f-sidebar__heading">Settings</p>
+                <a class="f-sidebar__item" href="#/general" :aria-current="current('#/general')"><svg class="f-icon" aria-hidden="true"><use href="#i-settings"/></svg>General</a>
                 <a class="f-sidebar__item" href="#/mailboxes" :aria-current="current('#/mailboxes')"><svg class="f-icon" aria-hidden="true"><use href="#i-inbox"/></svg>Mailboxes</a>
                 <a class="f-sidebar__item" href="#/ai" :aria-current="current('#/ai')"><svg class="f-icon" aria-hidden="true"><use href="#i-sparkles"/></svg>AI Assistant</a>
-                <a class="f-sidebar__item" href="#/profile" :aria-current="current('#/profile')"><svg class="f-icon" aria-hidden="true"><use href="#i-person"/></svg>Profile</a>
                 <p class="f-sidebar__heading">Manage</p>
                 <a class="f-sidebar__item" href="#/users" :aria-current="current('#/users')"><svg class="f-icon" aria-hidden="true"><use href="#i-people"/></svg>Users</a>
                 <a class="f-sidebar__item" href="#/status" :aria-current="current('#/status')" :aria-label="'Status' + (problems.length ? ', ' + problems.length + ' need attention' : '')"><svg class="f-icon" aria-hidden="true"><use href="#i-activity"/></svg>Status<span class="f-badge f-badge--warning" x-show="problems.length" x-text="problems.length"></span></a>
@@ -120,11 +122,29 @@
                       </section>
                     </div></template>
 
+                    <!-- Your own notifications: what reaches you, and where. Nobody else sets them. -->
+                    <template x-if="page === 'notifications'"><div class="settings-sections">
+                      <section class="f-form-section" aria-labelledby="settings-notify-email-title">
+                        <h3 class="f-form-section__title" id="settings-notify-email-title">Email</h3>
+                        <div class="f-form-section__rows">
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-new">New Conversations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-new" name="notifyNew" x-model="account.notifyNew"><span></span></label></div>
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-replies">Replies to Your Conversations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-replies" name="notifyReplies" x-model="account.notifyReplies"><span></span></label></div>
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-mentions">Mentions</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-mentions" name="notifyMentions" x-model="account.notifyMentions"><span></span></label></div>
+                        </div>
+                      </section>
+                      <section class="f-form-section" aria-labelledby="settings-notify-browser-title">
+                        <h3 class="f-form-section__title" id="settings-notify-browser-title">Browser</h3>
+                        <div class="f-form-section__rows">
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-browser">Desktop Notifications</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-browser" name="notifyBrowser" x-model="account.notifyBrowser" aria-describedby="settings-notify-browser-help"><span></span></label><p class="f-help" id="settings-notify-browser-help">While Forma is open in a browser tab.</p></div>
+                        </div>
+                      </section>
+                    </div></template>
+
                     <!-- Users: everyone who signs in. Each row opens the person as the next level. -->
                     <template x-if="page === 'users'"><div class="settings-sections">
                       <section class="f-form-section" aria-label="Users">
                         <div class="f-form-section__rows">
-                          <template x-for="(entry, id) in settings.users" :key="id"><a class="f-form-row f-form-row--link" :href="'#/users/' + id" :aria-current="current('#/users/' + id)"><span class="settings-item"><span class="f-avatar settings-item__avatar" aria-hidden="true" x-text="initials(entry.name)"></span><span><span x-text="entry.name"></span><small class="f-help" x-text="entry.email"></small></span></span></a></template>
+                          <template x-for="(entry, id) in settings.users" :key="id"><a class="f-form-row f-form-row--link" :href="'#/users/' + id" :aria-current="current('#/users/' + id)"><span class="settings-item"><span class="f-avatar settings-item__avatar" aria-hidden="true" x-text="initials(entry.name)"></span><span><span x-text="id === me ? entry.name + ' (You)' : entry.name"></span><small class="f-help" x-text="entry.email"></small></span></span></a></template>
                         </div>
                         <p class="f-form-section__footer">Everyone who can sign in to Forma.</p>
                       </section>
@@ -244,23 +264,39 @@
                 <div class="f-page f-page--narrow settings-page">
                   <div class="f-page__body">
                     <div class="settings-sections">
+                      <!-- What an administrator decides about the account, the same for every person, yourself
+                           included; what would lock you out of your own account is disabled and says why. -->
                       <section class="f-form-section" aria-labelledby="settings-person-title">
-                        <h3 class="f-form-section__title" id="settings-person-title">Profile</h3>
+                        <h3 class="f-form-section__title" id="settings-person-title">Account</h3>
                         <div class="f-form-section__rows">
                           <div class="f-field f-field--row"><label class="f-label" for="settings-user-name">Name</label><input class="f-input" id="settings-user-name" name="userName" x-model="user.name" required maxlength="60"></div>
                           <div class="f-field f-field--row"><label class="f-label" for="settings-user-email">Email</label><input class="f-input" id="settings-user-email" type="email" name="userEmail" x-model="user.email" required></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-user-role">Role</label><select class="f-input" id="settings-user-role" name="userRole" x-model="user.role" aria-describedby="settings-user-role-help"><option value="user">User</option><option value="admin">Administrator</option></select><p class="f-help" id="settings-user-role-help">Administrators open every mailbox and change Settings.</p></div>
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-user-role">Role</label><select class="f-input" id="settings-user-role" name="userRole" x-model="user.role" :disabled="isMe" aria-describedby="settings-user-role-help"><option value="user">User</option><option value="admin">Administrator</option></select><p class="f-help" id="settings-user-role-help" x-text="isMe ? 'You can’t change your own role.' : 'Administrators open every mailbox and change Settings.'">Administrators open every mailbox and change Settings.</p></div>
+                          <div class="f-field f-field--row"><label class="f-label" for="settings-user-sign-in">Can Sign In</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-user-sign-in" name="userCanSignIn" x-model="user.canSignIn" :disabled="isMe" aria-describedby="settings-user-sign-in-help"><span></span></label><p class="f-help" id="settings-user-sign-in-help" x-text="isMe ? 'You can’t turn off your own sign-in.' : 'Off keeps their conversations and settings, without access.'">Off keeps their conversations and settings, without access.</p></div>
                         </div>
                       </section>
                       <div class="f-form-section">
                         <div class="f-form-section__rows">
-                          <template x-for="(label, key) in userSections" :key="key"><a class="f-form-row f-form-row--link" :href="'#/users/' + userId + '/' + key" :aria-current="current('#/users/' + userId + '/' + key)"><span x-text="label"></span><span class="f-form-row__value" x-text="userSummary(key)"></span></a></template>
+                          <template x-for="(label, key) in userSections" :key="key"><a class="f-form-row f-form-row--link" :href="'#/users/' + userId + '/' + key" :aria-current="current('#/users/' + userId + '/' + key)"><span x-text="label"></span><span class="f-form-row__value" x-text="userSummary()"></span></a></template>
                         </div>
                       </div>
+                      <!-- Your own password, two-factor and notifications are yours to set, under Profile. -->
+                      <template x-if="isMe"><div class="f-form-section">
+                        <div class="f-form-section__rows">
+                          <a class="f-form-row f-form-row--link" href="#/profile"><span>Your Profile</span><span class="f-form-row__value">Password, two-factor, notifications</span></a>
+                        </div>
+                        <p class="f-form-section__footer">What you set for yourself is under Profile and Notifications, as it is for everyone.</p>
+                      </div></template>
+                      <template x-if="!isMe"><section class="f-form-section" aria-labelledby="settings-sign-in-title">
+                        <h3 class="f-form-section__title" id="settings-sign-in-title">Sign-In</h3>
+                        <div class="f-form-section__rows">
+                          <div class="f-form-row"><div><strong class="f-headline">Reset Password</strong><p class="f-help">Emails them a link to choose a new one.</p></div><button class="f-button" type="button" @click="resetPassword()">Reset Password…</button></div>
+                        </div>
+                      </section></template>
                       <section class="f-form-section" aria-labelledby="settings-remove-title">
                         <h3 class="f-form-section__title" id="settings-remove-title">Danger Zone</h3>
                         <div class="f-form-section__rows">
-                          <div class="f-form-row"><div><strong class="f-headline">Remove from Forma</strong><p class="f-help">They can no longer sign in. Their conversations stay with your team.</p></div><button class="f-button f-button--danger" type="button" @click="removeUser()">Remove…</button></div>
+                          <div class="f-form-row"><div><strong class="f-headline">Remove from Forma</strong><p class="f-help" id="settings-remove-help" x-text="isMe ? 'You can’t remove yourself.' : 'They can no longer sign in. Their conversations stay with your team.'">They can no longer sign in. Their conversations stay with your team.</p></div><button class="f-button f-button--danger" type="button" @click="removeUser()" :disabled="isMe" aria-describedby="settings-remove-help">Remove…</button></div>
                         </div>
                       </section>
                     </div>
@@ -376,22 +412,6 @@
                           <template x-for="(label, key) in permissions" :key="key"><div class="f-field f-field--row"><label class="f-label" :for="'settings-permission-' + key" x-text="label"></label><select class="f-input" :id="'settings-permission-' + key" :name="'permissions[' + key + ']'" x-model="user.permissions[key]"><option value="default" x-text="defaultLabel(key)"></option><option value="allow">Allowed</option><option value="deny">Not Allowed</option></select></div></template>
                         </div>
                         <p class="f-form-section__footer">Default follows what General lets every user do.</p>
-                      </section>
-                    </div></template>
-                    <template x-if="section === 'notifications'"><div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-notify-email-title">
-                        <h3 class="f-form-section__title" id="settings-notify-email-title">Email</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-new">New Conversations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-new" name="notifyNew" x-model="user.notifyNew"><span></span></label></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-replies">Replies to Their Conversations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-replies" name="notifyReplies" x-model="user.notifyReplies"><span></span></label></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-mentions">Mentions</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-mentions" name="notifyMentions" x-model="user.notifyMentions"><span></span></label></div>
-                        </div>
-                      </section>
-                      <section class="f-form-section" aria-labelledby="settings-notify-browser-title">
-                        <h3 class="f-form-section__title" id="settings-notify-browser-title">Browser</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-notify-browser">Desktop Notifications</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-notify-browser" name="notifyBrowser" x-model="user.notifyBrowser" aria-describedby="settings-notify-browser-help"><span></span></label><p class="f-help" id="settings-notify-browser-help">While Forma is open in a browser tab.</p></div>
-                        </div>
                       </section>
                     </div></template>
                   </div>
