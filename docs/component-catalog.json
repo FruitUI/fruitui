@@ -1045,7 +1045,7 @@
     "kind": "primitive",
     "classes": ["f-editor"],
     "blade": ["editor"],
-    "uses": ["admin.html"],
+    "uses": ["admin.html", "settings.html"],
     "contracts": {
       "editor": {
         "purpose": "Edit a formatted document: rich text written as HTML, or Markdown.",

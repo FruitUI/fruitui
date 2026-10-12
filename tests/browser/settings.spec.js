@@ -498,6 +498,48 @@ test('a mailbox has a color from the named accents, which its row shows at once'
   ).toHaveAttribute('data-fruit-mark', 'green');
 });
 
+test('a mailbox’s signature and automatic reply are written in Markdown and shown as sent', async ({ page }) => {
+  await page.goto('/settings.html#/mailboxes/support');
+  const mailbox = level(page, 'Support');
+  const signature = mailbox.getByRole('textbox', { name: 'Signature' });
+  await expect(signature).toHaveValue('Thanks,\n**The Forma team**\n[forma.example](https://forma.example)');
+  const sent = mailbox.getByRole('figure', { name: 'Signature as Sent' });
+  await expect(sent.locator('strong')).toHaveText('The Forma team');
+  await expect(sent.getByRole('link', { name: 'forma.example' })).toHaveAttribute('href', 'https://forma.example');
+  // The toolbar writes Markdown around the selection, and the preview follows.
+  await signature.evaluate(element => {
+    element.focus();
+    element.setSelectionRange(0, 6);
+  });
+  await mailbox.getByRole('button', { name: 'Italic', exact: true }).click();
+  await expect(signature).toHaveValue(/^\*Thanks\*,/);
+  await expect(sent.locator('em')).toHaveText('Thanks');
+  // Raw HTML shows as text, and only web and mail addresses become links.
+  await signature.fill('<b>Hi</b> [there](javascript:alert(1))');
+  await expect(sent.locator('.settings-preview__body')).toHaveText('<b>Hi</b> there');
+  await expect(sent.getByRole('link')).toHaveCount(0);
+
+  // An automatic reply's variables are inserted as written, for the server to fill in.
+  await page.goto('/settings.html#/mailboxes/billing/auto-reply');
+  const reply = level(page, 'Auto Reply');
+  const message = reply.getByRole('textbox', { name: 'Message' });
+  await message.evaluate(element => {
+    element.focus();
+    element.setSelectionRange(element.value.length, element.value.length);
+  });
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('Best, ');
+  await reply.getByRole('button', { name: 'Insert Variable' }).click();
+  await page.getByRole('menuitem', { name: 'Mailbox Name' }).click();
+  await expect(message).toHaveValue(/\nBest, \{%mailbox\.name%\}$/);
+  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toContainText('Best, {%mailbox.name%}');
+  // Off, the message, its toolbar and its preview step aside.
+  await reply.getByRole('switch', { name: 'Send an automatic reply' }).uncheck();
+  await expect(message).toBeDisabled();
+  await expect(reply.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toBeHidden();
+});
+
 test('a mailbox’s AI Assistant is one of its pages, and Settings › AI Assistant links to each', async ({ page }) => {
   await page.goto('/settings.html#/mailboxes/billing');
   const row = name => level(page, 'Billing').getByRole('link', { name: new RegExp(`^${name}`) });

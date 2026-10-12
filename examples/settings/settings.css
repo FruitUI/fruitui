@@ -165,3 +165,22 @@
 .settings-fetch-days {
   width: 6rem;
 }
+
+/* A Markdown field's text as customers will see it: the message on its own surface. */
+.settings-preview {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.settings-preview__body {
+  padding: 10px 12px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-md);
+  background: var(--f-surface);
+}
+.settings-preview__body > :first-child {
+  margin-top: 0;
+}
+.settings-preview__body > :last-child {
+  margin-bottom: 0;
+}

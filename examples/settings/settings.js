@@ -4,6 +4,25 @@
  * can't take says why beside it.
  */
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
+import { Marked } from 'marked';
+
+/**
+ * Signatures and automatic replies are written in Markdown and shown as customers will see them, as a
+ * server renders them: a single line break is a line break, raw HTML shows as text, and only web and
+ * mail addresses become links.
+ */
+const escape = text => text.replace(/[&<>"']/g, character => `&#${character.charCodeAt(0)};`);
+const markdown = new Marked({
+  gfm: true,
+  breaks: true,
+  renderer: {
+    html: ({ text }) => escape(text),
+    link(token) {
+      return /^(https?:|mailto:)/i.test(token.href) ? false : this.parser.parseInline(token.tokens);
+    },
+    image: ({ href, text }) => (/^https?:/i.test(href) ? false : escape(text)),
+  },
+});
 
 // Your own pages first (Profile, Notifications), then the team's settings, then managing it.
 const pages = {
@@ -51,14 +70,14 @@ const mailbox = (name, email, color, details = {}) => ({
   name,
   email,
   color,
-  signature: 'Thanks,\nThe Forma team',
+  signature: 'Thanks,\n**The Forma team**\n[forma.example](https://forma.example)',
   sending: 'smtp',
   smtpHost: 'smtp.forma.example',
   smtpPort: 587,
   agents: ['alex', 'mia'],
   autoReply: false,
   autoSubject: 'We received your message',
-  autoBody: 'Thanks for writing. We usually reply within a day.',
+  autoBody: 'Hi {%customer.first_name%},\n\nThanks for writing. We usually reply **within a day**.',
   // The AI Assistant for this mailbox; providers and limits are installation-wide (Settings › AI Assistant).
   aiLanguage: 'default',
   aiSummaries: true,
@@ -233,6 +252,10 @@ export function settingsDemo() {
           .slice(0, 2)
           .toUpperCase() || '?'
       );
+    },
+    /** Markdown as customers will see it. */
+    asSent(text) {
+      return markdown.parse(text ?? '');
     },
     people(box) {
       return box.agents.length === 1 ? '1 person' : `${box.agents.length} people`;
