@@ -176,6 +176,9 @@ class LaravelIntegrationTest extends TestCase
         $this->assertTrue($links->item(1)->parentNode->hasAttribute('open'));
         // A Drill-Down's section, a deeper level open under it, keeps an explicit aria-current.
         $this->assertSame('true', $links->item(2)->getAttribute('aria-current'));
+        // A null aria-current leaves current's page, so one item can bind either.
+        $bound = $this->xpath(Blade::render('<x-fruit::sidebar-item href="/x" :current="true" :aria-current="null">A</x-fruit::sidebar-item>'));
+        $this->assertSame('page', $bound->query('//a')->item(0)->getAttribute('aria-current'));
         $this->assertSame('alex@example.com', $xpath->query('//summary//small')->item(0)->textContent);
     }
 

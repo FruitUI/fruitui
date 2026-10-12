@@ -125,6 +125,36 @@ test('where the levels don’t all fit, the deepest show and the first leads bac
   expect(new Set(heights).size).toBe(1);
 });
 
+test('a level shows its current row after a page load, scrolling only itself', async ({ page }) => {
+  // A short frame, so the open person's row and the sidebar's Users start out of their levels' view.
+  // It comes with the stylesheet, as a page's own layout does.
+  await page.route('**/examples/settings/settings.css*', async route => {
+    const response = await route.fetch();
+    const body = `${await response.text()}\n.settings-workspace { --f-workspace-height: 280px; }`;
+    await route.fulfill({ response, body });
+  });
+  // A load, not a hash change: the page before this one is the same document.
+  await page.goto('/settings.html#/users/noah/permissions');
+  await page.reload();
+  await expect(workspace(page)).toHaveCSS('height', '280px');
+  const pageScroll = await page.evaluate(() => scrollY);
+  const inView = async (row, scroller) => {
+    const box = await row.boundingBox();
+    const view = await scroller.boundingBox();
+    return box.y >= view.y - 1 && box.y + box.height <= view.y + view.height + 1;
+  };
+  const users = level(page, 'Users');
+  await expect
+    .poll(() => inView(users.getByRole('link', { name: /^Noah Williams/ }), users.locator('.f-pane__scroll')))
+    .toBe(true);
+  await expect
+    .poll(() =>
+      inView(sidebar(page).getByRole('link', { name: 'Users' }), workspace(page).locator('.settings-sidebar')),
+    )
+    .toBe(true);
+  expect(await page.evaluate(() => scrollY)).toBe(pageScroll);
+});
+
 test('a phone shows one level at a time, from the list, with a way back', async ({ page }) => {
   await page.getByRole('radio', { name: 'Phone', exact: true }).check();
   // At Settings' root a phone shows the list; General waits beside it for a wider window.
