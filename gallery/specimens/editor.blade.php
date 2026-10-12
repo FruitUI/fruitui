@@ -15,9 +15,9 @@
         <x-fruit::button type="reset">Reset Signature</x-fruit::button>
     </div>
 </form>
-{{-- Markdown mode: the textarea holds Markdown, as written, and submits it. The toolbar writes the syntax
-     around the selection, Enter continues a list, pasted formatting arrives as Markdown, and a content
-     request's { markdown } is inserted as it is. --}}
+{{-- Markdown mode: the value is the Markdown as written, and the field shows its syntax dimmed and its
+     effect styled. The toolbar writes the syntax around the selection, Enter continues a list, pasted
+     formatting arrives as Markdown, and a content request's { markdown } is inserted as it is. --}}
 <form class="f-stack" id="editor-markdown-example" @submit.prevent>
     <label class="f-label" for="gallery-markdown-editor">Reply Template</label>
     <x-fruit::editor id="gallery-markdown-editor" name="reply" mode="markdown" placeholder="Write in Markdown" aria-describedby="gallery-markdown-editor-help">{{ "Hi {%customer.first_name%},\n\nThanks for **writing**. We'll:\n- look into it\n- reply within a day" }}

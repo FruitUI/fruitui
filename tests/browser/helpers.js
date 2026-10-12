@@ -29,3 +29,39 @@ export function tokenColor(page, token) {
     return color;
   }, token);
 }
+
+/**
+ * Select in a Markdown editor's surface as a person would, with the pointer or Shift+arrows: the first
+ * `text` from offset `from` of its Markdown, or a caret `at` an offset (negative counts from the end).
+ */
+export function selectMarkdown(field, { text, from = 0, at } = {}) {
+  return field.evaluate(
+    async (element, { text, from, at }) => {
+      const lines = [...element.children];
+      const value = lines.map(line => line.textContent).join('\n');
+      const start = text === undefined ? (at < 0 ? value.length + at + 1 : at) : value.indexOf(text, from);
+      const end = text === undefined ? start : start + text.length;
+      const point = offset => {
+        let line = 0;
+        while (offset > lines[line].textContent.length) offset -= lines[line++].textContent.length + 1;
+        const walker = document.createTreeWalker(lines[line], NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (offset <= node.data.length) return [node, offset];
+          offset -= node.data.length;
+        }
+        return [lines[line], 0];
+      };
+      // The editor puts its own selection back just after it takes focus.
+      if (document.activeElement !== element) {
+        element.focus();
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      const range = document.createRange();
+      range.setStart(...point(start));
+      range.setEnd(...point(end));
+      getSelection().removeAllRanges();
+      getSelection().addRange(range);
+    },
+    { text, from, at },
+  );
+}

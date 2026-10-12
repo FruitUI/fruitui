@@ -1691,9 +1691,9 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::button type=&quot;reset&quot;&gt;Reset Signature&lt;/x-fruit::button&gt;
     &lt;/div&gt;
 &lt;/form&gt;
-{{-- Markdown mode: the textarea holds Markdown, as written, and submits it. The toolbar writes the syntax
-     around the selection, Enter continues a list, pasted formatting arrives as Markdown, and a content
-     request&apos;s { markdown } is inserted as it is. --}}
+{{-- Markdown mode: the value is the Markdown as written, and the field shows its syntax dimmed and its
+     effect styled. The toolbar writes the syntax around the selection, Enter continues a list, pasted
+     formatting arrives as Markdown, and a content request&apos;s { markdown } is inserted as it is. --}}
 &lt;form class=&quot;f-stack&quot; id=&quot;editor-markdown-example&quot; @submit.prevent&gt;
     &lt;label class=&quot;f-label&quot; for=&quot;gallery-markdown-editor&quot;&gt;Reply Template&lt;/label&gt;
     &lt;x-fruit::editor id=&quot;gallery-markdown-editor&quot; name=&quot;reply&quot; mode=&quot;markdown&quot; placeholder=&quot;Write in Markdown&quot; aria-describedby=&quot;gallery-markdown-editor-help&quot;&gt;{{ &quot;Hi {%customer.first_name%},\n\nThanks for **writing**. We&apos;ll:\n- look into it\n- reply within a day&quot; }}
