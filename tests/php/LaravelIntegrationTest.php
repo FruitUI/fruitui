@@ -154,6 +154,7 @@ class LaravelIntegrationTest extends TestCase
                 <x-fruit::sidebar-group title="Work" subtitle="alex@example.com" open>
                     <x-fruit::sidebar-item href="/work/inbox">Inbox</x-fruit::sidebar-item>
                 </x-fruit::sidebar-group>
+                <x-fruit::sidebar-item href="/settings/users" aria-current="true">Users</x-fruit::sidebar-item>
             </x-fruit::sidebar>
             BLADE);
         $xpath = $this->xpath($html);
@@ -173,6 +174,8 @@ class LaravelIntegrationTest extends TestCase
         $this->assertFalse($links->item(1)->hasAttribute('aria-current'));
         $this->assertSame('details', $links->item(1)->parentNode->nodeName);
         $this->assertTrue($links->item(1)->parentNode->hasAttribute('open'));
+        // A Drill-Down's section, a deeper level open under it, keeps an explicit aria-current.
+        $this->assertSame('true', $links->item(2)->getAttribute('aria-current'));
         $this->assertSame('alex@example.com', $xpath->query('//summary//small')->item(0)->textContent);
     }
 

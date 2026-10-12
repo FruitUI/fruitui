@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible, expectNoOverflow } from './helpers.js';
+import { expectAccessible, expectNoOverflow, tokenColor } from './helpers.js';
 
 // The Settings example: grouped settings in a Drill-Down (settings.html).
 const workspace = page => page.locator('#settings');
@@ -271,11 +271,22 @@ for (const colorScheme of ['light', 'dark']) {
   });
 }
 
-test('the deepest level keeps its sections at a readable width in a wide window', async ({ page }) => {
+test('the deepest level keeps its sections at a readable width, from its edge, on the grouped background', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
-  await page.goto('/settings.html');
-  const section = await level(page, 'General').locator('.f-form-section').first().boundingBox();
+  await page.goto('/settings.html#/users/mia/permissions');
+  const deepest = level(page, 'Permissions');
+  const column = await deepest.boundingBox();
+  const section = await deepest.locator('.f-form-section').first().boundingBox();
   expect(section.width).toBeLessThanOrEqual(641);
+  // It starts at the level's edge, as the levels before it do, rather than centered in the room left.
+  for (const name of ['Users', 'Mia Patel', 'Permissions']) {
+    const box = await level(page, name).boundingBox();
+    const start = await level(page, name).locator('.f-form-section').first().boundingBox();
+    expect(Math.round(start.x - box.x)).toBe(Math.round(section.x - column.x));
+  }
+  await expect(deepest).toHaveCSS('background-color', await tokenColor(page, '--f-grouped-background'));
 });
 
 test('the accent color applies to the whole page at once', async ({ page }) => {

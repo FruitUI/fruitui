@@ -460,6 +460,23 @@ test('every form-section row spans the group, and a disclosure row has no box of
   await expect(page.locator('.f-choice')).toHaveCSS('border-top-width', '1px');
 });
 
+test('rows filtered out with hidden leave the group’s hairlines and corners to the rows shown', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  const row = name => `<a class="f-form-row f-form-row--link" href="#${name}"><span>${name}</span></a>`;
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-form-section" style="width: 400px"><div class="f-form-section__rows">
+      <a class="f-form-row f-form-row--link" href="#a" hidden><span>A</span></a>${row('B')}${row('C')}
+      <a class="f-form-row f-form-row--link" href="#d" hidden><span>D</span></a>
+    </div></section></body></html>`);
+  const first = page.locator('a[href="#B"]');
+  const last = page.locator('a[href="#C"]');
+  await expect(first).toHaveCSS('border-top-width', '0px');
+  await expect(first).not.toHaveCSS('border-top-left-radius', '0px');
+  await expect(last).toHaveCSS('border-top-width', '1px');
+  await expect(last).not.toHaveCSS('border-bottom-left-radius', '0px');
+  await expect(first).toHaveCSS('border-bottom-left-radius', '0px');
+});
+
 test('links in a message author and time keep the header text style until hovered', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
