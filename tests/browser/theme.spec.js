@@ -504,6 +504,31 @@ test('a table never scrolls sideways: where its columns don’t fit, each row is
   expect((await narrow.getByRole('columnheader', { name: 'Status' }).boundingBox()).width).toBeLessThanOrEqual(1);
 });
 
+test('a form inside a group’s rows holds rows of its own, spaced and divided like the others', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-form-section" style="width: 600px"><div class="f-form-section__rows">
+      <div class="f-form-row"><span>ghp_…41a3</span><button class="f-button" type="button">Remove</button></div>
+      <form><input type="hidden" name="_token" value="x">
+        <div class="f-field f-field--row" id="owner"><label class="f-label" for="o">Owner</label><input class="f-input" id="o"></div>
+        <div class="f-field f-field--row" id="token"><label class="f-label" for="t">Token</label><input class="f-input" id="t"></div>
+      </form>
+    </div></section></body></html>`);
+  const owner = page.locator('#owner');
+  const token = page.locator('#token');
+  // Each field is a row: padded, and divided from the one before by a hairline.
+  await expect(owner).toHaveCSS('padding-top', '12px');
+  await expect(owner).toHaveCSS('border-top-width', '0px');
+  await expect(token).toHaveCSS('border-top-width', '1px');
+  await expect(page.locator('form')).toHaveCSS('padding-top', '0px');
+  await expect(page.locator('form')).toHaveCSS('border-top-width', '1px');
+  const gap = (await token.boundingBox()).y - ((await owner.boundingBox()).y + (await owner.boundingBox()).height);
+  expect(gap).toBeGreaterThanOrEqual(0);
+  expect(
+    (await token.locator('input').boundingBox()).y - (await owner.locator('input').boundingBox()).y,
+  ).toBeGreaterThanOrEqual(56);
+});
+
 test('rows filtered out with hidden leave the group’s hairlines and corners to the rows shown', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   const row = name => `<a class="f-form-row f-form-row--link" href="#${name}"><span>${name}</span></a>`;
