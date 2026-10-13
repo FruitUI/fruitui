@@ -248,8 +248,7 @@ test('Enter continues a list, ends it on an empty item, and Insert Variable land
   await expect(control).toHaveValue(/- follow up\nBest, \{%customer\.first_name%\}$/);
   // Shift+Enter breaks the line without continuing the list, and Enter before an item's marker
   // makes room above it.
-  await select(field, 'look into it');
-  await page.keyboard.press('ArrowRight');
+  await caretAt(field, (await control.inputValue()).indexOf('look into it') + 'look into it'.length);
   await page.keyboard.press('Shift+Enter');
   await page.keyboard.type('today');
   await expect(control).toHaveValue(/- look into it\ntoday\n- reply/);

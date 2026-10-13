@@ -61,6 +61,8 @@ export function selectMarkdown(field, { text, from = 0, at } = {}) {
       range.setEnd(...point(end));
       getSelection().removeAllRanges();
       getSelection().addRange(range);
+      // The editor reads the selection on selectionchange: let it, before the next key or click.
+      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)));
     },
     { text, from, at },
   );
