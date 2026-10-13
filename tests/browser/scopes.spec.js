@@ -145,7 +145,8 @@ test('Support combines team mailboxes while local views, searches, and status co
   await expand(page, '#support-queues', 'support');
   await nav.getByRole('button', { name: /^Support Open(,|$)/ }).click();
   await expect(rows).toHaveCount(3);
-  await page.getByRole('button', { name: 'Show priority conversations' }).click();
+  await page.getByRole('button', { name: /^Filter/ }).click();
+  await page.getByRole('menuitemcheckbox', { name: 'High Priority' }).click();
   await expect(rows).toHaveCount(2);
   await page.getByLabel('Conversation Status').selectOption('waiting');
   // The views count unread conversations, each in its scope: 1041 is unread and now waiting in Support.

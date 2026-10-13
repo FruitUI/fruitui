@@ -19,9 +19,9 @@ test('support sits beside Mail and queue search and priority filters work', asyn
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
   await expect(page.locator('#ticket-title')).toHaveText('Our project export is missing files');
   await search.fill('');
-  await page.getByRole('button', { name: 'Show priority conversations' }).click();
+  await filter(page, 'High Priority');
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  await page.getByRole('button', { name: 'Show priority conversations' }).click();
+  await filter(page, 'High Priority');
   await queue(page, 'Waiting').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
   await queue(page, 'Closed').click();
@@ -447,6 +447,16 @@ test('on a phone the team chat takes the screen and the sidebar is one tap away'
   expect(await page.locator('#support').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
 });
 
+/** Choose a filter in the list's Filter menu. */
+async function filter(page, name) {
+  await page.getByRole('button', { name: /^Filter/ }).click();
+  await page
+    .getByRole('menu', { name: 'Filter conversations' })
+    .getByRole('menuitemcheckbox', { name, exact: true })
+    .or(page.getByRole('menu', { name: 'Filter conversations' }).getByRole('menuitemradio', { name, exact: true }))
+    .click();
+}
+
 function queue(page, name) {
   return page
     .getByRole('navigation', { name: 'Support views', exact: true })
@@ -655,3 +665,71 @@ test('a queue without unread conversations shows a gray dot while open ones for 
   const color = await mine.evaluate(element => getComputedStyle(element).color);
   expect(await dotStyle(mine.locator('.f-badge--dot'), 'backgroundColor')).toBe(color);
 });
+
+test('one Filter menu holds every filter, a group for each way this view can be narrowed', async ({ page }) => {
+  const button = page.getByRole('button', { name: /^Filter/ });
+  const menu = page.getByRole('menu', { name: 'Filter conversations' });
+  const rows = page.locator('button.support-ticket');
+  await expect(button).toHaveAccessibleName('Filter');
+  await button.click();
+  // Show is in every view; Assigned To where the view holds everyone's conversations; checkmarks, no boxes.
+  await expect(menu.getByRole('group')).toHaveCount(2);
+  await expect(menu.getByRole('group', { name: 'Show' }).getByRole('menuitemcheckbox')).toHaveText([
+    'Unread',
+    'High Priority',
+  ]);
+  await expect(menu.getByRole('group', { name: 'Assigned To' }).getByRole('menuitemradio')).toHaveText([
+    'Anyone',
+    'Me',
+    'Unassigned',
+    'Mia Patel',
+    'Noah Williams',
+  ]);
+  await expect(menu.getByRole('menuitemradio', { name: 'Anyone' })).toHaveAttribute('aria-checked', 'true');
+  await expect(menu.getByRole('menuitem', { name: 'Clear Filters' })).toBeHidden();
+  await expectAccessible(page, '.support-list-header');
+  await page.keyboard.press('Escape');
+  await expect(button).toBeFocused();
+
+  // Filters combine; the button names those in effect, and the open conversation stays while it's read.
+  await filter(page, 'Unread');
+  await expect(rows).toHaveCount(4);
+  await expect(ticket(page, 1042)).toBeVisible();
+  await filter(page, 'Mia Patel');
+  await expect(button).toHaveAccessibleName('Filter: Unread, Mia Patel');
+  await expect(button).toHaveText(/Unread, Mia Patel/);
+  await expect(rows).toHaveCount(1);
+  await expect(ticket(page, 1038)).toBeVisible();
+  await button.click();
+  await expect(menu.getByRole('menuitemcheckbox', { name: 'Unread' })).toHaveAttribute('aria-checked', 'true');
+  await expect(menu.getByRole('menuitemradio', { name: 'Mia Patel' })).toHaveAttribute('aria-checked', 'true');
+  await expect(menu.getByRole('menuitemradio', { name: 'Anyone' })).toHaveAttribute('aria-checked', 'false');
+  await menu.getByRole('menuitem', { name: 'Clear Filters' }).click();
+  await expect(button).toHaveAccessibleName('Filter');
+  await expect(rows).toHaveCount(6);
+
+  // Assigned to Me holds open and waiting conversations: Status, not Assigned To.
+  await queue(page, 'Assigned to Me').click();
+  await button.click();
+  await expect(menu.getByRole('group', { name: 'Assigned To' })).toBeHidden();
+  await expect(menu.getByRole('group', { name: 'Status' }).getByRole('menuitemradio')).toHaveText([
+    'Any Status',
+    'Open',
+    'Waiting',
+  ]);
+  await menu.getByRole('menuitemradio', { name: 'Waiting' }).click();
+  await expect(button).toHaveAccessibleName('Filter: Waiting');
+  await expect(rows).toHaveCount(1);
+  // Changing views clears the filters.
+  await queue(page, 'Unassigned').click();
+  await expect(button).toHaveAccessibleName('Filter');
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`the Filter menu and its button in effect are accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await filter(page, 'High Priority');
+    await page.getByRole('button', { name: /^Filter/ }).click();
+    await expectAccessible(page, '.support-list-header');
+  });
+}

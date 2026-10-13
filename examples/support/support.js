@@ -9,7 +9,9 @@ export function supportDemo() {
     mailboxId: 'all',
     queue: 'open',
     query: '',
-    priorityOnly: false,
+    // The list's filters, all in one Filter menu: what to show, and where the view holds more than
+    // one, a status or an assignee. Changing views clears them.
+    filters: { unread: false, priority: false, status: '', assignee: null },
     selectedId: 1042,
     // A mailbox's team chat, open in place of the list and conversation (null: the mailboxes).
     rooms: structuredClone(teamRooms),
@@ -102,7 +104,11 @@ export function supportDemo() {
           ticket =>
             this.matchesScope(ticket, this.mailboxId) &&
             this.matchesQueue(ticket, this.queue) &&
-            (!this.priorityOnly || ['high', 'urgent'].includes(ticket.priority)) &&
+            // The open conversation stays while it's read, until you leave it.
+            (!this.filters.unread || ticket.unread || ticket.id === this.selectedId) &&
+            (!this.filters.priority || ['high', 'urgent'].includes(ticket.priority)) &&
+            (!this.filters.status || ticket.status === this.filters.status) &&
+            (this.filters.assignee === null || ticket.assignee === this.filters.assignee) &&
             (!query ||
               [
                 ticket.id,
@@ -365,7 +371,7 @@ export function supportDemo() {
       this.queue = queue;
       this.checked = [];
       this.query = '';
-      this.priorityOnly = false;
+      this.resetFilters();
       this.syncSelection();
       this.backToList();
       this.$nextTick(() => this.revealMailbox());
@@ -428,7 +434,7 @@ export function supportDemo() {
       if (this.mailboxId !== 'all') this.mailboxId = ticket.mailboxId;
       this.queue = ticket.status;
       this.query = '';
-      this.priorityOnly = false;
+      this.resetFilters();
       this.select(id);
       this.$nextTick(() => this.revealMailbox(queues));
     },
@@ -551,13 +557,36 @@ export function supportDemo() {
         count => `${count} marked as unread`,
       );
     },
-    togglePriority() {
-      this.priorityOnly = !this.priorityOnly;
+    /**
+     * The Filter menu's groups that narrow this view: Status where it holds open and waiting
+     * conversations (Assigned to Me), Assigned To where it holds everyone's.
+     */
+    get filterGroups() {
+      return { status: this.queue === 'mine', assignee: ['open', 'waiting', 'closed'].includes(this.queue) };
+    },
+    /** The filters in effect, named as the Filter button shows them. */
+    get activeFilters() {
+      const { unread, priority, status, assignee } = this.filters;
+      return [
+        unread && 'Unread',
+        priority && 'High Priority',
+        status && this.queues.find(item => item.id === status).label,
+        assignee === '' ? 'Unassigned' : assignee === 'alex' ? 'Me' : assignee && this.agentName(assignee),
+      ].filter(Boolean);
+    },
+    agentName(id) {
+      return this.agents.find(agent => agent.id === id)?.name ?? id;
+    },
+    setFilter(name, value) {
+      this.filters[name] = value;
       this.syncSelection();
+    },
+    resetFilters() {
+      this.filters = { unread: false, priority: false, status: '', assignee: null };
     },
     clearFilters() {
       this.query = '';
-      this.priorityOnly = false;
+      this.resetFilters();
       this.syncSelection();
       this.$nextTick(() => this.$refs.search.focus());
     },
@@ -623,7 +652,7 @@ export function supportDemo() {
         ticket.status = 'open';
         this.queue = 'open';
         this.query = '';
-        this.priorityOnly = false;
+        this.resetFilters();
       }
       this.draft = '';
       this.$toast(
@@ -679,7 +708,7 @@ export function supportDemo() {
       if (this.mailboxId !== 'all') this.mailboxId = this.newMailboxId;
       this.queue = 'open';
       this.query = '';
-      this.priorityOnly = false;
+      this.resetFilters();
       this.select(id);
       this.$nextTick(() => this.revealMailbox());
       this.newName = '';

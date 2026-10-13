@@ -135,6 +135,20 @@
 .support-list-header .f-icon {
   --f-icon-size: 15px;
 }
+/* The Filter menu's button names the filters in effect, on the selection tint, as a pressed button. */
+.support-filter > summary {
+  max-width: 16rem;
+  font-size: inherit;
+}
+.support-filter-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.support-filter[data-filtered] > summary {
+  background: var(--f-selection);
+  color: var(--f-selection-text);
+}
 .support-ticket-list {
   --f-item-list-padding: 0 7px 8px;
 }

@@ -555,6 +555,10 @@ import fruitUI from 'fruitui/alpine';
 fruitUI(Alpine);
 ```
 
+### Filters
+
+A list's filters go in one Filter menu rather than a button each, so more can join it later. Its trigger is a pull-down button with a funnel icon, reading "Filter" until a filter is in effect, then naming them ("Unread, Mia Patel"; its `aria-label` adds "Filter:" before the names). Inside, an `x-fruit::menu-group` per kind of filter: Menu Checkboxes for filters that combine (Unread, High Priority), Menu Radios for a choice within one kind (Status, Assigned To) with an "Any" item first. A group appears only in views where it narrows anything, and a Clear Filters item follows a separator while any filter is in effect. Each choice closes the menu, as in mail apps. The Support example's list does this.
+
 ### Pull-down chevrons
 
 A Menu whose trigger is text, a pull-down button, shows a chevron after it: Blade adds it to the default `title` trigger. A custom `trigger` slot chooses: add `<span class="f-menu__chevron" aria-hidden="true"></span>` after its text, use the chevron alone in an `f-button--icon` trigger with an `aria-label` (the menu half of a split button), or leave it out for an icon-only "more" button.
