@@ -395,6 +395,23 @@ test('a rich field switches to Markdown in place, its content converted for revi
   await expect(root.getByRole('textbox')).toHaveCount(1);
 });
 
+test('switching escapes text that would read as Markdown, and keeps what reads as written', async ({ page }) => {
+  const control = page.locator('#editor-switch-example textarea[name="autoReply"]');
+  await page.evaluate(() => {
+    const request = (type, detail) =>
+      window.dispatchEvent(new CustomEvent(type, { detail: { target: 'autoReply', ...detail } }));
+    request('fruit-editor-set', {
+      html: '<p>Thanks,<br>--<br>Alex</p><p>--<br>{%mailbox.name%}</p><p>2024. A good year</p><p>---</p><p>#support 3 * 4</p>',
+    });
+    request('fruit-editor-mode', { mode: 'markdown' });
+  });
+  // A line of dashes below text would make it a heading, and a number with a period a list.
+  await expect(control).toHaveValue(
+    'Thanks,\n\\--\nAlex\n\n--\n{%mailbox.name%}\n\n2024\\. A good year\n\n\\---\n\n#support 3 \\* 4',
+  );
+  await expect(page.locator('#editor-switch-example .f-editor__line--h2')).toHaveCount(0);
+});
+
 for (const colorScheme of ['light', 'dark']) {
   test(`a Markdown editor is accessible in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
