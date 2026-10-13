@@ -143,14 +143,18 @@ test('Support combines team mailboxes while local views, searches, and status co
   await nav.getByRole('button', { name: /^All Inboxes/ }).click();
   await expect(rows).toHaveCount(6);
   await expand(page, '#support-queues', 'support');
-  await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
+  await nav.getByRole('button', { name: /^Support Open(,|$)/ }).click();
   await expect(rows).toHaveCount(3);
   await page.getByRole('button', { name: 'Show priority conversations' }).click();
   await expect(rows).toHaveCount(2);
   await page.getByLabel('Conversation Status').selectOption('waiting');
-  await expect(nav.getByRole('button', { name: 'Support Waiting', exact: true })).toContainText('2');
-  await expect(nav.getByRole('button', { name: /^Waiting/ })).toContainText('3');
-  await nav.getByRole('button', { name: 'Billing Waiting', exact: true }).click();
+  // The views count unread conversations, each in its scope: 1041 is unread and now waiting in Support.
+  await expect(nav.getByRole('button', { name: /^Support Waiting(,|$)/ })).toHaveAccessibleName(
+    'Support Waiting, 1 unread',
+  );
+  await expect(nav.getByRole('button', { name: /^Waiting/ })).toHaveAccessibleName('Waiting, 1 unread');
+  await expect(nav.getByRole('button', { name: /^Billing Waiting(,|$)/ })).toHaveAccessibleName('Billing Waiting');
+  await nav.getByRole('button', { name: /^Billing Waiting(,|$)/ }).click();
   await expect(rows).toHaveCount(1);
   await expect(supportRow(page, 1041)).toHaveCount(0);
   await nav.getByRole('button', { name: /^Waiting/ }).click();
@@ -166,18 +170,18 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   const reply = page.getByRole('textbox', { name: 'Reply Message', exact: true });
   await reply.fill('A billing reply for Sophie.');
   await expand(page, '#support-queues', 'support');
-  await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
+  await nav.getByRole('button', { name: /^Support Open(,|$)/ }).click();
   await expect(reply).toHaveValue('');
   await reply.fill('A support reply for Jordan.');
   await expand(page, '#support-queues', 'billing');
-  await nav.getByRole('button', { name: 'Billing Open', exact: true }).click();
+  await nav.getByRole('button', { name: /^Billing Open(,|$)/ }).click();
   await expect(reply).toHaveValue('A billing reply for Sophie.');
   await expect(page.locator('#support-reply-help')).toHaveText('From billing@forma.example');
   await page.getByRole('button', { name: 'Send Reply', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Agent reply', exact: true }).first()).toContainText(
     'A billing reply for Sophie.',
   );
-  await nav.getByRole('button', { name: 'Support Open', exact: true }).click();
+  await nav.getByRole('button', { name: /^Support Open(,|$)/ }).click();
   await expect(reply).toHaveValue('A support reply for Jordan.');
   await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'New Conversation' });
@@ -191,8 +195,8 @@ test('Support preserves drafts across mailboxes and replies and new conversation
   await expect(supportRow(page, 1043)).toHaveAttribute('aria-current', 'true');
   await expect(page.locator('.support-list-footer')).toContainText('feedback@forma.example');
   await expect(page.locator('button.support-ticket')).toHaveCount(3);
-  await expect(nav.getByRole('button', { name: 'Feedback Open', exact: true })).toHaveAttribute('aria-current', 'page');
-  await nav.getByRole('button', { name: 'Billing Open', exact: true }).click();
+  await expect(nav.getByRole('button', { name: /^Feedback Open(,|$)/ })).toHaveAttribute('aria-current', 'page');
+  await nav.getByRole('button', { name: /^Billing Open(,|$)/ }).click();
   await expect(supportRow(page, 1043)).toHaveCount(0);
   await nav.getByRole('button', { name: /^All Inboxes/ }).click();
   await expect(page.locator('button.support-ticket')).toHaveCount(7);
@@ -204,7 +208,10 @@ test('Support customer history can cross mailboxes and responsive navigation fol
 }) => {
   await page.goto('/support.html');
   await expand(page, '#support-queues', 'support');
-  await page.locator('#support-queues').getByRole('button', { name: 'Support Waiting', exact: true }).click();
+  await page
+    .locator('#support-queues')
+    .getByRole('button', { name: /^Support Waiting(,|$)/ })
+    .click();
   await page
     .locator('.support-customer')
     .getByRole('button', { name: /A small idea for project templates/ })
@@ -212,14 +219,15 @@ test('Support customer history can cross mailboxes and responsive navigation fol
   await expect(supportRow(page, 1034)).toHaveAttribute('aria-current', 'true');
   await expect(page.locator('.support-list-footer')).toContainText('feedback@forma.example');
   await expect(page.locator('button.support-ticket')).toHaveCount(2);
-  await expect(
-    page.locator('#support-queues').getByRole('button', { name: 'Feedback Open', exact: true }),
-  ).toHaveAttribute('aria-current', 'page');
+  await expect(page.locator('#support-queues').getByRole('button', { name: /^Feedback Open(,|$)/ })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   await page.getByRole('textbox', { name: 'Reply Message', exact: true }).fill('A draft about templates.');
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'Back to conversations', exact: true }).click();
   await page.getByRole('button', { name: 'Show support views', exact: true }).click();
-  const selected = page.locator('#support-queues').getByRole('button', { name: 'Feedback Open', exact: true });
+  const selected = page.locator('#support-queues').getByRole('button', { name: /^Feedback Open(,|$)/ });
   await expect(selected).toBeFocused();
   await selected.click();
   await supportRow(page, 1034).click();
@@ -240,7 +248,11 @@ for (const appearance of ['light', 'dark']) {
     ]) {
       await page.goto(url);
       await expand(page, nav, scope);
-      await page.locator(nav).getByRole('button', { name: label, exact: true }).click();
+      // A view's name adds what its badge shows: "Billing Open, conversations for you, all read".
+      await page
+        .locator(nav)
+        .getByRole('button', { name: new RegExp(`^${label}(,|$)`) })
+        .click();
       await expectAccessible(page);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }

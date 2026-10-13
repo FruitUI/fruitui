@@ -627,6 +627,8 @@
     <span class="f-badge">Unread</span>
     <span class="f-badge">12 conversations</span>
     <span class="f-badge f-badge--outline">Studio Plan</span>
+    
+    <span title="Conversations for you, all read" class="f-badge f-badge--dot">Conversations for you, all read</span>
 </div>
 <div class="f-row">
     <span class="f-badge f-badge--success"><span class="f-badge__dot" aria-hidden="true"></span>Active</span>
@@ -637,6 +639,8 @@
     &lt;x-fruit::badge&gt;Unread&lt;/x-fruit::badge&gt;
     &lt;x-fruit::badge&gt;{{ 12 }} conversations&lt;/x-fruit::badge&gt;
     &lt;x-fruit::badge variant=&quot;outline&quot;&gt;Studio Plan&lt;/x-fruit::badge&gt;
+    {{-- A dot alone, in a count&apos;s place: conversations for you, all read. Its text is its name. --}}
+    &lt;x-fruit::badge variant=&quot;dot&quot;&gt;Conversations for you, all read&lt;/x-fruit::badge&gt;
 &lt;/div&gt;
 &lt;div class=&quot;f-row&quot;&gt;
     &lt;x-fruit::badge tone=&quot;success&quot;&gt;

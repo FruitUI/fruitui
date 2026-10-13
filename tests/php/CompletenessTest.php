@@ -14,6 +14,14 @@ class CompletenessTest extends TestCase
         $this->assertSame('f-badge', $badges->item(0)->getAttribute('class'));
         $this->assertSame('f-badge f-badge--success f-badge--outline', $badges->item(1)->getAttribute('class'));
         $this->assertSame('true', $xpath->query('//span[@class="f-badge__dot"]')->item(0)->getAttribute('aria-hidden'));
+
+        // A dot alone: its text names it for screen readers and shows as its tooltip, unless one is given.
+        $dots = $this->xpath(Blade::render('<x-fruit::badge variant="dot">For you &amp; Mia</x-fruit::badge><x-fruit::badge variant="dot" tone="accent" title="Needs a reply">Waiting</x-fruit::badge>'))->query('//span');
+        $this->assertSame('f-badge f-badge--dot', $dots->item(0)->getAttribute('class'));
+        $this->assertSame('For you & Mia', $dots->item(0)->getAttribute('title'));
+        $this->assertSame('For you & Mia', trim($dots->item(0)->textContent));
+        $this->assertSame('f-badge f-badge--accent f-badge--dot', $dots->item(1)->getAttribute('class'));
+        $this->assertSame('Needs a reply', $dots->item(1)->getAttribute('title'));
     }
 
     public function test_menu_items_render_their_roles_checked_state_and_shortcuts(): void

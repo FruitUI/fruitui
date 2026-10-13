@@ -2,6 +2,8 @@
     <x-fruit::badge>Unread</x-fruit::badge>
     <x-fruit::badge>{{ 12 }} conversations</x-fruit::badge>
     <x-fruit::badge variant="outline">Studio Plan</x-fruit::badge>
+    {{-- A dot alone, in a count's place: conversations for you, all read. Its text is its name. --}}
+    <x-fruit::badge variant="dot">Conversations for you, all read</x-fruit::badge>
 </div>
 <div class="f-row">
     <x-fruit::badge tone="success">

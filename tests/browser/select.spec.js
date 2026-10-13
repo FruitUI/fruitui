@@ -253,7 +253,6 @@ test('real native picker selection updates status through the existing Alpine su
   await select.click();
   await select.locator('option[value="waiting"]').click();
   await expect(page.locator('button.support-ticket')).toHaveCount(5);
-  await expect(page.locator('#support-queues').getByRole('button', { name: /^Waiting/ })).toContainText('3');
   await page
     .locator('#support-queues')
     .getByRole('button', { name: /^Waiting/ })

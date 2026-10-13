@@ -67,9 +67,33 @@ export function supportDemo() {
           ? ticket.status !== 'closed' && !ticket.assignee
           : ticket.status === queue;
     },
-    count(queue, mailboxId = 'all') {
-      return this.tickets.filter(ticket => this.matchesScope(ticket, mailboxId) && this.matchesQueue(ticket, queue))
-        .length;
+    /** A queue's unread conversations: its badge's count. */
+    unread(queue, mailboxId = 'all') {
+      return this.tickets.filter(
+        ticket => ticket.unread && this.matchesScope(ticket, mailboxId) && this.matchesQueue(ticket, queue),
+      ).length;
+    },
+    /**
+     * A queue without unread conversations that still holds open ones for you, assigned to you or to no
+     * one, all read: a gray dot in its badge's place, so they aren't forgotten.
+     */
+    forYou(queue, mailboxId = 'all') {
+      return (
+        !this.unread(queue, mailboxId) &&
+        this.tickets.some(
+          ticket =>
+            ticket.status === 'open' &&
+            (ticket.assignee === 'alex' || !ticket.assignee) &&
+            this.matchesScope(ticket, mailboxId) &&
+            this.matchesQueue(ticket, queue),
+        )
+      );
+    },
+    /** A queue's name for screen readers, with what its badge shows. */
+    queueLabel(name, queue, mailboxId = 'all') {
+      const unread = this.unread(queue, mailboxId);
+      if (unread) return `${name}, ${unread} unread`;
+      return this.forYou(queue, mailboxId) ? `${name}, conversations for you, all read` : name;
     },
     get filtered() {
       const query = this.query.trim().toLowerCase();

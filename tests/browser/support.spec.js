@@ -73,21 +73,19 @@ test('assignment, closing, waiting, and reopening update the actual queues', asy
   await page.getByRole('combobox', { name: 'Assigned To', exact: true }).fill('Alex');
   await page.getByRole('combobox', { name: 'Assigned To', exact: true }).press('Enter');
   await expect(page.locator('button.support-ticket')).toHaveCount(1);
-  await expect(queue(page, 'Assigned to Me')).toContainText('4');
+  // The sidebar counts unread conversations: 1041 is Alex's now, unread, with 1040.
+  await expect(queue(page, 'Assigned to Me')).toHaveAccessibleName('Assigned to Me, 2 unread');
   await queue(page, 'Assigned to Me').click();
   await ticket(page, 1041).click();
   await expect(page.locator('#support-assignee')).toHaveValue('alex');
   await page.getByRole('button', { name: 'Close Conversation', exact: true }).click();
-  await expect(queue(page, 'Closed')).toContainText('2');
   await queue(page, 'Closed').click();
   await ticket(page, 1041).click();
   await page.getByRole('textbox', { name: 'Reply Message', exact: true }).fill('We have updated your SSO domain.');
   await page.getByRole('button', { name: 'Reopen & reply', exact: true }).click();
   await expect(page.getByLabel('Conversation Status')).toHaveValue('open');
   await expect(ticket(page, 1041)).toHaveAttribute('aria-current', 'true');
-  await expect(queue(page, 'Closed')).toContainText('1');
   await page.getByLabel('Conversation Status').selectOption('waiting');
-  await expect(queue(page, 'Waiting')).toContainText('3');
   await queue(page, 'Waiting').click();
   await ticket(page, 1041).click();
   await expect(page.getByLabel('Conversation Status')).toHaveValue('waiting');
@@ -516,7 +514,7 @@ test('All Inboxes marks each conversation with its mailbox’s color, named for 
   expect(await icon('support')).toBe(await bar(1041));
   // In one mailbox every row would share the color, so none is marked.
   await page.locator('#support-queues [data-scope="support"] > summary').click();
-  await page.getByRole('button', { name: 'Support Open', exact: true }).click();
+  await page.getByRole('button', { name: /^Support Open,/ }).click();
   await expect(ticket(page, 1041)).toBeVisible();
   await expect(page.locator('button.support-ticket[data-fruit-mark]')).toHaveCount(0);
   await expect(ticket(page, 1041)).not.toHaveAccessibleName(/Support mailbox/);
@@ -613,4 +611,43 @@ test('an image attachment shows as a thumbnail, named by its file and removable'
   await page.keyboard.press('Enter');
   await expect(card).toHaveCount(0);
   await expectAccessible(page, '.support-thread');
+});
+
+test('a queue without unread conversations shows a gray dot while open ones for you wait there, read', async ({
+  page,
+}) => {
+  // Badges count unread conversations. Billing has none, but holds an open one of Alex's, read.
+  const billing = page.locator('#support-queues [data-scope="billing"] > summary');
+  await expect(billing).toHaveAccessibleName('Billing mailbox, conversations for you, all read');
+  const dot = billing.locator('.f-badge--dot');
+  await expect(dot).toBeVisible();
+  await expect(dot).toHaveAttribute('title', 'Conversations for you, all read');
+  // A gray dot alone, in the place its count would take; the text is for screen readers.
+  const dotStyle = (badge, property) =>
+    badge.evaluate((element, property) => getComputedStyle(element, '::before')[property], property);
+  expect(await dotStyle(dot, 'backgroundColor')).toBe(await tokenColor(page, '--f-tertiary'));
+  expect(await dotStyle(dot, 'width')).toBe('7px');
+  expect(await dot.evaluate(element => element.getBoundingClientRect().width)).toBe(20);
+  await billing.click();
+  const row = name => page.getByRole('button', { name: new RegExp(`^Billing ${name}`) });
+  await expect(row('Open')).toHaveAccessibleName('Billing Open, conversations for you, all read');
+  // Others' conversations and those waiting on the customer aren't for you now.
+  await expect(row('Waiting')).toHaveAccessibleName('Billing Waiting');
+  await expect(row('Waiting').locator('.f-badge--dot')).toBeHidden();
+  // Feedback's open conversation has no one assigned: it's for you too.
+  await expect(page.locator('#support-queues [data-scope="feedback"] > summary')).toHaveAccessibleName(
+    'Feedback mailbox, conversations for you, all read',
+  );
+
+  // Reading the last unread conversation for you turns the count into the dot.
+  const mine = queue(page, 'Assigned to Me');
+  await expect(mine).toHaveAccessibleName('Assigned to Me, 1 unread');
+  await mine.click();
+  await ticket(page, 1040).click();
+  await expect(mine).toHaveAccessibleName('Assigned to Me, conversations for you, all read');
+  await expect(mine.locator('.f-badge:not(.f-badge--dot)')).toBeHidden();
+  // On the selected row the dot takes the row's text color, so it stays visible on the selection.
+  await mine.focus();
+  const color = await mine.evaluate(element => getComputedStyle(element).color);
+  expect(await dotStyle(mine.locator('.f-badge--dot'), 'backgroundColor')).toBe(color);
 });
