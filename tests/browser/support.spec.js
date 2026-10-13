@@ -621,7 +621,11 @@ test('a queue without unread conversations shows a gray dot while open ones for 
   await expect(billing).toHaveAccessibleName('Billing mailbox, conversations for you, all read');
   const dot = billing.locator('.f-badge--dot');
   await expect(dot).toBeVisible();
+  // An image with no text, named, with the same tooltip: no hidden text for contrast checks to measure.
+  await expect(dot).toHaveAttribute('role', 'img');
+  await expect(dot).toHaveAccessibleName('Conversations for you, all read');
   await expect(dot).toHaveAttribute('title', 'Conversations for you, all read');
+  await expect(dot).toHaveText('');
   // A gray dot alone, in the place its count would take; the text is for screen readers.
   const dotStyle = (badge, property) =>
     badge.evaluate((element, property) => getComputedStyle(element, '::before')[property], property);
