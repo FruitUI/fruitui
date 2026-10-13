@@ -31,6 +31,24 @@
     </x-fruit::editor>
     <p class="f-help" id="gallery-markdown-editor-help">Markdown, as you write it: **bold**, *italic*, - lists, > quotes.</p>
 </form>
+{{-- A field written before it took Markdown switches to it: fruit-editor-mode converts its content, and
+     the person reviews the Markdown before the form saves it. The control is the application's; it
+     goes away once the field holds Markdown, so focus moves to the text. --}}
+<form class="f-stack" id="editor-switch-example" x-data="{
+    markdown: false,
+    toMarkdown() {
+        this.$dispatch('fruit-editor-mode', { target: 'gallery-switch-editor', mode: 'markdown' });
+        this.markdown = true;
+        this.$root.querySelector('[role=textbox]').focus();
+    },
+}" @submit.prevent>
+    <label class="f-label" for="gallery-switch-editor">Automatic Reply</label>
+    <x-fruit::editor id="gallery-switch-editor" name="autoReply" aria-describedby="gallery-switch-editor-help">{{ '<p>Hi,</p><p>Thanks for <strong>writing</strong>. Our <a href="https://forma.example/help">help pages</a> cover:</p><ul><li><p>Billing</p></li><li><p>Shipping</p></li></ul>' }}</x-fruit::editor>
+    <p class="f-help" id="gallery-switch-editor-help" x-text="markdown ? 'Markdown. Save to keep the change.' : 'Written before Markdown. Switching converts the text; nothing changes until you save.'">Written before Markdown. Switching converts the text; nothing changes until you save.</p>
+    <div class="f-row" x-show="!markdown">
+        <x-fruit::button x-on:click="toMarkdown()">Switch to Markdown</x-fruit::button>
+    </div>
+</form>
 {{-- A channel's formats: Telegram supports bold, italic and links, so the toolbar offers only those, and
      shortcuts and pasted content cannot add other markup. Undo and Redo always stay. --}}
 <form class="f-stack" id="editor-formats-example" @submit.prevent>

@@ -351,6 +351,50 @@ test('in a chat field Enter sends, except in a list, and a read-only field offer
   await expect(field).toHaveAttribute('contenteditable', 'false');
 });
 
+test('a rich field switches to Markdown in place, its content converted for review', async ({ page }) => {
+  const root = page.locator('#editor-switch-example');
+  const control = root.locator('textarea[name="autoReply"]');
+  const field = root.getByRole('textbox', { name: 'Automatic Reply' });
+  const request = mode =>
+    page.evaluate(
+      mode => window.dispatchEvent(new CustomEvent('fruit-editor-mode', { detail: { target: 'autoReply', mode } })),
+      mode,
+    );
+  await expect(field).toHaveClass(/f-prose/);
+  await expect(field.locator('strong')).toHaveText('writing');
+  // A read-only field, and a mode other than Markdown, are left as they are.
+  await control.evaluate(element => (element.readOnly = true));
+  await request('markdown');
+  await control.evaluate(element => (element.readOnly = false));
+  await request('rich');
+  await expect(root.locator('.f-editor')).not.toHaveAttribute('data-fruit-mode', /./);
+  await expect(control).toHaveValue(/^<p>Hi,<\/p>/);
+  await control.evaluate(element => {
+    window.switchEvents = [];
+    for (const type of ['input', 'change']) element.addEventListener(type, () => window.switchEvents.push(type));
+  });
+  await root.getByRole('button', { name: 'Switch to Markdown' }).click();
+  // The same field, now in Markdown mode: the value is the Markdown, for the form to save.
+  await expect(root.locator('.f-editor')).toHaveAttribute('data-fruit-mode', 'markdown');
+  await expect(control).toHaveValue(
+    'Hi,\n\nThanks for **writing**. Our [help pages](https://forma.example/help) cover:\n\n- Billing\n- Shipping',
+  );
+  expect(await page.evaluate(() => window.switchEvents)).toEqual(['input', 'change']);
+  await expect(root.getByRole('textbox')).toHaveCount(1);
+  await expect(field).toHaveClass(/f-editor__markdown/);
+  await expect(field).toBeFocused();
+  await expect(field).toHaveAccessibleDescription('Markdown. Save to keep the change.');
+  await expect(field.locator('.f-editor__strong:not(.f-editor__syntax)')).toHaveText('writing');
+  await expect(root.getByRole('button', { name: 'Switch to Markdown' })).toBeHidden();
+  // The toolbar writes Markdown now, and the switch goes one way.
+  await select(field, 'Billing');
+  await root.getByRole('button', { name: 'Bold' }).click();
+  await expect(control).toHaveValue(/\n- \*\*Billing\*\*\n/);
+  await request('markdown');
+  await expect(control).toHaveValue(/\n- \*\*Billing\*\*\n/);
+  await expect(root.getByRole('textbox')).toHaveCount(1);
+});
+
 for (const colorScheme of ['light', 'dark']) {
   test(`a Markdown editor is accessible in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
@@ -371,5 +415,7 @@ for (const colorScheme of ['light', 'dark']) {
     await select(field, 'there');
     await root.getByRole('button', { name: 'Link', exact: true }).click();
     await expectAccessible(page, '#editor-markdown-example');
+    await page.getByRole('button', { name: 'Switch to Markdown' }).click();
+    await expectAccessible(page, '#editor-switch-example');
   });
 }

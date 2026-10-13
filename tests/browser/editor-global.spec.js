@@ -76,4 +76,10 @@ test('without the editor plugin the native textarea answers the same requests', 
     ),
   );
   await expect(control).toHaveValue('<p>Hello</p><p>Signature</p>');
+  // Switched to Markdown, it holds its HTML as text.
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('fruit-editor-mode', { detail: { target: 'reply', mode: 'markdown' } })),
+  );
+  await expect(control).toHaveValue('Hello\n\nSignature');
+  await expect(control.locator('xpath=..')).toHaveAttribute('data-fruit-mode', 'markdown');
 });
