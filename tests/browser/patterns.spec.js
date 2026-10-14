@@ -162,6 +162,41 @@ test('a toast announced while a modal dialog is open appears above it', async ({
   expect(await toast.evaluate(element => element.matches(':popover-open'))).toBe(true);
 });
 
+test('a toast sits at the window’s top end, below the header row', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/support.html');
+  await page.evaluate(() =>
+    window.dispatchEvent(new CustomEvent('fruit-toast', { detail: { message: 'Conversation assigned to Mia Patel' } })),
+  );
+  const toast = page.getByRole('status').filter({ hasText: 'Conversation assigned to Mia Patel' });
+  await expect(toast).toBeVisible();
+  const box = () => toast.boundingBox();
+  let { x, y, width } = await box();
+  expect(y).toBeCloseTo(80, 0);
+  expect(1280 - (x + width)).toBeCloseTo(16, 0);
+  // In a right-to-left page, the top left; --f-toast-top clears a taller header.
+  await page.evaluate(() => {
+    document.documentElement.dir = 'rtl';
+    document.documentElement.style.setProperty('--f-toast-top', '120px');
+  });
+  ({ x, y } = await box());
+  expect(x).toBeCloseTo(16, 0);
+  expect(y).toBeCloseTo(120, 0);
+  // On a phone, a long message wraps within the margins.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(() =>
+    window.dispatchEvent(
+      new CustomEvent('fruit-toast', {
+        detail: { message: 'Could not connect to the IMAP server for support@forma.example. Check the password.' },
+      }),
+    ),
+  );
+  await expect(toast).toBeHidden();
+  ({ x, width } = await page.getByRole('status').filter({ hasText: 'IMAP' }).boundingBox());
+  expect(x).toBeCloseTo(16, 0);
+  expect(x + width).toBeCloseTo(374, 0);
+});
+
 test('print keeps the conversation and leaves application chrome off paper', async ({ page }) => {
   await page.goto('/support.html');
   await page.emulateMedia({ media: 'print' });
