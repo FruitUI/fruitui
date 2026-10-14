@@ -1,5 +1,8 @@
 import { tickets, queues, agents, mailboxes, teamRooms } from './tickets.js';
 
+/** Language names for the agent, in English: "Danish". */
+const language = new Intl.DisplayNames(['en'], { type: 'language' });
+
 export function supportDemo() {
   return {
     tickets: structuredClone(tickets),
@@ -327,6 +330,30 @@ export function supportDemo() {
     },
     get ticket() {
       return this.tickets.find(ticket => ticket.id === this.selectedId) ?? null;
+    },
+    /** A message as the agent reads it: its translation where there is one, otherwise the text as written. */
+    reading(entry) {
+      return entry.translation ?? entry.body;
+    },
+    /**
+     * The message in its other language, collapsed under a label: a customer's original under its
+     * translation, or a reply as it was sent.
+     */
+    original(entry) {
+      if (entry.translation)
+        return { label: `Translated from ${language.of(entry.lang)}`, lang: entry.lang, text: entry.body };
+      if (entry.sent)
+        return { label: `Sent in ${language.of(entry.sent.lang)}`, lang: entry.sent.lang, text: entry.sent.body };
+      return null;
+    },
+    /** A message's paragraphs, with its pictures where the text places them ({image}). */
+    paragraphs(text, images = []) {
+      return text
+        .split('{image}')
+        .flatMap((chunk, index) => [
+          ...(index && images[index - 1] ? [{ image: images[index - 1] }] : []),
+          ...(chunk.trim() ? [{ text: chunk.replace(/^\n+|\n+$/g, '') }] : []),
+        ]);
     },
     /** A row's channel and message count in one token: the icon says how it came in, the number how long it is. */
     messageCount(item) {

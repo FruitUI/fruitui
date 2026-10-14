@@ -538,8 +538,8 @@ test('the list leaves conversation numbers to search results and the open conver
   // in place of a channel label beside the subject. A single message shows the icon alone.
   await expect(ticket(page, 1042).locator('.support-channel')).toHaveAttribute('title', 'Email, 5 messages');
   await expect(ticket(page, 1042)).toHaveAccessibleName(/Email, 5 messages/);
-  await expect(ticket(page, 1040).locator('.support-channel .f-sr-only')).toHaveText('Email, 1 message');
-  await expect(ticket(page, 1040).locator('.support-channel [aria-hidden="true"]:not(svg)')).toBeHidden();
+  await expect(ticket(page, 1038).locator('.support-channel .f-sr-only')).toHaveText('Email, 1 message');
+  await expect(ticket(page, 1038).locator('.support-channel [aria-hidden="true"]:not(svg)')).toBeHidden();
   await expect(ticket(page, 1041).getByText('High priority')).toBeVisible();
   await expect(ticket(page, 1041).getByText('#1041', { exact: true })).toBeHidden();
   // Search results show it, whether the search was for the number or for words.

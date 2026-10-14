@@ -30,14 +30,16 @@
             </x-fruit::menu>
         </x-slot:actions>
     </x-fruit::message>
-    <x-fruit::message layout="stacked" aria-label="Customer message from Emma Thompson" lang="da">
+    <x-fruit::message layout="stacked" aria-label="Customer message from Emma Thompson" lang="en">
         <x-slot:avatar><x-fruit::avatar>ET</x-fruit::avatar></x-slot:avatar>
         <x-slot:author>Emma Thompson</x-slot:author>
         <x-slot:meta>Customer</x-slot:meta>
         <x-slot:time>10:08 AM</x-slot:time>
-        Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?
-        {{-- A machine translation stays with the message it translates. --}}
-        <x-slot:translation lang="en">What’s the easiest way to move our projects so the comments come along?</x-slot:translation>
+        {{-- Read in the reader's language: the translation is the message, and the original stays collapsed. --}}
+        What’s the easiest way to move our projects so the comments come along? This is what we see:
+        {{-- A picture shows as a thumbnail where it sits, linked to the full image. --}}
+        <p><a class="f-message__image" href="attachments/move-project.png" target="_blank" rel="noopener"><img src="attachments/move-project.png" alt="The Move Project dialog" width="640" height="400"></a></p>
+        <x-slot:original lang="da" label="Translated from Danish">Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med? Det her er, hvad vi ser:</x-slot:original>
     </x-fruit::message>
     <x-fruit::message layout="stacked" direction="outgoing" mine aria-label="Your reply, not sent" datetime="2026-10-02T10:31">
         <x-slot:avatar><x-fruit::avatar>AM</x-fruit::avatar></x-slot:avatar>

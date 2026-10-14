@@ -389,15 +389,22 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::message mine aria-label="Question">Hi</x-fruit::message>', 'use it with direction="outgoing"');
         $this->assertRejected('<x-fruit::message variant="ai">Hi</x-fruit::message>', 'message variant must be one of');
 
-        app()->setLocale('nl');
-        $xpath = $this->xpath(Blade::render('<x-fruit::message layout="stacked" lang="da" aria-label="Emma">Hej<x-slot:translation lang="en">Hi</x-slot:translation></x-fruit::message>'));
-        $translation = $xpath->query('//div[@class="f-message__translation"]')->item(0);
-        $this->assertSame('en', $translation->getAttribute('lang'));
-        $this->assertSame('Vertaling', $xpath->query('.//span[@class="f-sr-only"]', $translation)->item(0)->textContent);
-        $this->assertSame('Hi', $xpath->query('.//div[@class="f-message__translation-text"]', $translation)->item(0)->textContent);
-        $this->assertSame('true', $xpath->query('.//svg', $translation)->item(0)->getAttribute('aria-hidden'));
-        // Read first: the translation comes before the original text.
-        $this->assertSame('f-message__body', $xpath->query('following-sibling::div[1]', $translation)->item(0)->getAttribute('class'));
+        // The translation is the message; the original stays collapsed under its label, in its own lang.
+        $xpath = $this->xpath(Blade::render('<x-fruit::message layout="stacked" lang="en" aria-label="Emma">Hi<x-slot:original lang="da" label="Translated from Danish" id="original-1">Hej</x-slot:original></x-fruit::message>'));
+        $original = $xpath->query('//details[@class="f-message__original"]')->item(0);
+        $this->assertSame('original-1', $original->getAttribute('id'));
+        $this->assertFalse($original->hasAttribute('open'));
+        $this->assertFalse($original->hasAttribute('lang'));
+        $this->assertFalse($original->hasAttribute('label'));
+        $this->assertSame('Translated from Danish', trim($xpath->query('./summary', $original)->item(0)->textContent));
+        $this->assertSame(2, $xpath->query('./summary/svg[@aria-hidden="true"]', $original)->length);
+        $text = $xpath->query('./div[@class="f-message__original-text"]', $original)->item(0);
+        $this->assertSame('da', $text->getAttribute('lang'));
+        $this->assertSame('Hej', $text->textContent);
+        // After the message it belongs to.
+        $this->assertSame('f-message__body', $xpath->query('preceding-sibling::div[1]', $original)->item(0)->getAttribute('class'));
+        $this->assertRejected('<x-fruit::message aria-label="Emma">Hi<x-slot:original lang="da">Hej</x-slot:original></x-fruit::message>', 'message original needs a label');
+        $this->assertRejected('<x-fruit::message lang="da" aria-label="Emma">Hej<x-slot:translation lang="en">Hi</x-slot:translation></x-fruit::message>', 'message has no translation slot');
 
         $this->assertStringContainsString('class="f-composer f-composer--top"', Blade::render('<x-fruit::composer placement="top" aria-label="Reply">Reply</x-fruit::composer>'));
         $this->assertRejected('<x-fruit::composer placement="side">Reply</x-fruit::composer>', 'composer placement must be one of');

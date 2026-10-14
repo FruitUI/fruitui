@@ -183,17 +183,35 @@ export const tickets = [
     unread: true,
     time: '46m',
     tags: ['Workspace'],
-    preview: 'Vi er ved at oprette et separat workspace til vores nye studie.',
+    // The list previews the translation, in the agent's language.
+    preview: 'Thanks! Do our guests move too, or do we invite them again?',
     threads: [
       {
         ...customer(
           'Hej,\n\nVi er ved at oprette et separat workspace til vores nye studie. Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med?\n\nTak,\nEmma',
-          'Today, 10:08 AM',
+          'Yesterday, 4:12 PM',
         ),
-        // A machine translation shown with the message it translates.
+        // A machine translation is read as the message; the original, in its lang, stays collapsed.
         lang: 'da',
         translation:
           'Hi,\n\nWe’re setting up a separate workspace for our new studio. What’s the easiest way to move our projects so the comments come along?\n\nThanks,\nEmma',
+      },
+      {
+        // Written in English and sent in Danish: what Alex wrote is the message, the version sent collapsed.
+        ...reply(
+          'Hi Emma,\n\nOpen the project’s menu, choose Move Project and pick the new workspace:\n\n{image}\n\nComments, files and history move with it.\n\nAlex',
+          'Yesterday, 4:40 PM',
+        ),
+        images: [{ src: 'attachments/move-project.png', alt: 'The Move Project dialog', width: 640, height: 400 }],
+        sent: {
+          lang: 'da',
+          body: 'Hej Emma,\n\nÅbn projektets menu, vælg Flyt projekt, og vælg det nye workspace:\n\n{image}\n\nKommentarer, filer og historik flytter med.\n\nAlex',
+        },
+      },
+      {
+        ...customer('Tak! Flytter vores gæster også med, eller skal vi invitere dem igen?', 'Today, 10:08 AM'),
+        lang: 'da',
+        translation: 'Thanks! Do our guests move too, or do we invite them again?',
       },
     ],
   },
@@ -233,10 +251,21 @@ export const tickets = [
     tags: ['Export', 'Bug'],
     preview: 'A few attachments didn’t make it into our export. We have a handoff today.',
     threads: [
-      customer(
-        'Hi,\n\nOur project export is missing a few attachments. We have a client handoff this afternoon and need the original files. I can send the project link if that helps.\n\nMaya',
-        'Today, 9:48 AM',
-      ),
+      {
+        // A picture in the text shows as a thumbnail where it sits, linked to the full image.
+        ...customer(
+          'Hi,\n\nOur project export is missing a few attachments:\n\n{image}\n\nWe have a client handoff this afternoon and need the original files. I can send the project link if that helps.\n\nMaya',
+          'Today, 9:48 AM',
+        ),
+        images: [
+          {
+            src: 'attachments/export-missing-files.png',
+            alt: 'The export, with two files missing',
+            width: 640,
+            height: 400,
+          },
+        ],
+      },
       note(
         'Reproduced with large attachments. Engineering is checking the export job. Ask for the project link and offer individual downloads in the meantime.',
         'Today, 9:52 AM',

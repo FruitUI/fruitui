@@ -840,31 +840,90 @@ test('a network failure keeps the dialog retryable and closeable', async ({ page
   await expect(trigger).toBeFocused();
 });
 
-test('a translation stays inside the message it translates, outlined and announced as a translation', async ({
-  page,
-}) => {
+test('a thread reads in the reader’s language, the other language collapsed under its label', async ({ page }) => {
   await page.goto('/components.html');
-  const message = page
+  const specimen = page
     .locator('#component-message')
     .getByRole('article', { name: 'Customer message from Emma Thompson' });
-  const translation = message.locator('.f-message__translation');
-  await expect(translation).toHaveAttribute('lang', 'en');
-  await expect(translation).toHaveText(
-    'TranslationWhat’s the easiest way to move our projects so the comments come along?',
+  await expect(specimen.locator('.f-message__body')).toContainText('What’s the easiest way to move our projects');
+  const original = specimen.locator('details.f-message__original');
+  await expect(original).not.toHaveAttribute('open', '');
+  await expect(original.locator('summary')).toHaveText('Translated from Danish');
+  await expect(original.locator('.f-message__original-text')).toBeHidden();
+  await original.locator('summary').click();
+  await expect(original.locator('.f-message__original-text')).toHaveAttribute('lang', 'da');
+  await expect(original.locator('.f-message__original-text')).toContainText('Hvad er den nemmeste måde');
+  expect(await original.locator('.f-message__original-icon').evaluate(icon => getComputedStyle(icon).color)).toBe(
+    await tokenColor(page, '--f-generated'),
   );
-  const look = await translation.evaluate(element => {
-    const style = getComputedStyle(element);
-    return { border: style.borderTopWidth, background: style.backgroundColor };
-  });
-  expect(look).toEqual({ border: '1px', background: 'rgba(0, 0, 0, 0)' });
 
   await page.goto('/support.html');
   await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
   const thread = page.getByRole('region', { name: 'Conversation history' });
-  await expect(
-    thread.getByRole('region', { name: 'Customer Message' }).locator('.f-message__translation'),
-  ).toContainText('move our projects');
+  const messages = thread.locator('.support-message');
+  // Emma's latest message: the translation is the message, the Danish original collapsed.
+  const latest = messages.nth(0);
+  await expect(latest.locator('.f-message__body')).toHaveText(
+    'Thanks! Do our guests move too, or do we invite them again?',
+  );
+  await expect(latest.locator('.f-message__body')).not.toHaveAttribute('lang', /./);
+  const summary = latest.getByRole('group').locator('summary');
+  await expect(summary).toHaveText('Translated from Danish');
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(latest.locator('.f-message__original-text')).toHaveText(
+    'Tak! Flytter vores gæster også med, eller skal vi invitere dem igen?',
+  );
+  // Alex's reply: what he wrote is the message, the version sent in Danish collapsed.
+  const reply = messages.nth(1);
+  await expect(reply.locator('.f-message__body')).toContainText('Open the project’s menu, choose Move Project');
+  await expect(reply.locator('summary')).toHaveText('Sent in Danish');
+  await expect(reply.locator('.f-message__original-text')).toBeHidden();
+  await reply.locator('summary').click();
+  await expect(reply.locator('.f-message__original-text')).toHaveAttribute('lang', 'da');
+  await expect(reply.locator('.f-message__original-text')).toContainText('Åbn projektets menu');
+  // The list previews the translation too.
+  await expect(page.locator('button.support-ticket', { hasText: 'Emma Thompson' })).toContainText(
+    'Thanks! Do our guests move too',
+  );
 });
+
+test('a picture in a message is a thumbnail where it sits, linked to the full image', async ({ page }) => {
+  await page.goto('/support.html');
+  await page.locator('button.support-ticket', { hasText: 'Maya Rodriguez' }).click();
+  const message = page.getByRole('region', { name: 'Conversation history' }).locator('.support-message', {
+    hasText: 'Maya Rodriguez',
+  });
+  const link = message.getByRole('link', { name: 'The export, with two files missing' });
+  await expect(link).toHaveAttribute('href', 'attachments/export-missing-files.png');
+  await expect(link).toHaveAttribute('target', '_blank');
+  const image = link.locator('img');
+  await image.scrollIntoViewIfNeeded();
+  await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth)).toBe(640);
+  const box = await image.boundingBox();
+  // 120px tall with its border, the picture in proportion inside it.
+  expect(box.height).toBeCloseTo(120, 0);
+  expect((box.width - 2) / (box.height - 2)).toBeCloseTo(640 / 400, 2);
+  // Where the text placed it: between the line that refers to it and the rest.
+  const order = await message
+    .locator('.f-message__body > p')
+    .evaluateAll(paragraphs => paragraphs.map(p => (p.querySelector('img') ? 'image' : p.textContent.slice(0, 12))));
+  expect(order).toEqual(['Hi,\n\nOur pro', 'image', 'We have a cl']);
+  await expect(link).toHaveCSS('cursor', 'zoom-in');
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`translated messages and their originals are accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.goto('/support.html');
+    await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
+    const thread = page.getByRole('region', { name: 'Conversation history' });
+    await expectAccessible(page, '.support-thread');
+    for (const summary of await thread.locator('.f-message__original > summary').all()) await summary.click();
+    await thread.locator('.f-message__original > summary').first().focus();
+    await expectAccessible(page, '.support-thread');
+  });
+}
 
 test('a segmented control in a toolbar is named for assistive technology only', async ({ page }) => {
   await page.goto('/components.html');
