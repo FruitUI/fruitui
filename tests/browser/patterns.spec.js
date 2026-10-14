@@ -197,6 +197,38 @@ test('a toast sits at the window’s top end, below the header row', async ({ pa
   expect(x + width).toBeCloseTo(374, 0);
 });
 
+test('a click or Escape closes a toast, unless it selects its text or a menu takes Escape', async ({ page }) => {
+  await page.goto('/support.html');
+  const show = message =>
+    page.evaluate(message => window.dispatchEvent(new CustomEvent('fruit-toast', { detail: { message } })), message);
+  const toast = page.getByRole('status').filter({ hasText: 'Starred' });
+  await show('Starred');
+  await toast.click();
+  await expect(toast).toBeHidden();
+  // Escape closes it from wherever focus is, unless a menu or dialog takes it first.
+  await show('Starred');
+  await page.locator('body').press('Escape');
+  await expect(toast).toBeHidden();
+  const filter = page.locator('.support-filter > summary');
+  await filter.click();
+  await show('Starred');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.support-filter')).not.toHaveAttribute('open', '');
+  await expect(toast).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(toast).toBeHidden();
+  // Selecting its text to copy leaves it open.
+  await show('Could not connect to the IMAP server.');
+  const error = page.getByRole('status').filter({ hasText: 'IMAP' });
+  const box = await error.boundingBox();
+  await page.mouse.move(box.x + 20, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width - 20, box.y + box.height / 2, { steps: 5 });
+  await page.mouse.up();
+  expect(await page.evaluate(() => String(window.getSelection()))).toContain('IMAP');
+  await expect(error).toBeVisible();
+});
+
 test('print keeps the conversation and leaves application chrome off paper', async ({ page }) => {
   await page.goto('/support.html');
   await page.emulateMedia({ media: 'print' });
