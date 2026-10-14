@@ -108,6 +108,7 @@ class ComponentContractsTest extends TestCase
             ['<x-fruit::textarea role="listbox" />', 'overriding role'],
             ['<x-fruit::dialog role="checkbox" />', 'overriding role'],
             ['<x-fruit::disclosure title="More" as="button">Details</x-fruit::disclosure>', 'fixed native element'],
+            ['<x-fruit::disclosure title="More" variant="plain">Details</x-fruit::disclosure>', 'disclosure variant must be one of'],
             ['<x-fruit::card role="checkbox">A row</x-fruit::card>', 'overriding role'],
             ['<x-fruit::card as="button">An action</x-fruit::card>', 'fixed native element'],
         ];
@@ -391,13 +392,14 @@ class ComponentContractsTest extends TestCase
 
         // The translation is the message; the original stays collapsed under its label, in its own lang.
         $xpath = $this->xpath(Blade::render('<x-fruit::message layout="stacked" lang="en" aria-label="Emma">Hi<x-slot:original lang="da" label="Translated from Danish" id="original-1">Hej</x-slot:original></x-fruit::message>'));
-        $original = $xpath->query('//details[@class="f-message__original"]')->item(0);
+        $original = $xpath->query('//details[@class="f-disclosure f-disclosure--quiet f-message__original"]')->item(0);
         $this->assertSame('original-1', $original->getAttribute('id'));
         $this->assertFalse($original->hasAttribute('open'));
         $this->assertFalse($original->hasAttribute('lang'));
         $this->assertFalse($original->hasAttribute('label'));
         $this->assertSame('Translated from Danish', trim($xpath->query('./summary', $original)->item(0)->textContent));
-        $this->assertSame(2, $xpath->query('./summary/svg[@aria-hidden="true"]', $original)->length);
+        // A quiet Disclosure: the translate icon, the label, and a chevron its CSS draws.
+        $this->assertSame(1, $xpath->query('./summary/svg[@aria-hidden="true"]', $original)->length);
         $text = $xpath->query('./div[@class="f-message__original-text"]', $original)->item(0);
         $this->assertSame('da', $text->getAttribute('lang'));
         $this->assertSame('Hej', $text->textContent);
@@ -459,6 +461,17 @@ class ComponentContractsTest extends TestCase
         $this->assertSame('Summary', $xpath->query('.//span[@class="f-sr-only"]', $root)->item(0)->textContent);
         $this->assertSame('true', $xpath->query('.//svg', $root)->item(0)->getAttribute('aria-hidden'));
         $this->assertSame('Moved to the Team plan.', trim($xpath->query('.//div[@class="f-generated__text"]', $root)->item(0)->textContent));
+        // With details, the text is a quiet Disclosure's summary that opens to them.
+        $xpath = $this->xpath(Blade::render('<x-fruit::generated label="Summary">Moved to the Team plan.<x-slot:details id="background"><ul><li>Asked to pay annually.</li></ul></x-slot:details></x-fruit::generated>'));
+        $details = $xpath->query('//div[@class="f-generated"]/details')->item(0);
+        $this->assertSame('background', $details->getAttribute('id'));
+        $this->assertSame('f-generated__text f-disclosure f-disclosure--quiet', $details->getAttribute('class'));
+        $this->assertFalse($details->hasAttribute('open'));
+        $this->assertSame('Moved to the Team plan.', trim($xpath->query('./summary', $details)->item(0)->textContent));
+        $this->assertSame('Asked to pay annually.', $xpath->query('./div/ul/li', $details)->item(0)->textContent);
+        $this->assertSame(0, $xpath->query('//div[@class="f-generated__text"]')->length);
+        $this->assertStringContainsString('<details class="f-disclosure f-disclosure--quiet">', Blade::render('<x-fruit::disclosure variant="quiet" title="Why?">Because.</x-fruit::disclosure>'));
+        $this->assertStringContainsString('<details class="f-disclosure">', Blade::render('<x-fruit::disclosure title="Why?">Because.</x-fruit::disclosure>'));
         app()->setLocale('nl');
         $this->assertStringContainsString('<span class="f-sr-only">Gegenereerd</span>', Blade::render('<x-fruit::generated>Tekst</x-fruit::generated>'));
         $this->assertRejected('<x-fruit::generated label=" ">Text</x-fruit::generated>', 'needs a nonempty label');

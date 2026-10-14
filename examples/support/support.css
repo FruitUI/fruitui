@@ -323,6 +323,13 @@
   line-height: 1.7;
   white-space: pre-wrap;
 }
+.support-summary-details {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  font-size: var(--f-text-sm);
+}
 .support-note-lock {
   flex-shrink: 0;
   width: 13px;

@@ -498,11 +498,20 @@
         <section id="component-disclosure" data-component="disclosure" class="f-card component-card"><h2>Disclosure</h2><p>Reveal supporting content with native Enter/Space and open state.</p><!-- blade:disclosure --><details class="f-disclosure">
     <summary>What makes FruitUI CSS first?</summary>
     <div><p class="f-help">Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.</p></div>
+</details>
+
+<details class="f-disclosure f-disclosure--quiet">
+    <summary>Why do some settings need a restart?</summary>
+    <div><p class="f-help">Mail fetching runs in the background and reads its settings when it starts.</p></div>
 </details><!-- /blade:disclosure --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;details class=&quot;f-disclosure&quot;&gt;
   &lt;summary&gt;More details&lt;/summary&gt;
   &lt;p&gt;The details, when you need them.&lt;/p&gt;
 &lt;/details&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="disclosure">&lt;x-fruit::disclosure title=&quot;What makes FruitUI CSS first?&quot;&gt;
     &lt;p class=&quot;f-help&quot;&gt;Layout, appearance, selection controls, focus states, and this disclosure work with native HTML and CSS.&lt;/p&gt;
+&lt;/x-fruit::disclosure&gt;
+{{-- Quiet: no box, the summary a line ending in a chevron, and what it reveals on a bar below. --}}
+&lt;x-fruit::disclosure variant=&quot;quiet&quot; title=&quot;Why do some settings need a restart?&quot;&gt;
+    &lt;p class=&quot;f-help&quot;&gt;Mail fetching runs in the background and reads its settings when it starts.&lt;/p&gt;
 &lt;/x-fruit::disclosure&gt;</pre></details></section>
         <section id="component-dialog" data-component="dialog" class="f-card component-card"><h2>Dialogs</h2><p>Native focus management and Escape dismissal. The optional fruitDialog helper opens and closes it.</p><!-- blade:dialog --><div x-data>
     <button type="button" class="f-button" @click="$refs.dialog.showModal()">Open Dialog</button>
@@ -1872,7 +1881,7 @@ Thanks for **writing**. We&#039;ll:
         
         <p><a class="f-message__image" href="attachments/move-project.png" target="_blank" rel="noopener"><img src="attachments/move-project.png" alt="The Move Project dialog" width="640" height="400"></a></p></div>
     
-    <details class="f-message__original"><summary><svg class="f-icon f-message__original-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span>Translated from Danish</span><svg class="f-icon f-message__original-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></summary><div class="f-message__original-text"  lang="da" >Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med? Det her er, hvad vi ser:</div></details>            </article>
+    <details class="f-disclosure f-disclosure--quiet f-message__original"><summary><svg class="f-icon f-message__original-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>Translated from Danish</summary><div class="f-message__original-text"  lang="da" >Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med? Det her er, hvad vi ser:</div></details>            </article>
     <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your reply, not sent">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AM</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">You</small> </span>
@@ -2790,8 +2799,8 @@ Thanks for **writing**. We&#039;ll:
         <div class="f-generated">
     <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
     <span class="f-sr-only">Summary</span>
-    <div class="f-generated__text">Studio North moved to the Team plan with annual billing.</div>
-</div>
+            <div class="f-generated__text">Studio North moved to the Team plan with annual billing.</div>
+    </div>
     </li></ol><!-- /blade:thread --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;ol class=&quot;f-thread&quot; role=&quot;list&quot; aria-label=&quot;Conversation history&quot;&gt;
   &lt;li&gt;&lt;article class=&quot;f-message f-message--stacked&quot; aria-label=&quot;Customer message&quot;&gt;…&lt;/article&gt;&lt;/li&gt;
   &lt;li&gt;&lt;div class=&quot;f-message-event&quot;&gt;…&lt;/div&gt;&lt;/li&gt;
@@ -2854,11 +2863,15 @@ Thanks for **writing**. We&#039;ll:
     &lt;/li&gt;
 &lt;/x-fruit::thread&gt;</pre></details></section>
         <section id="component-generated" data-component="generated" class="f-card component-card"><h2>Generated Summary</h2><p>Generated text that stands on its own in a thread, such as a summary: a sparkles icon and the text, on the generated tint, named for assistive technology. Translations go in their message&#8217;s translation slot instead.</p><!-- blade:generated --><ol role="list" class="f-thread" aria-label="Conversation history"><li>
+        
         <div class="f-generated">
     <svg class="f-icon f-generated__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
     <span class="f-sr-only">Summary</span>
-    <div class="f-generated__text">Studio North moved to the Team plan with annual billing. One guest invite expired and needs to be sent again.</div>
-</div>
+            <details class="f-generated__text f-disclosure f-disclosure--quiet"><summary>Studio North moved to the Team plan with annual billing. One guest invite expired and needs to be sent again.</summary><div><ul>
+                    <li>Sophie asked to move the whole studio to the Team plan and to pay annually.</li>
+                    <li>Alex upgraded the plan; three freelancers joined as guests.</li>
+                </ul></div></details>
+    </div>
     </li>
     <li>
         <article class="f-message f-message--stacked" aria-label="Customer Message">
@@ -2875,8 +2888,15 @@ Thanks for **writing**. We&#039;ll:
 &lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="generated">{{-- Generated text standing on its own in a thread, such as a summary; the label names it for assistive technology. --}}
 &lt;x-fruit::thread aria-label=&quot;Conversation history&quot;&gt;
     &lt;li&gt;
+        {{-- The summary opens to its background: the text is a quiet Disclosure&apos;s summary. --}}
         &lt;x-fruit::generated label=&quot;Summary&quot;&gt;
             Studio North moved to the Team plan with annual billing. One guest invite expired and needs to be sent again.
+            &lt;x-slot:details&gt;
+                &lt;ul&gt;
+                    &lt;li&gt;Sophie asked to move the whole studio to the Team plan and to pay annually.&lt;/li&gt;
+                    &lt;li&gt;Alex upgraded the plan; three freelancers joined as guests.&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/x-slot:details&gt;
         &lt;/x-fruit::generated&gt;
     &lt;/li&gt;
     &lt;li&gt;

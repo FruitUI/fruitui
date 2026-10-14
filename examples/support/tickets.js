@@ -134,10 +134,18 @@ export const tickets = [
           { name: 'invite-link-expired.png', size: '19 KB', href: 'attachments/invite-link-expired.png', image: true },
         ],
       },
-      summary(
-        'Studio North moved to the Team plan with annual billing. Sophie invited three freelancers as guests; one invite link expired and needs to be sent again.',
-        'Today, 10:43 AM',
-      ),
+      {
+        // Where the conversation stands, which opens to its background.
+        ...summary(
+          'Studio North moved to the Team plan with annual billing. One guest invite link expired and needs to be sent again.',
+          'Today, 10:43 AM',
+        ),
+        details: [
+          'Sophie asked to bring all 12 of the studio onto the Team plan without losing projects, and to pay annually.',
+          'Mia confirmed projects stay where they are; Alex upgraded the plan and sent the new invoice.',
+          'Three freelancers joined as free guests to comment. Ana’s invite link expired.',
+        ],
+      },
     ],
   },
   {

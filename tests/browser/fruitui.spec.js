@@ -247,6 +247,12 @@ test('CSS-only controls work with JavaScript disabled', async ({ browser }) => {
   await control.uncheck();
   await expect(control).not.toBeChecked();
   await page.getByText('What makes FruitUI CSS first?', { exact: true }).click();
-  await expect(page.locator('details.f-disclosure')).toHaveAttribute('open', '');
+  await expect(page.locator('details.f-disclosure', { hasText: 'What makes FruitUI CSS first?' })).toHaveAttribute(
+    'open',
+    '',
+  );
+  // A quiet one opens the same way.
+  await page.getByText('Why do some settings need a restart?', { exact: true }).click();
+  await expect(page.locator('details.f-disclosure--quiet', { hasText: 'need a restart' })).toHaveAttribute('open', '');
   await context.close();
 });

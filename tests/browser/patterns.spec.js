@@ -888,6 +888,44 @@ test('a thread reads in the reader’s language, the other language collapsed un
   );
 });
 
+test('a summary opens to its background, with the translation line’s quiet chevron', async ({ page }) => {
+  await page.goto('/support.html');
+  const summary = page.getByRole('region', { name: 'Conversation history' }).locator('.f-generated').first();
+  const details = summary.locator('details.f-disclosure--quiet');
+  const toggle = details.locator('summary');
+  await expect(toggle).toHaveText(
+    'Studio North moved to the Team plan with annual billing. One guest invite link expired and needs to be sent again.',
+  );
+  await expect(details.locator('li')).toHaveCount(3);
+  await expect(details.locator('li').first()).toBeHidden();
+  const chevron = () => toggle.evaluate(element => getComputedStyle(element, '::after').maskImage);
+  expect(await chevron()).toContain('m9 18');
+  // The chevron is joined to the last word, on the summary's last line.
+  const lines = await toggle.evaluate(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const rects = [...range.getClientRects()];
+    return {
+      gap: element.getBoundingClientRect().bottom - rects.at(-1).bottom,
+      line: parseFloat(getComputedStyle(element).lineHeight),
+    };
+  });
+  // Alone on a line, the chevron would add a whole line below the text.
+  expect(lines.gap).toBeLessThan(lines.line / 2);
+  await toggle.focus();
+  await page.keyboard.press('Enter');
+  await expect(details.locator('li').first()).toBeVisible();
+  await expect(details.locator('li').first()).toHaveText(/^Sophie asked to bring all 12/);
+  expect(await chevron()).toContain('m6 9');
+  // What it reveals sits on the same bar as a message's original.
+  const bar = await details.locator('ul').evaluate(element => getComputedStyle(element).borderInlineStartWidth);
+  expect(bar).toBe('2px');
+  // In a right-to-left page the closed chevron points left.
+  await page.keyboard.press('Enter');
+  await page.evaluate(() => (document.documentElement.dir = 'rtl'));
+  expect(await chevron()).toContain('m15 18');
+});
+
 test('a picture in a message is a thumbnail where it sits, linked to the full image', async ({ page }) => {
   await page.goto('/support.html');
   await page.locator('button.support-ticket', { hasText: 'Maya Rodriguez' }).click();
@@ -913,11 +951,15 @@ test('a picture in a message is a thumbnail where it sits, linked to the full im
 });
 
 for (const colorScheme of ['light', 'dark']) {
-  test(`translated messages and their originals are accessible in ${colorScheme} appearance`, async ({ page }) => {
+  test(`a summary’s background and translated messages’ originals are accessible in ${colorScheme} appearance`, async ({
+    page,
+  }) => {
     await page.emulateMedia({ colorScheme });
     await page.goto('/support.html');
-    await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
     const thread = page.getByRole('region', { name: 'Conversation history' });
+    await thread.locator('.f-generated summary').click();
+    await expectAccessible(page, '.support-thread');
+    await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
     await expectAccessible(page, '.support-thread');
     for (const summary of await thread.locator('.f-message__original > summary').all()) await summary.click();
     await thread.locator('.f-message__original > summary').first().focus();
