@@ -326,6 +326,7 @@ class LaravelIntegrationTest extends TestCase
             ['<x-fruit::context-menu role="listbox">Items</x-fruit::context-menu>', 'overriding role'],
             ['<x-fruit::context-menu x-data="other">Items</x-fruit::context-menu>', 'owns its fruitContextMenu helper'],
             ['<x-fruit::context-menu x-bind:hidden="closed">Items</x-fruit::context-menu>', 'owns its fruitContextMenu helper'],
+            ['<x-fruit::context-menu data-fruit-targets="li">Items</x-fruit::context-menu>', 'targets (the targets prop)'],
             ['<x-fruit::sidebar-item>Inbox</x-fruit::sidebar-item>', 'requires href'],
             ['<x-fruit::sidebar-item href="/" role="button">Inbox</x-fruit::sidebar-item>', 'overriding role'],
             ['<x-fruit::sidebar-item href="/" current="yes">Inbox</x-fruit::sidebar-item>', 'current must be a boolean'],
@@ -412,6 +413,17 @@ class LaravelIntegrationTest extends TestCase
         $this->assertTrue($menu->hasAttribute('wire:ignore.self'));
         $this->assertSame('f-menu__items f-context-menu extra', $menu->getAttribute('class'));
         $this->assertSame('archive(4)', $xpath->query('.//button[@role="menuitem"]', $menu)->item(0)->getAttribute('wire:click'));
+        $this->assertFalse($menu->hasAttribute('data-fruit-targets'));
+    }
+
+    public function test_one_context_menu_can_serve_the_rows_of_a_list(): void
+    {
+        $xpath = $this->xpath(Blade::render('<div><ul><li data-id="4">Sophie</li></ul><x-fruit::context-menu targets="li[data-id]" title="Conversation actions"><x-fruit::menu-item wire:click="archive(target.dataset.id)">Archive</x-fruit::menu-item></x-fruit::context-menu></div>'));
+        $menu = $xpath->query('//div/div[@role="menu"]')->item(0);
+        $this->assertSame('li[data-id]', $menu->getAttribute('data-fruit-targets'));
+        $this->assertSame('fruitContextMenu', $menu->getAttribute('x-data'));
+        $this->assertSame('Conversation actions', $menu->getAttribute('aria-label'));
+        $this->assertSame('archive(target.dataset.id)', $xpath->query('.//button[@role="menuitem"]', $menu)->item(0)->getAttribute('wire:click'));
     }
 
     public function test_livewire_tests_assert_fruit_feedback_directly(): void

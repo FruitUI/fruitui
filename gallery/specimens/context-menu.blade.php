@@ -14,3 +14,19 @@
         </li>
     @endforeach
 </x-fruit::item-list>
+<div x-data>
+    <x-fruit::item-list aria-label="Mailboxes with one context menu">
+        @foreach (['Support' => '3 unread', 'Billing' => '1 unread'] as $name => $unread)
+            <li data-mailbox="{{ $name }}">
+                <x-fruit::item-row @click="$toast('Opened {{ $name }}.')">
+                    {{ $name }}
+                    <x-slot:subtitle>{{ $unread }}</x-slot:subtitle>
+                </x-fruit::item-row>
+            </li>
+        @endforeach
+    </x-fruit::item-list>
+    <x-fruit::context-menu targets="li[data-mailbox]" title="Mailbox actions" x-bind:aria-label="target ? `Actions for ${target.dataset.mailbox}` : 'Mailbox actions'">
+        <x-fruit::menu-item @click="$toast(`Marked ${target.dataset.mailbox} as read.`)">Mark All as Read</x-fruit::menu-item>
+        <x-fruit::menu-item @click="$toast(`Muted ${target.dataset.mailbox}.`)">Mute</x-fruit::menu-item>
+    </x-fruit::context-menu>
+</div>

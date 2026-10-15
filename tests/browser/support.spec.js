@@ -562,7 +562,11 @@ test('a row’s context menu holds the selection bar’s commands, for the row o
   await expect(menu).toHaveAccessibleName('Actions for Jordan Lee');
   await expect(menu.getByRole('menuitem')).toHaveText(['Mark as Read', 'Assign to Me', 'Move to Waiting', 'Close']);
   await expect(menu.getByRole('menuitem').first()).toBeFocused();
+  // One menu beside the list serves every row; the row it acts on is outlined.
+  await expect(page.locator('#support-list-pane .f-context-menu')).toHaveCount(1);
+  await expect(ticket(page, 1041).locator('xpath=..')).toHaveAttribute('data-fruit-context-open', '');
   await menu.getByRole('menuitem', { name: 'Mark as Read' }).click();
+  await expect(ticket(page, 1041).locator('xpath=..')).not.toHaveAttribute('data-fruit-context-open');
   await expect(toast('1 conversation marked as read')).toBeVisible();
   await expect(ticket(page, 1041).locator('.support-unread')).toBeHidden();
   // From the keyboard: Shift+F10 on the focused row, Escape returns to it.

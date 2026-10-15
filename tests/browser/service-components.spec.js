@@ -668,6 +668,58 @@ test('a context menu opens at the pointer or from the keyboard and returns focus
   await expect(page.getByRole('status').filter({ hasText: 'Opened Sophie Chen.' })).toHaveCount(0);
 });
 
+test('one context menu serves every row of a list, for the row it opens on', async ({ page }) => {
+  const card = page.locator('#component-context-menu');
+  const rows = card.getByRole('list', { name: 'Mailboxes with one context menu' });
+  const menu = card.getByRole('menu', { name: /^Actions for/ });
+  await expect(card.locator('[data-fruit-targets]')).toHaveCount(1);
+  const support = rows.getByRole('button', { name: /Support/ });
+  const billing = rows.getByRole('button', { name: /Billing/ });
+
+  // A secondary click opens it for the row under the pointer, which it names and outlines.
+  await support.scrollIntoViewIfNeeded();
+  await support.click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Support');
+  await expect(support.locator('xpath=..')).toHaveAttribute('data-fruit-context-open', '');
+  await expect(menu.getByRole('menuitem', { name: 'Mark All as Read' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status').filter({ hasText: 'Marked Support as read.' })).toBeVisible();
+  await expect(support.locator('xpath=..')).not.toHaveAttribute('data-fruit-context-open');
+
+  // From the keyboard, for the focused row; Escape returns focus to it.
+  await billing.focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(menu).toHaveAccessibleName('Actions for Billing');
+  await expect(billing.locator('xpath=..')).toHaveAttribute('data-fruit-context-open', '');
+  await expect(support.locator('xpath=..')).not.toHaveAttribute('data-fruit-context-open');
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(billing).toBeFocused();
+
+  // A right-click on another row while it is open moves it there.
+  await support.click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Support');
+  await billing.click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Billing');
+  await expect(support.locator('xpath=..')).not.toHaveAttribute('data-fruit-context-open');
+  await page.keyboard.press('Escape');
+
+  // Data a morph changes on the same row is read anew when it opens again.
+  await billing.locator('xpath=..').evaluate(row => (row.dataset.mailbox = 'Invoices'));
+  await billing.click({ button: 'right' });
+  await expect(menu).toHaveAccessibleName('Actions for Invoices');
+  await page.keyboard.press('Escape');
+
+  // Elsewhere in its parent, the browser's own menu remains.
+  const prevented = await rows.evaluate(list => {
+    const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+    list.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+  expect(prevented).toBe(false);
+  await expect(menu).toBeHidden();
+});
+
 for (const colorScheme of ['light', 'dark']) {
   test(`an open context menu is accessible in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });

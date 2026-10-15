@@ -416,20 +416,34 @@ test('the lazy history island loads behind a skeleton, follows the open ticket a
   expect(errors).toEqual([]);
 });
 
-test('a ticket row context menu runs Livewire actions for that ticket', async ({ page }) => {
+test('one context menu serves every ticket row and runs Livewire actions for the row it opens on', async ({ page }) => {
   const errors = await openDesk(page);
+  // One menu beside the list, not one per row.
+  await expect(page.locator('.f-context-menu')).toHaveCount(1);
   const row = list(page).getByRole('button', { name: /Jordan Lee/ });
   await row.click({ button: 'right' });
   const menu = page.getByRole('menu', { name: 'Conversation actions' }).filter({ visible: true });
+  await expect(row.locator('xpath=..')).toHaveAttribute('data-fruit-context-open', '');
+  // wire:click reads the row it opened for (target) from the menu's Alpine scope.
   await menu.getByRole('menuitem', { name: 'Close Conversation' }).click();
   await expect(page.getByRole('status').filter({ hasText: '1 conversation closed.' })).toBeVisible();
   await expect(list(page).getByRole('button', { name: /Jordan Lee/ })).toHaveCount(0);
 
+  // After the morph, the same menu opens for another row.
   await list(page)
     .getByRole('button', { name: /Emma Thompson/ })
     .click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Open Conversation', 'Close Conversation']);
   await menu.getByRole('menuitem', { name: 'Open Conversation' }).click();
   await expect(conversation(page).getByRole('heading', { level: 1 })).toHaveText('A new home for our workspace');
+
+  // A closed row's menu leaves out Close (x-show on the row's data).
+  await page.getByRole('link', { name: /Closed/ }).click();
+  await list(page)
+    .getByRole('button', { name: /Jordan Lee/ })
+    .click({ button: 'right' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Open Conversation']);
+  await page.keyboard.press('Escape');
   expect(errors).toEqual([]);
 });
 

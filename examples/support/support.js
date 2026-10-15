@@ -508,17 +508,23 @@ export function supportDemo() {
     menuTargets(item) {
       return this.checked.length > 1 && this.checked.includes(item.id) ? [...this.checked] : [item.id];
     },
+    /** The conversation of the row the list's one context menu opened for (nothing before it first opens). */
+    menuTicket(row) {
+      const id = Number(row?.querySelector('[data-ticket-id]')?.dataset.ticketId);
+      return this.tickets.find(ticket => ticket.id === id);
+    },
     menuLabel(item) {
+      if (!item) return 'Conversation actions';
       const count = this.menuTargets(item).length;
       return count > 1 ? `Actions for ${count} conversations` : `Actions for ${item.customer.name}`;
     },
     /** A single unread row offers Mark as Read; otherwise the menu marks as unread, as the selection bar does. */
     rowMarksRead(item) {
-      return item.unread && this.menuTargets(item).length === 1;
+      return !!item?.unread && this.menuTargets(item).length === 1;
     },
     /** A single closed row offers Reopen; otherwise the menu closes. */
     rowReopens(item) {
-      return item.status === 'closed' && this.menuTargets(item).length === 1;
+      return item?.status === 'closed' && this.menuTargets(item).length === 1;
     },
     toggleRowRead(item) {
       const read = this.rowMarksRead(item);

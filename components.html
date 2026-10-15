@@ -2415,14 +2415,38 @@ Thanks for **writing**. We&#039;ll:
                 <button type="button" role="menuitem" class="f-menu-item" @click="$toast('Archived Jordan Lee.')">Archive</button>
                 <div role="separator" class="f-menu__separator"></div>
                 <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger" @click="$toast('Deleted Jordan Lee.')">Delete</button></div>
-        </li></ul><!-- /blade:context-menu --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;li&gt;
+        </li></ul>
+<div x-data>
+    <ul role="list" class="f-item-list" aria-label="Mailboxes with one context menu"><li data-mailbox="Support">
+                <button type="button" class="f-item-row" @click="$toast('Opened Support.')">
+    <span class="f-item-row__top">
+    <span class="f-item-row__title">Support</span>
+        </span>
+<span class="f-item-row__subtitle">3 unread</span></button>
+            </li>
+                    <li data-mailbox="Billing">
+                <button type="button" class="f-item-row" @click="$toast('Opened Billing.')">
+    <span class="f-item-row__top">
+    <span class="f-item-row__title">Billing</span>
+        </span>
+<span class="f-item-row__subtitle">1 unread</span></button>
+            </li></ul>
+    <div class="f-menu__items f-context-menu" x-bind:aria-label="target ? `Actions for ${target.dataset.mailbox}` : 'Mailbox actions'" role="menu" aria-label="Mailbox actions" data-fruit-targets="li[data-mailbox]" x-data="fruitContextMenu" wire:ignore.self hidden><button type="button" role="menuitem" class="f-menu-item" @click="$toast(`Marked ${target.dataset.mailbox} as read.`)">Mark All as Read</button>
+        <button type="button" role="menuitem" class="f-menu-item" @click="$toast(`Muted ${target.dataset.mailbox}.`)">Mute</button></div>
+</div><!-- /blade:context-menu --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;li&gt;
   &lt;button class=&quot;f-item-row&quot; type=&quot;button&quot;&gt;…&lt;/button&gt;
   &lt;div class=&quot;f-menu__items f-context-menu&quot; role=&quot;menu&quot; aria-label=&quot;Conversation actions&quot; x-data=&quot;fruitContextMenu&quot; hidden&gt;
     &lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot;&gt;Archive&lt;/button&gt;
     &lt;div class=&quot;f-menu__separator&quot; role=&quot;separator&quot;&gt;&lt;/div&gt;
     &lt;button class=&quot;f-menu-item f-menu-item--danger&quot; type=&quot;button&quot; role=&quot;menuitem&quot;&gt;Delete&lt;/button&gt;
   &lt;/div&gt;
-&lt;/li&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="context-menu">&lt;x-fruit::item-list aria-label=&quot;Conversations with context menus&quot;&gt;
+&lt;/li&gt;
+
+&lt;!-- One menu for every row of a list, beside it: target is the row it opens for. --&gt;
+&lt;ul class=&quot;f-item-list&quot; role=&quot;list&quot;&gt;&lt;li data-mailbox=&quot;Support&quot;&gt;…&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&quot;f-menu__items f-context-menu&quot; role=&quot;menu&quot; aria-label=&quot;Mailbox actions&quot; data-fruit-targets=&quot;li[data-mailbox]&quot; x-data=&quot;fruitContextMenu&quot; hidden&gt;
+  &lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;markRead(target.dataset.mailbox)&quot;&gt;Mark All as Read&lt;/button&gt;
+&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="context-menu">&lt;x-fruit::item-list aria-label=&quot;Conversations with context menus&quot;&gt;
     @foreach ([&apos;Sophie Chen&apos; =&gt; &apos;A little help with our team plan&apos;, &apos;Jordan Lee&apos; =&gt; &apos;Sign-in after changing our domain&apos;] as $name =&gt; $subject)
         &lt;li x-data&gt;
             &lt;x-fruit::item-row @click=&quot;$toast(&apos;Opened {{ $name }}.&apos;)&quot;&gt;
@@ -2437,7 +2461,23 @@ Thanks for **writing**. We&#039;ll:
             &lt;/x-fruit::context-menu&gt;
         &lt;/li&gt;
     @endforeach
-&lt;/x-fruit::item-list&gt;</pre></details></section>
+&lt;/x-fruit::item-list&gt;
+&lt;div x-data&gt;
+    &lt;x-fruit::item-list aria-label=&quot;Mailboxes with one context menu&quot;&gt;
+        @foreach ([&apos;Support&apos; =&gt; &apos;3 unread&apos;, &apos;Billing&apos; =&gt; &apos;1 unread&apos;] as $name =&gt; $unread)
+            &lt;li data-mailbox=&quot;{{ $name }}&quot;&gt;
+                &lt;x-fruit::item-row @click=&quot;$toast(&apos;Opened {{ $name }}.&apos;)&quot;&gt;
+                    {{ $name }}
+                    &lt;x-slot:subtitle&gt;{{ $unread }}&lt;/x-slot:subtitle&gt;
+                &lt;/x-fruit::item-row&gt;
+            &lt;/li&gt;
+        @endforeach
+    &lt;/x-fruit::item-list&gt;
+    &lt;x-fruit::context-menu targets=&quot;li[data-mailbox]&quot; title=&quot;Mailbox actions&quot; x-bind:aria-label=&quot;target ? `Actions for ${target.dataset.mailbox}` : &apos;Mailbox actions&apos;&quot;&gt;
+        &lt;x-fruit::menu-item @click=&quot;$toast(`Marked ${target.dataset.mailbox} as read.`)&quot;&gt;Mark All as Read&lt;/x-fruit::menu-item&gt;
+        &lt;x-fruit::menu-item @click=&quot;$toast(`Muted ${target.dataset.mailbox}.`)&quot;&gt;Mute&lt;/x-fruit::menu-item&gt;
+    &lt;/x-fruit::context-menu&gt;
+&lt;/div&gt;</pre></details></section>
 <section id="component-text-styles" data-component="text-styles" class="f-card component-card"><h2>Text Styles</h2><p>Named text styles, from Large Title to Caption. Headings in the scope default to Title 1–3 and Headline in the text color.</p><div class="f-stack"><p class="f-large-title">Inbox <span class="f-muted f-caption">· Large Title</span></p><p class="f-title-1">Customer settings <span class="f-muted f-caption">· Title 1</span></p><p class="f-title-2">Notifications <span class="f-muted f-caption">· Title 2</span></p><p class="f-title-3">Delivery <span class="f-muted f-caption">· Title 3</span></p><p class="f-headline">Sophie Chen <span class="f-muted f-caption">· Headline</span></p><p class="f-subheadline">A little help with our team plan <span class="f-muted f-caption">· Subheadline</span></p><p class="f-footnote">Last changed by Mia Patel <span class="f-muted f-caption">· Footnote</span></p><p class="f-caption">Today, 10:42 AM <span class="f-muted f-caption">· Caption</span></p></div><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;h1 class=&quot;f-large-title&quot;&gt;Inbox&lt;/h1&gt;
 &lt;h2&gt;Customer settings&lt;/h2&gt;  &lt;!-- Title 2 by default --&gt;
 &lt;p class=&quot;f-headline&quot;&gt;Sophie Chen&lt;/p&gt;

@@ -371,7 +371,7 @@ new class extends Component
                 @else
                     <x-fruit::item-list id="support-tickets" selection="multiple" aria-label="{{ $this::MAILBOXES[$mailbox] }}">
                         @foreach ($this->tickets as $item)
-                            <li wire:key="ticket-{{ $item['id'] }}">
+                            <li wire:key="ticket-{{ $item['id'] }}" data-ticket-id="{{ $item['id'] }}" data-status="{{ $item['status'] }}">
                                 <x-fruit::checkbox wire:model.live="selected" value="{{ $item['id'] }}"><span class="f-sr-only">Select {{ $item['name'] }}</span></x-fruit::checkbox>
                                 <x-fruit::item-row wire:click="open({{ $item['id'] }})" :aria-current="$openId === $item['id'] ? 'true' : null">
                                     {{ $item['name'] }}
@@ -380,16 +380,14 @@ new class extends Component
                                     <x-slot:subtitle>{{ $item['subject'] }}</x-slot:subtitle>
                                     <x-slot:meta>{{ $item['assignee'] === '' ? 'Unassigned' : $this::AGENTS[$item['assignee']] }}</x-slot:meta>
                                 </x-fruit::item-row>
-                                {{-- The same commands are on the toolbar and the selection bar. --}}
-                                <x-fruit::context-menu title="Conversation actions">
-                                    <x-fruit::menu-item wire:click="open({{ $item['id'] }})">Open Conversation</x-fruit::menu-item>
-                                    @if ($item['status'] === 'open')
-                                        <x-fruit::menu-item wire:click="closeOne({{ $item['id'] }})">Close Conversation</x-fruit::menu-item>
-                                    @endif
-                                </x-fruit::context-menu>
                             </li>
                         @endforeach
                     </x-fruit::item-list>
+                    {{-- One menu for every row, acting on the row it opens for. The same commands are on the toolbar and the selection bar. --}}
+                    <x-fruit::context-menu targets="li[data-ticket-id]" title="Conversation actions">
+                        <x-fruit::menu-item wire:click="open(target.dataset.ticketId)">Open Conversation</x-fruit::menu-item>
+                        <x-fruit::menu-item wire:click="closeOne(target.dataset.ticketId)" x-show="target?.dataset.status === 'open'">Close Conversation</x-fruit::menu-item>
+                    </x-fruit::context-menu>
                     <div style="padding: 0 var(--f-space-3)">{{ $this->tickets->links() }}</div>
                 @endif
             </div>
