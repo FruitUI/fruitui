@@ -5,6 +5,8 @@
     <a class="f-button" href="fragments/merge-conversation.html" data-fruit-dialog-url data-fruit-dialog-title="Merge Conversation">Merge Conversation…</a>
     <x-fruit::button x-on:click="$dialog({ title: 'Keyboard Shortcuts', html: document.getElementById('gallery-shortcuts').innerHTML })">Keyboard Shortcuts</x-fruit::button>
     <x-fruit::button x-on:click="$refs.terms.showModal()">Terms (Large, Scrolling)</x-fruit::button>
+    {{-- A viewer closes on a click outside as well; a long file name stays on one line. --}}
+    <x-fruit::button x-on:click="$dialog({ title: 'IMG_20261015_move_project_dialog_screenshot_for_the_workspace_migration_guide.png', html: '<img src=&quot;attachments/move-project.png&quot; alt=&quot;The Move Project dialog&quot; width=&quot;640&quot; height=&quot;400&quot; style=&quot;width: 100%; height: auto&quot;>', size: 'large', closedBy: 'any' })">Preview Attachment</x-fruit::button>
     {{-- Any dialog can be large and keep its header and footer in view while the body scrolls. --}}
     <x-fruit::dialog size="large" class="f-dialog--scroll" x-ref="terms" aria-labelledby="gallery-terms-title">
         <header class="f-dialog__header"><h2 id="gallery-terms-title">Terms of Service</h2></header>

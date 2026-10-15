@@ -1099,7 +1099,7 @@ For content the server renders on demand (outgoing emails, the original message,
 <a href="{{ route('conversations.merge', $conversation) }}" data-fruit-dialog-url data-fruit-dialog-title="Merge Conversation">Merge…</a>
 ```
 
-From script, `FruitUI.dialog({ title, url | html, size })` (`$dialog(…)` in Alpine, `dialog` from `fruitui/alpine`) returns `{ element, body, loaded, closed, close(value) }`. The request asks for HTML with `X-Requested-With: XMLHttpRequest`, so a Laravel route can return a partial view. A skeleton and a polite Loading status show meanwhile; a failed request shows an alert with Try again. URL loads accept only successful, unredirected `text/html` fragments; JSON and full HTML documents show the error state instead of being inserted. The bubbling `fruit-dialog-error` event gives the host `{ dialog, url, error, reason, response }`, where `reason` is `network`, `http`, `redirect`, `content-type`, or `document`, and `response` is `null` if no response was received or `{ url, status, redirected, contentType }` for HTTP responses. A host can use the final response URL to handle an expired session. Alpine starts on the inserted content by itself, and a trailing `.f-dialog__footer` becomes the dialog's footer, kept in view while the body scrolls. `<form method="dialog">` buttons close it with their value, and the dialog is removed on close, with focus back on the opener. Scripts in loaded HTML do not run: wire up the content from `loaded`, or from the bubbling `fruit-dialog-loaded` event (`detail.body`, `url`, `trigger`) for links.
+From script, `FruitUI.dialog({ title, url | html, size, closedBy })` (`$dialog(…)` in Alpine, `dialog` from `fruitui/alpine`) returns `{ element, body, loaded, closed, close(value) }`. The request asks for HTML with `X-Requested-With: XMLHttpRequest`, so a Laravel route can return a partial view. A skeleton and a polite Loading status show meanwhile; a failed request shows an alert with Try again. URL loads accept only successful, unredirected `text/html` fragments; JSON and full HTML documents show the error state instead of being inserted. The bubbling `fruit-dialog-error` event gives the host `{ dialog, url, error, reason, response }`, where `reason` is `network`, `http`, `redirect`, `content-type`, or `document`, and `response` is `null` if no response was received or `{ url, status, redirected, contentType }` for HTTP responses. A host can use the final response URL to handle an expired session. Alpine starts on the inserted content by itself, and a trailing `.f-dialog__footer` becomes the dialog's footer, kept in view while the body scrolls. `<form method="dialog">` buttons close it with their value, and the dialog is removed on close, with focus back on the opener. Scripts in loaded HTML do not run: wire up the content from `loaded`, or from the bubbling `fruit-dialog-loaded` event (`detail.body`, `url`, `trigger`) for links.
 
 ```js
 const { loaded, closed } = FruitUI.dialog({ title: 'Outgoing Emails', url: `/conversations/${id}/emails`, size: 'large' });
@@ -1107,7 +1107,13 @@ loaded.then(body => initEmailList(body));
 closed.then(value => value === 'resent' && FruitUI.toast('Email sent again.', { tone: 'success' }));
 ```
 
-`x-fruit::dialog` takes the same `size` (medium or large), and `f-dialog--scroll` keeps any dialog's header and footer in view while a long body scrolls.
+Escape and the close button close a dialog. For a viewer (an attachment, a picture, an email's source) or other read-only content, `closedBy: 'any'` also closes it on a click outside, as the native `closedby="any"` does for any `dialog`. Leave it out where there is input to lose, such as a form: a stray click shouldn't discard it. Escape also works while focus is in a same-origin frame inside a modal dialog, such as a text preview; the browser's PDF viewer and cross-origin frames keep their keys, so a viewer showing them should close on a click outside as well. The title of a script-opened dialog stays on one line, cut with an ellipsis, and shows in full as a tooltip when it is cut (its accessible name is always whole), so a long file name never widens the dialog past the window.
+
+```js
+FruitUI.dialog({ title: file.name, html: preview, size: 'large', closedBy: 'any' });
+```
+
+`x-fruit::dialog` takes the same `size` (medium or large), and `f-dialog--scroll` keeps any dialog's header and footer in view while a long body scrolls. A header title wraps, even within a long word, rather than widening the dialog; add `f-dialog__header--truncate` to the header to keep it on one line with an ellipsis instead.
 
 ## Pagination
 

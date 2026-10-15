@@ -720,6 +720,91 @@ test('a link opens its content in a loaded dialog that closes, cleans up and ret
   await expect(shortcuts).toHaveCount(0);
 });
 
+test('a viewer dialog keeps a long title in the window and closes on a click outside or Escape, even from a frame', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/components.html');
+  const card = page.locator('#component-remote-dialog');
+  const trigger = card.getByRole('button', { name: 'Preview Attachment' });
+  const name = 'IMG_20261015_move_project_dialog_screenshot_for_the_workspace_migration_guide.png';
+  await trigger.scrollIntoViewIfNeeded();
+  await trigger.click();
+  // Named by the whole title; on screen it stays on one line, cut, and the dialog stays in the window.
+  const viewer = page.getByRole('dialog', { name });
+  await expect(viewer).toBeVisible();
+  const heading = viewer.getByRole('heading', { name });
+  const layout = await viewer.evaluate(dialog => {
+    const box = element => element.getBoundingClientRect();
+    const title = dialog.querySelector('h2');
+    const close = box(dialog.querySelector('[data-fruit-dialog-close]'));
+    return {
+      inWindow: box(dialog).left >= 0 && box(dialog).right <= innerWidth,
+      scrollsSideways: dialog.scrollWidth > dialog.clientWidth,
+      closeInside: close.left >= box(dialog).left && close.right <= box(dialog).right,
+      oneLine: box(title).height < parseFloat(getComputedStyle(title).lineHeight) * 1.5,
+      cut: title.scrollWidth > title.clientWidth,
+    };
+  });
+  expect(layout).toEqual({ inWindow: true, scrollsSideways: false, closeInside: true, oneLine: true, cut: true });
+  // Pointing at a cut title shows it in full.
+  await heading.hover();
+  await expect(heading).toHaveAttribute('title', name);
+  // A click outside closes a viewer, and focus returns to the opener.
+  await page.mouse.click(5, 5);
+  await expect(viewer).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+
+  // By default a click outside leaves a dialog open (it may hold input); Escape closes it.
+  await card.getByRole('button', { name: 'Keyboard Shortcuts' }).click();
+  const shortcuts = page.getByRole('dialog', { name: 'Keyboard Shortcuts' });
+  await page.mouse.click(5, 5);
+  await expect(shortcuts).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(shortcuts).toHaveCount(0);
+
+  // Escape while focus is in a same-origin frame inside the dialog closes it too.
+  await page.evaluate(async () => {
+    const { dialog } = await import('/src/js/remote-dialog.js');
+    dialog({
+      title: 'merge-conversation.html',
+      html: '<iframe src="fragments/merge-conversation.html" title="merge-conversation.html"></iframe>',
+      size: 'large',
+    });
+  });
+  const framed = page.getByRole('dialog', { name: 'merge-conversation.html' });
+  await page.frameLocator('dialog iframe').getByRole('combobox').focus();
+  await page.keyboard.press('Escape');
+  await expect(framed).toHaveCount(0);
+
+  // An authored header title wraps, even within a long word, instead of widening the dialog.
+  const wrapped = await page.evaluate(name => {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'f-dialog';
+    dialog.innerHTML = `<header class="f-dialog__header"><h2>${name}</h2></header><div class="f-dialog__body"><p>Body</p></div>`;
+    document.body.append(dialog);
+    dialog.showModal();
+    const title = dialog.querySelector('h2');
+    const result = {
+      scrollsSideways: dialog.scrollWidth > dialog.clientWidth,
+      wraps: title.getBoundingClientRect().height > parseFloat(getComputedStyle(title).lineHeight) * 1.5,
+    };
+    dialog.remove();
+    return result;
+  }, name);
+  expect(wrapped).toEqual({ scrollsSideways: false, wraps: true });
+  expect(
+    await page.evaluate(async () => {
+      const { dialog } = await import('/src/js/remote-dialog.js');
+      try {
+        dialog({ title: 'Viewer', html: '<p></p>', closedBy: 'none' });
+      } catch (error) {
+        return error.message;
+      }
+    }),
+  ).toBe('FruitUI dialog closedBy must be one of: closerequest, any.');
+});
+
 test('a valueless dialog attribute rendered by Blade still loads the link', async ({ page }) => {
   await page.goto('/components.html');
   await page.evaluate(() => {

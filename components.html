@@ -737,6 +737,8 @@
     <button type="button" class="f-button" x-on:click="$dialog({ title: 'Keyboard Shortcuts', html: document.getElementById('gallery-shortcuts').innerHTML })">Keyboard Shortcuts</button>
     <button type="button" class="f-button" x-on:click="$refs.terms.showModal()">Terms (Large, Scrolling)</button>
     
+    <button type="button" class="f-button" x-on:click="$dialog({ title: 'IMG_20261015_move_project_dialog_screenshot_for_the_workspace_migration_guide.png', html: '<img src=&quot;attachments/move-project.png&quot; alt=&quot;The Move Project dialog&quot; width=&quot;640&quot; height=&quot;400&quot; style=&quot;width: 100%; height: auto&quot;>', size: 'large', closedBy: 'any' })">Preview Attachment</button>
+    
     <dialog class="f-dialog f-dialog--large f-dialog--scroll" x-ref="terms" aria-labelledby="gallery-terms-title" wire:ignore.self ><header class="f-dialog__header"><h2 id="gallery-terms-title">Terms of Service</h2></header>
         <div class="f-dialog__body">
                             <p>Section 1. These terms describe how a workspace, its members and their conversations are handled, and what each side can expect from the other.</p>
@@ -781,6 +783,8 @@
     &lt;a class=&quot;f-button&quot; href=&quot;fragments/merge-conversation.html&quot; data-fruit-dialog-url data-fruit-dialog-title=&quot;Merge Conversation&quot;&gt;Merge Conversation…&lt;/a&gt;
     &lt;x-fruit::button x-on:click=&quot;$dialog({ title: &apos;Keyboard Shortcuts&apos;, html: document.getElementById(&apos;gallery-shortcuts&apos;).innerHTML })&quot;&gt;Keyboard Shortcuts&lt;/x-fruit::button&gt;
     &lt;x-fruit::button x-on:click=&quot;$refs.terms.showModal()&quot;&gt;Terms (Large, Scrolling)&lt;/x-fruit::button&gt;
+    {{-- A viewer closes on a click outside as well; a long file name stays on one line. --}}
+    &lt;x-fruit::button x-on:click=&quot;$dialog({ title: &apos;IMG_20261015_move_project_dialog_screenshot_for_the_workspace_migration_guide.png&apos;, html: &apos;&lt;img src=&amp;quot;attachments/move-project.png&amp;quot; alt=&amp;quot;The Move Project dialog&amp;quot; width=&amp;quot;640&amp;quot; height=&amp;quot;400&amp;quot; style=&amp;quot;width: 100%; height: auto&amp;quot;&gt;&apos;, size: &apos;large&apos;, closedBy: &apos;any&apos; })&quot;&gt;Preview Attachment&lt;/x-fruit::button&gt;
     {{-- Any dialog can be large and keep its header and footer in view while the body scrolls. --}}
     &lt;x-fruit::dialog size=&quot;large&quot; class=&quot;f-dialog--scroll&quot; x-ref=&quot;terms&quot; aria-labelledby=&quot;gallery-terms-title&quot;&gt;
         &lt;header class=&quot;f-dialog__header&quot;&gt;&lt;h2 id=&quot;gallery-terms-title&quot;&gt;Terms of Service&lt;/h2&gt;&lt;/header&gt;
