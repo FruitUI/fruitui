@@ -26,5 +26,10 @@
         <dt><label for="customer-language">Language</label></dt>
         <dd><x-fruit::select id="customer-language" name="language" control-size="small" style="width: auto"><option value="en">English</option><option value="nl" selected>Dutch</option><option value="de">German</option></x-fruit::select></dd>
     </div>
+    {{-- variant="quiet": the value in the link color until it is opened, for a detail changed now and then. --}}
+    <div>
+        <dt><label for="reply-language">Replies In</label></dt>
+        <dd><x-fruit::select id="reply-language" name="reply_language" variant="quiet"><option value="en">English</option><option value="zh-Hans" selected>Chinese (Simplified)</option><option value="da">Danish</option></x-fruit::select></dd>
+    </div>
 </dl>
 <p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p>

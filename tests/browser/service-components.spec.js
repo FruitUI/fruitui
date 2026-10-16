@@ -377,6 +377,20 @@ for (const scheme of ['light', 'dark']) {
   });
 }
 
+test('a data table in written content keeps its grid; a quiet select reads as its value', async ({ page }) => {
+  // Tables in prose are data, with a grid; only a message's email tables go without (support.spec).
+  const cell = page.locator('#component-prose td').first();
+  await expect(cell).toHaveCSS('border-top-style', 'solid');
+  await expect(cell).toHaveCSS('padding-top', '8px');
+  const quiet = page.locator('#component-select').getByRole('combobox', { name: 'Replies In' });
+  await expect(quiet).toHaveClass(/f-input--quiet/);
+  await expect(quiet).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await quiet.focus();
+  await expect(quiet).toBeFocused();
+  await quiet.selectOption('da');
+  await expect(quiet).toHaveValue('da');
+});
+
 test('helper destruction restores the native controls and removes generated UI', async ({ page }) => {
   await page
     .locator('#component-combobox .f-combobox, #component-token-field .f-token-field, #editor-example .f-editor')

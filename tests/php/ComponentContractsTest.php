@@ -261,6 +261,11 @@ class ComponentContractsTest extends TestCase
         $list = $this->xpath(Blade::render('<x-fruit::select name="folders[]" multiple size="3" control-size="small"><option>A</option></x-fruit::select>'))->query('//select')->item(0);
         $this->assertSame('3', $list->getAttribute('size'));
         $this->assertRejected('<x-fruit::select control-size="large"><option>A</option></x-fruit::select>', 'control-size must be one of');
+        // A quiet select shows its value in the link color until it is opened.
+        $quiet = $this->xpath(Blade::render('<x-fruit::select name="language" variant="quiet"><option>English</option></x-fruit::select>'))->query('//select')->item(0);
+        $this->assertSame('f-input f-input--quiet', $quiet->getAttribute('class'));
+        $this->assertFalse($quiet->hasAttribute('variant'));
+        $this->assertRejected('<x-fruit::select variant="link"><option>A</option></x-fruit::select>', 'variant must be one of');
     }
 
     public function test_an_unread_row_shows_the_dot_after_the_time_and_names_it(): void

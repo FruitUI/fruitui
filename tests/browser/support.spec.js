@@ -258,7 +258,7 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
   await page.locator('button.support-ticket', { hasText: 'Inviting a client' }).click();
   await expect(
     page.locator('button.support-ticket', { hasText: 'Inviting a client' }).locator('.support-channel'),
-  ).toHaveAttribute('title', 'Website Chat, 6 messages');
+  ).toHaveAttribute('title', 'Website Chat');
   const conversation = page.locator('#support-conversation');
   await expect(conversation.getByRole('heading', { level: 2 })).toHaveText('Lena Wilson');
   // The header leads with the person and the channel; an email's leads with its subject and status.
@@ -530,16 +530,83 @@ test('All Inboxes marks each conversation with its mailbox’s color, named for 
   await expect(ticket(page, 1041)).not.toHaveAccessibleName(/Support mailbox/);
 });
 
+test('a calm conversation: no role under senders, a folded signature without table lines, the language as its value', async ({
+  page,
+}) => {
+  await ticket(page, 1041).click();
+  const thread = page.locator('.support-thread');
+  // Customers and replies name only their sender; a note still says it stays with the team.
+  const jordan = thread
+    .getByRole('region', { name: 'Customer Message' })
+    .filter({ hasText: 'We changed our company domain' });
+  await expect(jordan.locator('.f-message__meta')).toBeHidden();
+  // The signature folds away under a small secondary label at the end of the message.
+  const signature = jordan.locator('details.f-disclosure--quiet', { hasText: 'Signature' });
+  await expect(signature).not.toHaveAttribute('open');
+  await expect(signature.getByText('IT Lead, Fieldwork')).toBeHidden();
+  const label = await signature.locator('summary').evaluate(summary => ({
+    color: getComputedStyle(summary).color,
+    secondary: getComputedStyle(summary.closest('.f-message')).getPropertyValue('--f-secondary'),
+    size: parseFloat(getComputedStyle(summary).fontSize),
+    body: parseFloat(getComputedStyle(summary.closest('.f-message__body')).fontSize),
+  }));
+  expect(label.size).toBeLessThan(label.body);
+  await signature.locator('summary').click();
+  await expect(signature.getByText('IT Lead, Fieldwork')).toBeVisible();
+  // Email lays itself out with tables: in a message they keep no grid lines or padding of FruitUI's.
+  const cell = await signature
+    .locator('td')
+    .first()
+    .evaluate(td => ({
+      border: getComputedStyle(td).borderTopStyle,
+      padding: getComputedStyle(td).paddingTop,
+      after: getComputedStyle(td.closest('table')).marginBottom,
+    }));
+  expect(cell).toEqual({ border: 'none', padding: '1px', after: '0px' });
+  // The customer's language shows as its value, in the link color, and opens the native picker.
+  const language = page.getByRole('combobox', { name: 'Language' });
+  await expect(language).toHaveValue('en');
+  const quiet = await language.evaluate(select => ({
+    border: getComputedStyle(select).borderTopColor,
+    background: getComputedStyle(select).backgroundColor,
+    width: select.getBoundingClientRect().width,
+  }));
+  expect(quiet.border).toBe('rgba(0, 0, 0, 0)');
+  expect(quiet.background).toBe('rgba(0, 0, 0, 0)');
+  expect(quiet.width).toBeLessThan(120);
+  await language.selectOption('da');
+  await expect(page.getByRole('status').filter({ hasText: 'Jordan Lee gets replies in Danish' })).toBeVisible();
+});
+
+test('a sidebar item under the pointer stays lighter than the current one, and panes scroll with thin scrollbars', async ({
+  page,
+  browserName,
+}) => {
+  const current = page.locator('#support-queues .f-sidebar__item[aria-current="page"]').first();
+  const other = queue(page, 'Waiting');
+  await other.hover();
+  const alpha = color => {
+    const match = color.match(/[\d.]+(?=\))/);
+    return color.startsWith('rgba') || color.includes('/') ? Number(match[0]) : 1;
+  };
+  const hover = await other.evaluate(item => getComputedStyle(item).backgroundColor);
+  const selected = await current.evaluate(item => getComputedStyle(item).backgroundColor);
+  expect(alpha(hover)).toBeLessThan(0.05);
+  expect(alpha(selected)).toBe(1);
+  // Playwright's Firefox hides every scrollbar (scrollbar-width: none), even one styled thin.
+  const scrollbar = await page.locator('.support-thread').evaluate(pane => getComputedStyle(pane).scrollbarWidth);
+  expect(browserName === 'firefox' ? ['thin', 'none'] : ['thin']).toContain(scrollbar);
+});
+
 test('the list leaves conversation numbers to search results and the open conversation', async ({ page }) => {
   // People find a conversation by who and what; its number is in its header.
   await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();
   await expect(page.locator('.support-ticket-number')).toHaveText('#1042');
-  // The last line leads with how the conversation came in and how long it is: one small icon and a count,
-  // in place of a channel label beside the subject. A single message shows the icon alone.
-  await expect(ticket(page, 1042).locator('.support-channel')).toHaveAttribute('title', 'Email, 5 messages');
-  await expect(ticket(page, 1042)).toHaveAccessibleName(/Email, 5 messages/);
-  await expect(ticket(page, 1038).locator('.support-channel .f-sr-only')).toHaveText('Email, 1 message');
-  await expect(ticket(page, 1038).locator('.support-channel [aria-hidden="true"]:not(svg)')).toBeHidden();
+  // The last line says only what differs from the usual. Email is usual, so an email row names no
+  // channel and no count; a row with nothing to add has no last line at all.
+  await expect(ticket(page, 1042).locator('.support-channel')).toBeHidden();
+  await expect(ticket(page, 1042)).not.toHaveAccessibleName(/Email|message/);
+  await expect(ticket(page, 1042).locator('.support-ticket-meta')).toBeHidden();
   await expect(ticket(page, 1041).getByText('High priority')).toBeVisible();
   await expect(ticket(page, 1041).getByText('#1041', { exact: true })).toBeHidden();
   // Search results show it, whether the search was for the number or for words.

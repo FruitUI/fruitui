@@ -8,6 +8,7 @@ const people = {
     members: 12,
     since: 'March 2024',
     location: 'Portland, Oregon',
+    language: 'en',
   },
   jordan: {
     name: 'Jordan Lee',
@@ -18,6 +19,7 @@ const people = {
     members: 24,
     since: 'June 2023',
     location: 'London, UK',
+    language: 'en',
   },
   emma: {
     name: 'Emma Thompson',
@@ -28,6 +30,7 @@ const people = {
     members: 8,
     since: 'January 2025',
     location: 'Copenhagen, Denmark',
+    language: 'da',
   },
   daniel: {
     name: 'Daniel Brooks',
@@ -38,6 +41,7 @@ const people = {
     members: 6,
     since: 'April 2024',
     location: 'Austin, Texas',
+    language: 'en',
   },
   maya: {
     name: 'Maya Rodriguez',
@@ -48,6 +52,7 @@ const people = {
     members: 18,
     since: 'August 2023',
     location: 'Barcelona, Spain',
+    language: 'en',
   },
   oliver: {
     name: 'Oliver Park',
@@ -58,6 +63,7 @@ const people = {
     members: 1,
     since: 'February 2025',
     location: 'Seoul, South Korea',
+    language: 'en',
   },
   lena: {
     name: 'Lena Wilson',
@@ -68,6 +74,7 @@ const people = {
     members: 4,
     since: 'May 2025',
     location: 'Melbourne, Australia',
+    language: 'en',
   },
 };
 
@@ -161,10 +168,14 @@ export const tickets = [
     tags: ['Account', 'SSO'],
     preview: 'Our new domain is live, but a few teammates can’t sign in with SSO.',
     threads: [
-      customer(
-        'Hello,\n\nWe changed our company domain this morning. A few teammates are having trouble signing in with SSO. Can you help us update the workspace settings?\n\nJordan',
-        'Today, 10:26 AM',
-      ),
+      {
+        ...customer(
+          'Hello,\n\nWe changed our company domain this morning. A few teammates are having trouble signing in with SSO. Can you help us update the workspace settings?\n\nJordan',
+          'Today, 10:26 AM',
+        ),
+        // An email signature: collapsed at the end of the message.
+        signature: { name: 'Jordan Lee', title: 'IT Lead, Fieldwork', phone: '+44 20 7946 0958' },
+      },
       {
         ...reply(
           'Hi Jordan,\n\nI’ve added your new domain to the workspace’s single sign-on settings. The attached notes show where to confirm it on your side.\n\nAlex',

@@ -158,6 +158,12 @@
         <dd><select class="f-input f-input--small" style="width: auto;" id="customer-language" name="language"><option value="en">English</option><option value="nl" selected>Dutch</option><option value="de">German</option></select>
 </dd>
     </div>
+    
+    <div>
+        <dt><label for="reply-language">Replies In</label></dt>
+        <dd><select class="f-input f-input--quiet" id="reply-language" name="reply_language"><option value="en">English</option><option value="zh-Hans" selected>Chinese (Simplified)</option><option value="da">Danish</option></select>
+</dd>
+    </div>
 </dl>
 <p class="f-help">Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.</p><!-- /blade:select --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;label class=&quot;f-field&quot;&gt;
   &lt;span class=&quot;f-label&quot;&gt;Default mailbox&lt;/span&gt;
@@ -195,6 +201,11 @@
     &lt;div&gt;
         &lt;dt&gt;&lt;label for=&quot;customer-language&quot;&gt;Language&lt;/label&gt;&lt;/dt&gt;
         &lt;dd&gt;&lt;x-fruit::select id=&quot;customer-language&quot; name=&quot;language&quot; control-size=&quot;small&quot; style=&quot;width: auto&quot;&gt;&lt;option value=&quot;en&quot;&gt;English&lt;/option&gt;&lt;option value=&quot;nl&quot; selected&gt;Dutch&lt;/option&gt;&lt;option value=&quot;de&quot;&gt;German&lt;/option&gt;&lt;/x-fruit::select&gt;&lt;/dd&gt;
+    &lt;/div&gt;
+    {{-- variant=&quot;quiet&quot;: the value in the link color until it is opened, for a detail changed now and then. --}}
+    &lt;div&gt;
+        &lt;dt&gt;&lt;label for=&quot;reply-language&quot;&gt;Replies In&lt;/label&gt;&lt;/dt&gt;
+        &lt;dd&gt;&lt;x-fruit::select id=&quot;reply-language&quot; name=&quot;reply_language&quot; variant=&quot;quiet&quot;&gt;&lt;option value=&quot;en&quot;&gt;English&lt;/option&gt;&lt;option value=&quot;zh-Hans&quot; selected&gt;Chinese (Simplified)&lt;/option&gt;&lt;option value=&quot;da&quot;&gt;Danish&lt;/option&gt;&lt;/x-fruit::select&gt;&lt;/dd&gt;
     &lt;/div&gt;
 &lt;/dl&gt;
 &lt;p class=&quot;f-help&quot;&gt;Option styling follows your appearance in supporting desktop browsers. Touch devices retain their system picker.&lt;/p&gt;</pre></details></section>

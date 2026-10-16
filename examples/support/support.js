@@ -355,14 +355,6 @@ export function supportDemo() {
           ...(chunk.trim() ? [{ text: chunk.replace(/^\n+|\n+$/g, '') }] : []),
         ]);
     },
-    /** A row's channel and message count in one token: the icon says how it came in, the number how long it is. */
-    messageCount(item) {
-      return item.threads.filter(entry => ['customer', 'reply'].includes(entry.kind)).length;
-    },
-    channelSummary(item) {
-      const count = this.messageCount(item);
-      return `${item.channel === 'chat' ? 'Website Chat' : 'Email'}, ${count} ${count === 1 ? 'message' : 'messages'}`;
-    },
     get related() {
       return this.ticket
         ? this.tickets.filter(
