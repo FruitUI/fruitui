@@ -576,6 +576,17 @@ test('a calm conversation: no role under senders, a folded signature without tab
   expect(quiet.width).toBeLessThan(120);
   await language.selectOption('da');
   await expect(page.getByRole('status').filter({ hasText: 'Jordan Lee gets replies in Danish' })).toBeVisible();
+  // A long value (a language with its own name beside it) stays within the panel: it never scrolls sideways.
+  const fits = await language.evaluate(select => {
+    select.querySelector('option[value="zh-Hans"]').textContent = 'Chinese (Simplified) (简体中文) — Mainland China';
+    select.value = 'zh-Hans';
+    const pane = select.closest('.f-pane');
+    return {
+      within: select.getBoundingClientRect().right <= select.closest('dd').getBoundingClientRect().right + 0.5,
+      scrollsSideways: pane.scrollWidth > pane.clientWidth,
+    };
+  });
+  expect(fits).toEqual({ within: true, scrollsSideways: false });
 });
 
 test('a sidebar item under the pointer stays lighter than the current one, and panes scroll with thin scrollbars', async ({
