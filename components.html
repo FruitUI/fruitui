@@ -1876,7 +1876,7 @@ Thanks for **writing**. We&#039;ll:
             <button type="button" class="f-button f-button--ghost f-button--icon" aria-label="Reply in Thread"><svg class="f-icon" aria-hidden="true"><use href="#i-chat"/></svg></button></div></article>
     <article class="f-message f-message--stacked" aria-label="Customer Message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> <span class="f-message__headers"><span>To: support@forma.example</span>
+        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  <span class="f-message__headers"><span>To: support@forma.example</span>
             <span>Cc: mia@studio-north.example</span></span></span>
         <time class="f-message__time" >Today, 10:42 AM</time>    </header>
         <div class="f-message__body">We’re growing the studio. Can we move to the Team plan without losing our projects?</div>
@@ -1890,13 +1890,20 @@ Thanks for **writing**. We&#039;ll:
 </details></div></article>
     <article class="f-message f-message--stacked" aria-label="Customer message from Emma Thompson" lang="en">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >ET</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Emma Thompson</strong> <small class="f-message__meta">Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Emma Thompson</strong>  </span>
         <time class="f-message__time" >10:08 AM</time>    </header>
         <div class="f-message__body">What’s the easiest way to move our projects so the comments come along? This is what we see:
         
         <p><a class="f-message__image" href="attachments/move-project.png" target="_blank" rel="noopener"><img src="attachments/move-project.png" alt="The Move Project dialog" width="640" height="400"></a></p></div>
     
     <details class="f-disclosure f-disclosure--quiet f-message__original"><summary><svg class="f-icon f-message__original-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>Translated from Danish</summary><div class="f-message__original-text"  lang="da" >Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med? Det her er, hvad vi ser:</div></details>            </article>
+    <article class="f-message f-message--stacked" aria-label="Customer message from Emma Thompson" lang="en">
+    <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >ET</span></span>    <header class="f-message__header">
+        <span class="f-message__identity"><strong class="f-message__author">Emma Thompson</strong>  </span>
+        <time class="f-message__time" >10:12 AM</time>    </header>
+        <div class="f-message__body">gather-studio.example/projects</div>
+    
+    <details class="f-disclosure f-disclosure--quiet f-message__original"><summary><svg class="f-icon f-message__original-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>Not translated</summary><div class="f-message__original-text" >The message has no text to translate.</div></details>            </article>
     <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your reply, not sent">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AM</span></span>    <header class="f-message__header">
         <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">You</small> </span>
@@ -1941,7 +1948,6 @@ Thanks for **writing**. We&#039;ll:
     &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot;&gt;
         &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
         &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
-        &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
         &lt;x-slot:headers&gt;
             &lt;span&gt;To: support@forma.example&lt;/span&gt;
             &lt;span&gt;Cc: mia@studio-north.example&lt;/span&gt;
@@ -1961,13 +1967,20 @@ Thanks for **writing**. We&#039;ll:
     &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message from Emma Thompson&quot; lang=&quot;en&quot;&gt;
         &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;ET&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
         &lt;x-slot:author&gt;Emma Thompson&lt;/x-slot:author&gt;
-        &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
         &lt;x-slot:time&gt;10:08 AM&lt;/x-slot:time&gt;
         {{-- Read in the reader&apos;s language: the translation is the message, and the original stays collapsed. --}}
         What’s the easiest way to move our projects so the comments come along? This is what we see:
         {{-- A picture shows as a thumbnail where it sits, linked to the full image. --}}
         &lt;p&gt;&lt;a class=&quot;f-message__image&quot; href=&quot;attachments/move-project.png&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;img src=&quot;attachments/move-project.png&quot; alt=&quot;The Move Project dialog&quot; width=&quot;640&quot; height=&quot;400&quot;&gt;&lt;/a&gt;&lt;/p&gt;
         &lt;x-slot:original lang=&quot;da&quot; label=&quot;Translated from Danish&quot;&gt;Hvad er den nemmeste måde at flytte vores projekter på, så kommentarerne følger med? Det her er, hvad vi ser:&lt;/x-slot:original&gt;
+    &lt;/x-fruit::message&gt;
+    &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer message from Emma Thompson&quot; lang=&quot;en&quot;&gt;
+        &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;ET&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
+        &lt;x-slot:author&gt;Emma Thompson&lt;/x-slot:author&gt;
+        &lt;x-slot:time&gt;10:12 AM&lt;/x-slot:time&gt;
+        gather-studio.example/projects
+        {{-- Not translated: the same quiet line says so, with the reason folded away. --}}
+        &lt;x-slot:original label=&quot;Not translated&quot;&gt;The message has no text to translate.&lt;/x-slot:original&gt;
     &lt;/x-fruit::message&gt;
     &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; mine aria-label=&quot;Your reply, not sent&quot; datetime=&quot;2026-10-02T10:31&quot;&gt;
         &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;AM&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
@@ -2805,7 +2818,7 @@ Thanks for **writing**. We&#039;ll:
 <section id="component-thread" data-component="thread" class="f-card component-card"><h2>Thread</h2><p>A conversation’s history in order, with each kind identifiable: sent replies carry a bar (the accent for your own, neutral for a teammate’s), notes are yellow cards and generated summaries indigo ones.</p><!-- blade:thread --><ol role="list" class="f-thread" aria-label="Conversation history"><li>
         <article class="f-message f-message--stacked" aria-label="Customer Message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T10:42" >10:42 AM</time>    </header>
         <div class="f-message__body">Can we move to the Team plan without losing our projects?</div>
     
@@ -2823,7 +2836,7 @@ Thanks for **writing**. We&#039;ll:
     <li>
         <article class="f-message f-message--stacked f-message--outgoing" aria-label="Reply from Mia Patel">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >MP</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong> <small class="f-message__meta">Reply to Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Mia Patel</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T10:51" >10:51 AM</time>    </header>
         <div class="f-message__body">Yes. Your projects stay in place, and annual billing is available on the Team plan.</div>
     
@@ -2835,7 +2848,7 @@ Thanks for **writing**. We&#039;ll:
     <li>
         <article class="f-message f-message--stacked" aria-label="Customer Message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T11:20" >11:20 AM</time>    </header>
         <div class="f-message__body">Perfect. Could you make the switch for us?</div>
     
@@ -2844,7 +2857,7 @@ Thanks for **writing**. We&#039;ll:
     <li>
         <article class="f-message f-message--stacked f-message--outgoing f-message--mine" aria-label="Your reply">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >AM</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong> <small class="f-message__meta">Reply to Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Alex Morgan</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T11:24" >11:24 AM</time>    </header>
         <div class="f-message__body">All done. Studio North is on the Team plan with annual billing.</div>
     
@@ -2867,7 +2880,6 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot; datetime=&quot;2026-10-02T10:42&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
             &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
-            &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;10:42 AM&lt;/x-slot:time&gt;
             Can we move to the Team plan without losing our projects?
         &lt;/x-fruit::message&gt;
@@ -2883,7 +2895,6 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; aria-label=&quot;Reply from Mia Patel&quot; datetime=&quot;2026-10-02T10:51&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;MP&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
             &lt;x-slot:author&gt;Mia Patel&lt;/x-slot:author&gt;
-            &lt;x-slot:meta&gt;Reply to Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;10:51 AM&lt;/x-slot:time&gt;
             Yes. Your projects stay in place, and annual billing is available on the Team plan.
         &lt;/x-fruit::message&gt;
@@ -2899,7 +2910,6 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot; datetime=&quot;2026-10-02T11:20&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
             &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
-            &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;11:20 AM&lt;/x-slot:time&gt;
             Perfect. Could you make the switch for us?
         &lt;/x-fruit::message&gt;
@@ -2908,7 +2918,6 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::message layout=&quot;stacked&quot; direction=&quot;outgoing&quot; mine aria-label=&quot;Your reply&quot; datetime=&quot;2026-10-02T11:24&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;AM&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
             &lt;x-slot:author&gt;Alex Morgan&lt;/x-slot:author&gt;
-            &lt;x-slot:meta&gt;Reply to Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;11:24 AM&lt;/x-slot:time&gt;
             All done. Studio North is on the Team plan with annual billing.
         &lt;/x-fruit::message&gt;
@@ -2931,7 +2940,7 @@ Thanks for **writing**. We&#039;ll:
     <li>
         <article class="f-message f-message--stacked" aria-label="Customer Message">
     <span class="f-message__avatar"><span class="f-avatar"  aria-hidden="true" >SC</span></span>    <header class="f-message__header">
-        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong> <small class="f-message__meta">Customer</small> </span>
+        <span class="f-message__identity"><strong class="f-message__author">Sophie Chen</strong>  </span>
         <time class="f-message__time"  datetime="2026-10-02T10:42" >10:42 AM</time>    </header>
         <div class="f-message__body">Ana says her invite link has expired. Could you send her a fresh one?</div>
     
@@ -2958,7 +2967,6 @@ Thanks for **writing**. We&#039;ll:
         &lt;x-fruit::message layout=&quot;stacked&quot; aria-label=&quot;Customer Message&quot; datetime=&quot;2026-10-02T10:42&quot;&gt;
             &lt;x-slot:avatar&gt;&lt;x-fruit::avatar&gt;SC&lt;/x-fruit::avatar&gt;&lt;/x-slot:avatar&gt;
             &lt;x-slot:author&gt;Sophie Chen&lt;/x-slot:author&gt;
-            &lt;x-slot:meta&gt;Customer&lt;/x-slot:meta&gt;
             &lt;x-slot:time&gt;10:42 AM&lt;/x-slot:time&gt;
             Ana says her invite link has expired. Could you send her a fresh one?
         &lt;/x-fruit::message&gt;

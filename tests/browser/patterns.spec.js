@@ -927,9 +927,8 @@ test('a network failure keeps the dialog retryable and closeable', async ({ page
 
 test('a thread reads in the reader’s language, the other language collapsed under its label', async ({ page }) => {
   await page.goto('/components.html');
-  const specimen = page
-    .locator('#component-message')
-    .getByRole('article', { name: 'Customer message from Emma Thompson' });
+  const emma = page.locator('#component-message').getByRole('article', { name: 'Customer message from Emma Thompson' });
+  const specimen = emma.filter({ hasText: 'easiest way' });
   await expect(specimen.locator('.f-message__body')).toContainText('What’s the easiest way to move our projects');
   const original = specimen.locator('details.f-message__original');
   await expect(original).not.toHaveAttribute('open', '');
@@ -938,9 +937,22 @@ test('a thread reads in the reader’s language, the other language collapsed un
   await original.locator('summary').click();
   await expect(original.locator('.f-message__original-text')).toHaveAttribute('lang', 'da');
   await expect(original.locator('.f-message__original-text')).toContainText('Hvad er den nemmeste måde');
-  expect(await original.locator('.f-message__original-icon').evaluate(icon => getComputedStyle(icon).color)).toBe(
-    await tokenColor(page, '--f-generated'),
-  );
+  // The translate icon is gray, as the rest of the line: the accent is left for what is selected.
+  const icon = await original.locator('.f-message__original-icon').evaluate(icon => ({
+    color: getComputedStyle(icon).color,
+    width: icon.getBoundingClientRect().width,
+  }));
+  expect(icon).toEqual({ color: await tokenColor(page, '--f-secondary'), width: 16 });
+  // A message that wasn't translated says so on the same line, below it, with the reason folded away.
+  const untranslated = emma.filter({ hasText: 'gather-studio.example' }).locator('details.f-message__original');
+  await expect(untranslated.locator('summary')).toHaveText('Not translated');
+  await expect(untranslated.getByText('The message has no text to translate.')).toBeHidden();
+  expect(
+    await untranslated.locator('.f-message__original-icon').evaluate(icon => icon.getBoundingClientRect().width),
+  ).toBe(16);
+  await untranslated.locator('summary').click();
+  await expect(untranslated.getByText('The message has no text to translate.')).toBeVisible();
+  await expect(untranslated.locator('.f-message__original-text')).not.toHaveAttribute('lang');
 
   await page.goto('/support.html');
   await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();

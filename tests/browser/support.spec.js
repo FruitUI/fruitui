@@ -522,6 +522,26 @@ test('All Inboxes marks each conversation with its mailbox’s color, named for 
       .evaluate(element => getComputedStyle(element).color);
   expect(await icon('billing')).toBe(await bar(1042));
   expect(await icon('support')).toBe(await bar(1041));
+  // The mark is short: beside the title only, not the subject below it.
+  const mark = await ticket(page, 1041).evaluate(row => {
+    const bar = getComputedStyle(row, '::before');
+    const title = row.querySelector('.f-item-row__title').getBoundingClientRect();
+    const top = row.getBoundingClientRect().top + parseFloat(bar.top);
+    return {
+      height: parseFloat(bar.height),
+      withinTitle: top >= title.top && top + parseFloat(bar.height) <= title.bottom,
+    };
+  });
+  expect(mark).toEqual({ height: 14, withinTitle: true });
+  // Other sidebar icons are gray; the current item's takes its text color. The accent is left for selection.
+  const queueIcon = name =>
+    queue(page, name)
+      .locator('.f-icon')
+      .first()
+      .evaluate(icon => getComputedStyle(icon).color);
+  const textOf = name => queue(page, name).evaluate(item => getComputedStyle(item).color);
+  expect(await queueIcon('Waiting')).toBe(await tokenColor(page, '--f-secondary'));
+  expect(await queueIcon('All Inboxes')).toBe(await textOf('All Inboxes'));
   // In one mailbox every row would share the color, so none is marked.
   await page.locator('#support-queues [data-scope="support"] > summary').click();
   await page.getByRole('button', { name: /^Support Open,/ }).click();

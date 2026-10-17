@@ -394,7 +394,8 @@ test('the accent color applies to the whole page at once', async ({ page }) => {
   const html = page.locator('html');
   const link = sidebar(page).getByRole('link', { name: 'General' });
   await expect(html).toHaveAttribute('data-fruit-accent', 'blue');
-  const color = () => link.locator('.f-icon').evaluate(icon => getComputedStyle(icon).color);
+  // The accent as the page resolves it (sidebar icons are gray; the accent is for selection).
+  const color = () => tokenColor(page, '--f-accent');
   const blue = await color();
   const group = page.getByRole('radiogroup', { name: 'Accent Color' });
   await group.getByRole('radio', { name: 'Blue' }).focus();
