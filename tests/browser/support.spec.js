@@ -629,6 +629,20 @@ test('a sidebar item under the pointer stays lighter than the current one, and p
   expect(browserName === 'firefox' ? ['thin', 'none'] : ['thin']).toContain(scrollbar);
 });
 
+test('the heading names the customer only while their panel is out of sight', async ({ page }) => {
+  const heading = page.locator('.support-conversation-heading');
+  const panel = page.locator('#support-customer');
+  // Beside the panel, which names them with their email, the heading leaves them out.
+  await expect(panel.getByRole('heading', { name: 'Sophie Chen' })).toBeVisible();
+  await expect(panel.getByText('sophie@example.com')).toBeVisible();
+  await expect(heading.getByText('sophie@example.com')).toBeHidden();
+  // When the panel is its own view, behind a button, the heading names them again.
+  await page.setViewportSize({ width: 1000, height: 1000 });
+  await expect(panel).toBeHidden();
+  await expect(heading.getByText('sophie@example.com')).toBeVisible();
+  await expect(heading.getByText('Sophie Chen', { exact: true })).toBeVisible();
+});
+
 test('the list leaves conversation numbers to search results and the open conversation', async ({ page }) => {
   // People find a conversation by who and what; its number is in its header.
   await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();

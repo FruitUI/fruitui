@@ -514,9 +514,17 @@
   max-height: calc(100dvh - 32px);
   overflow: auto;
 }
+/* Who wrote in, under the subject: only while the customer panel is out of sight. Beside it, the panel
+   names them, with their email, at its top, so the heading would repeat it. */
+.support-conversation-customer {
+  display: none;
+}
 @container support (max-width: 1100px) {
   .support-workspace {
     grid-template-columns: var(--f-sidebar-width, 188px) var(--f-list-width, 268px) minmax(0, 1fr);
+  }
+  .support-conversation-customer {
+    display: block;
   }
   .support-customer,
   .support-customer-toolbar {
