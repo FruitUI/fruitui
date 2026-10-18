@@ -29,6 +29,7 @@ new class extends Component
     public const MAILBOXES = ['all' => 'All Open', 'unassigned' => 'Unassigned', 'mine' => 'Assigned to Me', 'closed' => 'Closed'];
     public const AGENTS = ['alex' => 'Alex Morgan', 'mia' => 'Mia Patel', 'noah' => 'Noah Williams'];
     public const REASONS = ['resolved' => 'Resolved', 'duplicate' => 'Duplicate', 'spam' => 'Spam'];
+    public const LANGUAGES = ['en' => 'English', 'da' => 'Danish', 'zh-Hans' => 'Chinese (Simplified) (简体中文)'];
     private const PER_PAGE = 4;
 
     /** Earlier conversations per customer email, standing in for a slower CRM or billing lookup. */
@@ -55,6 +56,9 @@ new class extends Component
     public string $mergeSearch = '';
     public string $reply = '';
     public string $closeReason = 'resolved';
+
+    /** The language the open ticket's customer gets replies in. */
+    public string $language = 'en';
 
     public bool $closing = false;
 
@@ -126,6 +130,7 @@ new class extends Component
         $this->assignee = $ticket['assignee'];
         $this->cc = $ticket['cc'];
         $this->bcc = $ticket['bcc'] ?? '';
+        $this->language = $ticket['language'] ?? 'en';
         $this->reply = '';
         $this->mergeInto = '';
         $this->mergeSearch = '';
@@ -301,6 +306,8 @@ new class extends Component
             'channel' => 'email', 'messages' => [['author' => $row[1], 'body' => $row[6]]],
         ]])->all();
         // A conversation from a chat channel: short messages, shown in the Chat view.
+        $tickets[1042]['language'] = 'zh-Hans';
+        $tickets[1040]['language'] = 'da';
         $tickets[1036] = [...$tickets[1036], 'channel' => 'chat', 'messages' => [
             ['author' => 'Lena Wilson', 'body' => 'Hi! Since Monday new events no longer appear in our shared calendar.', 'time' => '9:02 AM'],
             ['author' => 'Alex Morgan', 'body' => 'Hi Lena, sorry about that. Is it every calendar, or only the shared one?', 'time' => '9:05 AM'],
@@ -467,6 +474,8 @@ new class extends Component
                         <div><dt>Customer</dt><dd>{{ $ticket['name'] }}</dd></div>
                         <div><dt>Email</dt><dd>{{ $ticket['email'] }}</dd></div>
                         <div><dt>Company</dt><dd>{{ $ticket['company'] }}</dd></div>
+                        {{-- A detail changed now and then: its value until it is opened, on one line. --}}
+                        <div><dt><label for="support-language">Replies In</label></dt><dd><x-fruit::select id="support-language" name="language" wire:model.live="language" variant="quiet">@foreach ($this::LANGUAGES as $code => $name)<option value="{{ $code }}">{{ $name }}</option>@endforeach</x-fruit::select></dd></div>
                     </x-fruit::description-list>
 
                     @island(name: 'history', lazy: true)

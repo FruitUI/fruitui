@@ -447,6 +447,40 @@ test('one context menu serves every ticket row and runs Livewire actions for the
   expect(errors).toEqual([]);
 });
 
+test('a quiet select keeps showing its value, on one line, through Livewire re-renders', async ({ page }) => {
+  const errors = await openDesk(page);
+  const language = page.getByRole('combobox', { name: 'Replies In' });
+  // What the closed select shows: the customizable select's selectedcontent, or the native select's own.
+  const shown = () =>
+    language.evaluate(select => {
+      const content = select.querySelector('selectedcontent');
+      const drawn = getComputedStyle(select).appearance === 'base-select';
+      return drawn ? content.textContent.trim() : select.selectedOptions[0].textContent.trim();
+    });
+  await expect(language).toHaveValue('zh-Hans');
+  expect(await shown()).toBe('Chinese (Simplified) (简体中文)');
+  const height = await language.evaluate(select => select.getBoundingClientRect().height);
+  expect(height).toBeLessThan(36);
+  // Another ticket morphs the same select to its customer's language, and back.
+  await list(page)
+    .getByRole('button', { name: /Jordan Lee/ })
+    .click();
+  await expect(language).toHaveValue('en');
+  await expect.poll(shown).toBe('English');
+  await list(page)
+    .getByRole('button', { name: /Sophie Chen/ })
+    .click();
+  await expect(language).toHaveValue('zh-Hans');
+  await expect.poll(shown).toBe('Chinese (Simplified) (简体中文)');
+  // A choice reaches the server and survives the next re-render.
+  await language.selectOption('da');
+  await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('so');
+  await expect(list(page).getByRole('button', { name: /Sophie Chen/ })).toBeVisible();
+  await expect(language).toHaveValue('da');
+  await expect.poll(shown).toBe('Danish');
+  expect(errors).toEqual([]);
+});
+
 test('a message action quotes it into the Livewire reply', async ({ page }) => {
   const errors = await openDesk(page);
   const message = conversation(page).getByRole('article', { name: 'Message from Sophie Chen' });

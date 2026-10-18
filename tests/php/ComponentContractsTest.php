@@ -264,6 +264,11 @@ class ComponentContractsTest extends TestCase
         // A quiet select shows its value in the link color until it is opened.
         $quiet = $this->xpath(Blade::render('<x-fruit::select name="language" variant="quiet"><option>English</option></x-fruit::select>'))->query('//select')->item(0);
         $this->assertSame('f-input f-input--quiet', $quiet->getAttribute('class'));
+        // On one line in the customizable select: a button showing the chosen option, left to the browser.
+        $button = $quiet->firstChild;
+        $this->assertSame('button', $button->nodeName);
+        $this->assertTrue($button->hasAttribute('wire:ignore'));
+        $this->assertSame('selectedcontent', $button->firstChild->nodeName);
         $this->assertFalse($quiet->hasAttribute('variant'));
         $this->assertRejected('<x-fruit::select variant="link"><option>A</option></x-fruit::select>', 'variant must be one of');
     }

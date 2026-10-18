@@ -596,17 +596,23 @@ test('a calm conversation: no role under senders, a folded signature without tab
   expect(quiet.width).toBeLessThan(120);
   await language.selectOption('da');
   await expect(page.getByRole('status').filter({ hasText: 'Jordan Lee gets replies in Danish' })).toBeVisible();
-  // A long value (a language with its own name beside it) stays within the panel: it never scrolls sideways.
-  const fits = await language.evaluate(select => {
-    select.querySelector('option[value="zh-Hans"]').textContent = 'Chinese (Simplified) (简体中文) — Mainland China';
+  // A long value (a language with its own name beside it) stays on one line within the panel, cut
+  // short with an ellipsis: it never wraps or scrolls the panel sideways.
+  const fits = await language.evaluate(async select => {
+    const height = select.getBoundingClientRect().height;
+    select.querySelector('option[value="zh-Hans"]').textContent =
+      'Chinese (Simplified) (简体中文) — Mainland China, Hong Kong and Macau';
     select.value = 'zh-Hans';
+    await new Promise(requestAnimationFrame);
     const pane = select.closest('.f-pane');
     return {
+      // One line, whatever font draws the CJK name: well under two lines' height.
+      oneLine: select.getBoundingClientRect().height < height * 1.4,
       within: select.getBoundingClientRect().right <= select.closest('dd').getBoundingClientRect().right + 0.5,
       scrollsSideways: pane.scrollWidth > pane.clientWidth,
     };
   });
-  expect(fits).toEqual({ within: true, scrollsSideways: false });
+  expect(fits).toEqual({ oneLine: true, within: true, scrollsSideways: false });
 });
 
 test('a sidebar item under the pointer stays lighter than the current one, and panes scroll with thin scrollbars', async ({
