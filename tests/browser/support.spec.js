@@ -672,6 +672,21 @@ test('an email conversation’s heading: status and mailbox on one line, then th
   await expect(page.locator('.support-thread .f-generated')).toContainText('Studio North moved to the Team plan');
 });
 
+test('an unread conversation’s name is bold, a read one’s is not, whatever their status', async ({ page }) => {
+  const weight = id =>
+    ticket(page, id)
+      .locator('.f-item-row__title')
+      .evaluate(title => getComputedStyle(title).fontWeight);
+  // Jordan Lee (1041) is unread, Sophie Chen (1042) read.
+  await expect(ticket(page, 1041)).toHaveAttribute('data-unread', '');
+  expect(await weight(1041)).toBe('650');
+  expect(await weight(1042)).toBe('500');
+  // Opening it reads it: its name is no longer bold.
+  await ticket(page, 1041).click();
+  await expect(ticket(page, 1041)).not.toHaveAttribute('data-unread');
+  expect(await weight(1041)).toBe('500');
+});
+
 test('the list leaves conversation numbers to search results and the open conversation', async ({ page }) => {
   // People find a conversation by who and what; its number is in its header.
   await expect(ticket(page, 1042).getByText('#1042', { exact: true })).toBeHidden();

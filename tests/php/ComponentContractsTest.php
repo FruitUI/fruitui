@@ -276,12 +276,16 @@ class ComponentContractsTest extends TestCase
         $classes = array_map(fn ($node) => $node->getAttribute('class'), iterator_to_array($row->query('./*', $top)));
         $this->assertSame(['f-item-row__title', 'f-item-row__time', 'f-item-row__unread', 'f-sr-only'], $classes);
         $this->assertSame('true', $row->query('//span[@class="f-item-row__unread"]')->item(0)->getAttribute('aria-hidden'));
+        // The row itself says it's unread, for its bold title.
+        $this->assertTrue($row->query('//a')->item(0)->hasAttribute('data-unread'));
         $this->assertSame(__('Unread'), $row->query('//span[@class="f-item-row__top"]/span[@class="f-sr-only"]')->item(0)->textContent);
 
         $named = $this->xpath(Blade::render('<x-fruit::item-row :unread="true" unread-label="New reply">Sophie Chen</x-fruit::item-row>'));
         $this->assertSame('New reply', $named->query('//span[@class="f-sr-only"]')->item(0)->textContent);
         $read = $this->xpath(Blade::render('<x-fruit::item-row :unread="false">Sophie Chen</x-fruit::item-row>'));
         $this->assertSame(0, $read->query('//span[@class="f-item-row__unread"]')->length);
+        $this->assertFalse($read->query('//button')->item(0)->hasAttribute('data-unread'));
+        $this->assertTrue($named->query('//button')->item(0)->hasAttribute('data-unread'));
 
         $this->assertRejected('<x-fruit::item-row unread="yes">A</x-fruit::item-row>', 'unread must be a boolean');
         $this->assertRejected('<x-fruit::item-link href="/a" unread unread-label=" ">A</x-fruit::item-link>', 'unread-label must be text');

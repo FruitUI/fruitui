@@ -91,7 +91,7 @@
           <div class="f-mail__list-heading"><span x-text="query ? 'Search results' : 'Sort by Date'">Sort by Date</span><button class="f-button f-button--ghost f-button--icon" type="button" @click="toggleFilter" :aria-pressed="unreadOnly" aria-label="Show unread messages" title="Filter unread"><svg class="f-icon" aria-hidden="true"><use href="#i-filter"/></svg></button></div>
           <ul class="f-item-list f-mail__list" role="list" aria-label="Messages" x-ref="messageList" @keydown.arrow-down.prevent="moveSelection(1)" @keydown.arrow-up.prevent="moveSelection(-1)">
             <template x-for="item in filtered" :key="item.id">
-              <li><button class="f-item-row f-item-row--filled f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id">
+              <li><button class="f-item-row f-item-row--filled f-mail__message" type="button" @click="select(item.id)" :aria-current="selectedId === item.id ? 'true' : null" :data-message-id="item.id" :data-unread="item.unread ? '' : null">
                 <span class="f-item-row__leading f-avatar f-mail__list-avatar" x-text="item.initials" aria-hidden="true"></span>
                 <span class="f-item-row__unread f-mail__unread" x-show="item.unread" aria-hidden="true"></span><span class="f-sr-only" x-show="item.unread">Unread: </span>
                 <span class="f-item-row__top f-mail__message-top"><span class="f-item-row__title f-mail__sender" x-text="item.sender"></span><span class="f-item-row__time f-mail__time" x-text="item.time"></span><svg class="f-icon f-mail__message-chevron" aria-hidden="true"><use href="#i-chevron"/></svg></span>
