@@ -366,10 +366,14 @@ test('a thread separates messages, and sent, own, note and generated messages ea
 
 test('the Support thread lists its entries newest first without a line before the first', async ({ page }) => {
   await page.goto('/support.html');
-  const first = page.locator('.support-thread .f-thread > li').first();
+  const first = page.locator('.support-thread .f-thread > li').filter({ visible: true }).first();
   await expect(first).toBeVisible();
-  // The newest entry leads and the opening message ends the thread, above the start divider.
-  await expect(first.locator('.f-generated')).toContainText('Studio North moved to the Team plan');
+  // The newest entry leads and the opening message ends the thread, above the start divider. The
+  // summary of where it stands heads the conversation, under the subject, not the thread.
+  await expect(first.locator('.f-generated')).toHaveCount(0);
+  await expect(page.locator('.support-conversation-heading .f-generated')).toContainText(
+    'Studio North moved to the Team plan',
+  );
   await expect(page.locator('.support-thread .f-thread > li').last()).toContainText('Hi there');
   expect(
     await page.locator('.support-thread').evaluate(thread => thread.lastElementChild.matches('.support-thread-start')),
@@ -987,7 +991,7 @@ test('a thread reads in the reader’s language, the other language collapsed un
 
 test('a summary opens to its background, with the translation line’s quiet chevron', async ({ page }) => {
   await page.goto('/support.html');
-  const summary = page.getByRole('region', { name: 'Conversation history' }).locator('.f-generated').first();
+  const summary = page.locator('.support-conversation-heading .f-generated');
   const details = summary.locator('details.f-disclosure--quiet');
   const toggle = details.locator('summary');
   await expect(toggle).toHaveText(
@@ -1054,7 +1058,8 @@ for (const colorScheme of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme });
     await page.goto('/support.html');
     const thread = page.getByRole('region', { name: 'Conversation history' });
-    await thread.locator('.f-generated summary').click();
+    await page.locator('.support-conversation-heading .f-generated summary').click();
+    await expectAccessible(page, '.support-conversation-heading');
     await expectAccessible(page, '.support-thread');
     await page.locator('button.support-ticket', { hasText: 'Emma Thompson' }).click();
     await expectAccessible(page, '.support-thread');

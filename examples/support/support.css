@@ -241,6 +241,24 @@
   color: var(--f-secondary);
   font-size: var(--f-text-xs);
 }
+/* The status, then the mailbox it came in to, with room between them; on a narrow window the mailbox
+   moves to its own line. */
+.support-overline-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 20px;
+  row-gap: 4px;
+  min-width: 0;
+}
+/* Where the conversation stands, under the subject (and the customer, when named). On a phone it
+   leads the thread instead, so the heading stays short and the reply field in reach. */
+.support-heading-summary {
+  margin-top: 12px;
+}
+.support-thread-summary {
+  display: none;
+}
 .support-status {
   color: var(--f-accent);
   font-weight: 500;
@@ -593,6 +611,12 @@
   }
 }
 @container support (max-width: 700px) {
+  .support-heading-summary {
+    display: none;
+  }
+  .support-thread-summary {
+    display: list-item;
+  }
   .support-workspace {
     grid-template-columns: minmax(0, 1fr);
     height: clamp(620px, calc(100svh - 240px), 800px);

@@ -264,7 +264,7 @@ test('a website-chat conversation opens in the Chat view, oldest first, at its n
   // The header leads with the person and the channel; an email's leads with its subject and status.
   const heading = conversation.locator('.support-conversation-heading');
   await expect(heading.locator('.support-conversation-avatar')).toHaveText('LW');
-  await expect(heading.locator('.support-mailbox-detail')).toHaveText('Website Chat · Support');
+  await expect(heading.locator('p.support-mailbox-detail')).toHaveText('Website Chat · Support');
   await expect(heading.locator('.support-conversation-overline')).toBeHidden();
   const history = conversation.getByRole('region', { name: 'Chat with Lena Wilson' });
   // The chat sits on the grouped background; an email thread stays on the plain surface.
@@ -641,6 +641,35 @@ test('the heading names the customer only while their panel is out of sight', as
   await expect(panel).toBeHidden();
   await expect(heading.getByText('sophie@example.com')).toBeVisible();
   await expect(heading.getByText('Sophie Chen', { exact: true })).toBeVisible();
+});
+
+test('an email conversation’s heading: status and mailbox on one line, then the subject and where it stands', async ({
+  page,
+}) => {
+  const heading = page.locator('.support-conversation-heading');
+  const overline = heading.locator('.support-conversation-overline');
+  await expect(overline.locator('.support-status')).toHaveText('Open Conversation');
+  await expect(overline.locator('.support-mailbox-detail')).toHaveText('Billing · billing@forma.example');
+  const line = await overline.evaluate(row => {
+    const status = row.querySelector('.support-status').getBoundingClientRect();
+    const mailbox = row.querySelector('.support-mailbox-detail').getBoundingClientRect();
+    return { sameLine: Math.abs(status.top - mailbox.top) < 4, gap: Math.round(mailbox.left - status.right) };
+  });
+  expect(line.sameLine).toBe(true);
+  expect(line.gap).toBeGreaterThanOrEqual(16);
+  // The summary follows the subject; the thread no longer holds it.
+  const order = await heading.evaluate(header => {
+    const title = header.querySelector('h2').getBoundingClientRect();
+    const summary = header.querySelector('.f-generated').getBoundingClientRect();
+    return summary.top > title.bottom;
+  });
+  expect(order).toBe(true);
+  await expect(page.locator('.support-thread .f-generated')).toBeHidden();
+  await expect(heading.locator('p.support-mailbox-detail')).toBeHidden();
+  // On a phone it leads the thread instead, so the heading stays short and the reply field in reach.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(heading.locator('.f-generated')).toBeHidden();
+  await expect(page.locator('.support-thread .f-generated')).toContainText('Studio North moved to the Team plan');
 });
 
 test('the list leaves conversation numbers to search results and the open conversation', async ({ page }) => {

@@ -326,7 +326,12 @@ export function supportDemo() {
     /** The open conversation's entries with their place in the history: newest first, or oldest first in a chat. */
     get timeline() {
       const entries = (this.ticket?.threads ?? []).map((entry, index) => ({ ...entry, index }));
-      return this.chat ? entries : entries.reverse();
+      // An email conversation's summary heads it, under the subject (summaryEntry), not the thread.
+      return this.chat ? entries : entries.filter(entry => entry.kind !== 'summary').reverse();
+    },
+    /** Where an email conversation stands: its latest summary, shown under the subject. */
+    get summaryEntry() {
+      return this.chat ? null : (this.ticket?.threads.findLast(entry => entry.kind === 'summary') ?? null);
     },
     get ticket() {
       return this.tickets.find(ticket => ticket.id === this.selectedId) ?? null;

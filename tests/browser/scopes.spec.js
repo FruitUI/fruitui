@@ -137,7 +137,9 @@ test('Support combines team mailboxes while local views, searches, and status co
   await expand(page, '#support-queues', 'billing');
   await nav.getByRole('button', { name: 'Billing Open' }).click();
   await expect(rows).toHaveCount(1);
-  await expect(page.locator('.support-mailbox-detail')).toContainText('billing@forma.example');
+  await expect(page.locator('.support-mailbox-detail').filter({ visible: true })).toContainText(
+    'billing@forma.example',
+  );
   await page.getByRole('searchbox', { name: 'Search Conversations' }).fill('sso');
   await expect(rows).toHaveCount(0);
   await nav.getByRole('button', { name: /^All Inboxes/ }).click();
