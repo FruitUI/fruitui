@@ -16,6 +16,9 @@ const greeting = {
   body: 'Hi there. Ask us anything, we’re happy to help.',
 };
 const agent = { author: 'Alex Morgan', initials: 'AM' };
+// The launcher's name, and with answers that arrived while it was closed; Tallport translates both.
+const launcher = 'Chat with Forma';
+const unreadLauncher = count => `Chat with Forma, ${count} unread`;
 
 function size(bytes) {
   return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -73,7 +76,7 @@ export function widgetChat() {
       addEventListener('offline', () => (this.online = false));
       matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.post('theme', this.colors()));
       // Not in an animation frame: browsers skip those in a hidden frame from another origin.
-      this.$nextTick(() => this.post('ready', { label: 'Chat with Forma', ...this.colors() }));
+      this.$nextTick(() => this.post('ready', { label: launcher, ...this.colors() }));
     },
     destroy() {
       for (const timer of timers) clearTimeout(timer);
@@ -186,7 +189,7 @@ export function widgetChat() {
     receive(message) {
       this.add({ kind: 'team', ...message, time: clock.format(new Date()) });
       if (this.shown) this.announcement = `${message.author}: ${message.body}`;
-      else this.post('unread', { count: ++this.unread });
+      else this.post('unread', { count: ++this.unread, label: unreadLauncher(this.unread) });
     },
     event(body) {
       return { kind: 'event', body };

@@ -15,7 +15,8 @@
  * appearance ('system', 'light' or 'dark'). The launcher appears once the window says it is ready,
  * so a window that can't load (or isn't allowed on this website) leaves no button behind. The styles
  * are adopted rather than inline, so a strict Content Security Policy needs only script-src and
- * frame-src for the script's domain. Icons: Lucide (https://lucide.dev, ISC licence).
+ * frame-src for the script's domain. It has no words of its own: the window sends the launcher's
+ * name, so it is in the visitor's language. Icons: Lucide (https://lucide.dev, ISC licence).
  */
 (() => {
   'use strict';
@@ -170,12 +171,13 @@
     else addEventListener('DOMContentLoaded', () => document.body.append(host), { once: true });
   }
 
-  // The count shows on the badge, and the launcher's name says it.
-  function setUnread(count) {
+  // The count shows on the badge, and the launcher's name says it in the window's words ("Chat with
+  // Forma, 2 unread"): every word comes from the window, in the visitor's language.
+  function setUnread(count, words) {
     unread = opened ? 0 : count;
     badge.hidden = unread === 0;
     badge.textContent = unread || '';
-    label.textContent = unread ? `${name}, ${unread} unread` : name;
+    label.textContent = unread && words ? words : name;
   }
 
   function theme({ fill, fillHover, canvas, dark }) {
@@ -222,7 +224,7 @@
       for (const [type, payload] of outbox.splice(0)) post(type, payload);
       if (openWhenReady) open({ focus: false });
     } else if (data.type === 'theme') theme(data);
-    else if (data.type === 'unread') setUnread(data.count);
+    else if (data.type === 'unread') setUnread(data.count, data.label);
     else if (data.type === 'close') close({ focus: true });
   });
 
