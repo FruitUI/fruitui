@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const file = path => fileURLToPath(new URL(`../../${path}`, import.meta.url));
 
 /** A fresh document and window, so no Alpine from another page is already running. */
-async function openFixture(page, scripts) {
+async function openFixture(page, scripts, { alpine = true } = {}) {
   await page.route('**/editor-fixture', route =>
     route.fulfill({
       contentType: 'text/html',
@@ -22,7 +22,7 @@ async function openFixture(page, scripts) {
   );
   await page.goto('/editor-fixture');
   // Alpine's CDN build starts on its own, after the plugins registered on alpine:init.
-  for (const path of [...scripts, 'node_modules/alpinejs/dist/cdn.min.js'])
+  for (const path of [...scripts, ...(alpine ? ['node_modules/alpinejs/dist/cdn.min.js'] : [])])
     await page.addScriptTag({ path: file(path) });
 }
 
@@ -82,4 +82,38 @@ test('without the editor plugin the native textarea answers the same requests', 
   );
   await expect(control).toHaveValue('Hello\n\nSignature');
   await expect(control.locator('xpath=..')).toHaveAttribute('data-fruit-mode', 'markdown');
+});
+
+test('the standalone global brings Alpine, registers FruitUI and starts it, after plugins loaded before it', async ({
+  page,
+}) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await openFixture(page, ['build/editor.global.js', 'build/standalone.global.js'], { alpine: false });
+  await expect(page.locator('.f-editor__surface [contenteditable]')).toBeVisible();
+  expect(
+    await page.evaluate(() => ({
+      alpine: typeof window.Alpine?.start,
+      helpers: ['confirm', 'dialog', 'toast'].map(name => typeof window.FruitUI[name]),
+    })),
+  ).toEqual({ alpine: 'function', helpers: ['function', 'function', 'function'] });
+  // FruitUI's own data is registered: a toast outlet added to the page shows a message sent from outside.
+  await page.evaluate(() =>
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div class="f-toast" role="status" x-data="fruitToast" x-show="notice" x-text="notice"></div>',
+    ),
+  );
+  await expect.poll(() => page.locator('.f-toast').evaluate(element => Boolean(element._x_dataStack))).toBe(true);
+  await page.evaluate(() => window.FruitUI.toast('Saved'));
+  await expect(page.getByRole('status')).toHaveText('Saved');
+  expect(errors).toEqual([]);
+});
+
+test('the standalone global keeps an Alpine the page already has', async ({ page }) => {
+  await openFixture(page, []);
+  const before = await page.evaluateHandle(() => window.Alpine);
+  await page.addScriptTag({ path: file('build/standalone.global.js') });
+  expect(await page.evaluate(alpine => window.Alpine === alpine, before)).toBe(true);
+  await expect(page.locator('#reply')).toBeVisible();
 });

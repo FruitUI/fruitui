@@ -39,17 +39,19 @@ for (const [name, file] of Object.entries({
 }
 // livewire.js registers itself on Livewire's injected Alpine; alpine and editor export plugins. The
 // editor's global file registers itself too, so pages without a bundler only add a script tag.
-// Both Alpine builds expose the same helpers as window.FruitUI for code outside Alpine.
-const globals = { alpine: 'FruitUI', editor: 'FruitEditor', livewire: 'FruitUI' };
+// standalone brings Alpine itself, for a page with neither Livewire nor a bundler: a global file only.
+// The Alpine builds expose the same helpers as window.FruitUI for code outside Alpine.
+const globals = { alpine: 'FruitUI', editor: 'FruitEditor', livewire: 'FruitUI', standalone: 'FruitUI' };
 for (const [name, module, global] of [
   ['alpine', 'src/js/alpine.js', 'src/js/alpine.js'],
   ['editor', 'src/js/editor.js', 'src/js/editor-global.js'],
   ['livewire', 'src/js/livewire.js', 'src/js/livewire.js'],
+  ['standalone', null, 'src/js/standalone.js'],
 ]) {
   for (const [format, entry] of [
     ['es', module],
     ['iife', global],
-  ]) {
+  ].filter(([, entry]) => entry)) {
     await build({
       configFile: false,
       // The showcase's public files (sample attachments) are not package assets.

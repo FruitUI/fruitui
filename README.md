@@ -91,7 +91,7 @@ Fruit::openDialog('confirm-archive');        // <x-fruit::dialog name="confirm-a
 
 A dialog can also bind its open state: `<x-fruit::dialog wire:model="confirming">`. To ask before an action, `$confirm({ title: 'Delete this mailbox?', confirm: 'Delete', tone: 'danger' }).then(confirmed => confirmed && $wire.delete())` resolves true or false. For pagination, set `'pagination_theme' => 'fruit'` in `config/livewire.php`; outside Livewire, use `$items->links('fruit::pagination.default')`.
 
-Without Livewire, register the helpers on your own Alpine instance: `fruitUI(Alpine)` from `src/js/alpine.js`. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
+Without Livewire, register the helpers on your own Alpine instance: `fruitUI(Alpine)` from `src/js/alpine.js`, or, without a bundler, link `build/standalone.global.js`, which includes Alpine and starts it. See [JavaScript setup](docs/adoption.md#javascript-and-optional-editing).
 
 ## Explore the examples
 
