@@ -244,6 +244,7 @@ for (const [name, url, frame] of [
   ['Support', '/support.html', '#support'],
   ['Chat', '/chat.html', '#chat'],
   ['Admin', '/admin.html', '#admin'],
+  ['Widget', '/widget.html', '#widget'],
 ]) {
   test(`${name} switches between its responsive layout and a phone-sized preview`, async ({ page }) => {
     const errors = [];

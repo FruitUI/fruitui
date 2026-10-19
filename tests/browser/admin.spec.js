@@ -19,7 +19,7 @@ test('Admin is linked alongside every example and summary statistics match curre
   await expect(navigation.getByRole('link', { name: 'Admin', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(stats(page)).toHaveText(['$1,256', '14', '4', '20']);
   await expect(page.locator('.admin-plan-bars li')).toHaveText([/Starter4.*29%/, /Studio5.*36%/, /Business5.*36%/]);
-  for (const path of ['/', '/support.html', '/chat.html', '/components.html']) {
+  for (const path of ['/', '/support.html', '/chat.html', '/widget.html', '/components.html']) {
     await page.goto(path);
     await expect(
       page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Admin', exact: true }),

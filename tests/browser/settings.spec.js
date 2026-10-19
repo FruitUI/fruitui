@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Settings is linked from every example, and its pages follow the URL', async ({ page }) => {
-  for (const path of ['/', '/support.html', '/chat.html', '/admin.html', '/components.html']) {
+  for (const path of ['/', '/support.html', '/chat.html', '/admin.html', '/widget.html', '/components.html']) {
     await page.goto(path);
     await expect(
       page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Settings', exact: true }),

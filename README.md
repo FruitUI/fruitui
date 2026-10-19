@@ -102,7 +102,7 @@ npm ci
 npm run dev
 ```
 
-Open [Mail](http://127.0.0.1:5173/), [Support](http://127.0.0.1:5173/support.html), [Chat](http://127.0.0.1:5173/chat.html), [Admin](http://127.0.0.1:5173/admin.html), [Settings](http://127.0.0.1:5173/settings.html), or the [component gallery](http://127.0.0.1:5173/components.html). These are interactive frontend examples using sample data.
+Open [Mail](http://127.0.0.1:5173/), [Support](http://127.0.0.1:5173/support.html), [Chat](http://127.0.0.1:5173/chat.html), [Admin](http://127.0.0.1:5173/admin.html), [Settings](http://127.0.0.1:5173/settings.html), [Widget](http://127.0.0.1:5173/widget.html) (a chat on an example website), or the [component gallery](http://127.0.0.1:5173/components.html). These are interactive frontend examples using sample data.
 
 The Support interface and a Mail preferences form also exist as Livewire 4 single-file components in [examples/laravel](examples/laravel/). With `npm run dev` running, start the bundled Laravel host with `composer install && node scripts/serve-host.mjs` and open [the Livewire Support desk](http://127.0.0.1:5180/support).
 

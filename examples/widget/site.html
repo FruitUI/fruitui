@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <title>Forma · Plan, share and ship together</title>
+  <link rel="stylesheet" href="/examples/widget/site.css">
+  <script type="module" src="/examples/widget/site.js"></script>
+  <!-- The chat: a website adds these two scripts and nothing else. -->
+  <script>
+    window.tallport = window.tallport || function () { (tallport.q = tallport.q || []).push(arguments); };
+    tallport('init', { widget: 'forma-support' });
+  </script>
+  <script src="/widget/t.js" async></script>
+</head>
+<body>
+  <!-- An example company's website (no FruitUI here), with the chat in the corner. -->
+  <header class="site-bar">
+    <a class="site-logo" href="#top"><span class="site-logo-mark" aria-hidden="true">F</span>Forma</a>
+    <nav class="site-links" aria-label="Website"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#help">Help</a></nav>
+    <div class="site-account">
+      <button class="site-button" type="button" data-sign-in>Sign In</button>
+      <span class="site-person" data-signed-in hidden><span class="site-avatar" aria-hidden="true">LW</span><span class="site-person-name">Lena Wilson</span><button class="site-button" type="button" data-sign-out>Sign Out</button></span>
+    </div>
+  </header>
+  <main id="top">
+    <section class="site-hero">
+      <p class="site-kicker">Projects, files and feedback</p>
+      <h1>Plan, share and ship together.</h1>
+      <p>Forma keeps your team’s projects in one calm place, with room for clients as guests.</p>
+      <div class="site-actions"><a class="site-button site-button--primary" href="#pricing">Start Free Trial</a><a class="site-button" href="#features">See Features</a></div>
+    </section>
+    <section id="features" class="site-section" aria-labelledby="features-title">
+      <h2 id="features-title">Everything in one place</h2>
+      <ul class="site-cards">
+        <li><h3>Projects</h3><p>Plans, tasks and files side by side, so the next step is always clear.</p></li>
+        <li><h3>Guests</h3><p>Invite a client to one project. They see that project and nothing else.</p></li>
+        <li><h3>Feedback</h3><p>Comments on the work itself, gathered in one thread per file.</p></li>
+      </ul>
+    </section>
+    <section id="pricing" class="site-section" aria-labelledby="pricing-title">
+      <h2 id="pricing-title">Simple pricing</h2>
+      <ul class="site-cards">
+        <li><h3>Starter</h3><p class="site-price">Free</p><p>Three projects for you and a few friends.</p></li>
+        <li><h3>Team</h3><p class="site-price">$8 <small>per person, per month</small></p><p>Unlimited projects, guests and annual billing.</p></li>
+      </ul>
+    </section>
+    <section id="help" class="site-section" aria-labelledby="help-title">
+      <h2 id="help-title">Questions?</h2>
+      <!-- Without the script (blocked, or JavaScript off) the link opens the chat on its own page. -->
+      <p>Our team is here to help. <a href="/widget/chat.html?widget=forma-support" data-chat>Chat with us</a> or email <a href="mailto:support@forma.example">support@forma.example</a>.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><span>© 2026 Forma</span><a href="#top">Privacy</a><a href="#top">Terms</a></footer>
+</body>
+</html>

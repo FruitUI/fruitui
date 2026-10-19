@@ -11,6 +11,7 @@ import { chatDemo } from './chat/chat.js';
 import { adminDemo } from './admin/admin.js';
 import { settingsDemo } from './settings/settings.js';
 import { uploadDemo } from './shared/uploads.js';
+import { widgetDemo } from './widget/widget.js';
 
 installIcons();
 // A page with a rich editor registers it first, in examples/editor.js.
@@ -22,4 +23,5 @@ Alpine.data('chatDemo', withPreview(chatDemo));
 Alpine.data('adminDemo', withPreview(adminDemo));
 Alpine.data('settingsDemo', withPreview(settingsDemo));
 Alpine.data('uploadDemo', uploadDemo);
+Alpine.data('widgetDemo', withPreview(widgetDemo));
 Alpine.start();
