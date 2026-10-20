@@ -86,7 +86,7 @@ export function widgetChat() {
       addEventListener('offline', () => (this.online = false));
       matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.post('theme', this.colors()));
       // Not in an animation frame: browsers skip those in a hidden frame from another origin.
-      this.$nextTick(() => this.post('ready', { label: launcher, ...this.colors() }));
+      this.$nextTick(() => this.post('ready', { label: launcher, available: true, ...this.colors() }));
     },
     destroy() {
       for (const timer of timers) clearTimeout(timer);

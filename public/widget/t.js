@@ -13,7 +13,10 @@
  * own domain (a proxy for the folder) and the script finds the window there. Commands, queued until
  * the script loads: init, open, close, identify (a token the website's server signs), logout and
  * appearance ('system', 'light' or 'dark'). The launcher appears once the window says it is ready,
- * so a window that can't load (or isn't allowed on this website) leaves no button behind. The styles
+ * so a window that can't load (or isn't allowed on this website) leaves no button behind. A window
+ * that is ready but takes no new chats now (a limit reached, for a visitor without a conversation)
+ * says available: false: no button, open does nothing, and window.tallport.available stays false, so
+ * a website's own "Chat with us" link can follow its href to the window's page instead. The styles
  * are adopted rather than inline, so a strict Content Security Policy needs only script-src and
  * frame-src for the script's domain. It has no words of its own: the window sends the launcher's
  * name, so it is in the visitor's language. Icons: Lucide (https://lucide.dev, ISC licence).
@@ -131,6 +134,7 @@
 
   let root, launcher, label, badge, frame, config, name;
   let ready = false;
+  let available = false;
   let opened = false;
   let openWhenReady = false;
   let unread = 0;
@@ -191,7 +195,7 @@
   // or link calling open), never when the website opens it by itself, such as on page load.
   function open({ focus = navigator.userActivation?.isActive ?? true } = {}) {
     if (!ready) return void (openWhenReady = true);
-    if (opened) return;
+    if (opened || !available) return;
     opened = true;
     root.toggleAttribute('data-open', true);
     launcher.setAttribute('aria-expanded', 'true');
@@ -216,11 +220,13 @@
     if (data?.tallport !== 1) return;
     if (data.type === 'ready') {
       ready = true;
+      available = data.available !== false;
+      window.tallport.available = available;
       name = data.label;
       label.textContent = name;
       frame.title = name;
       theme(data);
-      launcher.hidden = false;
+      launcher.hidden = !available;
       for (const [type, payload] of outbox.splice(0)) post(type, payload);
       if (openWhenReady) open({ focus: false });
     } else if (data.type === 'theme') theme(data);
@@ -245,7 +251,7 @@
     } else if (!root) pending.push([command, ...args]);
     else commands[command]?.(...args);
   };
-  window.tallport = Object.assign(run, { loaded: true });
+  window.tallport = Object.assign(run, { loaded: true, available: false });
   const init = queued.find(([command]) => command === 'init');
   if (init) run(...init);
   else if (script.dataset.widget) run('init');

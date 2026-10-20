@@ -43,6 +43,7 @@ test('Widget is linked beside the examples, and the launcher appears once the ch
   await page.goto('/widget.html');
   await expect(launcher(page)).toBeVisible();
   await expect(launcher(page)).toHaveAttribute('aria-expanded', 'false');
+  expect(await page.frame({ url: /site\.html/ }).evaluate(() => window.tallport.available)).toBe(true);
   // The window loads hidden, so the launcher opens it at once; the launcher takes its accent.
   const fill = await chat(page)
     .locator('.f-composer__send')
@@ -371,4 +372,28 @@ test('the page’s appearance carries into the website and the chat', async ({ p
   await page.getByRole('combobox', { name: 'Appearance' }).selectOption('system');
   await expect(chat(page).locator('html')).toHaveAttribute('data-theme', 'system');
   await expect(chat(page).locator('body')).toHaveCSS('background-color', 'rgb(242, 242, 244)');
+});
+
+test('a window that takes no new chats leaves no launcher, and the website’s link opens its page', async ({ page }) => {
+  // A stand-in window that is ready but over its limit for new chats, as Tallport's says.
+  await page.route('**/widget/chat.html?*', route =>
+    route.fulfill({
+      contentType: 'text/html; charset=utf-8',
+      body: `<!doctype html><html lang="en"><meta charset="utf-8"><title>Chat with Forma</title><p>Chat isn’t available right now.</p><script>
+        const origin = new URLSearchParams(location.search).get('origin');
+        if (parent !== window) parent.postMessage({ tallport: 1, type: 'ready', label: 'Chat with Forma', available: false,
+          fill: 'rgb(0, 99, 204)', fillHover: 'rgb(0, 84, 173)', canvas: 'rgb(255, 255, 255)', dark: false }, origin);
+      </script></html>`,
+    }),
+  );
+  await page.goto('/examples/widget/site.html');
+  const toggle = page.locator('button.launcher');
+  await expect.poll(() => page.evaluate(() => window.tallport.available)).toBe(false);
+  await expect(toggle).toBeHidden();
+  await page.evaluate(() => window.tallport('open'));
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.window')).toHaveCSS('visibility', 'hidden');
+  await page.getByRole('link', { name: 'Chat with us' }).click();
+  await expect(page).toHaveURL(/\/widget\/chat\.html\?widget=forma-support$/);
+  await expect(page.getByText('Chat isn’t available right now.')).toBeVisible();
 });
