@@ -135,7 +135,12 @@ body {
   border-end-end-radius: 6px;
 }
 .widget-attachment {
+  --f-attachment-thumbnail-max-width: 15rem;
+  --f-attachment-thumbnail-height: 9rem;
   margin-top: 4px;
+}
+.widget-attachment > .f-attachment {
+  max-width: 100%;
 }
 .widget-meta {
   margin: 4px 12px 0;

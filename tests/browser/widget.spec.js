@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import { expectAccessible, expectNoOverflow } from './helpers.js';
 
 // The Widget example (widget.html): an example website (examples/widget/site.html) whose script
@@ -140,13 +141,18 @@ test('signing in continues Lena’s chat from the Support example, and signing o
     'Oh nice. Can guests comment too?',
     'Perfect, I’ll give that a try with our next client project. Thank you!',
   ]);
+  // Signed in with a name, the greeting uses it.
   await expect(chat(page).locator('.widget-entry[data-kind="team"] .widget-bubble')).toHaveText([
-    'Hi there. Ask us anything, we’re happy to help.',
+    'Hi Lena. Ask us anything, we’re happy to help.',
     'Hi Lena! Yes, invite them as a guest from the project’s Share menu.',
     'They’ll only see that project, and you can change their permissions at any time.',
     'They can comment and upload files. Editing stays with your team unless you allow it.',
   ]);
   await expect(chat(page).locator('.widget-messages')).not.toContainText('Help Center would help');
+  // Alex's answer about the Share menu shows its screenshot as a thumbnail.
+  const screenshot = chat(page).getByRole('link', { name: /share-menu\.png/ });
+  await expect(screenshot).toHaveClass(/f-attachment--thumbnail/);
+  await expect.poll(() => screenshot.locator('img').evaluate(img => img.naturalWidth)).toBe(640);
   await expect(chat(page).locator('.widget-event')).toHaveText('Replies also go to lena@example.com.');
   // A run of messages shows its time once, under the last.
   const run = chat(page).locator('.widget-entry[data-kind="team"]').filter({ hasText: 'They’ll only see' });
@@ -159,6 +165,7 @@ test('signing in continues Lena’s chat from the Support example, and signing o
   await expect(chat(page).locator('.widget-email')).toHaveCount(0);
   await site(page).getByRole('button', { name: 'Sign Out' }).click();
   await expect(entries(page)).toHaveCount(1);
+  await expect(entries(page)).toContainText('Hi there. Ask us anything');
   await expect(site(page).getByRole('button', { name: 'Sign In' })).toBeFocused();
 });
 
@@ -168,6 +175,7 @@ test('what a visitor wrote before signing in stays in the chat', async ({ page }
   await expect(chat(page).locator('.widget-email')).toBeVisible();
   await site(page).getByRole('button', { name: 'Sign In' }).click();
   await expect(chat(page).locator('.widget-email')).toHaveCount(0);
+  await expect(entries(page).first()).toContainText('Hi Lena. Ask us anything');
   await expect(chat(page).locator('.widget-entry[data-kind="visitor"] .widget-bubble')).toHaveText([
     'Is there a discount for nonprofits?',
   ]);
@@ -202,24 +210,40 @@ test('offline, messages wait for the connection and send when it is back', async
   });
 });
 
-test('files attach to a message and can be removed before sending', async ({ page }) => {
+test('files attach to a message and can be removed before sending; images show as thumbnails', async ({ page }) => {
   await open(page);
   const input = chat(page).locator('input[type="file"]');
   await input.setInputFiles([
     { name: 'invoice-september.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(48 * 1024) },
-    { name: 'screenshot.png', mimeType: 'image/png', buffer: Buffer.alloc(2 * 1024 * 1024) },
+    { name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Notes') },
+    {
+      name: 'sofa.png',
+      mimeType: 'image/png',
+      buffer: readFileSync(new URL('../../public/attachments/share-menu.png', import.meta.url)),
+    },
   ]);
   const files = chat(page).getByRole('list', { name: 'Files to send' });
-  await expect(files.getByRole('listitem')).toHaveText(['invoice-september.pdf', 'screenshot.png']);
-  await files.getByRole('button', { name: 'Remove screenshot.png' }).click();
+  await expect(files.getByRole('listitem')).toHaveText(['invoice-september.pdf', 'notes.txt', 'sofa.png']);
+  await files.getByRole('button', { name: 'Remove notes.txt' }).click();
   await expect(message(page)).toBeFocused();
   await message(page).press('Enter');
   const sent = chat(page).locator('.widget-entry[data-kind="visitor"]').last();
   const attachment = sent.getByRole('link', { name: /invoice-september\.pdf/ });
   await expect(attachment).toHaveAttribute('download', 'invoice-september.pdf');
   await expect(attachment).toContainText('48 KB');
+  // An image is a thumbnail that opens in a new tab.
+  const image = sent.getByRole('link', { name: /sofa\.png/ });
+  await expect(image).toHaveClass(/f-attachment--thumbnail/);
+  await expect(image).toHaveAttribute('target', '_blank');
+  await expect(image).not.toHaveAttribute('download');
+  await expect.poll(() => image.locator('img').evaluate(img => img.naturalWidth)).toBe(640);
   await expect(sent.locator('.widget-bubble')).toBeHidden();
   await expect(files).toBeHidden();
+  expect(
+    await chat(page)
+      .locator('body')
+      .evaluate(body => body.scrollWidth <= innerWidth),
+  ).toBe(true);
 });
 
 test('a phone gives the chat the whole screen, with its own Close button', async ({ page }) => {

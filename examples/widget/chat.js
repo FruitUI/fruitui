@@ -7,15 +7,25 @@ import { tickets } from '../support/tickets.js';
 // the Support example's #1036, seen from her side: its replies, without the team's notes.
 const lena = tickets.find(ticket => ticket.id === 1036);
 const clock = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' });
-const greeting = {
+// The team's greeting, by the visitor's first name once the website signed them in.
+const greet = (name = 'there') => ({
   id: 'greeting',
   kind: 'team',
   team: true,
   author: 'Forma',
   initials: 'F',
-  body: 'Hi there. Ask us anything, we’re happy to help.',
-};
+  body: `Hi ${name}. Ask us anything, we’re happy to help.`,
+});
+const greeting = greet();
 const agent = { author: 'Alex Morgan', initials: 'AM' };
+// Seen from Lena's side, Alex's answer about the Share menu comes with a screenshot of it.
+const shareMenu = {
+  id: 'share-menu',
+  name: 'share-menu.png',
+  size: '22 KB',
+  url: '/attachments/share-menu.png',
+  image: true,
+};
 // The launcher's name, and with answers that arrived while it was closed; Tallport translates both.
 const launcher = 'Chat with Forma';
 const unreadLauncher = count => `Chat with Forma, ${count} unread`;
@@ -141,7 +151,13 @@ export function widgetChat() {
     },
     addFiles(input) {
       for (const file of input.files)
-        this.files.push({ id: ++sequence, name: file.name, size: size(file.size), url: URL.createObjectURL(file) });
+        this.files.push({
+          id: ++sequence,
+          name: file.name,
+          size: size(file.size),
+          url: URL.createObjectURL(file),
+          image: file.type.startsWith('image/'),
+        });
       input.value = '';
       this.$refs.message.focus();
     },
@@ -204,17 +220,25 @@ export function widgetChat() {
       this.email = lena.customer.email;
       const written = this.entries.some(entry => entry.kind === 'visitor');
       const confirmed = this.event(`Replies also go to ${this.email}.`);
+      const welcome = greet(this.identity.name.split(' ')[0]);
       if (written) {
         const card = this.entries.findIndex(entry => entry.kind === 'email');
         if (card >= 0) this.entries.splice(card, 1);
-        this.entries.splice(1, 0, { id: `entry-${++sequence}`, ...confirmed });
+        this.entries.splice(0, 1, welcome, { id: `entry-${++sequence}`, ...confirmed });
         return;
       }
-      this.entries = [greeting, { id: `entry-${++sequence}`, ...confirmed }];
+      this.entries = [welcome, { id: `entry-${++sequence}`, ...confirmed }];
       for (const thread of lena.threads)
         if (thread.kind === 'customer')
           this.add({ kind: 'visitor', author: 'You', body: thread.body, time: thread.time, state: 'sent' });
-        else if (thread.kind === 'reply') this.add({ kind: 'team', ...agent, body: thread.body, time: thread.time });
+        else if (thread.kind === 'reply')
+          this.add({
+            kind: 'team',
+            ...agent,
+            body: thread.body,
+            time: thread.time,
+            files: thread.body.includes('Share menu') ? [shareMenu] : [],
+          });
     },
     /** Signed out on the website: a new, anonymous visitor. */
     logout() {
