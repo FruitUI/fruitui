@@ -443,6 +443,67 @@ test('a busy button covers its label with a spinner, keeps its width and name, a
   expect(await fill(labelled)).not.toBe('rgba(0, 0, 0, 0)');
 });
 
+for (const appearance of ['light', 'dark']) {
+  test(`aria-disabled links and menu triggers look disabled, keep focus and ignore activation in ${appearance}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: appearance });
+    const url = page.url();
+    // A link styled as a button looks like the disabled button beside it, without a hover.
+    const button = page.locator('#component-button');
+    const link = button.getByRole('link', { name: 'Disabled Link' });
+    const native = button.getByRole('button', { name: 'Disabled', exact: true });
+    for (const property of ['opacity', 'cursor'])
+      await expect(link).toHaveCSS(property, await native.evaluate((el, p) => getComputedStyle(el)[p], property));
+    await expect(link).toHaveCSS('opacity', '0.45');
+    const background = await link.evaluate(el => getComputedStyle(el).backgroundColor);
+    await link.hover();
+    await expect(link).toHaveCSS('background-color', background);
+    // It stays focusable and isn't followed, by pointer or keyboard.
+    await link.click({ force: true });
+    await link.focus();
+    await link.press('Enter');
+    await expect(link).toBeFocused();
+    expect(page.url()).toBe(url);
+    // A menu's trigger (a summary) with aria-disabled doesn't open.
+    const menus = page.locator('#component-menu');
+    const trigger = menus.locator('summary[aria-disabled="true"]');
+    await expect(trigger).toHaveCSS('opacity', '0.45');
+    await expect(trigger).toHaveCSS('cursor', 'not-allowed');
+    await trigger.click({ force: true });
+    for (const key of ['Enter', ' ', 'ArrowDown', 'ArrowUp']) await trigger.press(key);
+    await expect(trigger).toBeFocused();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(await trigger.evaluate(el => el.parentElement.open)).toBe(false);
+    // A menu link with aria-disabled: dimmed, no highlight, skipped by the arrows, not followed.
+    const more = menus.getByRole('button', { name: /More Actions/ });
+    await more.press('ArrowDown');
+    const item = page.getByRole('menuitem', { name: 'Open in New Tab' });
+    await expect(item).toHaveCSS('opacity', '0.45');
+    await expect(page.getByRole('menuitem', { name: 'Archive' })).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(page.getByRole('menuitem', { name: 'Mark Unread' })).toBeFocused();
+    await item.hover();
+    await expect(item).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await item.click({ force: true });
+    expect(page.url()).toBe(url);
+    await page.keyboard.press('Escape');
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    // An unavailable calendar day keeps its own look rather than the dimmed one.
+    const day = await page.evaluate(() => {
+      const probe = document.createElement('button');
+      probe.className = 'f-calendar__day';
+      probe.setAttribute('aria-disabled', 'true');
+      (document.querySelector('.fruit-ui') ?? document.body).append(probe);
+      const opacity = getComputedStyle(probe).opacity;
+      probe.remove();
+      return opacity;
+    });
+    expect(day).toBe('1');
+    await expectAccessible(page, '#component-button', '#component-menu');
+  });
+}
+
 test('forced colors preserve choice focus and reduced motion slows activity animation', async ({ page }) => {
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
   await combo(page).focus();

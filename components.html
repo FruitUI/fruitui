@@ -19,6 +19,8 @@
     <button type="button" class="f-button f-button--ghost">Quiet</button>
     <button type="button" class="f-button f-button--danger">Delete</button>
     <button type="button" class="f-button" disabled="disabled">Disabled</button>
+    
+    <a class="f-button" href="#component-button" aria-disabled="true">Disabled Link</a>
     <button type="button" class="f-button f-button--icon" aria-label="Add an item"><svg class="f-icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
     <button type="button" class="f-button" aria-pressed="true">Pinned</button>
 </div>
@@ -33,6 +35,8 @@
     &lt;x-fruit::button variant=&quot;ghost&quot;&gt;Quiet&lt;/x-fruit::button&gt;
     &lt;x-fruit::button variant=&quot;danger&quot;&gt;Delete&lt;/x-fruit::button&gt;
     &lt;x-fruit::button disabled&gt;Disabled&lt;/x-fruit::button&gt;
+    {{-- A link can&apos;t take disabled: aria-disabled looks the same and ignores activation. --}}
+    &lt;a class=&quot;f-button&quot; href=&quot;#component-button&quot; aria-disabled=&quot;true&quot;&gt;Disabled Link&lt;/a&gt;
     &lt;x-fruit::button class=&quot;f-button--icon&quot; aria-label=&quot;Add an item&quot;&gt;&lt;svg class=&quot;f-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;#i-plus&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;
     &lt;x-fruit::button aria-pressed=&quot;true&quot;&gt;Pinned&lt;/x-fruit::button&gt;
 &lt;/div&gt;
@@ -1248,22 +1252,39 @@
     &lt;x-fruit::alert tone=&quot;danger&quot;&gt;&lt;strong&gt;Could not save&lt;/strong&gt;&lt;br&gt;Check your connection and try again.&lt;/x-fruit::alert&gt;
 &lt;/div&gt;</pre></details></section>
 <section id="component-menu" data-component="menu" class="f-card component-card"><h2>Action Menu</h2><p>Arrow keys, Home/End, type-ahead, Escape, and outside dismissal through the existing Alpine instance.</p><!-- blade:menu --><div x-data="{ action: 'No action yet' }">
-    <details x-data="fruitMenu" class="f-menu">
+    <div class="f-row">
+        <details x-data="fruitMenu" class="f-menu">
     <summary role="button" class="f-button" aria-haspopup="menu">More Actions<span class="f-menu__chevron" aria-hidden="true"></span></summary>
     <div class="f-menu__items" role="menu" aria-label="Message actions"><button type="button" role="menuitem" class="f-menu-item" @click="action = 'Archived'">Archive</button>
-        <button type="button" role="menuitem" class="f-menu-item" disabled="disabled">Forward</button>
-        <button type="button" role="menuitem" class="f-menu-item" @click="action = 'Marked unread'">Mark Unread</button>
-        <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger" @click="action = 'Deleted'">Delete</button></div>
+            <button type="button" role="menuitem" class="f-menu-item" disabled="disabled">Forward</button>
+            
+            <a role="menuitem" class="f-menu-item" href="#component-menu" aria-disabled="true">Open in New Tab</a>
+            <button type="button" role="menuitem" class="f-menu-item" @click="action = 'Marked unread'">Mark Unread</button>
+            <button type="button" role="menuitem" class="f-menu-item f-menu-item--danger" @click="action = 'Deleted'">Delete</button></div>
 </details>
+        <details x-data="fruitMenu" class="f-menu">
+    <summary role="button" class="f-button" aria-disabled="true" aria-haspopup="menu">Assignee<span class="f-menu__chevron" aria-hidden="true"></span></summary>
+    <div class="f-menu__items" role="menu" aria-label="Assignee"><button type="button" role="menuitem" class="f-menu-item" @click="action = 'Assigned'">Assign to Me</button></div>
+</details>
+    </div>
     <p class="f-help" role="status" x-text="action"></p>
 </div><!-- /blade:menu --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;div x-data=&quot;{ action: &#x27;No action yet&#x27; }&quot;&gt;&lt;details class=&quot;f-menu&quot; x-data=&quot;fruitMenu&quot;&gt;&lt;summary role=&quot;button&quot; class=&quot;f-button&quot; aria-haspopup=&quot;menu&quot;&gt;More actions&lt;/summary&gt;&lt;div class=&quot;f-menu__items&quot; role=&quot;menu&quot; aria-label=&quot;Message actions&quot;&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Archived&#x27;&quot;&gt;Archive&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; disabled&gt;Forward&lt;/button&gt;&lt;button class=&quot;f-menu-item&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Marked unread&#x27;&quot;&gt;Mark unread&lt;/button&gt;&lt;button class=&quot;f-menu-item f-menu-item--danger&quot; type=&quot;button&quot; role=&quot;menuitem&quot; @click=&quot;action = &#x27;Deleted&#x27;&quot;&gt;Delete&lt;/button&gt;&lt;/div&gt;&lt;/details&gt;&lt;p class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;action&quot;&gt;&lt;/p&gt;&lt;/div&gt;</pre></details><details class="gallery-source"><summary>Blade</summary><pre class="code" data-blade-source="menu">&lt;div x-data=&quot;{ action: &apos;No action yet&apos; }&quot;&gt;
-    &lt;x-fruit::menu title=&quot;Message actions&quot;&gt;
-        &lt;x-slot:trigger&gt;More Actions&lt;span class=&quot;f-menu__chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/x-slot:trigger&gt;
-        &lt;x-fruit::menu-item @click=&quot;action = &apos;Archived&apos;&quot;&gt;Archive&lt;/x-fruit::menu-item&gt;
-        &lt;x-fruit::menu-item disabled&gt;Forward&lt;/x-fruit::menu-item&gt;
-        &lt;x-fruit::menu-item @click=&quot;action = &apos;Marked unread&apos;&quot;&gt;Mark Unread&lt;/x-fruit::menu-item&gt;
-        &lt;x-fruit::menu-item variant=&quot;danger&quot; @click=&quot;action = &apos;Deleted&apos;&quot;&gt;Delete&lt;/x-fruit::menu-item&gt;
-    &lt;/x-fruit::menu&gt;
+    &lt;div class=&quot;f-row&quot;&gt;
+        &lt;x-fruit::menu title=&quot;Message actions&quot;&gt;
+            &lt;x-slot:trigger&gt;More Actions&lt;span class=&quot;f-menu__chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/x-slot:trigger&gt;
+            &lt;x-fruit::menu-item @click=&quot;action = &apos;Archived&apos;&quot;&gt;Archive&lt;/x-fruit::menu-item&gt;
+            &lt;x-fruit::menu-item disabled&gt;Forward&lt;/x-fruit::menu-item&gt;
+            {{-- A link can&apos;t take disabled: aria-disabled looks the same and ignores activation. --}}
+            &lt;x-fruit::menu-link href=&quot;#component-menu&quot; aria-disabled=&quot;true&quot;&gt;Open in New Tab&lt;/x-fruit::menu-link&gt;
+            &lt;x-fruit::menu-item @click=&quot;action = &apos;Marked unread&apos;&quot;&gt;Mark Unread&lt;/x-fruit::menu-item&gt;
+            &lt;x-fruit::menu-item variant=&quot;danger&quot; @click=&quot;action = &apos;Deleted&apos;&quot;&gt;Delete&lt;/x-fruit::menu-item&gt;
+        &lt;/x-fruit::menu&gt;
+        &lt;x-fruit::menu title=&quot;Assignee&quot;&gt;
+            {{-- Nor can a summary: aria-disabled on the trigger keeps the menu closed. --}}
+            &lt;x-slot:trigger aria-disabled=&quot;true&quot;&gt;Assignee&lt;span class=&quot;f-menu__chevron&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;&lt;/x-slot:trigger&gt;
+            &lt;x-fruit::menu-item @click=&quot;action = &apos;Assigned&apos;&quot;&gt;Assign to Me&lt;/x-fruit::menu-item&gt;
+        &lt;/x-fruit::menu&gt;
+    &lt;/div&gt;
     &lt;p class=&quot;f-help&quot; role=&quot;status&quot; x-text=&quot;action&quot;&gt;&lt;/p&gt;
 &lt;/div&gt;</pre></details></section>
 <section id="component-menu-item" data-component="menu-item" class="f-card component-card"><h2>Menu Item</h2><p>A command button in an action menu. No checkbox or radio mode.</p><!-- blade:menu-item --><div class="f-stack" x-data="{ sort: 'date', previews: true }">
