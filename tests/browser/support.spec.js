@@ -981,6 +981,23 @@ test('a mailbox without an email address only chats, and its settings say so', a
   );
 });
 
+test('a mailbox’s settings start at their panes’ edges, as settings do, at a readable width', async ({ page }) => {
+  await page.setViewportSize({ width: 1600, height: 1000 });
+  await page.goto('/support.html#/mailbox/support/settings/connection');
+  const start = async pane => {
+    const box = await pane.boundingBox();
+    const section = await pane.locator('.f-form-section').first().boundingBox();
+    return { offset: Math.round(section.x - box.x), width: section.width, room: box.width };
+  };
+  const list = await start(settingsPages(page));
+  const open = await start(settingsPane(page));
+  // Not centered in the room the wide window leaves: from the edge, as the list beside it.
+  expect(open.room - open.width).toBeGreaterThan(100);
+  expect(open.offset).toBe(list.offset);
+  expect(open.offset).toBeLessThan(40);
+  expect(open.width).toBeLessThanOrEqual(641);
+});
+
 test('on a phone a mailbox’s settings show its pages, then the page, with a way back', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/support.html#/mailbox/billing/settings');

@@ -117,7 +117,7 @@
                value, and the open one beside them. Whoever manages the mailbox comes here from its menu,
                without the team's Settings; creating and deleting mailboxes stays there. -->
           <section id="support-settings-list" class="f-pane f-pane--column f-pane--border-end support-settings-list" aria-labelledby="support-settings-title" x-show="settingsId" x-cloak>
-            <div class="f-pane__scroll"><div class="f-page settings-page"><div class="f-page__body">
+            <div class="f-pane__scroll"><div class="f-page f-page--start settings-page"><div class="f-page__body">
               <template x-if="box"><div class="f-form-section"><div class="f-form-section__rows">
                 <template x-for="(label, key) in mailboxPages" :key="key"><a class="f-form-row f-form-row--link" :href="settingsUrl(key)" :aria-current="settingsPage === key ? 'page' : null"><span x-text="label"></span><span class="f-form-row__value" x-text="pageSummary(box, key)"></span></a></template>
               </div></div></template>
@@ -125,7 +125,7 @@
           </section>
           <section id="support-settings-page" class="f-pane f-pane--column support-settings-page" aria-labelledby="support-settings-page-title" x-show="settingsId" x-cloak @change="check($event)" @input="check($event)">
             <template x-if="box"><div class="f-pane__scroll">
-              <div class="f-page f-page--narrow settings-page">
+              <div class="f-page f-page--narrow f-page--start settings-page">
                 <div class="f-page__body">
 <template x-if="settingsPage === 'general'"><div class="settings-sections">
                       <section class="f-form-section" aria-labelledby="settings-mailbox-title">

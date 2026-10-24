@@ -558,6 +558,10 @@ class ComponentContractsTest extends TestCase
         $this->assertStringContainsString('f-back', $heading->firstElementChild->getAttribute('class'));
         $this->assertSame('Connection', $heading->getElementsByTagName('h1')->item(0)->textContent);
         $this->assertSame(1, $this->xpath(Blade::render('<x-fruit::page><x-slot:back><x-fruit::back-link href="/">Home</x-fruit::back-link></x-slot:back><p>Rows</p></x-fruit::page>'))->query('//header[@class="f-page__header"]//a')->length);
+        // Settings start at the pane's edge; anything but center or start is refused.
+        $start = $this->xpath(Blade::render('<x-fruit::page width="narrow" align="start"><p>Rows</p></x-fruit::page>'));
+        $this->assertSame('f-page f-page--narrow f-page--start', $start->query('//div[contains(@class, "f-page")]')->item(0)->getAttribute('class'));
+        $this->assertRejected('<x-fruit::page align="end">Rows</x-fruit::page>', 'page align must be one of');
         $this->assertRejected('<x-fruit::page width="full">Rows</x-fruit::page>', 'page width must be one of');
         $this->assertRejected('<x-fruit::page title="A" :level="4">Rows</x-fruit::page>', 'page level must be 1, 2 or 3');
     }

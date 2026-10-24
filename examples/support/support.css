@@ -1174,9 +1174,8 @@
 .support-settings-page {
   --f-pane-background: var(--f-grouped-background);
 }
-/* The pages sit in the list's narrow column with a Drill-Down level's 16px margins. */
+/* The pages sit in the list's narrow column, from its top as from its edge. */
 .support-settings-list .f-page {
-  --f-page-padding-inline: 16px;
   --f-page-padding-block: 16px;
 }
 /* The mailbox's menu, after its folders. */
