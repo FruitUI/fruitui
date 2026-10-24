@@ -546,6 +546,43 @@ test('rows filtered out with hidden leave the group’s hairlines and corners to
   await expect(first).toHaveCSS('border-bottom-left-radius', '0px');
 });
 
+test('a current link row shows the accent while its pane or Drill-Down level has focus, in both appearances', async ({
+  page,
+}) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  const rows = id =>
+    `<div class="f-form-section__rows"><a class="f-form-row f-form-row--link" href="#${id}-a"><span>A</span></a><a class="f-form-row f-form-row--link" href="#${id}-b" aria-current="page"><span>B</span><span class="f-form-row__value">On</span></a></div>`;
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-pane" id="list">${rows('list')}</section>
+    <main class="f-pane" id="page"><button type="button">Elsewhere</button>
+      <div class="f-drilldown"><section class="f-drilldown__column" id="first">${rows('first')}</section>
+      <section class="f-drilldown__column" id="second"><button type="button">Deeper</button></section></div></main>
+    <i id="accent" style="background: var(--f-accent-fill)"></i><i id="inactive" style="background: var(--f-selection-inactive)"></i>
+    </body></html>`);
+  const background = selector => page.locator(selector).evaluate(element => getComputedStyle(element).backgroundColor);
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme });
+    const accent = await background('#accent');
+    const inactive = await background('#inactive');
+    expect(accent).not.toBe(inactive);
+    // A list column: the accent while it has focus, the inactive selection once focus leaves it.
+    await page.locator('a[href="#list-a"]').focus();
+    expect(await background('#list [aria-current]')).toBe(accent);
+    await expect(page.locator('#list [aria-current] .f-form-row__value')).toHaveCSS(
+      'color',
+      await page.locator('#list [aria-current]').evaluate(element => getComputedStyle(element).color),
+    );
+    await page.getByRole('button', { name: 'Elsewhere' }).focus();
+    expect(await background('#list [aria-current]')).toBe(inactive);
+    // A Drill-Down in a pane: only the focused level shows it.
+    expect(await background('#first [aria-current]')).toBe(inactive);
+    await page.getByRole('button', { name: 'Deeper' }).focus();
+    expect(await background('#first [aria-current]')).toBe(inactive);
+    await page.locator('a[href="#first-a"]').focus();
+    expect(await background('#first [aria-current]')).toBe(accent);
+  }
+});
+
 test('links in a message author and time keep the header text style until hovered', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
