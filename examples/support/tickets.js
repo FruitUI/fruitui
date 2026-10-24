@@ -393,9 +393,9 @@ export const agents = [
 ];
 
 export const mailboxes = [
-  { id: 'support', name: 'Support', email: 'support@forma.example', accent: 'blue' },
-  { id: 'billing', name: 'Billing', email: 'billing@forma.example', accent: 'green' },
-  { id: 'feedback', name: 'Feedback', email: 'feedback@forma.example', accent: 'purple' },
+  { id: 'support', name: 'Support', email: 'support@forma.example', color: 'blue' },
+  { id: 'billing', name: 'Billing', email: 'billing@forma.example', color: 'green' },
+  { id: 'feedback', name: 'Feedback', email: 'feedback@forma.example', color: 'purple' },
 ];
 
 /** Each mailbox's team chat: one room for the agents who work in it. Alex Morgan is you. */

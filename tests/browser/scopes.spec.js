@@ -288,7 +288,7 @@ test('grouped navigation uses native keyboard disclosure and automatic themes wi
 
 async function expand(page, nav, scope) {
   const group = page.locator(`${nav} [data-scope="${scope}"]`);
-  if ((await group.getAttribute('open')) === null) await group.locator('summary').click();
+  if ((await group.getAttribute('open')) === null) await group.locator(':scope > summary').click();
 }
 function mailRow(page, id) {
   return page.locator(`button.f-mail__message[data-message-id="${id}"]`);

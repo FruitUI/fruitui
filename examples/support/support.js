@@ -1,14 +1,33 @@
 import { tickets, queues, agents, mailboxes, teamRooms } from './tickets.js';
+import {
+  asSent,
+  checkField,
+  defaultLanguage,
+  languages,
+  mailboxPages,
+  mailboxSettings,
+  pageSummary,
+  sampleMailboxes,
+} from '../shared/mailbox-settings.js';
 
 /** Language names for the agent, in English: "Danish". */
 const language = new Intl.DisplayNames(['en'], { type: 'language' });
+
+/** The team's mailboxes with their settings, which are edited in the mailbox. */
+const withSettings = () => {
+  const samples = sampleMailboxes();
+  return mailboxes.map(({ id, name, email, color }) => ({
+    id,
+    ...(samples[id] ?? mailboxSettings(name, email, color)),
+  }));
+};
 
 export function supportDemo() {
   return {
     tickets: structuredClone(tickets),
     queues,
     agents,
-    mailboxes,
+    mailboxes: withSettings(),
     mailboxId: 'all',
     queue: 'open',
     query: '',
@@ -27,6 +46,18 @@ export function supportDemo() {
     roomAnswered: {},
     // The room Team Chat opens: the last one chosen in the switcher (most agents use one).
     roomChoice: 'support',
+    // A mailbox's settings, open in the mailbox (#/mailbox/support/settings/connection): its pages in
+    // the list's place, the open one beside them. Without a page in the address General shows beside
+    // the list where there's room, and a phone shows the list.
+    settingsId: null,
+    settingsPage: 'general',
+    settingsChosen: false,
+    mailboxPages,
+    languages,
+    defaultLanguage,
+    // The AI Assistant's Customer Context test: not a setting.
+    contextEmail: '',
+    contextResult: '',
     // Conversations checked for a bulk action (Cmd/Ctrl+click, Shift+click, or Select).
     checked: [],
     page: 1,
@@ -50,6 +81,101 @@ export function supportDemo() {
     newError: '',
     mailbox(id) {
       return this.mailboxes.find(mailbox => mailbox.id === id);
+    },
+    /** The mailbox whose settings are open, which its fields edit. */
+    get box() {
+      return this.settingsId ? this.mailbox(this.settingsId) : null;
+    },
+    settingsUrl(page) {
+      return `#/mailbox/${this.settingsId}/settings/${page}`;
+    },
+    pageSummary,
+    asSent,
+    check(event) {
+      checkField(event);
+    },
+    init() {
+      // A mailbox created in the Settings example, for this visit: its settings open next.
+      try {
+        const created = JSON.parse(sessionStorage.getItem('fruitui-new-mailbox') ?? 'null');
+        if (created && !this.mailbox(created.id))
+          this.mailboxes.push({ id: created.id, ...mailboxSettings(created.name) });
+      } catch {
+        // Without storage only the sample mailboxes are here.
+      }
+      this.route();
+      window.addEventListener('hashchange', () => this.route());
+    },
+    /** The address opens a mailbox's settings at one of its pages; any other leaves them. */
+    route() {
+      const [, scope, id, settings, page] = location.hash.split('/');
+      if (scope === 'mailbox' && settings === 'settings' && this.mailbox(id)) {
+        this.openSettings(id, mailboxPages[page] ? page : '');
+      } else if (this.settingsId) {
+        this.leaveSettings(false);
+      }
+    },
+    openSettings(id, page) {
+      const refs = this.$refs;
+      const opening = this.settingsId !== id;
+      this.leaveRoom();
+      this.checked = [];
+      this.settingsId = id;
+      this.settingsPage = page || 'general';
+      this.settingsChosen = Boolean(page);
+      this.view = page ? 'settingsPage' : 'list';
+      this.contextResult = '';
+      this.$nextTick(() => {
+        this.revealMailbox(refs.queues, id);
+        requestAnimationFrame(() => {
+          const active = document.activeElement;
+          const list = document.getElementById('support-settings-list');
+          if (opening && list.getClientRects().length) {
+            // Opened from the mailbox's menu: the keyboard starts at its open page's row.
+            list.querySelector('[aria-current="page"]')?.focus();
+          } else if (!active || active === document.body || !active.getClientRects().length) {
+            // The row that opened the page gave way to it (a phone): its title.
+            refs.settingsPageTitle.focus();
+          }
+        });
+      });
+    },
+    /** Back to the mailboxes: the address no longer names its settings. */
+    leaveSettings(address = true) {
+      if (!this.settingsId) return;
+      this.settingsId = null;
+      this.view = 'list';
+      if (address && location.hash.startsWith('#/mailbox/'))
+        history.pushState(null, '', location.pathname + location.search);
+    },
+    /** A phone's way back from a mailbox's page (or the sidebar) to its list of pages. */
+    backToSettings() {
+      const refs = this.$refs;
+      this.view = 'list';
+      this.$nextTick(() =>
+        requestAnimationFrame(() => {
+          const row = document.getElementById('support-settings-list').querySelector('[aria-current="page"]');
+          (row ?? refs.settingsTitle).focus();
+        }),
+      );
+    },
+    /** Asks the Customer Context URL about one customer and shows the answer, as the assistant would. */
+    testContext() {
+      const input = document.getElementById('settings-ai-test');
+      // The message stays until the field changes or loses focus.
+      input.setCustomValidity(this.contextEmail ? '' : 'Enter a customer’s email address.');
+      if (!input.reportValidity()) return;
+      this.contextResult = JSON.stringify(
+        {
+          email: this.contextEmail,
+          name: 'Sophie Chen',
+          company: 'Studio North',
+          plan: 'Team',
+          customerSince: '2024-03',
+        },
+        null,
+        2,
+      );
     },
     get queueTitle() {
       const label = this.queues.find(queue => queue.id === this.queue)?.label;
@@ -258,6 +384,7 @@ export function supportDemo() {
     /** Team Chat opens the chosen room; the switcher in its title changes and remembers the choice. */
     openRoom(id = this.roomChoice) {
       if (!this.rooms[id]) return;
+      this.leaveSettings();
       this.roomChoice = id;
       const messages = this.rooms[id];
       const first = messages.findIndex(message => message.unread);
@@ -391,6 +518,7 @@ export function supportDemo() {
     setQueue(queue, mailboxId = 'all') {
       if (!this.queues.some(item => item.id === queue) || (mailboxId !== 'all' && !this.mailbox(mailboxId))) return;
       this.leaveRoom();
+      this.leaveSettings();
       this.mailboxId = mailboxId;
       this.queue = queue;
       this.checked = [];

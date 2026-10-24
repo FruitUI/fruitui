@@ -4,25 +4,14 @@
  * can't take says why beside it.
  */
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
-import { Marked } from 'marked';
-
-/**
- * Signatures and automatic replies are written in Markdown and shown as customers will see them, as a
- * server renders them: a single line break is a line break, raw HTML shows as text, and only web and
- * mail addresses become links.
- */
-const escape = text => text.replace(/[&<>"']/g, character => `&#${character.charCodeAt(0)};`);
-const markdown = new Marked({
-  gfm: true,
-  breaks: true,
-  renderer: {
-    html: ({ text }) => escape(text),
-    link(token) {
-      return /^(https?:|mailto:)/i.test(token.href) ? false : this.parser.parseInline(token.tokens);
-    },
-    image: ({ href, text }) => (/^https?:/i.test(href) ? false : escape(text)),
-  },
-});
+import {
+  languages,
+  mailboxPages,
+  mailboxSettings,
+  sampleMailboxes,
+  aiSummary,
+  checkField,
+} from '../shared/mailbox-settings.js';
 
 // Your own pages first (Profile, Notifications), then the team's settings, then managing it.
 const pages = {
@@ -36,18 +25,12 @@ const pages = {
   logs: 'Logs',
 };
 /**
- * A mailbox's settings live in one place: Settings › Mailboxes › the mailbox. Its page holds the
- * everyday settings and a row for each further page, with that page's current value; each opens as
- * the next level. A person's account works the same way, under Users: what an administrator decides
- * about it (role, sign-in, permissions). What a person sets for themselves (profile, notifications)
- * is under their own Profile and Notifications, never under Users, also for the administrator's own.
+ * A person's account, under Users, holds what an administrator decides about it (role, sign-in,
+ * permissions) and a row for each further page, with that page's current value; each opens as the
+ * next level. What a person sets for themselves (profile, notifications) is under their own Profile
+ * and Notifications, never under Users, also for the administrator's own. A mailbox's settings are
+ * in the mailbox (the Support example), for whoever manages it; Mailboxes here creates and deletes.
  */
-const mailboxSections = {
-  connection: 'Connection',
-  permissions: 'Permissions',
-  'auto-reply': 'Auto Reply',
-  ai: 'AI Assistant',
-};
 const userSections = { permissions: 'Permissions' };
 /** What a person may do: General's “Users can” is the default, and a person's own choice wins. */
 const permissions = {
@@ -56,42 +39,6 @@ const permissions = {
   manageFolders: 'Manage custom folders',
 };
 const roles = { admin: 'Administrator', user: 'User' };
-const languages = {
-  default: 'Default',
-  en: 'English',
-  nl: 'Dutch',
-  de: 'German',
-  fr: 'French',
-  es: 'Spanish',
-  ja: 'Japanese',
-};
-
-const mailbox = (name, email, color, details = {}) => ({
-  name,
-  email,
-  color,
-  signature: 'Thanks,\n**The Forma team**\n[forma.example](https://forma.example)',
-  sending: 'smtp',
-  smtpHost: 'smtp.forma.example',
-  smtpPort: 587,
-  agents: ['alex', 'mia'],
-  autoReply: false,
-  autoSubject: 'We received your message',
-  autoBody: 'Hi {%customer.first_name%},\n\nThanks for writing. We usually reply **within a day**.',
-  // The AI Assistant for this mailbox; providers and limits are installation-wide (Settings › AI Assistant).
-  aiLanguage: 'default',
-  aiSummaries: true,
-  aiTranslations: true,
-  aiDrafts: true,
-  chatTranslation: false,
-  markTranslated: true,
-  aiGlossary: '',
-  contextUrl: '',
-  contextKey: '',
-  contextHeader: 'none',
-  replyGuidance: '',
-  ...details,
-});
 
 const person = (name, email, role, details = {}) => ({
   name,
@@ -115,22 +62,7 @@ const defaults = () => ({
   manageTags: true,
   manageFolders: false,
   deleteConversations: false,
-  mailboxes: {
-    support: mailbox('Support', 'support@forma.example', 'blue'),
-    billing: mailbox('Billing', 'billing@forma.example', 'green', {
-      agents: ['alex'],
-      autoReply: true,
-      aiLanguage: 'nl',
-      chatTranslation: true,
-    }),
-    feedback: mailbox('Feedback', 'feedback@forma.example', 'purple', {
-      sending: 'php',
-      agents: ['alex', 'mia', 'noah'],
-      aiSummaries: false,
-      aiTranslations: false,
-      aiDrafts: false,
-    }),
-  },
+  mailboxes: sampleMailboxes(),
   users: {
     alex: person('Alex Morgan', 'alex@forma.example', 'admin'),
     mia: person('Mia Patel', 'mia@forma.example', 'user', { notifyBrowser: true }),
@@ -148,25 +80,22 @@ const defaults = () => ({
 
 export function settingsDemo() {
   return {
-    // The URL's levels: a page, then an item under it (a mailbox or a person), then one of its pages.
+    // The URL's levels: a page, then a person under Users, then one of their pages.
     page: 'profile',
-    mailboxId: null,
     userId: null,
     section: '',
     // At Settings' root no page is chosen: the first, Profile, shows beside the list where there's room.
     chosen: false,
     settings: defaults(),
     pages,
-    mailboxSections,
     userSections,
     permissions,
     roles,
     languages,
     // The signed-in person, whose Profile this is.
     me: 'alex',
-    // Customer Context's test: not a setting.
-    contextEmail: '',
-    contextResult: '',
+    // New Mailbox asks only for a name.
+    newMailboxName: '',
     // System: Status reports problems with their fixes; Logs shows what happened.
     systemInfo,
     requirements,
@@ -222,10 +151,6 @@ export function settingsDemo() {
       const query = this.logQuery.trim().toLowerCase();
       return (this.logs.app.files[this.logFile] ?? []).filter(line => !query || line.toLowerCase().includes(query));
     },
-    /** The open mailbox, which its fields edit. */
-    get box() {
-      return this.settings.mailboxes[this.mailboxId];
-    },
     /** The open person, or the signed-in one on Profile. */
     get user() {
       return this.settings.users[this.userId];
@@ -235,7 +160,7 @@ export function settingsDemo() {
     },
     /** The open levels as a URL. */
     get path() {
-      return ['#', this.page, this.mailboxId ?? this.userId, this.section].filter(Boolean).join('/');
+      return ['#', this.page, this.userId, this.section].filter(Boolean).join('/');
     },
     /** A row leading to the open path is current: the deepest one as the page, the ones above it on the way. */
     current(href) {
@@ -253,12 +178,9 @@ export function settingsDemo() {
           .toUpperCase() || '?'
       );
     },
-    /** Markdown as customers will see it. */
-    asSent(text) {
-      return markdown.parse(text ?? '');
-    },
-    people(box) {
-      return box.agents.length === 1 ? '1 person' : `${box.agents.length} people`;
+    /** A mailbox's settings, in the mailbox (the Support example), at one of its pages. */
+    mailboxUrl(id, page = '') {
+      return `/support.html#/mailbox/${id}/settings${page ? `/${page}` : ''}`;
     },
     /** The mailboxes a person can use: each mailbox's own list of people. */
     mailboxesOf(id) {
@@ -285,36 +207,47 @@ export function settingsDemo() {
     get installationLanguages() {
       return Object.fromEntries(Object.entries(languages).filter(([code]) => code !== 'default'));
     },
-    /** A mailbox's AI Assistant at a glance: its language while any feature is on. */
+    /** A mailbox's AI Assistant at a glance, its Default following the installation's language. */
     aiSummary(box) {
-      if (![box.aiSummaries, box.aiTranslations, box.aiDrafts, box.chatTranslation].some(Boolean)) return 'Off';
-      return `On · ${languages[box.aiLanguage === 'default' ? this.settings.aiDefaultLanguage : box.aiLanguage]}`;
+      return aiSummary(box, this.settings.aiDefaultLanguage);
     },
-    /** The current value a mailbox's page row shows for one of its further pages. */
-    summary(section) {
-      const box = this.box;
-      if (section === 'connection') return box.sending === 'smtp' ? `SMTP · ${box.smtpHost}` : 'The server’s mail';
-      if (section === 'permissions') return this.people(box);
-      if (section === 'ai') return this.aiSummary(box);
-      return box.autoReply ? 'On' : 'Off';
+    openNewMailbox() {
+      this.newMailboxName = '';
+      this.$refs.newMailboxDialog.showModal();
     },
-    /** Asks the Customer Context URL about one customer and shows the answer, as the assistant would. */
-    testContext() {
-      const input = this.$root.querySelector('#settings-ai-test');
-      // The message stays until the field changes or loses focus.
-      input.setCustomValidity(this.contextEmail ? '' : 'Enter a customer’s email address.');
-      if (!input.reportValidity()) return;
-      this.contextResult = JSON.stringify(
-        {
-          email: this.contextEmail,
-          name: 'Sophie Chen',
-          company: 'Studio North',
-          plan: 'Team',
-          customerSince: '2024-03',
-        },
-        null,
-        2,
-      );
+    /**
+     * A new mailbox with its name, then its settings in the mailbox. The Support example is another
+     * page, so it's told about the new mailbox for this visit (sessionStorage), as a server would know.
+     */
+    createMailbox() {
+      const name = this.newMailboxName.trim();
+      const base =
+        name
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '') || 'mailbox';
+      let id = base;
+      for (let number = 2; this.settings.mailboxes[id]; number++) id = `${base}-${number}`;
+      this.settings.mailboxes[id] = mailboxSettings(name);
+      this.$refs.newMailboxDialog.close();
+      try {
+        sessionStorage.setItem('fruitui-new-mailbox', JSON.stringify({ id, name }));
+      } catch {
+        // Without storage the Support example opens its own mailboxes.
+      }
+      location.assign(this.mailboxUrl(id));
+    },
+    async deleteMailbox(id) {
+      const name = this.settings.mailboxes[id].name;
+      const confirmed = await this.$confirm({
+        title: `Delete ${name}?`,
+        message: 'Its conversations are removed for everyone.',
+        confirm: 'Delete Mailbox',
+        tone: 'danger',
+      });
+      if (!confirmed) return;
+      delete this.settings.mailboxes[id];
+      this.$toast(`${name} was deleted.`);
     },
     init() {
       // The accent applies at once, on the whole page.
@@ -327,41 +260,20 @@ export function settingsDemo() {
     },
     route() {
       const [, page, id, section] = location.hash.split('/');
-      // Links to the single mailbox of earlier versions open the Support mailbox.
-      if (page === 'mailbox') return location.replace(`#/mailboxes/support${mailboxSections[id] ? `/${id}` : ''}`);
+      // A mailbox's settings moved into the mailbox: earlier links (and the single mailbox of earlier
+      // versions, the Support mailbox's) open them there.
+      if (page === 'mailbox') return location.replace(this.mailboxUrl('support', mailboxPages[id] ? id : ''));
+      if (page === 'mailboxes' && this.settings.mailboxes[id]) {
+        return location.replace(this.mailboxUrl(id, mailboxPages[section] ? section : ''));
+      }
       this.chosen = Boolean(pages[page]);
       this.page = pages[page] ? page : 'profile';
-      this.mailboxId = this.page === 'mailboxes' && this.settings.mailboxes[id] ? id : null;
       this.userId = this.page === 'users' && this.settings.users[id] ? id : null;
-      const sections = this.mailboxId ? mailboxSections : this.userId ? userSections : {};
-      this.section = sections[section] ? section : '';
+      this.section = this.userId && userSections[section] ? section : '';
     },
-    /**
-     * Changes are saved as they're made, so there's nothing to submit. A field that can't take an entry
-     * says why beside it when it's committed (on leaving a text field), until it's corrected.
-     */
+    /** An entry a field can't take says why beside it (examples/shared/mailbox-settings.js). */
     check(event) {
-      const control = event.target;
-      const field = control.closest?.('.f-field');
-      if (!control.willValidate || !control.id || !field) return;
-      const id = `${control.id}-error`;
-      let error = document.getElementById(id);
-      // While typing, a shown message follows the entry; a new one waits for the change.
-      if (event.type === 'input' && !error) return;
-      const described = (control.getAttribute('aria-describedby') ?? '')
-        .split(' ')
-        .filter(token => token && token !== id);
-      if (control.checkValidity()) {
-        error?.remove();
-        control.removeAttribute('aria-invalid');
-      } else {
-        error ??= field.appendChild(Object.assign(document.createElement('p'), { className: 'f-error', id }));
-        error.textContent = control.validationMessage;
-        control.setAttribute('aria-invalid', 'true');
-        described.push(id);
-      }
-      if (described.length) control.setAttribute('aria-describedby', described.join(' '));
-      else control.removeAttribute('aria-describedby');
+      checkField(event);
     },
     updateDatabase() {
       this.migrationsPending = false;

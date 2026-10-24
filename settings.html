@@ -8,8 +8,8 @@
   <title>Settings · FruitUI</title>
   <link rel="stylesheet" href="/src/fruitui.css">
   <link rel="stylesheet" href="/examples/shared/showcase.css">
+  <link rel="stylesheet" href="/examples/shared/settings-pages.css">
   <link rel="stylesheet" href="/examples/settings/settings.css">
-  <script type="module" src="/examples/editor.js"></script>
   <script type="module" src="/examples/main.js"></script>
 </head>
 <body>
@@ -24,8 +24,8 @@
       <div class="page-intro"><div><p class="eyebrow">Familiar interfaces, fresh foundations</p><h1>Settings that feel settled.</h1><p>Grouped, level by level, and saved as you go.</p></div><div class="preview-controls"><span class="example-tag">Interactive example · 05</span><fieldset class="f-segmented" aria-label="Settings Preview Size"><legend class="f-sr-only">Settings Preview Size</legend><label><input type="radio" name="settings-preview" value="responsive" x-model="preview" checked><span>Responsive</span></label><label><input type="radio" name="settings-preview" value="phone" x-model="preview"><span>Phone</span></label></fieldset></div></div>
       <div class="settings-container" :data-preview="preview">
         <section id="settings" class="f-workspace settings-workspace" aria-label="Settings example">
-          <!-- Levels side by side: the categories, the chosen page, a mailbox or person on it, then one of
-               its pages. Changes are saved as they're made; check() explains an entry a field can't take. -->
+          <!-- Levels side by side: the categories, the chosen page, a person on it, then one of their pages.
+               Changes are saved as they're made; check() explains an entry a field can't take. -->
           <div class="f-drilldown" x-data="fruitDrilldown" @change="check($event)" @input="check($event)">
             <aside class="f-pane--scroll f-sidebar f-drilldown__column settings-sidebar">
               <div class="f-sidebar__header settings-account"><span class="f-avatar" aria-hidden="true">AM</span><div><strong x-text="account.name">Alex Morgan</strong><small>Forma Account</small></div></div>
@@ -46,7 +46,7 @@
             <!-- The chosen page. At Settings' root nothing is chosen yet: General shows beside the list
                  where there's room (an optional level), and a phone shows the list. -->
             <section class="f-drilldown__column" :class="{ 'f-drilldown__column--optional': !chosen }" aria-labelledby="settings-page-heading">
-              <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" href="#/"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></a><h2 class="f-drilldown__title" id="settings-page-heading" tabindex="-1" x-text="pages[page]">General</h2></header>
+              <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" href="#/"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Settings</span></a><h2 class="f-drilldown__title" id="settings-page-heading" tabindex="-1" x-text="pages[page]">General</h2><div class="f-drilldown__actions" x-show="page === 'mailboxes'" x-cloak><button class="f-button f-button--small" type="button" @click="openNewMailbox">New Mailbox</button></div></header>
               <div class="f-pane__scroll">
                 <div class="f-page f-page--narrow settings-page" :class="{ 'f-page--narrow': page !== 'logs', 'f-page--wide': page === 'logs' }">
                   <div class="f-page__body">
@@ -76,17 +76,20 @@
 
                     <!-- Mailboxes: one place for every mailbox's settings. Each row opens its mailbox as the next
                          level, with the people who use it. -->
+                    <!-- Mailboxes: the team's list, to create and delete them. Each mailbox's own settings are in
+                         the mailbox (the Support example), where people who manage only that mailbox reach them
+                         too. A new mailbox needs only its name; its settings open next. -->
                     <template x-if="page === 'mailboxes'"><div class="settings-sections">
                       <section class="f-form-section" aria-label="Mailboxes">
                         <div class="f-form-section__rows">
-                          <template x-for="(entry, id) in settings.mailboxes" :key="id"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + id" :aria-current="current('#/mailboxes/' + id)"><span class="settings-item"><svg class="f-icon settings-item__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span><span x-text="entry.name"></span><small class="f-help" x-text="entry.email"></small></span></span></a></template>
+                          <template x-for="(entry, id) in settings.mailboxes" :key="id"><div class="f-form-row settings-mailbox-row"><a class="settings-item settings-mailbox-link" :href="mailboxUrl(id)"><svg class="f-icon settings-item__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span><span x-text="entry.name"></span><small class="f-help" x-text="entry.email || 'No email address'"></small></span></a><details class="f-menu" x-data="fruitMenu"><summary role="button" class="f-button f-button--ghost f-button--icon f-button--small" aria-haspopup="menu" :aria-label="'More for ' + entry.name" title="More"><svg class="f-icon" aria-hidden="true"><use href="#i-more"/></svg></summary><div class="f-menu__items" role="menu" :aria-label="entry.name"><a class="f-menu-item" role="menuitem" :href="mailboxUrl(id)">Mailbox Settings</a><a class="f-menu-item" role="menuitem" href="/support.html">Open Mailbox</a><div class="f-menu__separator" role="separator"></div><button class="f-menu-item f-menu-item--danger" role="menuitem" type="button" @click="deleteMailbox(id)">Delete Mailbox…</button></div></details></div></template>
                         </div>
-                        <p class="f-form-section__footer">Each mailbox has its own address, signature, connection and people.</p>
+                        <p class="f-form-section__footer">A mailbox’s address, signature, connection and people are in its own settings, in the mailbox.</p>
                       </section>
                     </div></template>
 
-                    <!-- AI Assistant for the whole installation; each mailbox's own AI settings are on its page,
-                         linked here, so they live in one place with a way in from both. -->
+                    <!-- AI Assistant for the whole installation; each mailbox's own AI settings are in its settings,
+                         in the mailbox, linked here, so they live in one place with a way in from both. -->
                     <template x-if="page === 'ai'"><div class="settings-sections">
                       <section class="f-form-section" aria-labelledby="settings-ai-title">
                         <h3 class="f-form-section__title" id="settings-ai-title">Assistant</h3>
@@ -98,9 +101,9 @@
                       <section class="f-form-section" aria-labelledby="settings-ai-mailboxes-title">
                         <h3 class="f-form-section__title" id="settings-ai-mailboxes-title">Mailboxes</h3>
                         <div class="f-form-section__rows">
-                          <template x-for="(entry, id) in settings.mailboxes" :key="id"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + id + '/ai'"><span class="settings-item"><svg class="f-icon settings-item__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span x-text="entry.name"></span></span><span class="f-form-row__value" x-text="aiSummary(entry)"></span></a></template>
+                          <template x-for="(entry, id) in settings.mailboxes" :key="id"><a class="f-form-row f-form-row--link" :href="mailboxUrl(id, 'ai')"><span class="settings-item"><svg class="f-icon settings-item__icon" :data-fruit-mark="entry.color" aria-hidden="true"><use href="#i-envelope"/></svg><span x-text="entry.name"></span></span><span class="f-form-row__value" x-text="aiSummary(entry)"></span></a></template>
                         </div>
-                        <p class="f-form-section__footer">Each mailbox’s language, features, chat translation and customer context are on its own page, under Mailboxes.</p>
+                        <p class="f-form-section__footer">Each mailbox’s language, features, chat translation and customer context are in its own settings, in the mailbox.</p>
                       </section>
                     </div></template>
 
@@ -227,39 +230,7 @@
               </div>
             </section>
 
-            <!-- A mailbox or a person: its everyday settings, and a row for each of its further pages. -->
-            <template x-if="mailboxId"><section class="f-drilldown__column" aria-labelledby="settings-mailbox-heading">
-              <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" href="#/mailboxes"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Mailboxes</span></a><h2 class="f-drilldown__title" id="settings-mailbox-heading" tabindex="-1" x-text="box.name || 'Mailbox'"></h2><div class="f-drilldown__actions"><a class="f-button f-button--small" href="/support.html">Open Mailbox</a></div></header>
-              <div class="f-pane__scroll">
-                <div class="f-page f-page--narrow settings-page">
-                  <div class="f-page__body">
-                    <div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-mailbox-title">
-                        <h3 class="f-form-section__title" id="settings-mailbox-title">Mailbox</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-name">Name</label><input class="f-input" id="settings-mailbox-name" name="mailboxName" x-model="box.name" required maxlength="40"></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-mailbox-email">Email Address</label><input class="f-input" id="settings-mailbox-email" type="email" name="mailboxEmail" x-model="box.email" required></div>
-                          <div class="f-form-row"><div><span class="f-label" id="settings-mailbox-color-label">Color</span><p class="f-help">Marks this mailbox’s conversations in All Inboxes and its icon in the sidebar.</p></div><div class="f-accent-picker" role="radiogroup" aria-labelledby="settings-mailbox-color-label"><label class="f-accent-picker__option" data-fruit-accent="blue" title="Blue"><input type="radio" name="mailboxColor" value="blue" x-model="box.color"><span class="f-sr-only">Blue</span></label><label class="f-accent-picker__option" data-fruit-accent="purple" title="Purple"><input type="radio" name="mailboxColor" value="purple" x-model="box.color"><span class="f-sr-only">Purple</span></label><label class="f-accent-picker__option" data-fruit-accent="pink" title="Pink"><input type="radio" name="mailboxColor" value="pink" x-model="box.color"><span class="f-sr-only">Pink</span></label><label class="f-accent-picker__option" data-fruit-accent="red" title="Red"><input type="radio" name="mailboxColor" value="red" x-model="box.color"><span class="f-sr-only">Red</span></label><label class="f-accent-picker__option" data-fruit-accent="orange" title="Orange"><input type="radio" name="mailboxColor" value="orange" x-model="box.color"><span class="f-sr-only">Orange</span></label><label class="f-accent-picker__option" data-fruit-accent="yellow" title="Yellow"><input type="radio" name="mailboxColor" value="yellow" x-model="box.color"><span class="f-sr-only">Yellow</span></label><label class="f-accent-picker__option" data-fruit-accent="green" title="Green"><input type="radio" name="mailboxColor" value="green" x-model="box.color"><span class="f-sr-only">Green</span></label><label class="f-accent-picker__option" data-fruit-accent="graphite" title="Graphite"><input type="radio" name="mailboxColor" value="graphite" x-model="box.color"><span class="f-sr-only">Graphite</span></label></div></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-signature">Signature</label><div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="newline" data-fruit-mode="markdown" x-data="fruitEditor"><div class="f-editor__toolbar" id="settings-signature-formatting" hidden aria-label="Text formatting"><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bulletList" aria-label="Bullets" title="Bullets"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="orderedList" aria-label="Numbered List" title="Numbered List"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="blockquote" aria-label="Quote" title="Quote"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5H3"/><path d="M21 12H8"/><path d="M21 19H8"/><path d="M3 12v7"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="image" aria-label="Image" title="Image"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove Formatting" title="Remove Formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button></div><textarea data-fruit-control class="f-input" id="settings-signature" name="signature" aria-describedby="settings-signature-help" x-model="box.signature"></textarea><div class="f-editor__surface" hidden></div></div><p class="f-help" id="settings-signature-help">Added below every reply from this mailbox. Markdown: **bold**, *italic*, [links](https://).</p></div>
-                          <figure class="settings-preview"><figcaption class="f-label">Signature as Sent</figcaption><div class="f-prose settings-preview__body" x-html="asSent(box.signature)"></div></figure>
-                        </div>
-                      </section>
-                      <div class="f-form-section">
-                        <div class="f-form-section__rows">
-                          <template x-for="(label, key) in mailboxSections" :key="key"><a class="f-form-row f-form-row--link" :href="'#/mailboxes/' + mailboxId + '/' + key" :aria-current="current('#/mailboxes/' + mailboxId + '/' + key)"><span x-text="label"></span><span class="f-form-row__value" x-text="summary(key)"></span></a></template>
-                        </div>
-                      </div>
-                      <section class="f-form-section" aria-labelledby="settings-danger-title">
-                        <h3 class="f-form-section__title" id="settings-danger-title">Danger Zone</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-form-row"><div><strong class="f-headline">Delete Mailbox</strong><p class="f-help">Removes the mailbox and its conversations for everyone.</p></div><button class="f-button f-button--danger" type="button" @click="$toast('This sample mailbox stays.')">Delete Mailbox…</button></div>
-                        </div>
-                      </section>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section></template>
+            <!-- A person: what an administrator decides about their account, and a row for each further page. -->
             <template x-if="userId"><section class="f-drilldown__column" aria-labelledby="settings-user-heading">
               <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" href="#/users"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span>Users</span></a><h2 class="f-drilldown__title" id="settings-user-heading" tabindex="-1" x-text="user.name || 'Person'"></h2></header>
               <div class="f-pane__scroll">
@@ -307,91 +278,7 @@
               </div>
             </section></template>
 
-            <!-- One of a mailbox's or person's further pages. -->
-            <template x-if="mailboxId && section"><section class="f-drilldown__column" aria-labelledby="settings-section-heading">
-              <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" :href="'#/mailboxes/' + mailboxId"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="box.name || 'Mailbox'"></span></a><h2 class="f-drilldown__title" id="settings-section-heading" tabindex="-1" x-text="mailboxSections[section]"></h2></header>
-              <div class="f-pane__scroll">
-                <div class="f-page f-page--narrow settings-page">
-                  <div class="f-page__body">
-                    <template x-if="section === 'connection'"><div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-sending-title">
-                        <h3 class="f-form-section__title" id="settings-sending-title">Sending</h3>
-                        <div class="f-form-section__rows">
-                          <fieldset class="f-fieldset"><legend>Send email with</legend>
-                            <div class="f-choice"><label class="f-check"><input type="radio" name="sending" value="php" x-model="box.sending" aria-describedby="settings-php-help"><span>The server’s mail</span></label><p class="f-help f-choice__description" id="settings-php-help">Simple, but more likely to reach spam.</p></div>
-                            <label class="f-check"><input type="radio" name="sending" value="smtp" x-model="box.sending"><span>SMTP</span></label>
-                          </fieldset>
-                          <template x-if="box.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-host">Server</label><input class="f-input" id="settings-smtp-host" name="smtpHost" x-model="box.smtpHost" required></div></template>
-                          <template x-if="box.sending === 'smtp'"><div class="f-field f-field--row"><label class="f-label" for="settings-smtp-port">Port</label><input class="f-input" id="settings-smtp-port" type="number" name="smtpPort" x-model.number="box.smtpPort" min="1" max="65535" required></div></template>
-                        </div>
-                        <p class="f-form-section__footer">Use port 587 with STARTTLS, or 465 with TLS.</p>
-                      </section>
-                    </div></template>
-                    <template x-if="section === 'permissions'"><div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-agents-title">
-                        <h3 class="f-form-section__title" id="settings-agents-title">Who Can Use This Mailbox</h3>
-                        <div class="f-form-section__rows">
-                          <fieldset class="f-fieldset"><legend class="f-sr-only">People</legend>
-                            <template x-for="(entry, id) in settings.users" :key="id"><label class="f-check"><input type="checkbox" name="agents[]" :value="id" x-model="box.agents"><span x-text="entry.name"></span></label></template>
-                          </fieldset>
-                        </div>
-                        <p class="f-form-section__footer">Administrators can always open every mailbox.</p>
-                      </section>
-                    </div></template>
-                    <template x-if="section === 'auto-reply'"><div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-auto-title">
-                        <h3 class="f-form-section__title" id="settings-auto-title">Automatic Reply</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-auto-reply">Send an automatic reply</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-auto-reply" name="autoReply" x-model="box.autoReply" aria-describedby="settings-auto-reply-help"><span></span></label><p class="f-help" id="settings-auto-reply-help">To the first message of every new conversation.</p></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-auto-subject">Subject</label><input class="f-input" id="settings-auto-subject" name="autoSubject" x-model="box.autoSubject" :disabled="!box.autoReply" :required="box.autoReply"></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-auto-body">Message</label><div class="f-editor" data-fruit-link-label="Link Address" data-fruit-image-label="Image Address" data-fruit-apply-label="Apply" data-fruit-insert-label="Insert" data-fruit-remove-link-label="Remove Link" data-fruit-paste="rich" data-fruit-enter="newline" data-fruit-mode="markdown" x-data="fruitEditor"><div class="f-editor__toolbar" id="settings-auto-body-formatting" hidden aria-label="Text formatting"><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bold" aria-label="Bold" title="Bold"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="italic" aria-label="Italic" title="Italic"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" x2="10" y1="4" y2="4"/><line x1="14" x2="5" y1="20" y2="20"/><line x1="15" x2="9" y1="4" y2="20"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="bulletList" aria-label="Bullets" title="Bullets"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="orderedList" aria-label="Numbered List" title="Numbered List"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h10"/><path d="M11 12h10"/><path d="M11 19h10"/><path d="M4 4h1v5"/><path d="M4 9h2"/><path d="M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="blockquote" aria-label="Quote" title="Quote"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5H3"/><path d="M21 12H8"/><path d="M21 19H8"/><path d="M3 12v7"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="link" aria-label="Link" title="Link"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="image" aria-label="Image" title="Image"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="clear" aria-label="Remove Formatting" title="Remove Formatting"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3"/><path d="M5 20h6"/><path d="M13 4 8 20"/><path d="m15 15 5 5"/><path d="m20 15-5 5"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="undo" aria-label="Undo" title="Undo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/></svg></button><button class="f-button f-button--ghost f-button--icon" type="button" data-fruit-command="redo" aria-label="Redo" title="Redo"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13"/></svg></button><span class="f-editor__separator" role="separator" aria-orientation="vertical"></span><details x-data="fruitMenu" class="f-menu"><summary role="button" class="f-button f-button--ghost" aria-haspopup="menu">Insert Variable<span class="f-menu__chevron" aria-hidden="true"></span></summary><div class="f-menu__items" role="menu" aria-label="Insert Variable"><button type="button" role="menuitem" class="f-menu-item" x-on:click="$dispatch('fruit-editor-insert', { markdown: '{%customer.first_name%}', html: '{%customer.first_name%}' })">Customer First Name</button><button type="button" role="menuitem" class="f-menu-item" x-on:click="$dispatch('fruit-editor-insert', { markdown: '{%mailbox.name%}', html: '{%mailbox.name%}' })">Mailbox Name</button></div></details></div><textarea data-fruit-control class="f-input" id="settings-auto-body" name="autoBody" aria-describedby="settings-auto-body-help" x-model="box.autoBody" :disabled="!box.autoReply"></textarea><div class="f-editor__surface" hidden></div></div><p class="f-help" id="settings-auto-body-help">Markdown. Variables are filled in for each customer.</p></div>
-                          <figure class="settings-preview" x-show="box.autoReply"><figcaption class="f-label">Message as Sent</figcaption><div class="f-prose settings-preview__body" x-html="asSent(box.autoBody)"></div></figure>
-                        </div>
-                      </section>
-                    </div></template>
-
-                    <!-- A mailbox's AI Assistant: what it does here, in which language, and what it knows when
-                         drafting. Providers, models and limits are installation-wide, under Settings › AI Assistant. -->
-                    <template x-if="section === 'ai'"><div class="settings-sections">
-                      <section class="f-form-section" aria-labelledby="settings-ai-features-title">
-                        <h3 class="f-form-section__title" id="settings-ai-features-title">Features</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-summaries">Summaries</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-summaries" name="aiSummaries" x-model="box.aiSummaries" aria-describedby="settings-ai-summaries-help"><span></span></label><p class="f-help" id="settings-ai-summaries-help">A short summary at the top of each conversation.</p></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-translations">Translations</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-translations" name="aiTranslations" x-model="box.aiTranslations" aria-describedby="settings-ai-translations-help"><span></span></label><p class="f-help" id="settings-ai-translations-help">Customer messages in another language, translated for agents.</p></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-drafts">Drafts</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-ai-drafts" name="aiDrafts" x-model="box.aiDrafts" aria-describedby="settings-ai-drafts-help"><span></span></label><p class="f-help" id="settings-ai-drafts-help">Reply drafts for agents to review and send.</p></div>
-                        </div>
-                      </section>
-                      <section class="f-form-section" aria-labelledby="settings-ai-language-title">
-                        <h3 class="f-form-section__title" id="settings-ai-language-title">Language</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-language">Language</label><select class="f-input" id="settings-ai-language" name="aiLanguage" x-model="box.aiLanguage" aria-describedby="settings-ai-language-help"><template x-for="(label, code) in languages" :key="code"><option :value="code" :selected="code === box.aiLanguage" x-text="code === 'default' ? 'Default (' + languages[settings.aiDefaultLanguage] + ')' : label"></option></template></select><p class="f-help" id="settings-ai-language-help">Summaries and translations use this language, unless an agent has chosen their own.</p></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-glossary">Glossary</label><textarea class="f-input" id="settings-ai-glossary" name="aiGlossary" rows="4" x-model="box.aiGlossary" placeholder="12VPX&#10;server = Server" aria-describedby="settings-ai-glossary-help"></textarea><p class="f-help" id="settings-ai-glossary-help">One term per line: kept as written, or translated a fixed way (term = translation).</p></div>
-                        </div>
-                      </section>
-                      <section class="f-form-section" aria-labelledby="settings-chat-translation-title">
-                        <h3 class="f-form-section__title" id="settings-chat-translation-title">Chat Translation</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-chat-translation">Translate Chats</label><label class="f-switch"><input type="checkbox" role="switch" id="settings-chat-translation" name="chatTranslation" x-model="box.chatTranslation" aria-describedby="settings-chat-translation-help"><span></span></label><p class="f-help" id="settings-chat-translation-help">Telegram and Nostr chats, both ways: agents read and write in their own language, and see a reply’s translation before it’s sent.</p></div>
-                          <div class="f-choice"><label class="f-check"><input type="checkbox" name="markTranslated" x-model="box.markTranslated" :disabled="!box.chatTranslation" aria-describedby="settings-mark-translated-help"><span>Mark Translated Replies</span></label><p class="f-help f-choice__description" id="settings-mark-translated-help">Chat replies sent translated end with “Translated automatically”, in the customer’s language.</p></div>
-                        </div>
-                      </section>
-                      <section class="f-form-section" aria-labelledby="settings-context-title">
-                        <h3 class="f-form-section__title" id="settings-context-title">Customer Context</h3>
-                        <div class="f-form-section__rows">
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-context-url">URL</label><input class="f-input" id="settings-context-url" type="url" name="contextUrl" x-model="box.contextUrl" placeholder="https://" :disabled="!box.aiDrafts"></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-context-key">Secret Key</label><input class="f-input" id="settings-context-key" type="password" name="contextKey" autocomplete="new-password" x-model="box.contextKey" :disabled="!box.aiDrafts"></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-context-header">Signature Header</label><select class="f-input" id="settings-context-header" name="contextHeader" x-model="box.contextHeader" :disabled="!box.aiDrafts"><option value="none">None</option><option value="x-signature">X-Signature (HMAC SHA-256)</option></select></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-reply-guidance">Reply Guidance</label><textarea class="f-input" id="settings-reply-guidance" name="replyGuidance" rows="4" maxlength="6000" x-model="box.replyGuidance" :disabled="!box.aiDrafts" aria-describedby="settings-reply-guidance-help"></textarea><p class="f-help" id="settings-reply-guidance-help">How replies should sound, and what to avoid. Up to 6,000 characters.</p></div>
-                          <div class="f-field f-field--row"><label class="f-label" for="settings-ai-test">Test</label><div class="f-input-group"><input class="f-input" id="settings-ai-test" type="email" placeholder="customer@example.com" x-model="contextEmail" @input="$el.setCustomValidity('')" @blur="$el.setCustomValidity('')" :disabled="!box.aiDrafts" aria-describedby="settings-ai-test-help"><button class="f-button" type="button" @click="testContext()" :disabled="!box.aiDrafts">Test</button></div><p class="f-help" id="settings-ai-test-help">Asks the URL about this customer and shows the answer.</p></div>
-                          <pre class="settings-log-lines settings-context-result" role="status" aria-label="Test result" x-show="contextResult" x-text="contextResult"></pre>
-                        </div>
-                        <p class="f-form-section__footer" x-text="box.aiDrafts ? 'When drafting a reply, the assistant asks this URL about the customer, signed with the key, and uses the answer.' : 'Used when drafting replies. Turn on Drafts to use it.'"></p>
-                      </section>
-                    </div></template>
-                  </div>
-                </div>
-              </div>
-            </section></template>
+            <!-- One of a person's further pages. -->
             <template x-if="userId && section"><section class="f-drilldown__column" aria-labelledby="settings-user-section-heading">
               <header class="f-drilldown__header"><a class="f-button f-button--ghost f-back" :href="'#/users/' + userId"><svg class="f-icon" aria-hidden="true"><use href="#i-back"/></svg><span x-text="user.name || 'Person'"></span></a><h2 class="f-drilldown__title" id="settings-user-section-heading" tabindex="-1" x-text="userSections[section]"></h2></header>
               <div class="f-pane__scroll">
@@ -427,6 +314,13 @@
             <header class="f-dialog__header"><h2 id="settings-delete-title">Delete your account?</h2></header>
             <div class="f-dialog__body"><p>We’ll email you a link to confirm. Your conversations stay with your team.</p></div>
             <footer class="f-dialog__footer"><form method="dialog"><button class="f-button" type="submit" autofocus>Cancel</button></form><button class="f-button f-button--danger" type="button" @click="deleteAccount()">Delete Account</button></footer>
+          </dialog>
+          <dialog class="f-dialog" x-ref="newMailboxDialog" aria-labelledby="settings-new-mailbox-title">
+            <form x-ref="newMailboxForm" @submit.prevent="createMailbox">
+              <header class="f-dialog__header"><h2 id="settings-new-mailbox-title">New Mailbox</h2></header>
+              <div class="f-dialog__body"><div class="f-field"><label class="f-label" for="settings-new-mailbox-name">Mailbox Name</label><input class="f-input" id="settings-new-mailbox-name" x-model="newMailboxName" required maxlength="40" pattern=".*\S.*" autocomplete="off" aria-describedby="settings-new-mailbox-help"><p class="f-help" id="settings-new-mailbox-help">Its settings open next, in the mailbox: its address, people and the rest.</p></div></div>
+              <footer class="f-dialog__footer"><button class="f-button" type="button" @click="$refs.newMailboxDialog.close()">Cancel</button><button class="f-button f-button--primary" type="submit">Create</button></footer>
+            </form>
           </dialog>
           <dialog class="f-dialog" x-ref="fetchDialog" aria-labelledby="settings-fetch-title">
             <form x-ref="fetchForm" @submit.prevent="runFetch">

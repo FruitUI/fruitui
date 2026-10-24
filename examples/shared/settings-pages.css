@@ -1,0 +1,25 @@
+/*
+ * Settings pages, in the Settings example and in a mailbox's own settings (the Support example): a page
+ * on the grouped background, its sections spaced alike, and text a server returns (a log, a test's
+ * answer) in a box of its own.
+ */
+.settings-page {
+  --f-page-background: var(--f-grouped-background);
+}
+.settings-sections {
+  display: grid;
+  gap: 24px;
+}
+.settings-sections > * {
+  min-width: 0;
+}
+.settings-log-lines {
+  max-height: 24rem;
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  border-radius: var(--f-radius-md);
+  background: var(--f-surface-secondary);
+  font-size: var(--f-text-sm);
+  white-space: pre-wrap;
+}

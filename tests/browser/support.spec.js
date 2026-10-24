@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible, tokenColor } from './helpers.js';
+import { expectAccessible, expectNoOverflow, selectMarkdown, tokenColor } from './helpers.js';
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/support.html');
@@ -897,5 +897,208 @@ for (const colorScheme of ['light', 'dark']) {
     await filter(page, 'High Priority');
     await page.getByRole('button', { name: /^Filter/ }).click();
     await expectAccessible(page, '.support-list-header');
+  });
+}
+
+/** A mailbox's settings, in the mailbox: its pages in the list's place, the open one beside them. */
+const settingsPages = page => page.getByRole('region', { name: 'Settings', exact: true });
+const settingsRow = (page, name) => settingsPages(page).getByRole('link', { name: new RegExp(`^${name}`) });
+const settingsPane = page => page.locator('#support-settings-page');
+
+async function openMailboxSettings(page, id, name) {
+  await page.locator(`#support-queues details[data-scope="${id}"]`).evaluate(details => (details.open = true));
+  await page.getByRole('button', { name: `More for ${name}` }).click();
+  await page
+    .getByRole('menu', { name: `${name} mailbox` })
+    .getByRole('menuitem', { name: 'Mailbox Settings' })
+    .click();
+}
+
+test('a mailbox’s settings open from its menu, in the mailbox: its pages listed beside the open one', async ({
+  page,
+}) => {
+  await openMailboxSettings(page, 'billing', 'Billing');
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings$/);
+  await expect(page.locator('.support-settings-toolbar')).toContainText('Billing');
+  // A row per page, with its current value; General's says only what's missing.
+  await expect(settingsPages(page).getByRole('link')).toHaveText([
+    /^General$/,
+    /^Connection.*SMTP · smtp\.forma\.example/,
+    /^Permissions.*1 person/,
+    /^Auto Reply.*On/,
+    /^AI Assistant.*On · Dutch/,
+  ]);
+  // General shows beside them; its row is current and takes the keyboard, in the accent.
+  const general = settingsRow(page, 'General');
+  await expect(general).toHaveAttribute('aria-current', 'page');
+  await expect(general).toBeFocused();
+  await expect(general).toHaveCSS('background-color', await tokenColor(page, '--f-accent-fill'));
+  await expect(page.getByRole('heading', { name: 'General', level: 2 })).toBeVisible();
+  await expect(settingsPane(page).getByLabel('Name', { exact: true })).toHaveValue('Billing');
+  // Nothing in the sidebar is current while the mailbox's settings are open.
+  await expect(page.locator('#support-queues [aria-current]')).toHaveCount(0);
+  // Another page opens beside the list; its row keeps the keyboard, and a change shows in it at once.
+  await settingsRow(page, 'Connection').click();
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/connection$/);
+  await expect(settingsRow(page, 'Connection')).toHaveAttribute('aria-current', 'page');
+  await expect(settingsRow(page, 'Connection')).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Connection', level: 2 })).toBeVisible();
+  await settingsPane(page).getByRole('radio', { name: 'The server’s mail' }).check();
+  await expect(settingsRow(page, 'Connection')).toHaveText(/The server’s mail/);
+  await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
+  // With the keyboard elsewhere, the row stays selected without the accent.
+  await expect(settingsRow(page, 'Connection')).toHaveCSS(
+    'background-color',
+    await tokenColor(page, '--f-selection-inactive'),
+  );
+  // The mailbox's name is its own everywhere at once.
+  await settingsRow(page, 'General').click();
+  await settingsPane(page).getByLabel('Name', { exact: true }).fill('Billing Team');
+  await expect(page.locator('#support-queues details[data-scope="billing"] > summary')).toContainText('Billing Team');
+  await expect(page.locator('.support-settings-toolbar')).toContainText('Billing Team');
+  // A folder leaves the settings, and Back returns to them.
+  await queue(page, 'Unassigned').first().click();
+  await expect(page).toHaveURL(/\/support\.html$/);
+  await expect(settingsPages(page)).toBeHidden();
+  await expect(page.locator('button.support-ticket').first()).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/general$/);
+  await expect(settingsPages(page)).toBeVisible();
+});
+
+test('a mailbox without an email address only chats, and its settings say so', async ({ page }) => {
+  await page.goto('/support.html#/mailbox/feedback/settings');
+  const email = settingsPane(page).getByLabel('Email Address', { exact: true });
+  await expect(email).toHaveAccessibleDescription(/Optional/);
+  await email.fill('');
+  await email.blur();
+  await expect(email).not.toHaveAttribute('aria-invalid');
+  await expect(settingsRow(page, 'General')).toHaveText(/No email address/);
+  await expect(settingsRow(page, 'Connection')).toHaveText(/Not set up/);
+  await settingsRow(page, 'Connection').click();
+  await expect(settingsPane(page).getByRole('status')).toHaveText(
+    'This mailbox has no email address. Add one under General to send and receive email.',
+  );
+});
+
+test('on a phone a mailbox’s settings show its pages, then the page, with a way back', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/support.html#/mailbox/billing/settings');
+  await expect(settingsPages(page)).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'General', level: 2 })).toBeHidden();
+  await settingsRow(page, 'Permissions').click();
+  await expect(settingsPages(page)).toBeHidden();
+  await expect(page.getByRole('heading', { name: 'Permissions', level: 2 })).toBeFocused();
+  await page.getByRole('button', { name: 'Back to mailbox settings' }).click();
+  await expect(settingsRow(page, 'Permissions')).toBeFocused();
+  await expectNoOverflow(page, '#support');
+});
+
+test('a mailbox’s color comes from the named accents, and its sidebar icon shows it at once', async ({ page }) => {
+  await page.goto('/support.html#/mailbox/support/settings');
+  const group = settingsPane(page).getByRole('radiogroup', { name: 'Color' });
+  await expect(group.getByRole('radio')).toHaveCount(8);
+  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
+  await group.getByRole('radio', { name: 'Green' }).check();
+  await expect(page.locator('#support-queues details[data-scope="support"] > summary')).toHaveAttribute(
+    'data-fruit-mark',
+    'green',
+  );
+});
+
+test('a mailbox’s signature and automatic reply are written in Markdown and shown as sent', async ({ page }) => {
+  await page.goto('/support.html#/mailbox/support/settings');
+  const mailbox = settingsPane(page);
+  const signature = mailbox.getByRole('textbox', { name: 'Signature' });
+  // The field shows the Markdown as written, its syntax styled; its textarea holds it for the form.
+  const signatureValue = page.locator('#settings-signature');
+  await expect(signatureValue).toHaveValue('Thanks,\n**The Forma team**\n[forma.example](https://forma.example)');
+  await expect(signature.locator('.f-editor__strong:not(.f-editor__syntax)')).toHaveText('The Forma team');
+  const sent = mailbox.getByRole('figure', { name: 'Signature as Sent' });
+  await expect(sent.locator('strong')).toHaveText('The Forma team');
+  await expect(sent.getByRole('link', { name: 'forma.example' })).toHaveAttribute('href', 'https://forma.example');
+  // The toolbar writes Markdown around the selection, and the preview follows.
+  await selectMarkdown(signature, { text: 'Thanks' });
+  await mailbox.getByRole('button', { name: 'Italic', exact: true }).click();
+  await expect(signatureValue).toHaveValue(/^\*Thanks\*,/);
+  await expect(sent.locator('em')).toHaveText('Thanks');
+  // Raw HTML shows as text, and only web and mail addresses become links.
+  await signature.fill('<b>Hi</b> [there](javascript:alert(1))');
+  await expect(sent.locator('.settings-preview__body')).toHaveText('<b>Hi</b> there');
+  await expect(sent.getByRole('link')).toHaveCount(0);
+
+  // An automatic reply's variables are inserted as written, for the server to fill in.
+  await page.goto('/support.html#/mailbox/billing/settings/auto-reply');
+  const reply = settingsPane(page);
+  const message = reply.getByRole('textbox', { name: 'Message' });
+  await selectMarkdown(message, { at: -1 });
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('Best, ');
+  await reply.getByRole('button', { name: 'Insert Variable' }).click();
+  await page.getByRole('menuitem', { name: 'Mailbox Name' }).click();
+  await expect(page.locator('#settings-auto-body')).toHaveValue(/\nBest, \{%mailbox\.name%\}$/);
+  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toContainText('Best, {%mailbox.name%}');
+  // Off, the message, its toolbar and its preview step aside.
+  await reply.getByRole('switch', { name: 'Send an automatic reply' }).uncheck();
+  await expect(message).toBeDisabled();
+  await expect(reply.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
+  // It takes no content, so the application's Insert Variable steps aside with the toolbar.
+  await expect(reply.locator('.f-editor__toolbar')).toHaveJSProperty('inert', true);
+  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toBeHidden();
+  await expect(settingsRow(page, 'Auto Reply')).toHaveText(/Off/);
+});
+
+test('a mailbox’s AI Assistant is one of its pages, its row saying what’s on', async ({ page }) => {
+  await page.goto('/support.html#/mailbox/billing/settings');
+  await expect(settingsRow(page, 'AI Assistant')).toHaveText(/On · Dutch/);
+  await settingsRow(page, 'AI Assistant').click();
+  const ai = settingsPane(page);
+  await expect(page.getByRole('heading', { name: 'AI Assistant', level: 2 })).toBeVisible();
+  // Settings that only matter while a feature is on stay in view, disabled, and say why.
+  const mark = ai.getByRole('checkbox', { name: 'Mark Translated Replies' });
+  await expect(mark).toBeEnabled();
+  await ai.getByRole('switch', { name: 'Translate Chats' }).uncheck();
+  await expect(mark).toBeDisabled();
+  const url = ai.getByLabel('URL', { exact: true });
+  await expect(url).toBeEnabled();
+  await ai.getByRole('switch', { name: 'Drafts' }).uncheck();
+  await expect(url).toBeDisabled();
+  await expect(ai.getByRole('region', { name: 'Customer Context' })).toContainText('Turn on Drafts to use it.');
+  await ai.getByRole('switch', { name: 'Drafts' }).check();
+  // The test asks for an email first, then shows the answer.
+  const test = ai.getByRole('button', { name: 'Test', exact: true });
+  await test.click();
+  expect(await page.locator('#settings-ai-test').evaluate(input => input.validationMessage)).toBe(
+    'Enter a customer’s email address.',
+  );
+  await ai.getByLabel('Test', { exact: true }).fill('sophie@example.com');
+  await test.click();
+  await expect(ai.getByRole('status', { name: 'Test result' })).toContainText('"name": "Sophie Chen"');
+  // Default names the installation's language.
+  await expect(page.getByRole('option', { name: 'Default (English)' })).toBeAttached();
+  // With every feature off, its row says so.
+  for (const name of ['Summaries', 'Translations', 'Drafts']) await ai.getByRole('switch', { name }).uncheck();
+  await expect(settingsRow(page, 'AI Assistant')).toHaveText(/Off/);
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`every page of a mailbox’s settings is accessible and fits in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    for (const name of ['', '/general', '/connection', '/permissions', '/auto-reply', '/ai']) {
+      await page.goto(`/support.html#/mailbox/support/settings${name}`);
+      await expect(settingsPane(page).locator('.settings-sections').first()).toBeVisible();
+      await expectAccessible(page, '#support');
+    }
+    // The open page's row in the accent while the list has focus, and the mailbox's menu open.
+    await settingsRow(page, 'AI Assistant').focus();
+    await expectAccessible(page, '#support');
+    await page.locator('#support-queues details[data-scope="support"]').evaluate(details => (details.open = true));
+    await page.getByRole('button', { name: 'More for Support' }).click();
+    await expectAccessible(page, '#support');
+    await page.keyboard.press('Escape');
+    for (const width of [800, 320]) {
+      await page.setViewportSize({ width, height: 800 });
+      await expectNoOverflow(page, '#support');
+    }
   });
 }

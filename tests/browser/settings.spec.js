@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { expectAccessible, expectNoOverflow, selectMarkdown, tokenColor } from './helpers.js';
+import { expectAccessible, expectNoOverflow, tokenColor } from './helpers.js';
 
 // The Settings example: grouped settings in a Drill-Down (settings.html).
 const workspace = page => page.locator('#settings');
@@ -44,90 +44,76 @@ test('each level opens beside the one before, and the rows on the way stay curre
   await expect.poll(() => shown(page)).toEqual(['Settings', 'Profile']);
   const links = sidebar(page).getByRole('link');
   const count = await links.count();
-  const mailboxes = sidebar(page).getByRole('link', { name: 'Mailboxes' });
-  await mailboxes.click();
-  await expect(page).toHaveURL(/#\/mailboxes$/);
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes']);
-  const list = level(page, 'Mailboxes').getByRole('region', { name: 'Mailboxes' });
-  await expect(list.getByRole('link')).toHaveText([
-    /Support.*support@forma\.example/,
-    /Billing.*billing@forma\.example/,
-    /Feedback.*feedback@forma\.example/,
-  ]);
-  const billing = list.getByRole('link', { name: /^Billing/ });
-  await billing.click();
-  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Billing']);
+  const users = sidebar(page).getByRole('link', { name: 'Users' });
+  await users.click();
+  await expect(page).toHaveURL(/#\/users$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Users']);
+  const list = level(page, 'Users').getByRole('region', { name: 'Users' });
+  await expect(list.getByRole('link')).toHaveText([/Alex Morgan \(You\)/, /Mia Patel/, /Noah Williams/]);
+  const mia = list.getByRole('link', { name: /^Mia Patel/ });
+  await mia.click();
+  await expect(page).toHaveURL(/#\/users\/mia$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Users', 'Mia Patel']);
   // A level is a region named by its title. The row that opened it is current, and keeps focus beside
   // it; where a click doesn't focus a link (Safari), the new level's title takes focus instead.
-  await expect(level(page, 'Billing')).toHaveAccessibleName('Billing');
+  await expect(level(page, 'Mia Patel')).toHaveAccessibleName('Mia Patel');
   await expect
-    .poll(() =>
-      page.evaluate(() => document.activeElement?.matches('a[href="#/mailboxes/billing"], #settings-mailbox-heading')),
-    )
+    .poll(() => page.evaluate(() => document.activeElement?.matches('a[href="#/users/mia"], #settings-user-heading')))
     .toBe(true);
-  await expect(billing).toHaveAttribute('aria-current', 'page');
-  await expect(mailboxes).toHaveAttribute('aria-current', 'true');
-  const mailbox = level(page, 'Billing');
-  await expect(mailbox.getByLabel('Email Address', { exact: true })).toHaveValue('billing@forma.example');
-  await expect(mailbox.getByRole('link', { name: 'Open Mailbox' })).toBeVisible();
+  await expect(mia).toHaveAttribute('aria-current', 'page');
+  await expect(users).toHaveAttribute('aria-current', 'true');
+  const person = level(page, 'Mia Patel');
+  await expect(person.getByLabel('Email', { exact: true })).toHaveValue('mia@forma.example');
   // A row per further page, with its current value.
-  const row = name => mailbox.getByRole('link', { name: new RegExp(`^${name}`) });
-  await expect(row('Connection')).toHaveText(/SMTP · smtp\.forma\.example/);
-  await expect(row('Permissions')).toHaveText(/1 person/);
-  await expect(row('Auto Reply')).toHaveText(/On/);
-  await row('Connection').click();
-  await expect(page).toHaveURL(/#\/mailboxes\/billing\/connection$/);
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Billing', 'Connection']);
-  await expect(row('Connection')).toHaveAttribute('aria-current', 'page');
-  await expect(billing).toHaveAttribute('aria-current', 'true');
+  const row = person.getByRole('link', { name: /^Permissions/ });
+  await expect(row).toHaveText(/2 mailboxes/);
+  await row.click();
+  await expect(page).toHaveURL(/#\/users\/mia\/permissions$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Users', 'Mia Patel', 'Permissions']);
+  await expect(row).toHaveAttribute('aria-current', 'page');
+  await expect(mia).toHaveAttribute('aria-current', 'true');
   // With every level in view, none needs a way back.
-  for (const name of ['Mailboxes', 'Billing', 'Connection']) await expect(back(page, name)).toBeHidden();
+  for (const name of ['Users', 'Mia Patel', 'Permissions']) await expect(back(page, name)).toBeHidden();
   // A change shows at once in the row beside it: there's nothing to save.
-  await level(page, 'Connection').getByRole('radio', { name: 'The server’s mail' }).check();
-  await expect(level(page, 'Connection').getByLabel('Server', { exact: true })).toHaveCount(0);
-  await expect(row('Connection')).toHaveText(/The server’s mail/);
+  await level(page, 'Permissions').getByRole('checkbox', { name: 'Billing' }).check();
+  await expect(row).toHaveText(/3 mailboxes/);
   await expect(workspace(page).getByRole('button', { name: 'Save' })).toHaveCount(0);
   // The sidebar never grows on the way.
   await expect(links).toHaveCount(count);
   // Choosing another row closes the levels below it.
-  await list.getByRole('link', { name: /^Support/ }).click();
-  await expect(page).toHaveURL(/#\/mailboxes\/support$/);
-  await expect.poll(() => shown(page)).toEqual(['Settings', 'Mailboxes', 'Support']);
-  await expect(level(page, 'Support').getByRole('link', { name: /^Connection/ })).toHaveText(/SMTP/);
-  // Links to the earlier single mailbox open the Support mailbox.
-  await page.goto('/settings.html#/mailbox/connection');
-  await expect(page).toHaveURL(/#\/mailboxes\/support\/connection$/);
-  await expect(level(page, 'Connection')).toBeVisible();
+  await list.getByRole('link', { name: /^Noah Williams/ }).click();
+  await expect(page).toHaveURL(/#\/users\/noah$/);
+  await expect.poll(() => shown(page)).toEqual(['Settings', 'Users', 'Noah Williams']);
+  await expect(level(page, 'Noah Williams').getByRole('link', { name: /^Permissions/ })).toHaveText(/1 mailbox/);
 });
 
 test('where the levels don’t all fit, the deepest show and the first leads back', async ({ page }) => {
-  await page.goto('/settings.html#/mailboxes/billing/connection');
+  await page.goto('/settings.html#/users/mia/permissions');
   // Levels are a large phone's width at least; 1440 fits three of them.
-  await expect.poll(() => shown(page)).toEqual(['Mailboxes', 'Billing', 'Connection']);
+  await expect.poll(() => shown(page)).toEqual(['Users', 'Mia Patel', 'Permissions']);
   const widths = await workspace(page)
     .locator('.f-drilldown__column')
     .evaluateAll(columns => columns.filter(column => column.checkVisibility()).map(column => column.offsetWidth));
   for (const width of widths) expect(width).toBeGreaterThanOrEqual(440);
-  await expect(back(page, 'Mailboxes')).toHaveText('Settings');
-  await expect(back(page, 'Billing')).toBeHidden();
+  await expect(back(page, 'Users')).toHaveText('Settings');
+  await expect(back(page, 'Mia Patel')).toBeHidden();
   await page.setViewportSize({ width: 1280, height: 1000 });
-  await expect.poll(() => shown(page)).toEqual(['Billing', 'Connection']);
-  await expect(back(page, 'Billing')).toHaveText('Mailboxes');
+  await expect.poll(() => shown(page)).toEqual(['Mia Patel', 'Permissions']);
+  await expect(back(page, 'Mia Patel')).toHaveText('Users');
   await page.setViewportSize({ width: 800, height: 1000 });
-  await expect.poll(() => shown(page)).toEqual(['Connection']);
-  await expect(back(page, 'Connection')).toHaveText('Billing');
+  await expect.poll(() => shown(page)).toEqual(['Permissions']);
+  await expect(back(page, 'Permissions')).toHaveText('Mia Patel');
   // Back goes to that level's parent, focusing the row that leads where you were.
-  await back(page, 'Connection').click();
-  await expect(page).toHaveURL(/#\/mailboxes\/billing$/);
-  await expect.poll(() => shown(page)).toEqual(['Billing']);
-  await expect(level(page, 'Billing').getByRole('link', { name: /^Connection/ })).toBeFocused();
+  await back(page, 'Permissions').click();
+  await expect(page).toHaveURL(/#\/users\/mia$/);
+  await expect.poll(() => shown(page)).toEqual(['Mia Patel']);
+  await expect(level(page, 'Mia Patel').getByRole('link', { name: /^Permissions/ })).toBeFocused();
   // The sidebar counts at its own width, so the categories and a page share a tablet's width.
   await page.goto('/settings.html#/general');
   await expect.poll(() => shown(page)).toEqual(['Settings', 'General']);
   // Every level's title row keeps one height, with or without Back and actions.
   const heights = [];
-  for (const hash of ['#/general', '#/mailboxes/support', '#/mailboxes/support/connection']) {
+  for (const hash of ['#/general', '#/mailboxes', '#/users/mia', '#/users/mia/permissions']) {
     await page.goto(`/settings.html${hash}`);
     for (const header of await workspace(page).locator('.f-drilldown__header').all())
       if (await header.isVisible()) heights.push((await header.boundingBox()).height);
@@ -259,7 +245,7 @@ test('a person’s permissions: the mailboxes they open, and what General lets e
   await person.getByRole('link', { name: /^Permissions/ }).click();
   await expect(page).toHaveURL(/#\/users\/mia\/permissions$/);
   const permissions = level(page, 'Permissions');
-  // A mailbox's people, seen from the person: changing either changes both.
+  // The mailboxes they open: each mailbox's people, seen from the person.
   const billing = permissions.getByRole('checkbox', { name: 'Billing' });
   await expect(billing).not.toBeChecked();
   await billing.check();
@@ -269,8 +255,6 @@ test('a person’s permissions: the mailboxes they open, and what General lets e
   await expect(remove.locator('option:checked')).toHaveText('Default (Not Allowed)');
   await page.goto('/settings.html#/general');
   await page.getByRole('checkbox', { name: 'Delete conversations' }).check();
-  await page.goto('/settings.html#/mailboxes/billing/permissions');
-  await expect(level(page, 'Permissions').getByRole('checkbox', { name: 'Mia Patel' })).toBeChecked();
   await page.goto('/settings.html#/users/mia/permissions');
   await expect(remove.locator('option:checked')).toHaveText('Default (Allowed)');
   await remove.selectOption('deny');
@@ -341,11 +325,6 @@ for (const colorScheme of ['light', 'dark']) {
     for (const hash of [
       '#/general',
       '#/mailboxes',
-      '#/mailboxes/support',
-      '#/mailboxes/support/connection',
-      '#/mailboxes/support/permissions',
-      '#/mailboxes/support/auto-reply',
-      '#/mailboxes/support/ai',
       '#/ai',
       '#/profile',
       '#/users',
@@ -506,106 +485,70 @@ for (const colorScheme of ['light', 'dark']) {
   });
 }
 
-test('a mailbox has a color from the named accents, which its row shows at once', async ({ page }) => {
-  await page.goto('/settings.html#/mailboxes/support');
-  const group = page.getByRole('radiogroup', { name: 'Color' });
-  await expect(group.getByRole('radio')).toHaveCount(8);
-  await expect(group.getByRole('radio', { name: 'Blue' })).toBeChecked();
-  await group.getByRole('radio', { name: 'Green' }).check();
-  await expect(
-    level(page, 'Mailboxes')
-      .getByRole('link', { name: /^Support/ })
-      .locator('.settings-item__icon'),
-  ).toHaveAttribute('data-fruit-mark', 'green');
-});
-
-test('a mailbox’s signature and automatic reply are written in Markdown and shown as sent', async ({ page }) => {
-  await page.goto('/settings.html#/mailboxes/support');
-  const mailbox = level(page, 'Support');
-  const signature = mailbox.getByRole('textbox', { name: 'Signature' });
-  // The field shows the Markdown as written, its syntax styled; its textarea holds it for the form.
-  const signatureValue = page.locator('#settings-signature');
-  await expect(signatureValue).toHaveValue('Thanks,\n**The Forma team**\n[forma.example](https://forma.example)');
-  await expect(signature.locator('.f-editor__strong:not(.f-editor__syntax)')).toHaveText('The Forma team');
-  const sent = mailbox.getByRole('figure', { name: 'Signature as Sent' });
-  await expect(sent.locator('strong')).toHaveText('The Forma team');
-  await expect(sent.getByRole('link', { name: 'forma.example' })).toHaveAttribute('href', 'https://forma.example');
-  // The toolbar writes Markdown around the selection, and the preview follows.
-  await selectMarkdown(signature, { text: 'Thanks' });
-  await mailbox.getByRole('button', { name: 'Italic', exact: true }).click();
-  await expect(signatureValue).toHaveValue(/^\*Thanks\*,/);
-  await expect(sent.locator('em')).toHaveText('Thanks');
-  // Raw HTML shows as text, and only web and mail addresses become links.
-  await signature.fill('<b>Hi</b> [there](javascript:alert(1))');
-  await expect(sent.locator('.settings-preview__body')).toHaveText('<b>Hi</b> there');
-  await expect(sent.getByRole('link')).toHaveCount(0);
-
-  // An automatic reply's variables are inserted as written, for the server to fill in.
-  await page.goto('/settings.html#/mailboxes/billing/auto-reply');
-  const reply = level(page, 'Auto Reply');
-  const message = reply.getByRole('textbox', { name: 'Message' });
-  await selectMarkdown(message, { at: -1 });
-  await page.keyboard.press('Enter');
-  await page.keyboard.type('Best, ');
-  await reply.getByRole('button', { name: 'Insert Variable' }).click();
-  await page.getByRole('menuitem', { name: 'Mailbox Name' }).click();
-  await expect(page.locator('#settings-auto-body')).toHaveValue(/\nBest, \{%mailbox\.name%\}$/);
-  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toContainText('Best, {%mailbox.name%}');
-  // Off, the message, its toolbar and its preview step aside.
-  await reply.getByRole('switch', { name: 'Send an automatic reply' }).uncheck();
-  await expect(message).toBeDisabled();
-  await expect(reply.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
-  // It takes no content, so the application's Insert Variable steps aside with the toolbar.
-  await expect(reply.locator('.f-editor__toolbar')).toHaveJSProperty('inert', true);
-  await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toBeHidden();
-});
-
-test('a mailbox’s AI Assistant is one of its pages, and Settings › AI Assistant links to each', async ({ page }) => {
-  await page.goto('/settings.html#/mailboxes/billing');
-  const row = name => level(page, 'Billing').getByRole('link', { name: new RegExp(`^${name}`) });
-  await expect(row('AI Assistant')).toHaveText(/On · Dutch/);
-  await row('AI Assistant').click();
-  const ai = level(page, 'AI Assistant');
-  await expect(ai).toBeVisible();
-  // Settings that only matter while a feature is on stay in view, disabled, and say why.
-  const mark = ai.getByRole('checkbox', { name: 'Mark Translated Replies' });
-  await expect(mark).toBeEnabled();
-  await ai.getByRole('switch', { name: 'Translate Chats' }).uncheck();
-  await expect(mark).toBeDisabled();
-  const url = ai.getByLabel('URL', { exact: true });
-  await expect(url).toBeEnabled();
-  await ai.getByRole('switch', { name: 'Drafts' }).uncheck();
-  await expect(url).toBeDisabled();
-  await expect(ai.getByRole('region', { name: 'Customer Context' })).toContainText('Turn on Drafts to use it.');
-  await ai.getByRole('switch', { name: 'Drafts' }).check();
-  // The test asks for an email first, then shows the answer.
-  const test = ai.getByRole('button', { name: 'Test', exact: true });
-  await test.click();
-  expect(await page.locator('#settings-ai-test').evaluate(input => input.validationMessage)).toBe(
-    'Enter a customer’s email address.',
+test('Mailboxes creates and deletes mailboxes; a mailbox’s own settings open in the mailbox', async ({ page }) => {
+  await page.goto('/settings.html#/mailboxes');
+  const list = level(page, 'Mailboxes').getByRole('region', { name: 'Mailboxes' });
+  await expect(list.getByRole('link')).toHaveText([
+    /Support.*support@forma\.example/,
+    /Billing.*billing@forma\.example/,
+    /Feedback.*feedback@forma\.example/,
+  ]);
+  // A mailbox leads to its settings, in the mailbox, where whoever manages it reaches them too.
+  await expect(list.getByRole('link', { name: /^Billing/ })).toHaveAttribute(
+    'href',
+    '/support.html#/mailbox/billing/settings',
   );
-  await ai.getByLabel('Test', { exact: true }).fill('sophie@example.com');
-  await test.click();
-  await expect(ai.getByRole('status', { name: 'Test result' })).toContainText('"name": "Sophie Chen"');
-  // With every feature off, the mailbox's row beside it says so.
-  for (const name of ['Summaries', 'Translations', 'Drafts']) await ai.getByRole('switch', { name }).uncheck();
-  await expect(row('AI Assistant')).toHaveText(/Off/);
+  // Its menu leads there too, and deletes it after asking.
+  await list.getByRole('button', { name: 'More for Feedback' }).click();
+  const menu = page.getByRole('menu', { name: 'Feedback' });
+  await expect(menu.getByRole('menuitem')).toHaveText(['Mailbox Settings', 'Open Mailbox', 'Delete Mailbox…']);
+  await menu.getByRole('menuitem', { name: 'Delete Mailbox…' }).click();
+  const confirm = page.getByRole('alertdialog', { name: 'Delete Feedback?' });
+  await expect(confirm.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  await confirm.getByRole('button', { name: 'Delete Mailbox' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Feedback was deleted.' })).toBeVisible();
+  await expect(list.getByRole('link')).toHaveText([/^Support/, /^Billing/]);
+  // A new mailbox needs only its name; its settings open next, in the mailbox, without an address.
+  await level(page, 'Mailboxes').getByRole('button', { name: 'New Mailbox' }).click();
+  const dialog = page.getByRole('dialog', { name: 'New Mailbox' });
+  await expect(dialog.getByRole('textbox')).toHaveCount(1);
+  await dialog.getByRole('button', { name: 'Create' }).click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('textbox', { name: 'Mailbox Name' }).fill('Sales Team');
+  await dialog.getByRole('button', { name: 'Create' }).click();
+  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/sales-team\/settings$/);
+  const pages = page.getByRole('region', { name: 'Settings' });
+  await expect(page.locator('.support-settings-toolbar')).toContainText('Sales Team');
+  await expect(pages.getByRole('link', { name: /^General/ })).toHaveText(/No email address/);
+  await expect(pages.getByRole('link', { name: /^Connection/ })).toHaveText(/Not set up/);
+  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('');
+  await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Sales Team');
+});
 
-  // The installation's page keeps providers and limits, and a row per mailbox that opens its AI page.
+test('links to a mailbox’s settings in Settings open them in the mailbox', async ({ page }) => {
+  await page.goto('/settings.html#/mailboxes/billing/connection');
+  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/billing\/settings\/connection$/);
+  await expect(page.getByRole('heading', { name: 'Connection', level: 2 })).toBeVisible();
+  // The single mailbox of earlier versions is the Support mailbox.
+  await page.goto('/settings.html#/mailbox/auto-reply');
+  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/support\/settings\/auto-reply$/);
+  await expect(page.getByRole('heading', { name: 'Auto Reply', level: 2 })).toBeVisible();
+});
+
+test('Settings › AI Assistant keeps providers and limits, and a row per mailbox that opens its AI page', async ({
+  page,
+}) => {
   await page.goto('/settings.html#/ai');
   const mailboxes = page.getByRole('region', { name: 'Mailboxes' });
-  await expect(mailboxes.getByRole('link')).toHaveText([/Support.*On · English/, /Billing.*Off/, /Feedback.*Off/]);
+  await expect(mailboxes.getByRole('link')).toHaveText([
+    /Support.*On · English/,
+    /Billing.*On · Dutch/,
+    /Feedback.*Off/,
+  ]);
+  // A mailbox set to Default follows the installation's language.
   await page.getByLabel('Default Language', { exact: true }).selectOption('de');
   await expect(mailboxes.getByRole('link', { name: /^Support/ })).toHaveText(/On · German/);
-  await mailboxes.getByRole('link', { name: /^Support/ }).click();
-  await expect(page).toHaveURL(/#\/mailboxes\/support\/ai$/);
-  await expect(level(page, 'AI Assistant').getByRole('combobox', { name: 'Language', exact: true })).toHaveValue(
-    'default',
-  );
-  await expect(page.getByRole('option', { name: 'Default (German)' })).toBeAttached();
-  // The sidebar, folded away beside three levels, still marks the way.
-  await expect(workspace(page).locator('.settings-sidebar a[href="#/mailboxes"]')).toHaveAttribute(
-    'aria-current',
-    'true',
-  );
+  await mailboxes.getByRole('link', { name: /^Billing/ }).click();
+  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/billing\/settings\/ai$/);
+  await expect(page.getByRole('combobox', { name: 'Language', exact: true })).toHaveValue('nl');
 });

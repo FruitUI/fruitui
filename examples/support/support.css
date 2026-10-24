@@ -1118,3 +1118,123 @@
     display: none;
   }
 }
+
+/* A mailbox's settings, in the mailbox: its pages in the list's place, each with its current value,
+   and the open page in the conversation's and details' place. */
+.support-settings-toolbar,
+.support-settings-page-toolbar,
+.support-settings-list,
+.support-settings-page {
+  display: none;
+}
+.support-workspace[data-settings]
+  :is(
+    .support-list-toolbar,
+    .support-list-pane,
+    .support-thread-toolbar,
+    .support-conversation,
+    .support-customer-toolbar,
+    .support-customer,
+    .support-list-splitter,
+    .support-inspector-splitter
+  ) {
+  display: none;
+}
+.support-workspace[data-settings] .support-settings-toolbar {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+  gap: 8px;
+  border-right: 1px solid var(--f-border);
+}
+.support-workspace[data-settings] .support-settings-list {
+  display: flex;
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
+}
+.support-workspace[data-settings] .support-settings-page-toolbar {
+  display: flex;
+  grid-column: 3 / -1;
+  grid-row: 1;
+  gap: 5px;
+}
+.support-workspace[data-settings] .support-settings-page {
+  display: flex;
+  grid-column: 3 / -1;
+  grid-row: 2;
+  min-height: 0;
+}
+.support-settings-page-title {
+  font-size: var(--f-text-base);
+  font-weight: 600;
+}
+/* Settings sit on the grouped background, as in the Settings example. */
+.support-settings-list,
+.support-settings-page {
+  --f-pane-background: var(--f-grouped-background);
+}
+/* The pages sit in the list's narrow column with a Drill-Down level's 16px margins. */
+.support-settings-list .f-page {
+  --f-page-padding-inline: 16px;
+  --f-page-padding-block: 16px;
+}
+/* The mailbox's menu, after its folders. */
+.support-mailbox-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline: 4px;
+}
+@container support (max-width: 900px) {
+  .support-workspace[data-settings] :is(.support-settings-toolbar, .support-settings-list) {
+    grid-column: 1;
+  }
+  .support-workspace[data-settings] :is(.support-settings-page-toolbar, .support-settings-page) {
+    grid-column: 2 / -1;
+  }
+  .support-workspace[data-settings][data-view='queues'] .support-settings-list {
+    display: none;
+  }
+}
+@container support (max-width: 700px) {
+  .support-workspace[data-settings] .support-settings-toolbar {
+    border-right: 0;
+  }
+  .support-workspace[data-settings] :is(.support-settings-page-toolbar, .support-settings-page) {
+    display: none;
+    grid-column: 1;
+  }
+  .support-workspace[data-settings][data-view='settingsPage'] :is(.support-settings-toolbar, .support-settings-list) {
+    display: none;
+  }
+  .support-workspace[data-settings][data-view='settingsPage']
+    :is(.support-settings-page-toolbar, .support-settings-page) {
+    display: flex;
+  }
+  .support-settings-page-title {
+    font-size: var(--f-text-lg);
+  }
+}
+
+/* A Markdown field's text as customers will see it: the message on its own surface. */
+.settings-preview {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.settings-preview__body {
+  padding: 10px 12px;
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius-md);
+  background: var(--f-surface);
+}
+.settings-preview__body > :first-child {
+  margin-top: 0;
+}
+.settings-preview__body > :last-child {
+  margin-bottom: 0;
+}
+/* Customer Context's test answer: the group's last row, on the secondary surface to its corners. */
+.f-form-section__rows > .settings-context-result {
+  border-radius: 0 0 calc(var(--f-radius) - 1px) calc(var(--f-radius) - 1px);
+}

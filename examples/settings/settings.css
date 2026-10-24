@@ -30,13 +30,6 @@
   color: var(--f-secondary);
   font-size: var(--f-text-xs);
 }
-.settings-page {
-  --f-page-background: var(--f-grouped-background);
-}
-.settings-sections {
-  display: grid;
-  gap: 24px;
-}
 /* A mailbox or person row: its mark (the mailbox's color, the person's initials), then its name over
    its address. */
 .settings-item {
@@ -53,6 +46,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/* A mailbox in Mailboxes: its name and address lead to its settings, its menu sits at the end. */
+.settings-mailbox-row {
+  flex-wrap: nowrap;
+}
+.settings-mailbox-link {
+  color: var(--f-text);
+  text-decoration: none;
+}
+.settings-mailbox-link:hover > span > span:first-child {
+  text-decoration: underline;
 }
 .settings-item__icon {
   color: var(--f-mark);
@@ -143,48 +147,12 @@
   width: 100%;
   max-width: 0;
 }
-.settings-sections > * {
-  min-width: 0;
-}
 .settings-log-status > span {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.settings-log-lines {
-  max-height: 24rem;
-  margin: 0;
-  padding: 12px 14px;
-  overflow: auto;
-  border-radius: var(--f-radius-md);
-  background: var(--f-surface-secondary);
-  font-size: var(--f-text-sm);
-  white-space: pre-wrap;
-}
-/* Customer Context's test answer: the group's last row, on the secondary surface to its corners. */
-.f-form-section__rows > .settings-context-result {
-  border-radius: 0 0 calc(var(--f-radius) - 1px) calc(var(--f-radius) - 1px);
-}
 .settings-fetch-days {
   width: 6rem;
-}
-
-/* A Markdown field's text as customers will see it: the message on its own surface. */
-.settings-preview {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-}
-.settings-preview__body {
-  padding: 10px 12px;
-  border: 1px solid var(--f-border);
-  border-radius: var(--f-radius-md);
-  background: var(--f-surface);
-}
-.settings-preview__body > :first-child {
-  margin-top: 0;
-}
-.settings-preview__body > :last-child {
-  margin-bottom: 0;
 }
