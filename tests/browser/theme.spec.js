@@ -546,6 +546,29 @@ test('rows filtered out with hidden leave the group’s hairlines and corners to
   await expect(first).toHaveCSS('border-bottom-left-radius', '0px');
 });
 
+test('a link row short of room shortens its value before its label wraps', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <section class="f-form-section" style="width: 250px"><div class="f-form-section__rows">
+      <a class="f-form-row f-form-row--link" href="#ai" id="short"><span>AI Assistant</span><span class="f-form-row__value">On · English and Dutch</span></a>
+      <a class="f-form-row f-form-row--link" href="#long" id="long"><span>A label much longer than the row has room for</span><span class="f-form-row__value">On</span></a>
+    </div></section></body></html>`);
+  const lines = selector =>
+    page.locator(selector).evaluate(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size;
+    });
+  // The label keeps its line; the value takes what's left, cut short with an ellipsis.
+  expect(await lines('#short > span:first-child')).toBe(1);
+  expect(await page.locator('#short .f-form-row__value').evaluate(value => value.scrollWidth > value.clientWidth)).toBe(
+    true,
+  );
+  // A label longer than the row wraps within it, its chevron still in the row.
+  expect(await lines('#long > span:first-child')).toBeGreaterThan(1);
+  expect(await page.locator('#long').evaluate(row => row.scrollWidth <= row.clientWidth)).toBe(true);
+});
+
 test('a current link row shows the accent while its pane or Drill-Down level has focus, in both appearances', async ({
   page,
 }) => {
