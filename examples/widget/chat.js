@@ -34,6 +34,27 @@ const replied = author => `${author.split(' ')[0]} replied`;
 // The visitor's own choice of sound, kept in this browser; the website may start it off.
 const soundKey = 'fruitui-widget-sound';
 
+/**
+ * A message's text in parts, its web addresses as links: only http(s) and www. addresses, without the
+ * punctuation that ends a sentence after them (or a closing bracket that opened before them). The
+ * window shows text, never HTML, so a message can't add markup or other kinds of links.
+ */
+const address = /\b(?:https?:\/\/|www\.)[^\s<>"]+/gi;
+export function parts(text) {
+  const result = [];
+  let last = 0;
+  for (const match of text.matchAll(address)) {
+    let link = match[0].replace(/[.,:;!?'’]+$/, '');
+    while (/[)\]}]$/.test(link) && (link.match(/[([{]/g)?.length ?? 0) < (link.match(/[)\]}]/g)?.length ?? 0))
+      link = link.slice(0, -1).replace(/[.,:;!?'’]+$/, '');
+    if (match.index > last) result.push({ text: text.slice(last, match.index) });
+    result.push({ text: link, href: /^www\./i.test(link) ? `https://${link}` : link });
+    last = match.index + link.length;
+  }
+  if (last < text.length) result.push({ text: text.slice(last) });
+  return result;
+}
+
 function size(bytes) {
   return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
@@ -104,6 +125,7 @@ export function widgetChat() {
     destroy() {
       for (const timer of timers) clearTimeout(timer);
     },
+    parts,
     post(type, data = {}) {
       if (this.embedded) parent.postMessage({ tallport: 1, type, ...data }, host);
     },
@@ -213,7 +235,7 @@ export function widgetChat() {
       const name = this.identity?.name.split(' ')[0];
       const replies = this.entries.filter(entry => entry.kind === 'team' && !entry.team).length;
       const body = replies
-        ? 'Thanks, that helps. I’ll check and get back to you here.'
+        ? 'Thanks, that helps. I’ll check and get back to you here. Meanwhile, our billing guide may answer it: https://forma.example/help/billing.'
         : `Hi${name ? ` ${name}` : ''}, Alex here. Thanks for your message, I’m looking into it now.`;
       later(() => this.receive({ ...agent, body }), 2500);
     },

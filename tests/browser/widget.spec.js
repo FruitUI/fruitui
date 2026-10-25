@@ -303,6 +303,50 @@ test('an answer the visitor may not see chimes once, unless they muted it in the
   await expect(page.getByRole('button', { name: 'Sound' })).toHaveAttribute('aria-pressed', 'false');
 });
 
+test('web addresses in messages are links that open in a new tab, in either bubble', async ({ page }) => {
+  await open(page);
+  await send(page, 'Is it on www.example.com/plans? <b>Yes</b> javascript:alert(1)');
+  const mine = chat(page).locator('.widget-entry[data-kind="visitor"]').filter({ hasText: 'www.example.com/plans' });
+  const link = mine.getByRole('link', { name: 'www.example.com/plans' });
+  await expect(link).toHaveAttribute('href', 'https://www.example.com/plans');
+  await expect(link).toHaveAttribute('target', '_blank');
+  await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  // Markup and other kinds of addresses stay text.
+  await expect(mine.locator('.widget-bubble')).toContainText('<b>Yes</b> javascript:alert(1)');
+  await expect(mine.locator('.widget-bubble b')).toHaveCount(0);
+  await expect(mine.getByRole('link')).toHaveCount(1);
+  // The team's next answer links its guide, without the full stop after it.
+  await expect(chat(page).locator('.widget-entry[data-kind="team"]').last()).toContainText('Alex here.');
+  await send(page, 'And for teams?');
+  const theirs = chat(page).locator('.widget-entry[data-kind="team"]').last();
+  const guide = theirs.getByRole('link', { name: 'https://forma.example/help/billing' });
+  await expect(guide).toHaveAttribute('href', 'https://forma.example/help/billing');
+  await expect(theirs.locator('.widget-bubble')).toContainText('billing.');
+  // Underlined in both; the team's in the link colour, the visitor's in its accent bubble's own colour.
+  const look = locator =>
+    locator.evaluate(element => {
+      const probe = document.createElement('span');
+      probe.style.color = 'var(--f-accent-text)';
+      document.body.append(probe);
+      const accentText = getComputedStyle(probe).color;
+      probe.remove();
+      const style = getComputedStyle(element);
+      return {
+        color: style.color,
+        bubble: getComputedStyle(element.closest('.widget-bubble')).color,
+        accentText,
+        underline: style.textDecorationLine,
+      };
+    });
+  const visitorLink = await look(link);
+  expect(visitorLink.color).toBe(visitorLink.bubble);
+  expect(visitorLink.underline).toBe('underline');
+  const teamLink = await look(guide);
+  expect(teamLink.color).toBe(teamLink.accentText);
+  expect(teamLink.color).not.toBe(teamLink.bubble);
+  expect(teamLink.underline).toBe('underline');
+});
+
 test('offline, messages wait for the connection and send when it is back', async ({ page, context }) => {
   await open(page);
   await context.setOffline(true);
@@ -464,7 +508,7 @@ for (const appearance of ['light', 'dark']) {
     await expect(chat(page).locator('.widget-entry[data-kind="team"]').last()).toContainText('Alex here.');
     await expectAccessible(page);
     // An answer's start beside the launcher.
-    await chat(page).getByRole('textbox', { name: 'Message' }).fill('One more thing');
+    await chat(page).getByRole('textbox', { name: 'Message' }).fill('One more thing: www.example.com/plans');
     await chat(page).getByRole('textbox', { name: 'Message' }).press('Enter');
     await page.keyboard.press('Escape');
     await expect(site(page).locator('.preview')).toBeVisible();

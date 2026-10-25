@@ -134,6 +134,24 @@ body {
 .widget-entry[data-kind='visitor']:not([data-last]) .widget-bubble {
   border-end-end-radius: 6px;
 }
+/* Web addresses in a message are links, underlined in both bubbles so they don't rest on colour alone:
+   in the team's bubble in the link colour, in the visitor's accent bubble in its own text colour (the
+   accent would vanish there), its focus ring too. */
+.widget-bubble a {
+  color: var(--f-accent-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+.widget-bubble a:hover {
+  text-decoration-thickness: 2px;
+}
+.widget-entry[data-kind='visitor'] .widget-bubble a {
+  color: inherit;
+}
+.widget-entry[data-kind='visitor'] .widget-bubble a:focus-visible {
+  outline-color: currentColor;
+}
 .widget-attachment {
   --f-attachment-thumbnail-max-width: 15rem;
   --f-attachment-thumbnail-height: 9rem;
