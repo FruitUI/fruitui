@@ -1,13 +1,21 @@
 import { tickets, queues, agents, mailboxes, teamRooms } from './tickets.js';
 import {
   asSent,
+  channelModes,
+  channels,
   checkField,
   defaultLanguage,
+  oneLine,
+  greetingModes,
+  hasChannel,
   languages,
+  mailboxPage,
+  mailboxPageGroups,
   mailboxPages,
   mailboxSettings,
   pageSummary,
   sampleMailboxes,
+  translateSample,
 } from '../shared/mailbox-settings.js';
 
 /** Language names for the agent, in English: "Danish". */
@@ -53,6 +61,10 @@ export function supportDemo() {
     settingsPage: 'general',
     settingsChosen: false,
     mailboxPages,
+    mailboxPageGroups,
+    channels,
+    channelModes,
+    greetingModes,
     languages,
     defaultLanguage,
     // The AI Assistant's Customer Context test: not a setting.
@@ -86,11 +98,81 @@ export function supportDemo() {
     get box() {
       return this.settingsId ? this.mailbox(this.settingsId) : null;
     },
-    settingsUrl(page) {
-      return `#/mailbox/${this.settingsId}/settings/${page}`;
+    settingsUrl(page, channel = '') {
+      return `#/mailbox/${this.settingsId}/settings/${page}${channel ? `/${channel}` : ''}`;
     },
     pageSummary,
     asSent,
+    oneLine,
+    /** The open mailbox's channels that send a kind of message (a greeting needs one that can show it). */
+    channelsFor(kind) {
+      return Object.keys(channels).filter(
+        key => hasChannel(this.box, key) && (kind !== 'greeting' || channels[key].greets),
+      );
+    },
+    hasChannel(key) {
+      return hasChannel(this.box, key);
+    },
+    /** A channel taking its own message starts from the mailbox's Default. */
+    chooseMode(kind, message) {
+      if (message.mode !== 'own' || message.versions.length) return;
+      const base = this.box[kind === 'greeting' ? 'greeting' : 'autoReply'].versions[0];
+      message.versions.push({ language: 'default', subject: base?.subject ?? '', message: base?.message ?? '' });
+    },
+    /** What a channel sends of a kind, as its page's row says it. */
+    channelMessage(kind, key) {
+      return channelModes[this.box[kind].channels[key].mode];
+    },
+    languageName(code) {
+      return languages[code] ?? code;
+    },
+    /** The languages a message has no version in yet. */
+    missingLanguages(message) {
+      return Object.keys(languages).filter(
+        code => code !== 'default' && !message.versions.some(version => version.language === code),
+      );
+    },
+    /** A version in another language, opened to be written; it starts from Default's text. */
+    addLanguage(message, code, id) {
+      if (!code || message.versions.some(version => version.language === code)) return;
+      const base = message.versions[0] ?? { subject: '', message: '' };
+      message.versions.push({ language: code, subject: base.subject, message: base.message });
+      this.$nextTick(() => {
+        const row = document.getElementById(`${id}-${code}`);
+        if (row) {
+          row.open = true;
+          row.querySelector('summary').focus();
+        }
+      });
+    },
+    async removeLanguage(message, version, id) {
+      const name = this.languageName(version.language);
+      const confirmed = await this.$confirm({
+        title: `Remove the ${name} version?`,
+        message: 'Customers writing in it get Default instead.',
+        confirm: 'Remove',
+        tone: 'danger',
+      });
+      if (!confirmed) return;
+      message.versions = message.versions.filter(item => item !== version);
+      this.$nextTick(() => document.getElementById(`${id}-default`)?.querySelector('summary').focus());
+    },
+    /** Every other version from Default, as the AI translates it, to be checked before customers get it. */
+    async translateFromDefault(message) {
+      const [base, ...others] = message.versions;
+      const names = others.map(version => this.languageName(version.language)).join(', ');
+      const confirmed = await this.$confirm({
+        title: `Translate Default into ${names}?`,
+        message: 'Their text is replaced with Default’s, translated.',
+        confirm: 'Translate',
+      });
+      if (!confirmed) return;
+      for (const version of others) {
+        version.subject = translateSample(base.subject, version.language);
+        version.message = translateSample(base.message, version.language);
+      }
+      this.$toast(`Translated into ${names}. Check each before customers get it.`);
+    },
     check(event) {
       checkField(event);
     },
@@ -108,14 +190,19 @@ export function supportDemo() {
     },
     /** The address opens a mailbox's settings at one of its pages; any other leaves them. */
     route() {
-      const [, scope, id, settings, page] = location.hash.split('/');
+      const [, scope, id, settings, page, channel] = location.hash.split('/');
       if (scope === 'mailbox' && settings === 'settings' && this.mailbox(id)) {
-        this.openSettings(id, mailboxPages[page] ? page : '');
+        if (page && mailboxPage(page) !== page) return location.replace(this.settingsUrlFor(id, mailboxPage(page)));
+        this.openSettings(id, mailboxPage(page), channels[channel] ? channel : '');
       } else if (this.settingsId) {
         this.leaveSettings(false);
       }
     },
-    openSettings(id, page) {
+    settingsUrlFor(id, page) {
+      return `#/mailbox/${id}/settings${page ? `/${page}` : ''}`;
+    },
+    /** A page, perhaps at one channel's part of it (a channel's page links to its messages). */
+    openSettings(id, page, channel = '') {
       const refs = this.$refs;
       const opening = this.settingsId !== id;
       this.leaveRoom();
@@ -130,7 +217,12 @@ export function supportDemo() {
         requestAnimationFrame(() => {
           const active = document.activeElement;
           const list = document.getElementById('support-settings-list');
-          if (opening && list.getClientRects().length) {
+          const part = channel && document.getElementById(`settings-${page}-${channel}`);
+          if (part) {
+            // A channel's own part of a message page: its choice takes the keyboard.
+            part.scrollIntoView({ block: 'start' });
+            part.querySelector('select').focus();
+          } else if (opening && list.getClientRects().length) {
             // Opened from the mailbox's menu: the keyboard starts at its open page's row.
             list.querySelector('[aria-current="page"]')?.focus();
           } else if (!active || active === document.body || !active.getClientRects().length) {

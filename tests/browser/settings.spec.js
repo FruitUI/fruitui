@@ -519,16 +519,16 @@ test('Mailboxes creates and deletes mailboxes; a mailbox’s own settings open i
   await expect(page).toHaveURL(/\/support\.html#\/mailbox\/sales-team\/settings$/);
   const pages = page.getByRole('region', { name: 'Settings' });
   await expect(page.locator('.support-settings-toolbar')).toContainText('Sales Team');
-  await expect(pages.getByRole('link', { name: /^General/ })).toHaveText(/No email address/);
-  await expect(pages.getByRole('link', { name: /^Connection/ })).toHaveText(/Not set up/);
-  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('');
   await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Sales Team');
+  await expect(pages.getByRole('link', { name: /^Email/ })).toHaveText(/Not set up/);
+  await pages.getByRole('link', { name: /^Email/ }).click();
+  await expect(page.getByLabel('Email Address', { exact: true })).toHaveValue('');
 });
 
 test('links to a mailbox’s settings in Settings open them in the mailbox', async ({ page }) => {
   await page.goto('/settings.html#/mailboxes/billing/connection');
-  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/billing\/settings\/connection$/);
-  await expect(page.getByRole('heading', { name: 'Connection', level: 2 })).toBeVisible();
+  await expect(page).toHaveURL(/\/support\.html#\/mailbox\/billing\/settings\/email$/);
+  await expect(page.getByRole('heading', { name: 'Email', level: 2 })).toBeVisible();
   // The single mailbox of earlier versions is the Support mailbox.
   await page.goto('/settings.html#/mailbox/auto-reply');
   await expect(page).toHaveURL(/\/support\.html#\/mailbox\/support\/settings\/auto-reply$/);

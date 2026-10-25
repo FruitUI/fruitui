@@ -1215,6 +1215,54 @@
   }
 }
 
+/* A message's language version: a Disclosure row naming the language, with the start of its text
+   at the trailing edge and a chevron that turns down when open; open, it holds the version's fields. */
+.settings-version > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--f-space-4);
+  list-style: none;
+}
+.settings-version > summary::-webkit-details-marker {
+  display: none;
+}
+.settings-version > summary::after {
+  content: '';
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  background: var(--f-tertiary);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+.settings-version > summary:dir(rtl)::after {
+  scale: -1 1;
+}
+.settings-version[open] > summary::after {
+  rotate: 90deg;
+}
+.settings-version > summary > .f-form-row__value {
+  font-weight: 400;
+}
+.settings-version__fields {
+  display: grid;
+  gap: 12px;
+}
+/* Adding a language, and translating the others from Default where the mailbox's AI translates. */
+.settings-version-add {
+  justify-content: flex-start;
+}
+.settings-version-add > .f-input-group {
+  flex: 0 1 auto;
+}
+@media (forced-colors: active) {
+  .settings-version > summary::after {
+    background: CanvasText;
+  }
+}
+
 /* A Markdown field's text as customers will see it: the message on its own surface. */
 .settings-preview {
   display: grid;

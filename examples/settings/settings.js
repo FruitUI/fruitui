@@ -6,7 +6,7 @@
 import { systemInfo, requirements, tasks, failedJobs, logs } from './system.js';
 import {
   languages,
-  mailboxPages,
+  mailboxPage,
   mailboxSettings,
   sampleMailboxes,
   aiSummary,
@@ -262,9 +262,9 @@ export function settingsDemo() {
       const [, page, id, section] = location.hash.split('/');
       // A mailbox's settings moved into the mailbox: earlier links (and the single mailbox of earlier
       // versions, the Support mailbox's) open them there.
-      if (page === 'mailbox') return location.replace(this.mailboxUrl('support', mailboxPages[id] ? id : ''));
+      if (page === 'mailbox') return location.replace(this.mailboxUrl('support', mailboxPage(id)));
       if (page === 'mailboxes' && this.settings.mailboxes[id]) {
-        return location.replace(this.mailboxUrl(id, mailboxPages[section] ? section : ''));
+        return location.replace(this.mailboxUrl(id, mailboxPage(section)));
       }
       this.chosen = Boolean(pages[page]);
       this.page = pages[page] ? page : 'profile';

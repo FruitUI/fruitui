@@ -920,14 +920,20 @@ test('a mailbox’s settings open from its menu, in the mailbox: its pages liste
   await openMailboxSettings(page, 'billing', 'Billing');
   await expect(page).toHaveURL(/#\/mailbox\/billing\/settings$/);
   await expect(page.locator('.support-settings-toolbar')).toContainText('Billing');
-  // A row per page, with its current value; General's says only what's missing.
+  // Its pages, with their values: its own, its channels (email is one), the messages it sends by
+  // itself, and its AI Assistant.
   await expect(settingsPages(page).getByRole('link')).toHaveText([
     /^General$/,
-    /^Connection.*SMTP · smtp\.forma\.example/,
     /^Permissions.*1 person/,
+    /^Email.*billing@forma\.example/,
+    /^Website Chat.*On/,
+    /^Telegram.*Not set up/,
+    /^Greeting.*Built-in/,
     /^Auto Reply.*On/,
     /^AI Assistant.*On · Dutch/,
   ]);
+  await expect(settingsPages(page).getByRole('region', { name: 'Channels' })).toBeVisible();
+  await expect(settingsPages(page).getByRole('region', { name: 'Automatic Messages' })).toBeVisible();
   // General shows beside them; its row is current and takes the keyboard, in the accent.
   const general = settingsRow(page, 'General');
   await expect(general).toHaveAttribute('aria-current', 'page');
@@ -938,16 +944,16 @@ test('a mailbox’s settings open from its menu, in the mailbox: its pages liste
   // Nothing in the sidebar is current while the mailbox's settings are open.
   await expect(page.locator('#support-queues [aria-current]')).toHaveCount(0);
   // Another page opens beside the list; its row keeps the keyboard, and a change shows in it at once.
-  await settingsRow(page, 'Connection').click();
-  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/connection$/);
-  await expect(settingsRow(page, 'Connection')).toHaveAttribute('aria-current', 'page');
-  await expect(settingsRow(page, 'Connection')).toBeFocused();
-  await expect(page.getByRole('heading', { name: 'Connection', level: 2 })).toBeVisible();
-  await settingsPane(page).getByRole('radio', { name: 'The server’s mail' }).check();
-  await expect(settingsRow(page, 'Connection')).toHaveText(/The server’s mail/);
+  await settingsRow(page, 'Website Chat').click();
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/webchat$/);
+  await expect(settingsRow(page, 'Website Chat')).toHaveAttribute('aria-current', 'page');
+  await expect(settingsRow(page, 'Website Chat')).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Website Chat', level: 2 })).toBeVisible();
+  await settingsPane(page).getByRole('switch', { name: 'Enabled' }).uncheck();
+  await expect(settingsRow(page, 'Website Chat')).toHaveText(/Off/);
   await expect(page.getByRole('button', { name: 'Save' })).toHaveCount(0);
   // With the keyboard elsewhere, the row stays selected without the accent.
-  await expect(settingsRow(page, 'Connection')).toHaveCSS(
+  await expect(settingsRow(page, 'Website Chat')).toHaveCSS(
     'background-color',
     await tokenColor(page, '--f-selection-inactive'),
   );
@@ -964,26 +970,121 @@ test('a mailbox’s settings open from its menu, in the mailbox: its pages liste
   await page.goBack();
   await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/general$/);
   await expect(settingsPages(page)).toBeVisible();
+  // Connection of earlier versions is Email's.
+  await page.goto('/support.html#/mailbox/billing/settings/connection');
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/email$/);
 });
 
-test('a mailbox without an email address only chats, and its settings say so', async ({ page }) => {
-  await page.goto('/support.html#/mailbox/feedback/settings');
+test('email is a channel a mailbox may not have; without an address it only chats', async ({ page }) => {
+  await page.goto('/support.html#/mailbox/feedback/settings/email');
   const email = settingsPane(page).getByLabel('Email Address', { exact: true });
   await expect(email).toHaveAccessibleDescription(/Optional/);
+  await expect(settingsPane(page).getByRole('region', { name: 'Sending' })).toBeVisible();
   await email.fill('');
   await email.blur();
   await expect(email).not.toHaveAttribute('aria-invalid');
-  await expect(settingsRow(page, 'General')).toHaveText(/No email address/);
-  await expect(settingsRow(page, 'Connection')).toHaveText(/Not set up/);
-  await settingsRow(page, 'Connection').click();
-  await expect(settingsPane(page).getByRole('status')).toHaveText(
-    'This mailbox has no email address. Add one under General to send and receive email.',
+  // Nothing to send with, and no channel to reply on: Email's row says so, its parts step aside.
+  await expect(settingsRow(page, 'Email')).toHaveText(/Not set up/);
+  await expect(settingsPane(page).getByRole('region', { name: 'Sending' })).toHaveCount(0);
+  await expect(settingsPane(page).getByRole('region', { name: 'Emails to Customers' })).toHaveCount(0);
+  await settingsRow(page, 'Auto Reply').click();
+  await expect(settingsPane(page).getByText('This mailbox has no channels yet.')).toBeVisible();
+  await expect(settingsPane(page).getByLabel('Subject')).toHaveCount(0);
+});
+
+test('a mailbox’s auto reply is written once for every channel, in its languages, each channel taking it, its own or none', async ({
+  page,
+}) => {
+  await page.goto('/support.html#/mailbox/billing/settings/auto-reply');
+  const pane = settingsPane(page);
+  const mailbox = pane.getByRole('region', { name: 'Mailbox Auto Reply' });
+  // A row per language, showing its text on one line: which are up to date shows at a glance.
+  const versions = mailbox.locator('details.settings-version > summary');
+  await expect(versions).toHaveText([
+    /^Default.*Thanks for writing\. We usually reply within a day\./,
+    /^Dutch.*Bedankt voor je bericht/,
+  ]);
+  // Another language starts from Default's text, opened to be written.
+  await mailbox.getByRole('button', { name: 'Add Language' }).click();
+  await page.getByRole('menu', { name: 'Add Language' }).getByRole('menuitem', { name: 'German' }).click();
+  await expect(mailbox.locator('#settings-auto-reply-de')).toHaveJSProperty('open', true);
+  await expect(mailbox.locator('#settings-auto-reply-de > summary')).toBeFocused();
+  await expect(page.locator('#settings-auto-reply-de-subject')).toHaveValue('We received your message');
+  // Translate from Default replaces the others' text, after asking, for a person to check.
+  await mailbox.getByRole('button', { name: 'Translate from Default' }).click();
+  const translate = page.getByRole('alertdialog', { name: 'Translate Default into Dutch, German?' });
+  await expect(translate.getByRole('button', { name: 'Translate' })).toBeFocused();
+  await translate.getByRole('button', { name: 'Translate' }).click();
+  await expect(versions.nth(2)).toHaveText(/^German.*Danke für Ihre Nachricht/);
+  await expect(page.locator('#settings-auto-reply-de-subject')).toHaveValue('Wir haben Ihre Nachricht erhalten');
+  await expect(page.getByRole('status').filter({ hasText: 'Translated into Dutch, German.' })).toBeVisible();
+  // Removing a language asks first; Default covers it again.
+  await mailbox.getByRole('button', { name: 'Remove German…' }).click();
+  await page
+    .getByRole('alertdialog', { name: 'Remove the German version?' })
+    .getByRole('button', { name: 'Remove' })
+    .click();
+  await expect(versions).toHaveCount(2);
+  await expect(mailbox.locator('#settings-auto-reply-default > summary')).toBeFocused();
+  // Each channel the mailbox has takes the mailbox's, its own (beneath it, from Default), or none.
+  await expect(pane.getByRole('region', { name: 'Telegram' })).toHaveCount(0);
+  const email = pane.getByRole('region', { name: 'Email', exact: true });
+  const chat = pane.getByRole('region', { name: 'Website Chat' });
+  await expect(email.getByLabel('Auto Reply')).toHaveValue('mailbox');
+  await expect(chat.getByLabel('Auto Reply')).toHaveValue('none');
+  await email.getByLabel('Auto Reply').selectOption('own');
+  await expect(email.locator('details.settings-version > summary')).toHaveText([/^Default.*Thanks for writing/]);
+  await expect(email.getByLabel('Subject')).toHaveValue('We received your message');
+  await chat.getByLabel('Auto Reply').selectOption('own');
+  await expect(chat.getByLabel('Subject')).toHaveCount(0);
+  // Off, the mailbox's versions step aside, and a channel taking it says it sends nothing for now.
+  await chat.getByLabel('Auto Reply').selectOption('mailbox');
+  await mailbox.getByRole('switch', { name: 'Send an Automatic Reply' }).uncheck();
+  await expect(mailbox.getByRole('button', { name: 'Add Language' })).toHaveAttribute('aria-disabled', 'true');
+  await expect(chat.getByLabel('Auto Reply')).toHaveAccessibleDescription(
+    'Off for now: the mailbox’s auto reply is off.',
   );
+  await expect(settingsRow(page, 'Auto Reply')).toHaveText(/Off/);
+  // A channel's page leads to its part of the page, its choice taking the keyboard.
+  await settingsRow(page, 'Email').click();
+  const link = pane.getByRole('region', { name: 'Automatic Messages' }).getByRole('link', { name: /^Auto Reply/ });
+  await expect(link).toHaveText(/Its Own/);
+  await link.click();
+  await expect(page).toHaveURL(/#\/mailbox\/billing\/settings\/auto-reply\/email$/);
+  await expect(pane.getByRole('region', { name: 'Email', exact: true }).getByLabel('Auto Reply')).toBeFocused();
+});
+
+test('a greeting shows before the customer writes, on the channels that can, each taking the mailbox’s, its own or none', async ({
+  page,
+}) => {
+  await page.goto('/support.html#/mailbox/support/settings/greeting');
+  const pane = settingsPane(page);
+  await expect(pane.getByRole('radio', { name: 'Built-in Greeting' })).toBeChecked();
+  await expect(pane.getByRole('region', { name: 'Your Greeting' })).toHaveCount(0);
+  // Only channels that show something first: Website Chat and Telegram, not Email.
+  await expect(pane.locator('.settings-channel-message h3')).toHaveText(['Website Chat', 'Telegram']);
+  const telegram = pane.getByRole('region', { name: 'Telegram' });
+  await expect(telegram.getByLabel('Greeting')).toHaveValue('own');
+  await expect(telegram.locator('details.settings-version > summary')).toHaveText([/^Default.*This is Forma Support/]);
+  // The mailbox's own greeting, in languages, plain text with variables.
+  await pane.getByRole('radio', { name: 'Your Own Greeting' }).check();
+  const own = pane.getByRole('region', { name: 'Your Greeting' });
+  await expect(own.locator('details.settings-version > summary')).toHaveText([/^Default.*How can we help\?/]);
+  await expect(own.getByRole('textbox', { name: 'Message' })).toHaveAccessibleDescription(/Plain text/);
+  await expect(settingsRow(page, 'Greeting')).toHaveText(/Your Own/);
+  // No greeting: a channel taking the mailbox's shows none for now.
+  await pane.getByRole('radio', { name: 'No Greeting' }).check();
+  await expect(pane.getByRole('region', { name: 'Website Chat' }).getByLabel('Greeting')).toHaveAccessibleDescription(
+    'Off for now: the mailbox has no greeting.',
+  );
+  // A mailbox whose channels can't greet says which can.
+  await page.goto('/support.html#/mailbox/feedback/settings/greeting');
+  await expect(pane.getByText('None of this mailbox’s channels can greet.')).toBeVisible();
 });
 
 test('a mailbox’s settings start at their panes’ edges, as settings do, at a readable width', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
-  await page.goto('/support.html#/mailbox/support/settings/connection');
+  await page.goto('/support.html#/mailbox/support/settings/email');
   const start = async pane => {
     const box = await pane.boundingBox();
     const section = await pane.locator('.f-form-section').first().boundingBox();
@@ -1024,7 +1125,7 @@ test('a mailbox’s color comes from the named accents, and its sidebar icon sho
 });
 
 test('a mailbox’s signature and automatic reply are written in Markdown and shown as sent', async ({ page }) => {
-  await page.goto('/support.html#/mailbox/support/settings');
+  await page.goto('/support.html#/mailbox/support/settings/email');
   const mailbox = settingsPane(page);
   const signature = mailbox.getByRole('textbox', { name: 'Signature' });
   // The field shows the Markdown as written, its syntax styled; its textarea holds it for the form.
@@ -1046,17 +1147,18 @@ test('a mailbox’s signature and automatic reply are written in Markdown and sh
 
   // An automatic reply's variables are inserted as written, for the server to fill in.
   await page.goto('/support.html#/mailbox/billing/settings/auto-reply');
-  const reply = settingsPane(page);
+  const reply = settingsPane(page).locator('#settings-auto-reply-default');
+  await reply.locator(':scope > summary').click();
   const message = reply.getByRole('textbox', { name: 'Message' });
   await selectMarkdown(message, { at: -1 });
   await page.keyboard.press('Enter');
   await page.keyboard.type('Best, ');
   await reply.getByRole('button', { name: 'Insert Variable' }).click();
   await page.getByRole('menuitem', { name: 'Mailbox Name' }).click();
-  await expect(page.locator('#settings-auto-body')).toHaveValue(/\nBest, \{%mailbox\.name%\}$/);
+  await expect(page.locator('#settings-auto-reply-default-message')).toHaveValue(/\nBest, \{%mailbox\.name%\}$/);
   await expect(reply.getByRole('figure', { name: 'Message as Sent' })).toContainText('Best, {%mailbox.name%}');
   // Off, the message, its toolbar and its preview step aside.
-  await reply.getByRole('switch', { name: 'Send an automatic reply' }).uncheck();
+  await settingsPane(page).getByRole('switch', { name: 'Send an Automatic Reply' }).uncheck();
   await expect(message).toBeDisabled();
   await expect(reply.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
   // It takes no content, so the application's Insert Variable steps aside with the toolbar.
@@ -1101,11 +1203,31 @@ test('a mailbox’s AI Assistant is one of its pages, its row saying what’s on
 for (const colorScheme of ['light', 'dark']) {
   test(`every page of a mailbox’s settings is accessible and fits in ${colorScheme} appearance`, async ({ page }) => {
     await page.emulateMedia({ colorScheme });
-    for (const name of ['', '/general', '/connection', '/permissions', '/auto-reply', '/ai']) {
+    for (const name of [
+      '',
+      '/general',
+      '/permissions',
+      '/email',
+      '/webchat',
+      '/telegram',
+      '/greeting',
+      '/auto-reply',
+      '/ai',
+    ]) {
       await page.goto(`/support.html#/mailbox/support/settings${name}`);
       await expect(settingsPane(page).locator('.settings-sections').first()).toBeVisible();
       await expectAccessible(page, '#support');
     }
+    // A language version open, a channel's own, and Add Language's menu open.
+    await page.goto('/support.html#/mailbox/billing/settings/auto-reply');
+    await settingsPane(page).locator('#settings-auto-reply-nl > summary').click();
+    await settingsPane(page).getByRole('region', { name: 'Website Chat' }).getByLabel('Auto Reply').selectOption('own');
+    await settingsPane(page)
+      .getByRole('region', { name: 'Mailbox Auto Reply' })
+      .getByRole('button', { name: 'Add Language' })
+      .click();
+    await expectAccessible(page, '#support');
+    await page.keyboard.press('Escape');
     // The open page's row in the accent while the list has focus, and the mailbox's menu open.
     await settingsRow(page, 'AI Assistant').focus();
     await expectAccessible(page, '#support');
