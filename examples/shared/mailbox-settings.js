@@ -52,12 +52,17 @@ export const mailboxPage = page => (mailboxPages[page] ? page : (mailboxPageAlia
 
 /**
  * The channels, and the messages each can send by itself: every channel replies automatically to a
- * customer's first message; a greeting needs a channel that shows something before they write.
+ * customer's first message; a greeting needs a channel that shows something before they write, and
+ * says how it shows it.
  */
 export const channels = {
   email: { name: 'Email', greets: false, subject: true },
-  webchat: { name: 'Website Chat', greets: true, subject: false },
-  telegram: { name: 'Telegram', greets: true, subject: false },
+  webchat: { name: 'Website Chat', greets: 'Shown when a visitor opens the chat.', subject: false },
+  telegram: {
+    name: 'Telegram',
+    greets: 'Sent when the customer taps Start, and shown in the empty chat.',
+    subject: false,
+  },
 };
 /** A channel's own message: the mailbox's (the default), its own, or none. */
 export const channelModes = { mailbox: 'The Mailbox’s', own: 'Its Own', none: 'None' };

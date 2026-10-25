@@ -1065,6 +1065,13 @@ test('a greeting shows before the customer writes, on the channels that can, eac
   await expect(pane.locator('.settings-channel-message h3')).toHaveText(['Website Chat', 'Telegram']);
   const telegram = pane.getByRole('region', { name: 'Telegram' });
   await expect(telegram.getByLabel('Greeting')).toHaveValue('own');
+  // Each says how it shows the greeting.
+  await expect(pane.getByRole('region', { name: 'Website Chat' }).locator('.f-form-section__footer')).toHaveText(
+    'Shown when a visitor opens the chat.',
+  );
+  await expect(telegram.locator('.f-form-section__footer')).toHaveText(
+    'Sent when the customer taps Start, and shown in the empty chat.',
+  );
   await expect(telegram.locator('details.settings-version > summary')).toHaveText([/^Default.*This is Forma Support/]);
   // The mailbox's own greeting, in languages, plain text with variables.
   await pane.getByRole('radio', { name: 'Your Own Greeting' }).check();
