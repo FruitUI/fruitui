@@ -546,6 +546,33 @@ test('rows filtered out with hidden leave the group’s hairlines and corners to
   await expect(first).toHaveCSS('border-bottom-left-radius', '0px');
 });
 
+test('in a menu with checkable items every item’s name lines up, checkmark column or not', async ({ page }) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <div class="f-menu__items" role="menu" id="mixed" style="position: static">
+      <a class="f-menu-item" role="menuitem" href="#settings">Mailbox Settings</a>
+      <button class="f-menu-item" role="menuitemcheckbox" type="button" aria-checked="true">Mute Notifications</button>
+      <div class="f-menu__separator" role="separator"></div>
+      <div role="group" aria-label="Sort"><button class="f-menu-item" role="menuitemradio" type="button" aria-checked="false">Newest First</button></div>
+      <button class="f-menu-item" role="menuitem" type="button">Mark All as Read</button>
+    </div>
+    <div class="f-menu__items" role="menu" id="plain" style="position: static">
+      <button class="f-menu-item" role="menuitem" type="button">Mailbox Settings</button>
+    </div></body></html>`);
+  const starts = selector =>
+    page.locator(selector).evaluateAll(items =>
+      items.map(item => {
+        const range = document.createRange();
+        range.selectNodeContents(item);
+        return Math.round(range.getBoundingClientRect().left - item.getBoundingClientRect().left);
+      }),
+    );
+  const mixed = await starts('#mixed .f-menu-item');
+  expect(new Set(mixed).size).toBe(1);
+  // A menu without them keeps its items' own start.
+  expect((await starts('#plain .f-menu-item'))[0]).toBeLessThan(mixed[0]);
+});
+
 test('a link row short of room shortens its value before its label wraps', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
