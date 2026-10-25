@@ -195,6 +195,114 @@ test('an answer that arrives while the window is closed shows on the launcher un
   await expect(chat(page).locator('.widget-entry[data-kind="team"]').last()).toContainText('Alex here.');
 });
 
+test('beside the launcher, an answer’s start opens the chat, or is dismissed with the badge staying', async ({
+  page,
+}) => {
+  const card = site(page).locator('.preview');
+  await open(page);
+  await send(page, 'Do you offer annual billing?');
+  await page.keyboard.press('Escape');
+  // Who wrote and how it starts, in the window's words; read out once.
+  await expect(card).toBeVisible();
+  await expect(card.locator('.preview-author')).toHaveText('Alex Morgan');
+  await expect(card.locator('.preview-text')).toContainText('Alex here. Thanks for your message');
+  await expect(site(page).getByRole('status')).toHaveText(/^Alex Morgan: Hi, Alex here\./);
+  // Dismissed, the badge stays and the keyboard returns to the launcher.
+  await site(page).getByRole('button', { name: 'Dismiss' }).click();
+  await expect(card).toBeHidden();
+  await expect(site(page).locator('.badge')).toHaveText('1');
+  await expect(toggle(page)).toBeFocused();
+  // A new answer shows it again; the card opens the chat, where typing starts.
+  await open(page);
+  await send(page, 'And for teams?');
+  await page.keyboard.press('Escape');
+  await expect(card.locator('.preview-text')).toContainText('Thanks, that helps.');
+  await card.locator('.preview-open').click();
+  await expect(toggle(page)).toHaveAttribute('aria-expanded', 'true');
+  await expect(card).toBeHidden();
+  await expect(message(page)).toBeFocused();
+});
+
+/** The website's tab in the background, or back, as switching tabs does. */
+async function background(frame, hidden) {
+  await frame.evaluate(state => {
+    Object.defineProperty(document, 'hidden', { value: state, configurable: true });
+    Object.defineProperty(document, 'visibilityState', { value: state ? 'hidden' : 'visible', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, hidden);
+}
+const frameOf = (page, path) => page.frames().find(frame => frame.url().includes(path));
+
+test('while the website’s tab is in the background, its title says an answer arrived, until the visitor returns', async ({
+  page,
+}) => {
+  await open(page);
+  await send(page, 'Do you offer annual billing?');
+  await page.keyboard.press('Escape');
+  const website = frameOf(page, '/examples/widget/site.html');
+  const own = await website.evaluate(() => document.title);
+  await background(website, true);
+  await background(frameOf(page, '/widget/chat.html'), true);
+  // It alternates with the website's own title.
+  await expect.poll(() => website.evaluate(() => document.title)).toBe('(1) Alex replied');
+  await expect.poll(() => website.evaluate(() => document.title)).toBe(own);
+  await background(website, false);
+  await expect.poll(() => website.evaluate(() => document.title)).toBe(own);
+  await page.waitForTimeout(1700);
+  expect(await website.evaluate(() => document.title)).toBe(own);
+  // A page in view keeps its title: the badge and the card say it there.
+  await open(page);
+  await send(page, 'And for teams?');
+  await page.keyboard.press('Escape');
+  await expect(site(page).locator('.badge')).toHaveText('1');
+  expect(await website.evaluate(() => document.title)).toBe(own);
+});
+
+test('an answer the visitor may not see chimes once, unless they muted it in the window’s header', async ({ page }) => {
+  await open(page);
+  const window = frameOf(page, '/widget/chat.html');
+  // Each note of the chime is a tone.
+  await window.evaluate(() => {
+    window.notes = 0;
+    const tone = AudioContext.prototype.createOscillator;
+    AudioContext.prototype.createOscillator = function () {
+      window.notes++;
+      return tone.call(this);
+    };
+  });
+  const notes = () => window.evaluate(() => window.notes);
+  // In view, an answer is only read out.
+  await send(page, 'Do you offer annual billing?');
+  await expect(chat(page).locator('.widget-entry[data-kind="team"]').last()).toContainText('Alex here.');
+  expect(await notes()).toBe(0);
+  // Closed, it chimes: two soft notes.
+  await send(page, 'And for teams?');
+  await page.keyboard.press('Escape');
+  await expect(site(page).locator('.badge')).toHaveText('1');
+  expect(await notes()).toBe(2);
+  // Muted in the header, kept in this browser; the next answer is silent.
+  await open(page);
+  const sound = chat(page).getByRole('button', { name: 'Sound' });
+  await expect(sound).toHaveAttribute('aria-pressed', 'true');
+  await sound.click();
+  await expect(sound).toHaveAttribute('aria-pressed', 'false');
+  await expect(sound).toHaveAttribute('title', 'Sound Off');
+  expect(await window.evaluate(() => localStorage.getItem('fruitui-widget-sound'))).toBe('off');
+  await send(page, 'Thanks');
+  await page.keyboard.press('Escape');
+  await expect(site(page).locator('.badge')).toHaveText('1');
+  expect(await notes()).toBe(2);
+  // Turned on again, it plays once so the visitor hears it.
+  await open(page);
+  await sound.click();
+  expect(await notes()).toBe(4);
+  // A website can start it off; the visitor's own choice wins.
+  await page.goto('/widget/chat.html?sound=off');
+  await page.evaluate(() => localStorage.removeItem('fruitui-widget-sound'));
+  await page.reload();
+  await expect(page.getByRole('button', { name: 'Sound' })).toHaveAttribute('aria-pressed', 'false');
+});
+
 test('offline, messages wait for the connection and send when it is back', async ({ page, context }) => {
   await open(page);
   await context.setOffline(true);
@@ -354,6 +462,12 @@ for (const appearance of ['light', 'dark']) {
     await chat(page).getByRole('button', { name: 'Confirm' }).click();
     await expect(chat(page).locator('.f-error')).toBeVisible();
     await expect(chat(page).locator('.widget-entry[data-kind="team"]').last()).toContainText('Alex here.');
+    await expectAccessible(page);
+    // An answer's start beside the launcher.
+    await chat(page).getByRole('textbox', { name: 'Message' }).fill('One more thing');
+    await chat(page).getByRole('textbox', { name: 'Message' }).press('Enter');
+    await page.keyboard.press('Escape');
+    await expect(site(page).locator('.preview')).toBeVisible();
     await expectAccessible(page);
     await site(page).getByRole('button', { name: 'Sign In' }).click();
     await expect(chat(page).locator('.widget-event')).toBeVisible();

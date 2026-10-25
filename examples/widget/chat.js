@@ -29,6 +29,10 @@ const shareMenu = {
 // The launcher's name, and with answers that arrived while it was closed; Tallport translates both.
 const launcher = 'Chat with Forma';
 const unreadLauncher = count => `Chat with Forma, ${count} unread`;
+// What the website's tab says while it's in the background and an answer arrives ("(1) Alex replied").
+const replied = author => `${author.split(' ')[0]} replied`;
+// The visitor's own choice of sound, kept in this browser; the website may start it off.
+const soundKey = 'fruitui-widget-sound';
 
 function size(bytes) {
   return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -40,6 +44,8 @@ export function widgetChat() {
   // widget's allowed websites; this demo serves any.
   const host = params.get('origin');
   let sequence = 0;
+  let audio;
+  let chimed = 0;
   const timers = new Set();
   const later = (callback, delay) => {
     const timer = setTimeout(() => {
@@ -68,7 +74,14 @@ export function widgetChat() {
     busy: false,
     unread: 0,
     announcement: '',
+    sound: params.get('sound') !== 'off',
     init() {
+      try {
+        const chosen = localStorage.getItem(soundKey);
+        if (chosen) this.sound = chosen === 'on';
+      } catch {
+        // Without storage the website's default holds for this visit.
+      }
       addEventListener('message', event => {
         if (!this.embedded || event.source !== parent || event.origin !== host) return;
         const data = event.data;
@@ -107,6 +120,8 @@ export function widgetChat() {
         fill: resolve('--f-accent-fill'),
         fillHover: resolve('--f-accent-fill-hover'),
         canvas: resolve('--f-surface'),
+        text: resolve('--f-text'),
+        secondary: resolve('--f-secondary'),
         dark: theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches),
       };
       probe.remove();
@@ -202,10 +217,67 @@ export function widgetChat() {
         : `Hi${name ? ` ${name}` : ''}, Alex here. Thanks for your message, I’m looking into it now.`;
       later(() => this.receive({ ...agent, body }), 2500);
     },
+    /**
+     * An answer: read out while the window is open. Closed, the launcher counts it, shows its start
+     * beside itself and, while the website's tab is in the background, puts it in the tab's title. A
+     * soft chime sounds whenever the visitor may not see it, unless they muted it.
+     */
     receive(message) {
       this.add({ kind: 'team', ...message, time: clock.format(new Date()) });
-      if (this.shown) this.announcement = `${message.author}: ${message.body}`;
-      else this.post('unread', { count: ++this.unread, label: unreadLauncher(this.unread) });
+      if (!this.shown || document.hidden) this.chime();
+      if (this.shown) {
+        this.announcement = `${message.author}: ${message.body}`;
+        if (document.hidden) this.post('attention', { title: replied(message.author) });
+        return;
+      }
+      this.post('unread', {
+        count: ++this.unread,
+        label: unreadLauncher(this.unread),
+        title: replied(message.author),
+        preview: { author: message.author, initials: message.initials, text: message.body, dismiss: 'Dismiss' },
+      });
+    },
+    /**
+     * Two soft notes, once for answers that arrive close together. The visitor has typed in this
+     * window, which lets it play sound; without audio the launcher and the title still say it.
+     */
+    chime() {
+      if (!this.sound || Date.now() - chimed < 8000) return;
+      chimed = Date.now();
+      try {
+        audio ??= new AudioContext();
+        audio.resume();
+        const now = audio.currentTime;
+        for (const [frequency, start] of [
+          [880, 0],
+          [1318.5, 0.12],
+        ]) {
+          const tone = audio.createOscillator();
+          const volume = audio.createGain();
+          tone.frequency.value = frequency;
+          volume.gain.setValueAtTime(0.0001, now + start);
+          volume.gain.exponentialRampToValueAtTime(0.08, now + start + 0.02);
+          volume.gain.exponentialRampToValueAtTime(0.0001, now + start + 0.5);
+          tone.connect(volume).connect(audio.destination);
+          tone.start(now + start);
+          tone.stop(now + start + 0.55);
+        }
+      } catch {
+        // No audio here.
+      }
+    },
+    /** Sound on or off, kept in this browser; turned on, it plays once so the visitor hears it. */
+    toggleSound() {
+      this.sound = !this.sound;
+      try {
+        localStorage.setItem(soundKey, this.sound ? 'on' : 'off');
+      } catch {
+        // The choice holds for this visit.
+      }
+      if (this.sound) {
+        chimed = 0;
+        this.chime();
+      }
     },
     event(body) {
       return { kind: 'event', body };

@@ -20,6 +20,7 @@
         <h1 id="widget-title" x-ref="title" tabindex="-1">Forma</h1>
         <p>We usually reply within an hour</p>
       </div>
+      <button class="f-button f-button--ghost f-button--icon widget-sound" type="button" @click="toggleSound" :aria-pressed="String(sound)" aria-pressed="true" aria-label="Sound" :title="sound ? 'Sound On' : 'Sound Off'" title="Sound On"><svg class="f-icon" aria-hidden="true"><use :href="sound ? '#i-volume' : '#i-volume-off'" href="#i-volume"/></svg></button>
       <button class="f-button f-button--ghost f-button--icon widget-close" type="button" x-show="embedded" x-cloak @click="close" aria-label="Close Chat" title="Close Chat"><svg class="f-icon" aria-hidden="true"><use href="#i-close"/></svg></button>
     </header>
     <div class="f-alert f-alert--warning widget-offline" role="status" x-show="!online" x-cloak><svg class="f-icon f-alert__icon" aria-hidden="true"><use href="#i-alert"/></svg><div class="f-alert__body">You’re offline. Your messages will be sent when you’re back.</div></div>
