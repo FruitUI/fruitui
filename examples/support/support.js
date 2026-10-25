@@ -27,6 +27,8 @@ const withSettings = () => {
   return mailboxes.map(({ id, name, email, color }) => ({
     id,
     ...(samples[id] ?? mailboxSettings(name, email, color)),
+    // Your own notifications for it, not one of its settings.
+    muted: false,
   }));
 };
 
@@ -86,6 +88,8 @@ export function supportDemo() {
       },
     },
     newMailboxId: 'support',
+    // The mailbox a new conversation starts in from All Inboxes: the one used last.
+    lastMailboxId: null,
     newName: '',
     newEmail: '',
     newSubject: '',
@@ -93,6 +97,18 @@ export function supportDemo() {
     newError: '',
     mailbox(id) {
       return this.mailboxes.find(mailbox => mailbox.id === id);
+    },
+    /** The mailbox of a row in the sidebar (its group's), for the right-click menu. */
+    groupMailbox(row) {
+      return row ? this.mailbox(row.closest('[data-scope]')?.dataset.scope) : null;
+    },
+    toggleMute(id) {
+      const owner = this.mailbox(id);
+      if (!owner) return;
+      owner.muted = !owner.muted;
+      this.$toast(
+        owner.muted ? `Notifications for ${owner.name} are muted.` : `Notifications for ${owner.name} are on again.`,
+      );
     },
     /** The mailbox whose settings are open, which its fields edit. */
     get box() {
@@ -912,7 +928,12 @@ export function supportDemo() {
       if (!this.chat) this.$nextTick(() => (this.$refs.thread.scrollTop = 0));
     },
     openNew() {
-      this.newMailboxId = this.mailboxId === 'all' ? this.mailboxes[0].id : this.mailboxId;
+      this.newMailboxId =
+        this.mailboxId !== 'all'
+          ? this.mailboxId
+          : this.mailbox(this.lastMailboxId)
+            ? this.lastMailboxId
+            : this.mailboxes[0].id;
       this.newError = '';
       this.$refs.newConversation.showModal();
     },
@@ -926,6 +947,7 @@ export function supportDemo() {
         return;
       }
       if (!this.mailbox(this.newMailboxId)) return;
+      this.lastMailboxId = this.newMailboxId;
       const id = Math.max(...this.tickets.map(ticket => ticket.id)) + 1;
       this.tickets.unshift({
         id,

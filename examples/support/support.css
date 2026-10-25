@@ -26,6 +26,13 @@
 .support-queue-title {
   min-width: 0;
 }
+/* New Conversation and the open mailbox's menu stay together at the toolbar's end. */
+.support-list-toolbar > .support-queue-title {
+  margin-inline-end: auto;
+}
+.support-list-toolbar {
+  gap: 4px;
+}
 .support-queue-title h2 {
   font-size: var(--f-text-xl);
   line-height: 1.3;
@@ -1178,11 +1185,11 @@
 .support-settings-list .f-page {
   --f-page-padding-block: 16px;
 }
-/* The mailbox's menu, after its folders. */
-.support-mailbox-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding-inline: 4px;
+/* A mailbox whose notifications are muted (yours), beside its name. */
+.support-muted {
+  --f-icon-size: 14px;
+  flex: none;
+  color: var(--f-secondary);
 }
 @container support (max-width: 900px) {
   .support-workspace[data-settings] :is(.support-settings-toolbar, .support-settings-list) {

@@ -905,14 +905,81 @@ const settingsPages = page => page.getByRole('region', { name: 'Settings', exact
 const settingsRow = (page, name) => settingsPages(page).getByRole('link', { name: new RegExp(`^${name}`) });
 const settingsPane = page => page.locator('#support-settings-page');
 
-async function openMailboxSettings(page, id, name) {
-  await page.locator(`#support-queues details[data-scope="${id}"]`).evaluate(details => (details.open = true));
-  await page.getByRole('button', { name: `More for ${name}` }).click();
-  await page
-    .getByRole('menu', { name: `${name} mailbox` })
-    .getByRole('menuitem', { name: 'Mailbox Settings' })
-    .click();
+/** A mailbox's commands, from its row in the sidebar (a secondary click). */
+async function mailboxMenu(page, id, name) {
+  await page.locator(`#support-queues details[data-scope="${id}"] > summary`).click({ button: 'right' });
+  return page.getByRole('menu', { name: `${name} mailbox` });
 }
+async function openMailboxSettings(page, id, name) {
+  await (await mailboxMenu(page, id, name)).getByRole('menuitem', { name: 'Mailbox Settings' }).click();
+}
+
+test('a mailbox’s commands are in the list’s toolbar while it’s open, and on its row in the sidebar', async ({
+  page,
+}) => {
+  const toolbar = page.locator('.support-list-toolbar');
+  // All Inboxes is no one mailbox: no mailbox menu, but New Conversation.
+  await expect(toolbar.getByRole('button', { name: 'New Conversation', exact: true })).toBeVisible();
+  await expect(toolbar.locator('.support-mailbox-menu')).toBeHidden();
+  // In a mailbox's folder, its menu sits beside New Conversation.
+  await page.locator('#support-queues details[data-scope="billing"]').evaluate(details => (details.open = true));
+  await queue(page, 'Billing Open').click();
+  await toolbar.getByRole('button', { name: 'More for Billing' }).click();
+  const menu = page.getByRole('menu', { name: 'Billing mailbox' });
+  await expect(menu.locator('[role^="menuitem"]')).toHaveText(['Mailbox Settings', 'Mute Notifications']);
+  // Muted (your own notifications), its row says so: an icon, and in its name.
+  await menu.getByRole('menuitemcheckbox', { name: 'Mute Notifications' }).click();
+  const billing = page.locator('#support-queues details[data-scope="billing"] > summary');
+  await expect(billing.locator('.support-muted')).toBeVisible();
+  await expect(billing).toHaveAccessibleName(/, notifications muted$/);
+  await expect(page.getByRole('status').filter({ hasText: 'Notifications for Billing are muted.' })).toBeVisible();
+  // Any mailbox's row has the same commands on a secondary click, or Shift+F10 from the keyboard.
+  const support = await mailboxMenu(page, 'support', 'Support');
+  await expect(support.locator('[role^="menuitem"]')).toHaveText(['Mailbox Settings', 'Mute Notifications']);
+  await expect(support.getByRole('menuitemcheckbox')).toHaveAttribute('aria-checked', 'false');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#support-queues details[data-scope="support"] > summary')).toBeFocused();
+  await billing.focus();
+  await page.keyboard.press('Shift+F10');
+  await expect(page.getByRole('menu', { name: 'Billing mailbox' }).getByRole('menuitemcheckbox')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await page.keyboard.press('Escape');
+  // Mailbox Settings opens its settings, in the mailbox.
+  await (await mailboxMenu(page, 'feedback', 'Feedback')).getByRole('menuitem', { name: 'Mailbox Settings' }).click();
+  await expect(page).toHaveURL(/#\/mailbox\/feedback\/settings$/);
+});
+
+test('a new conversation starts in the mailbox being viewed, else the one used last, chosen in the composer', async ({
+  page,
+}) => {
+  const dialog = page.getByRole('dialog', { name: 'New Conversation', exact: true });
+  const mailbox = dialog.getByRole('combobox', { name: 'Mailbox' });
+  // From All Inboxes, the first; every mailbox can be chosen, with its address.
+  await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
+  await expect(mailbox).toHaveValue('support');
+  await expect(mailbox.locator('option')).toHaveText([
+    'Support · support@forma.example',
+    'Billing · billing@forma.example',
+    'Feedback · feedback@forma.example',
+  ]);
+  await mailbox.selectOption('feedback');
+  await dialog.getByLabel('Customer Name').fill('Ava Martin');
+  await dialog.getByLabel('Customer Email').fill('ava@example.com');
+  await dialog.getByLabel('Subject', { exact: true }).fill('A question about guest access');
+  await dialog.getByLabel('Customer Message').fill('Can guests leave comments?');
+  await dialog.getByRole('button', { name: 'Create Conversation' }).click();
+  await expect(dialog).toBeHidden();
+  // From All Inboxes again, the one used last; from a mailbox's folder, that mailbox.
+  await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
+  await expect(mailbox).toHaveValue('feedback');
+  await dialog.getByRole('button', { name: /^Close/ }).click();
+  await page.locator('#support-queues details[data-scope="billing"]').evaluate(details => (details.open = true));
+  await queue(page, 'Billing Open').click();
+  await page.getByRole('button', { name: 'New Conversation', exact: true }).click();
+  await expect(mailbox).toHaveValue('billing');
+});
 
 test('a mailbox’s settings open from its menu, in the mailbox: its pages listed beside the open one', async ({
   page,
@@ -1238,8 +1305,13 @@ for (const colorScheme of ['light', 'dark']) {
     // The open page's row in the accent while the list has focus, and the mailbox's menu open.
     await settingsRow(page, 'AI Assistant').focus();
     await expectAccessible(page, '#support');
+    await mailboxMenu(page, 'support', 'Support');
+    await expectAccessible(page, '#support');
+    await page.keyboard.press('Escape');
+    await page.goto('/support.html');
     await page.locator('#support-queues details[data-scope="support"]').evaluate(details => (details.open = true));
-    await page.getByRole('button', { name: 'More for Support' }).click();
+    await queue(page, 'Support Open').click();
+    await page.locator('.support-list-toolbar').getByRole('button', { name: 'More for Support' }).click();
     await expectAccessible(page, '#support');
     await page.keyboard.press('Escape');
     for (const width of [800, 320]) {
