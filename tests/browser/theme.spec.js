@@ -546,6 +546,21 @@ test('rows filtered out with hidden leave the group’s hairlines and corners to
   await expect(first).toHaveCSS('border-bottom-left-radius', '0px');
 });
 
+test('a marked sidebar item shows its mark in its leading icon only; icons after its name stay secondary', async ({
+  page,
+}) => {
+  const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
+  await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
+    <nav class="f-sidebar" style="width: 260px"><a class="f-sidebar__item" href="#support" data-fruit-mark="red">
+      <svg class="f-icon" id="lead" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/></svg>
+      <span class="f-sidebar__identity">Support</span>
+      <svg class="f-icon" id="status" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/></svg>
+    </a></nav><i id="mark" data-fruit-mark="red" style="color: var(--f-mark)"></i><i id="secondary" style="color: var(--f-secondary)"></i></body></html>`);
+  const color = selector => page.locator(selector).evaluate(element => getComputedStyle(element).color);
+  expect(await color('#lead')).toBe(await color('#mark'));
+  expect(await color('#status')).toBe(await color('#secondary'));
+});
+
 test('in a menu with checkable items every item’s name lines up, checkmark column or not', async ({ page }) => {
   const css = readFileSync(new URL('../../build/fruitui.css', import.meta.url), 'utf8');
   await page.setContent(`<!doctype html><html><head><style>${css}</style></head><body class="fruit-ui">
