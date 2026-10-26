@@ -1321,19 +1321,17 @@
 }
 /* In a chat's heading, under the customer's name, beside the avatar. */
 .support-conversation-heading--chat .support-presence-line {
-  grid-column: 2;
+  grid-column: 2 / -1;
   margin-top: 4px;
 }
+/* Side by side: at this size, an overlapping face covers the initials before it. */
 .support-presence-faces {
   display: inline-flex;
+  gap: 4px;
 }
 .support-presence-face {
   --f-avatar-size: 22px;
   --f-avatar-font-size: 10px;
-  box-shadow: 0 0 0 2px var(--f-surface);
-}
-.support-presence-face + .support-presence-face {
-  margin-inline-start: -6px;
 }
 /* Who is writing a reply, right above the composer; without anyone, it takes no room but stays a
    status region, so the next one is read out. */
