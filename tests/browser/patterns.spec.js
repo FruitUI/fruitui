@@ -488,6 +488,36 @@ test('the confirmer asks once per request and answers each in turn', async ({ pa
   expect(await answers).toEqual([true, false]);
 });
 
+test('each question starts with its buttons ready, even after a page’s script marked one busy', async ({ page }) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-confirm');
+  const answer = card.getByRole('status');
+  const dialog = page.getByRole('alertdialog');
+  // A page's own script marks a submitting form's button busy until the next page, as many do; the
+  // confirmer answers through its form (method="dialog"), which leaves nothing.
+  await page.evaluate(() =>
+    document.addEventListener('submit', event => event.submitter?.setAttribute('aria-busy', 'true')),
+  );
+  await card.getByRole('button', { name: 'Delete Conversation…' }).click();
+  await dialog.getByRole('button', { name: 'Delete' }).click();
+  await expect(answer).toHaveText('Deleted.');
+  // The next question isn't stuck: its buttons are ready, and its action answers.
+  const next = page.evaluate(
+    () =>
+      new Promise(resolve =>
+        window.dispatchEvent(
+          new CustomEvent('fruit-confirm', {
+            detail: { title: 'Delete another?', message: '', confirm: 'Delete', tone: 'danger', resolve },
+          }),
+        ),
+      ),
+  );
+  await expect(dialog).toHaveAccessibleName('Delete another?');
+  await expect(dialog.getByRole('button', { name: 'Delete' })).not.toHaveAttribute('aria-busy');
+  await dialog.getByRole('button', { name: 'Delete' }).click();
+  expect(await next).toBe(true);
+});
+
 test('without a confirmer on the page, confirm() asks with the browser', async ({ page }) => {
   await page.route('**/confirm-fixture', route =>
     route.fulfill({
