@@ -1292,3 +1292,57 @@
 .f-form-section__rows > .settings-context-result {
   border-radius: 0 0 calc(var(--f-radius) - 1px) calc(var(--f-radius) - 1px);
 }
+
+/* Who else has a conversation open: quiet, as it's no problem; in the accent while someone writes a
+   reply (typing in its composer), so two people don't answer at once. */
+.support-presence {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: var(--f-secondary);
+}
+.support-presence > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.support-presence[data-replying],
+.support-presence-line[data-replying] {
+  color: var(--f-accent-text);
+}
+.support-presence-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: var(--f-secondary);
+  font-size: var(--f-text-sm);
+}
+/* In a chat's heading, under the customer's name, beside the avatar. */
+.support-conversation-heading--chat .support-presence-line {
+  grid-column: 2;
+  margin-top: 4px;
+}
+.support-presence-faces {
+  display: inline-flex;
+}
+.support-presence-face {
+  --f-avatar-size: 22px;
+  --f-avatar-font-size: 10px;
+  box-shadow: 0 0 0 2px var(--f-surface);
+}
+.support-presence-face + .support-presence-face {
+  margin-inline-start: -6px;
+}
+/* Who is writing a reply, right above the composer; without anyone, it takes no room but stays a
+   status region, so the next one is read out. */
+.support-reply-typing {
+  padding: 4px 20px 0;
+  color: var(--f-accent-text);
+  font-size: var(--f-text-sm);
+}
+.support-reply-typing[data-idle] {
+  min-height: 0;
+  padding: 0;
+}

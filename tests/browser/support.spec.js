@@ -701,7 +701,7 @@ test('the list leaves conversation numbers to search results and the open conver
   // channel and no count; a row with nothing to add has no last line at all.
   await expect(ticket(page, 1042).locator('.support-channel')).toBeHidden();
   await expect(ticket(page, 1042)).not.toHaveAccessibleName(/Email|message/);
-  await expect(ticket(page, 1042).locator('.support-ticket-meta')).toBeHidden();
+  await expect(ticket(page, 1040).locator('.support-ticket-meta')).toBeHidden();
   await expect(ticket(page, 1041).getByText('High priority')).toBeVisible();
   await expect(ticket(page, 1041).getByText('#1041', { exact: true })).toBeHidden();
   // Search results show it, whether the search was for the number or for words.
@@ -1318,5 +1318,48 @@ for (const colorScheme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 800 });
       await expectNoOverflow(page, '#support');
     }
+  });
+}
+
+test('who else has a conversation open shows in its row and heading; who writes a reply, above the composer', async ({
+  page,
+}) => {
+  const row = id => page.locator(`button.support-ticket[data-ticket-id="${id}"] .support-presence`);
+  // Open only: quiet, in the secondary colour, with an eye.
+  await expect(row(1042)).toHaveText('Mia is viewing');
+  await expect(row(1042)).not.toHaveAttribute('data-replying');
+  await expect(row(1042)).toHaveCSS('color', await tokenColor(page, '--f-secondary'));
+  // Typing a reply: in the accent, first.
+  await expect(row(1041)).toHaveText('Noah is replying · Mia is viewing');
+  await expect(row(1041)).toHaveCSS('color', await tokenColor(page, '--f-accent-text'));
+  // The open conversation's heading names them; nobody writing, the line above the composer is empty
+  // and takes no room, but stays a status region.
+  const heading = page.locator('.support-presence-line');
+  const typing = page.locator('.support-reply-typing').first();
+  await expect(heading).toHaveText(/Mia Patel is viewing$/);
+  await expect(typing).toHaveRole('status');
+  await expect(typing).toHaveText('');
+  expect((await typing.boundingBox()).height).toBe(0);
+  await page.locator('button.support-ticket[data-ticket-id="1041"]').click();
+  await expect(heading).toHaveText(/Noah Williams is replying, Mia Patel is viewing$/);
+  await expect(typing).toHaveText('Noah Williams is writing a reply');
+  expect((await typing.boundingBox()).height).toBeGreaterThan(10);
+  // A chat's composer is always open, so it says nothing; someone typing is said above it too.
+  await queue(page, 'Waiting').first().click();
+  await page.locator('button.support-ticket[data-ticket-id="1036"]').click();
+  await expect(page.locator('.support-chat-composer').locator('xpath=preceding-sibling::p[1]')).toHaveText(
+    'Noah Williams is writing a reply',
+  );
+});
+
+for (const colorScheme of ['light', 'dark']) {
+  test(`who else has a conversation open is accessible in ${colorScheme} appearance`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.locator('button.support-ticket[data-ticket-id="1041"]').click();
+    await expect(page.locator('.support-reply-typing').first()).toHaveText('Noah Williams is writing a reply');
+    await expectAccessible(page, '#support');
+    await queue(page, 'Waiting').first().click();
+    await page.locator('button.support-ticket[data-ticket-id="1036"]').click();
+    await expectAccessible(page, '#support');
   });
 }

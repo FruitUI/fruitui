@@ -98,6 +98,7 @@ function summary(body, time) {
 export const tickets = [
   {
     id: 1042,
+    viewers: [{ agent: 'mia', replying: false }],
     mailboxId: 'billing',
     customer: people.sophie,
     subject: 'A little help with our team plan',
@@ -157,6 +158,10 @@ export const tickets = [
   },
   {
     id: 1041,
+    viewers: [
+      { agent: 'noah', replying: true },
+      { agent: 'mia', replying: false },
+    ],
     mailboxId: 'support',
     customer: people.jordan,
     subject: 'Sign-in after changing our domain',
@@ -312,6 +317,7 @@ export const tickets = [
   },
   {
     id: 1036,
+    viewers: [{ agent: 'noah', replying: true }],
     mailboxId: 'support',
     customer: people.lena,
     subject: 'Inviting a client as a guest',

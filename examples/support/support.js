@@ -843,6 +843,31 @@ export function supportDemo() {
     agentName(id) {
       return this.agents.find(agent => agent.id === id)?.name ?? id;
     },
+    /**
+     * Who else has a conversation open, those writing a reply first. Replying means typing in its
+     * composer in the last moments (or text not sent yet), not just an open composer: a chat's is
+     * always open, so an open one says nothing.
+     */
+    viewers(ticket) {
+      return [...(ticket?.viewers ?? [])].sort((one, other) => Number(other.replying) - Number(one.replying));
+    },
+    /** For the list's row: "Noah is replying · Mia is viewing". */
+    presenceSummary(ticket) {
+      return this.viewers(ticket)
+        .map(viewer => `${this.agentName(viewer.agent).split(' ')[0]} is ${viewer.replying ? 'replying' : 'viewing'}`)
+        .join(' · ');
+    },
+    /** For the conversation's heading, in full names. */
+    presenceLine(ticket) {
+      return this.viewers(ticket)
+        .map(viewer => `${this.agentName(viewer.agent)} is ${viewer.replying ? 'replying' : 'viewing'}`)
+        .join(', ');
+    },
+    /** Who is writing a reply now, for the line above the composer. */
+    replying(ticket) {
+      const viewer = this.viewers(ticket).find(viewer => viewer.replying);
+      return viewer ? this.agentName(viewer.agent) : '';
+    },
     setFilter(name, value) {
       this.filters[name] = value;
       this.syncSelection();
