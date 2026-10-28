@@ -86,6 +86,12 @@ export function supportDemo() {
           'Hi Sophie,\n\nAbsolutely — all your projects and comments will stay right where they are. You can upgrade from Settings → Billing and invite your teammates whenever you’re ready.\n\nAnnual billing is available, too. Happy to help you get the studio settled in!\n\nAlex',
         note: '',
       },
+      // The assistant's draft (its details: aiDraft in tickets.js).
+      1036: {
+        reply:
+          'You’re welcome, Lena! Here’s a short guide to working with guests, in case it helps: https://forma.example/help/guests',
+        note: '',
+      },
     },
     newMailboxId: 'support',
     // The mailbox a new conversation starts in from All Inboxes: the one used last.
@@ -946,11 +952,18 @@ export function supportDemo() {
         this.resetFilters();
       }
       this.draft = '';
+      // Sent, an AI draft's details describe nothing in the field any more.
+      if (this.mode === 'reply') ticket.aiDraft = null;
       this.$toast(
         this.mode === 'note' ? 'Internal note added · visible to your team' : 'Reply added to the demo conversation',
       );
       // Newest first: the new entry is at the top. A chat's history follows it at the bottom by itself.
       if (!this.chat) this.$nextTick(() => (this.$refs.thread.scrollTop = 0));
+    },
+    /** Dismissing an AI draft's details keeps the draft in the field, where focus goes. */
+    dismissAiDraft() {
+      this.ticket.aiDraft = null;
+      this.$refs.replyBody.focus();
     },
     openNew() {
       this.newMailboxId =

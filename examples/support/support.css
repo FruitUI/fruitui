@@ -1344,3 +1344,11 @@
   min-height: 0;
   padding: 0;
 }
+/* An AI draft already in a chat's field: its details in the composer, above the field they describe,
+   as wide as it and smaller than the draft. */
+.support-chat-draft {
+  --f-suggestion-padding: 10px 14px 12px;
+  --f-suggestion-gap: 8px;
+  margin-bottom: 10px;
+  font-size: var(--f-text-sm);
+}

@@ -1344,12 +1344,63 @@ test('who else has a conversation open shows in its row and heading; who writes 
   await expect(heading).toHaveText(/Noah Williams is replying, Mia Patel is viewing$/);
   await expect(typing).toHaveText('Noah Williams is writing a reply');
   expect((await typing.boundingBox()).height).toBeGreaterThan(10);
-  // A chat's composer is always open, so it says nothing; someone typing is said above it too.
+  // A chat's composer is always open, so it says nothing: Noah only has Lena's chat open.
   await queue(page, 'Waiting').first().click();
+  await expect(row(1036)).toHaveText('Noah is viewing');
   await page.locator('button.support-ticket[data-ticket-id="1036"]').click();
-  await expect(page.locator('.support-chat-composer').locator('xpath=preceding-sibling::p[1]')).toHaveText(
-    'Noah Williams is writing a reply',
+  await expect(heading).toHaveText(/Noah Williams is viewing$/);
+  await expect(page.locator('.support-chat-history ~ .support-reply-typing')).toHaveText('');
+});
+
+test('an AI draft already in a chat’s field shows its details above it until it is sent or dismissed', async ({
+  page,
+}) => {
+  const open = async () => {
+    await queue(page, 'Waiting').first().click();
+    await ticket(page, 1036).click();
+  };
+  await open();
+  const composer = page.locator('.support-chat-composer');
+  const field = composer.getByRole('textbox', { name: 'Message Lena Wilson' });
+  const card = composer.getByRole('region', { name: 'AI Draft' });
+  await expect(field).toHaveValue(/^You’re welcome, Lena!/);
+  // Its confidence, notes and sources; the draft itself is in the field.
+  await expect(card.locator('.f-suggestion__meta')).toHaveText('English · Medium confidence');
+  await expect(card.locator('.f-suggestion__body')).toHaveCount(0);
+  await expect(card.getByRole('heading', { name: 'Notes' })).toBeVisible();
+  await expect(card.getByRole('link', { name: 'Inviting guests to a project' })).toHaveAttribute(
+    'href',
+    'https://forma.example/help/guests',
   );
+  // In the composer, above the field and as wide, and quieter than the draft.
+  const [cardBox, fieldBox] = [await card.boundingBox(), await composer.locator('.f-composer__field').boundingBox()];
+  expect(cardBox.x).toBeCloseTo(fieldBox.x, 0);
+  expect(cardBox.width).toBeCloseTo(fieldBox.width, 0);
+  expect(cardBox.y + cardBox.height).toBeLessThan(fieldBox.y);
+  expect(Number.parseFloat(await card.evaluate(element => getComputedStyle(element).fontSize))).toBeLessThan(
+    Number.parseFloat(await field.evaluate(element => getComputedStyle(element).fontSize)),
+  );
+  // An internal note isn't the draft: its details wait.
+  const note = composer.getByRole('button', { name: 'Internal Note' });
+  await note.click();
+  await expect(card).toBeHidden();
+  await note.click();
+  await expect(card).toBeVisible();
+  // Dismissed, the draft stays in the field, which takes focus.
+  await card.getByRole('button', { name: 'Dismiss Draft Details' }).click();
+  await expect(card).toBeHidden();
+  await expect(field).toBeFocused();
+  await expect(field).toHaveValue(/^You’re welcome, Lena!/);
+  // Sent, the details go with it.
+  await page.goto('/support.html');
+  await open();
+  await expect(card).toBeVisible();
+  await field.press('Enter');
+  await expect(page.getByRole('list', { name: 'Messages' }).locator(':scope > li').last()).toContainText(
+    'You’re welcome, Lena!',
+  );
+  await expect(card).toBeHidden();
+  await expect(field).toHaveValue('');
 });
 
 for (const colorScheme of ['light', 'dark']) {

@@ -161,7 +161,7 @@ for (const theme of ['light', 'dark']) {
     await page.goto('/components.html');
     await page.locator('#component-toast').getByRole('button', { name: 'Error' }).click();
     await page.locator('#component-copy-button').getByRole('button', { name: 'Copy Invite Link' }).click();
-    await expect(page.locator('#component-suggestion').getByRole('region', { name: 'AI draft' })).toBeVisible();
+    await expect(page.locator('#component-suggestion').getByRole('region', { name: 'AI draft' }).first()).toBeVisible();
     await page.locator('#component-remote-dialog').getByRole('link', { name: 'Merge Conversation…' }).click();
     await expect(page.getByRole('dialog', { name: 'Merge Conversation' }).getByRole('combobox')).toBeVisible();
     await expectAccessible(page);

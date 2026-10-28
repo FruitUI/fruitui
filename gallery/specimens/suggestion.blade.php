@@ -34,3 +34,20 @@
     </x-fruit::suggestion>
     <x-fruit::button x-show="!open" x-on:click="open = true">Show the Draft Again</x-fruit::button>
 </div>
+{{-- A draft already in a chat's field: an empty default slot, so the card is its title, meta and details. --}}
+<div x-data="{ open: true }">
+    <x-fruit::suggestion title="AI draft" meta="English · Medium confidence" x-show="open">
+        <x-slot:dismiss><x-fruit::button variant="ghost" class="f-button--icon" x-on:click="open = false" aria-label="Dismiss draft details" title="Dismiss"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></x-fruit::button></x-slot:dismiss>
+        <x-slot:details>
+            <section>
+                <h4>Notes</h4>
+                <ul><li>Lena’s studio has asked about guests before.</li></ul>
+            </section>
+            <section>
+                <h4>Documentation Used</h4>
+                <ul class="f-suggestion__sources"><li><a href="https://forma.example/help/guests">Inviting guests to a project</a><small>forma.example/help</small></li></ul>
+            </section>
+        </x-slot:details>
+    </x-fruit::suggestion>
+    <x-fruit::button x-show="!open" x-on:click="open = true">Show the Details Again</x-fruit::button>
+</div>

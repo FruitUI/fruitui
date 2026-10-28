@@ -533,6 +533,18 @@ class ComponentContractsTest extends TestCase
         $this->assertRejected('<x-fruit::suggestion title="AI draft">Draft<x-slot:status tone="busy">…</x-slot:status></x-fruit::suggestion>', 'suggestion status tone must be one of');
     }
 
+    public function test_a_suggestion_already_where_it_is_used_shows_its_title_status_and_details(): void
+    {
+        // The draft is in a chat's field: no body, and no skeleton for it while busy. Livewire's
+        // comments alone count as an empty slot.
+        foreach (['', "\n    <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->\n"] as $slot) {
+            $xpath = $this->xpath(Blade::render('<x-fruit::suggestion title="AI draft" meta="English · Medium">'.$slot.'<x-slot:status tone="working">Drafting…</x-slot:status><x-slot:details><section><h4>Notes</h4><ul><li>Guests can comment.</li></ul></section></x-slot:details></x-fruit::suggestion>'));
+            $card = $xpath->query('//section[contains(@class, "f-suggestion")]')->item(0);
+            $this->assertSame(0, $xpath->query('.//*[contains(@class, "f-suggestion__body") or contains(@class, "f-suggestion__placeholder")]', $card)->length);
+            $this->assertSame(['f-suggestion__header', 'f-suggestion__status', 'f-suggestion__details'], array_map(fn ($child) => explode(' ', $child->getAttribute('class'))[0], iterator_to_array($xpath->query('./*', $card))));
+        }
+    }
+
     public function test_a_page_column_has_a_width_a_header_and_a_save_bar(): void
     {
         $xpath = $this->xpath(Blade::render('<x-fruit::page width="narrow" title="Mailbox" description="How it sends." :level="2"><p>Rows</p><x-slot:actions><button type="button">Restore</button></x-slot:actions><x-slot:footer><button type="submit">Save</button></x-slot:footer></x-fruit::page>'));

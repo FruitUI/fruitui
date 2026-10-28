@@ -1100,6 +1100,15 @@ An AI reply draft, or any generated suggestion the reader reviews and uses, is `
 </x-fruit::suggestion>
 ```
 
+When the suggestion is already where it's used, such as a reply draft that goes straight into a chat's field, leave the default slot empty: the card is then its title and meta, the dismiss button, the status while it is made, and the details, with no skeleton and no separator above the details. Livewire's `<!--[if BLOCK]>` comments alone count as empty. Leave out the translation and actions too; the field is where the draft is edited and sent. In a chat, put the card in the composer, above its field and as wide, remove it when the draft is sent or dismissed, and hide it while the field holds an internal note, as in the Support example's chat with Lena.
+
+```blade
+<x-fruit::suggestion title="AI draft" meta="English · Medium confidence">
+    <x-slot:dismiss><x-fruit::button variant="ghost" class="f-button--icon" aria-label="Dismiss draft details">…</x-fruit::button></x-slot:dismiss>
+    <x-slot:details>…</x-slot:details>
+</x-fruit::suggestion>
+```
+
 ### Dialogs with loaded content
 
 For content the server renders on demand (outgoing emails, the original message, a merge or move form), put one `<x-fruit::remote-dialog />` in the layout for translated labels, then open dialogs from links or script. A link or button with `data-fruit-dialog-url` loads that URL (empty on a link: its `href`) with the title from `data-fruit-dialog-title` (default: its text) and `data-fruit-dialog-size` (medium or large); Cmd/Ctrl/Shift-clicks keep the link's own behavior, so it can still open in a new tab.

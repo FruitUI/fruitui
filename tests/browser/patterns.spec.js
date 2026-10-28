@@ -1113,7 +1113,9 @@ test('a suggestion shows a skeleton while it is made, then the draft, its transl
 }) => {
   await page.clock.install();
   await page.goto('/components.html');
-  const card = page.locator('#component-suggestion').getByRole('region', { name: 'AI draft' });
+  const card = page.locator('#component-suggestion .f-suggestion').first();
+  await expect(card).toHaveRole('region');
+  await expect(card).toHaveAccessibleName('AI draft');
   await expect(card.getByRole('button', { name: 'Insert into Reply' })).toBeVisible();
   await expect(card.locator('.f-suggestion__placeholder')).toBeHidden();
   await expect(card.locator('.f-suggestion__translation')).toHaveAttribute('lang', 'nl');
@@ -1134,6 +1136,39 @@ test('a suggestion shows a skeleton while it is made, then the draft, its transl
   await expect(card.getByRole('status')).toBeHidden();
 
   await card.getByRole('button', { name: 'Dismiss draft' }).click();
+  await expect(card).toBeHidden();
+});
+
+test('a suggestion already where it is used shows its title and details, with nothing setting them apart', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const card = page.locator('#component-suggestion .f-suggestion').nth(1);
+  await expect(card).toHaveRole('region');
+  await expect(card).toHaveAccessibleName('AI draft');
+  await expect(card.locator(':scope > *')).toHaveCount(2);
+  await expect(card.locator('.f-suggestion__meta')).toHaveText('English · Medium confidence');
+  await expect(card.locator('.f-suggestion__body, .f-suggestion__placeholder')).toHaveCount(0);
+  const details = card.locator('.f-suggestion__details');
+  await expect(details).toHaveCSS('border-top-style', 'none');
+  await expect(details).toHaveCSS('padding-top', '0px');
+  await expect(card.getByRole('link', { name: 'Inviting guests to a project' })).toBeVisible();
+  // A card with its draft keeps the line above its details.
+  await expect(page.locator('#component-suggestion .f-suggestion').first().locator('.f-suggestion__details')).toHaveCSS(
+    'border-top-style',
+    'solid',
+  );
+  // In a narrow card the meta wraps beside the title; the icon and Dismiss stay on the title's line.
+  await page.setViewportSize({ width: 360, height: 800 });
+  const middle = locator =>
+    locator.evaluate(element => element.getBoundingClientRect().top + element.getBoundingClientRect().height / 2);
+  const title = card.locator('.f-suggestion__title');
+  expect((await card.locator('.f-suggestion__meta').boundingBox()).height).toBeGreaterThan(
+    (await title.boundingBox()).height * 1.5,
+  );
+  expect(await middle(card.locator('.f-suggestion__icon'))).toBeCloseTo(await middle(title), 0);
+  expect(await middle(card.locator('.f-suggestion__dismiss .f-button'))).toBeCloseTo(await middle(title), 0);
+  await card.getByRole('button', { name: 'Dismiss draft details' }).click();
   await expect(card).toBeHidden();
 });
 

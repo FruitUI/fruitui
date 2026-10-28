@@ -317,7 +317,21 @@ export const tickets = [
   },
   {
     id: 1036,
-    viewers: [{ agent: 'noah', replying: true }],
+    viewers: [{ agent: 'noah', replying: false }],
+    // The assistant's reply draft is already in the chat's field (drafts in support.js); its details
+    // show above it.
+    aiDraft: {
+      meta: 'English · Medium confidence',
+      notes: ['Lena’s studio has asked about guests before.', 'Guests can comment and upload files, but not edit.'],
+      sources: [
+        { title: 'Inviting guests to a project', url: 'https://forma.example/help/guests', site: 'forma.example/help' },
+        {
+          title: 'What guests can do',
+          url: 'https://forma.example/help/guests/permissions',
+          site: 'forma.example/help',
+        },
+      ],
+    },
     mailboxId: 'support',
     customer: people.lena,
     subject: 'Inviting a client as a guest',

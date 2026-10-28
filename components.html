@@ -2994,7 +2994,7 @@ Thanks for **writing**. We&#039;ll:
         &lt;/x-fruit::message&gt;
     &lt;/li&gt;
 &lt;/x-fruit::thread&gt;</pre></details></section>
-        <section id="component-suggestion" data-component="suggestion" class="f-card component-card"><h2>Suggestion</h2><p>A generated suggestion to review and use, such as an AI reply draft: the draft as readable text, its status while it is made, an optional translation, actions, and quieter notes and sources. Draft Again shows the working states.</p><!-- blade:suggestion --><div x-data="{
+        <section id="component-suggestion" data-component="suggestion" class="f-card component-card"><h2>Suggestion</h2><p>A generated suggestion to review and use, such as an AI reply draft: the draft as readable text, its status while it is made, an optional translation, actions, and quieter notes and sources. Draft Again shows the working states. The second card is for a draft already in a chat’s field: its title, meta and details only.</p><!-- blade:suggestion --><div x-data="{
     state: 'done', open: true,
     draft() { this.state = 'queued'; setTimeout(() => this.state = 'drafting', 900); setTimeout(() => this.state = 'done', 2400); },
 }">
@@ -3010,11 +3010,11 @@ Thanks for **writing**. We&#039;ll:
             <svg class="f-icon f-suggestion__status-icon f-suggestion__status-icon--danger" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
             <span class="f-suggestion__status-text"><span x-text="state === 'queued' ? 'Waiting in the queue…' : 'Drafting…'">Drafting…</span></span>
         </div>
-        <div class="f-skeleton f-suggestion__placeholder" aria-hidden="true"><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div></div>
-    <div class="f-suggestion__body f-prose"><p>Hi Sophie,</p>
+                <div class="f-skeleton f-suggestion__placeholder" aria-hidden="true"><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div><div class="f-skeleton__line"></div></div>
+        <div class="f-suggestion__body f-prose"><p>Hi Sophie,</p>
         <p>I’ve sent Ana a fresh invite link. It works for seven days, and she can join as a guest without a paid seat.</p>
         <p>Alex</p></div>
-            <div class="f-suggestion__translation" lang="nl"><svg class="f-icon f-suggestion__translation-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span class="f-sr-only">Translation</span><div class="f-suggestion__translation-text f-prose"><p>Hoi Sophie,</p><p>Ik heb Ana een nieuwe uitnodigingslink gestuurd. Die werkt zeven dagen, en ze kan als gast meedoen zonder betaalde plek.</p><p>Alex</p></div></div>
+                <div class="f-suggestion__translation" lang="nl"><svg class="f-icon f-suggestion__translation-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg><span class="f-sr-only">Translation</span><div class="f-suggestion__translation-text f-prose"><p>Hoi Sophie,</p><p>Ik heb Ana een nieuwe uitnodigingslink gestuurd. Die werkt zeven dagen, en ze kan als gast meedoen zonder betaalde plek.</p><p>Alex</p></div></div>
         <div class="f-suggestion__actions" aria-label="Actions" role="group"><button type="button" class="f-button f-button--primary" x-on:click="$toast('Draft inserted into the reply.')">Insert into Reply</button>
             <button type="button" class="f-button" x-on:click="draft()">Draft Again</button></div>    <div class="f-suggestion__details"><section>
                 <h4>Notes</h4>
@@ -3031,6 +3031,23 @@ Thanks for **writing**. We&#039;ll:
                 </ul>
             </section></div></section>
     <button type="button" class="f-button" x-show="!open" x-on:click="open = true">Show the Draft Again</button>
+</div>
+
+<div x-data="{ open: true }">
+    <section class="f-suggestion" aria-label="AI draft" x-show="open">
+    <header class="f-suggestion__header">
+        <svg class="f-icon f-suggestion__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+        <strong class="f-suggestion__title">AI draft</strong>
+        <span class="f-suggestion__meta">English · Medium confidence</span>        <span class="f-suggestion__dismiss"><button type="button" class="f-button f-button--ghost f-button--icon" x-on:click="open = false" aria-label="Dismiss draft details" title="Dismiss"><svg class="f-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></span>    </header>
+                    <div class="f-suggestion__details"><section>
+                <h4>Notes</h4>
+                <ul><li>Lena’s studio has asked about guests before.</li></ul>
+            </section>
+            <section>
+                <h4>Documentation Used</h4>
+                <ul class="f-suggestion__sources"><li><a href="https://forma.example/help/guests">Inviting guests to a project</a><small>forma.example/help</small></li></ul>
+            </section></div></section>
+    <button type="button" class="f-button" x-show="!open" x-on:click="open = true">Show the Details Again</button>
 </div><!-- /blade:suggestion --><details class="gallery-source"><summary>HTML &amp; CSS</summary><pre class="code">&lt;section class=&quot;f-suggestion&quot; aria-label=&quot;AI draft&quot; aria-busy=&quot;false&quot;&gt;
   &lt;header class=&quot;f-suggestion__header&quot;&gt;
     &lt;svg class=&quot;f-icon f-suggestion__icon&quot; aria-hidden=&quot;true&quot;&gt;…sparkles…&lt;/svg&gt;
@@ -3089,6 +3106,23 @@ Thanks for **writing**. We&#039;ll:
         &lt;/x-slot:details&gt;
     &lt;/x-fruit::suggestion&gt;
     &lt;x-fruit::button x-show=&quot;!open&quot; x-on:click=&quot;open = true&quot;&gt;Show the Draft Again&lt;/x-fruit::button&gt;
+&lt;/div&gt;
+{{-- A draft already in a chat&apos;s field: an empty default slot, so the card is its title, meta and details. --}}
+&lt;div x-data=&quot;{ open: true }&quot;&gt;
+    &lt;x-fruit::suggestion title=&quot;AI draft&quot; meta=&quot;English · Medium confidence&quot; x-show=&quot;open&quot;&gt;
+        &lt;x-slot:dismiss&gt;&lt;x-fruit::button variant=&quot;ghost&quot; class=&quot;f-button--icon&quot; x-on:click=&quot;open = false&quot; aria-label=&quot;Dismiss draft details&quot; title=&quot;Dismiss&quot;&gt;&lt;svg class=&quot;f-icon&quot; viewBox=&quot;0 0 24 24&quot; aria-hidden=&quot;true&quot;&gt;&lt;path d=&quot;M18 6 6 18&quot;/&gt;&lt;path d=&quot;m6 6 12 12&quot;/&gt;&lt;/svg&gt;&lt;/x-fruit::button&gt;&lt;/x-slot:dismiss&gt;
+        &lt;x-slot:details&gt;
+            &lt;section&gt;
+                &lt;h4&gt;Notes&lt;/h4&gt;
+                &lt;ul&gt;&lt;li&gt;Lena’s studio has asked about guests before.&lt;/li&gt;&lt;/ul&gt;
+            &lt;/section&gt;
+            &lt;section&gt;
+                &lt;h4&gt;Documentation Used&lt;/h4&gt;
+                &lt;ul class=&quot;f-suggestion__sources&quot;&gt;&lt;li&gt;&lt;a href=&quot;https://forma.example/help/guests&quot;&gt;Inviting guests to a project&lt;/a&gt;&lt;small&gt;forma.example/help&lt;/small&gt;&lt;/li&gt;&lt;/ul&gt;
+            &lt;/section&gt;
+        &lt;/x-slot:details&gt;
+    &lt;/x-fruit::suggestion&gt;
+    &lt;x-fruit::button x-show=&quot;!open&quot; x-on:click=&quot;open = true&quot;&gt;Show the Details Again&lt;/x-fruit::button&gt;
 &lt;/div&gt;</pre></details></section>
       </div>
       <section class="gallery-boundary"><h2>Example Compositions</h2><p>Charts, full Support inspectors, and Chat reactions remain example compositions. Tabs, pagination, selection, menus, and rich message content use shared components. Their frames, panes, composers, facts, floating disclosures, and native tables now use the cataloged shared styles. Application data and navigation stay local. See the <a href="/admin.html">Admin</a>, <a href="/support.html">Support</a>, and <a href="/chat.html">Chat</a> examples for those arrangements.</p></section>
