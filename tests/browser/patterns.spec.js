@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
-import { expectAccessible, tokenColor } from './helpers.js';
+import { expectAccessible, shownLines, tokenColor } from './helpers.js';
 
 test('Mail and Support consume the same conversation styles and preserve their variants', async ({ page }) => {
   for (const [path, listName, variant] of [
@@ -1179,12 +1179,11 @@ test('long content shows its first lines until Show More, and content a line or 
   const long = page.locator('#component-more .f-more').first();
   const short = page.locator('#component-more .f-more').nth(1);
   const content = long.locator('.f-more__content');
-  const lines = () =>
-    content.evaluate(element => element.clientHeight / parseFloat(getComputedStyle(element).lineHeight));
-  // Four lines, the last faded, and a native button that says it is collapsed.
+  // Four lines of text, the last faded (a gap between paragraphs isn't a line), and a native button
+  // that says it is collapsed.
   const more = long.getByRole('button', { name: 'Show More' });
   await expect(more).toHaveAttribute('aria-expanded', 'false');
-  expect(await lines()).toBeCloseTo(4, 1);
+  expect((await shownLines(content)).shown).toBe(4);
   await expect(content).toHaveCSS('overflow-y', 'hidden');
   expect(
     await content.evaluate(element => getComputedStyle(element).maskImage || getComputedStyle(element).webkitMaskImage),
@@ -1197,9 +1196,10 @@ test('long content shows its first lines until Show More, and content a line or 
   await expect(content).toHaveCSS('mask-image', 'none');
   await less.click();
   await expect(more).toHaveAttribute('aria-expanded', 'false');
-  // --f-more-lines sets how many lines show.
+  // --f-more-lines sets how many lines show (read when the content is measured: here, as the width changes).
   await long.evaluate(element => element.style.setProperty('--f-more-lines', '2'));
-  expect(await lines()).toBeCloseTo(2, 1);
+  await page.setViewportSize({ width: 1000, height: 1100 });
+  await expect.poll(async () => (await shownLines(content)).shown).toBe(2);
   // A short one has no button; content that grows (a morph, a script) is measured again.
   await expect(short.locator('.f-more__toggle')).toBeHidden();
   expect(await short.locator('.f-more__content').evaluate(element => element.scrollHeight - element.clientHeight)).toBe(

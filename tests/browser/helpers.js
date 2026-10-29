@@ -67,3 +67,24 @@ export function selectMarkdown(field, { text, from = 0, at } = {}) {
     { text, from, at },
   );
 }
+
+/** How many lines of a Show More's text show in full while it is collapsed, and how many it has. */
+export function shownLines(content) {
+  return content.evaluate(element => {
+    const origin = element.getBoundingClientRect().top - element.scrollTop;
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    const tops = new Set();
+    let shown = 0;
+    while (walker.nextNode()) {
+      range.selectNodeContents(walker.currentNode);
+      for (const rect of range.getClientRects()) {
+        const top = Math.round(rect.top - origin);
+        if (!rect.width || tops.has(top)) continue;
+        tops.add(top);
+        if (rect.bottom - origin <= element.clientHeight + 1) shown++;
+      }
+    }
+    return { shown, total: tops.size };
+  });
+}
