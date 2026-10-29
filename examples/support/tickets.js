@@ -319,7 +319,7 @@ export const tickets = [
     id: 1036,
     viewers: [{ agent: 'noah', replying: false }],
     // The assistant's reply draft is already in the chat's field (drafts in support.js); its details
-    // show above it.
+    // show above it, their first lines until Show More.
     aiDraft: {
       meta: 'English · Medium confidence',
       notes: ['Lena’s studio has asked about guests before.', 'Guests can comment and upload files, but not edit.'],
@@ -330,6 +330,7 @@ export const tickets = [
           url: 'https://forma.example/help/guests/permissions',
           site: 'forma.example/help',
         },
+        { title: 'Roles in a project', url: 'https://forma.example/help/roles', site: 'forma.example/help' },
       ],
     },
     mailboxId: 'support',

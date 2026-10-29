@@ -1172,6 +1172,45 @@ test('a suggestion already where it is used shows its title and details, with no
   await expect(card).toBeHidden();
 });
 
+test('long content shows its first lines until Show More, and content a line or two longer shows in full', async ({
+  page,
+}) => {
+  await page.goto('/components.html');
+  const long = page.locator('#component-more .f-more').first();
+  const short = page.locator('#component-more .f-more').nth(1);
+  const content = long.locator('.f-more__content');
+  const lines = () =>
+    content.evaluate(element => element.clientHeight / parseFloat(getComputedStyle(element).lineHeight));
+  // Four lines, the last faded, and a native button that says it is collapsed.
+  const more = long.getByRole('button', { name: 'Show More' });
+  await expect(more).toHaveAttribute('aria-expanded', 'false');
+  expect(await lines()).toBeCloseTo(4, 1);
+  await expect(content).toHaveCSS('overflow-y', 'hidden');
+  expect(
+    await content.evaluate(element => getComputedStyle(element).maskImage || getComputedStyle(element).webkitMaskImage),
+  ).toContain('linear-gradient');
+  await more.press('Enter');
+  const less = long.getByRole('button', { name: 'Show Less' });
+  await expect(less).toHaveAttribute('aria-expanded', 'true');
+  await expect(less).toBeFocused();
+  expect(await content.evaluate(element => element.scrollHeight - element.clientHeight)).toBe(0);
+  await expect(content).toHaveCSS('mask-image', 'none');
+  await less.click();
+  await expect(more).toHaveAttribute('aria-expanded', 'false');
+  // --f-more-lines sets how many lines show.
+  await long.evaluate(element => element.style.setProperty('--f-more-lines', '2'));
+  expect(await lines()).toBeCloseTo(2, 1);
+  // A short one has no button; content that grows (a morph, a script) is measured again.
+  await expect(short.locator('.f-more__toggle')).toBeHidden();
+  expect(await short.locator('.f-more__content').evaluate(element => element.scrollHeight - element.clientHeight)).toBe(
+    0,
+  );
+  await short
+    .locator('.f-more__content')
+    .evaluate(element => element.insertAdjacentHTML('beforeend', '<p>It works for seven days.</p>'.repeat(6)));
+  await expect(short.getByRole('button', { name: 'Show More' })).toBeVisible();
+});
+
 test('a message history opens at its newest message and follows what the docked composer sends', async ({ page }) => {
   await page.goto('/components.html');
   const card = page.locator('#component-history');

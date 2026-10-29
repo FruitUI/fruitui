@@ -1380,6 +1380,18 @@ test('an AI draft already in a chat’s field shows its details above it until i
   expect(Number.parseFloat(await card.evaluate(element => getComputedStyle(element).fontSize))).toBeLessThan(
     Number.parseFloat(await field.evaluate(element => getComputedStyle(element).fontSize)),
   );
+  // Their first lines, so the conversation stays in view; Tabbing to a source the clamp hides shows the rest.
+  const more = card.locator('.f-more');
+  const lines = await more
+    .locator('.f-more__content')
+    .evaluate(element => element.clientHeight / parseFloat(getComputedStyle(element).lineHeight));
+  expect(lines).toBeCloseTo(4, 1);
+  await expect(card.getByRole('button', { name: 'Show More' })).toHaveAttribute('aria-expanded', 'false');
+  await card.getByRole('link', { name: 'Roles in a project' }).focus();
+  await expect(card.getByRole('button', { name: 'Show Less' })).toHaveAttribute('aria-expanded', 'true');
+  expect(await more.locator('.f-more__content').evaluate(element => element.scrollTop)).toBe(0);
+  await card.getByRole('button', { name: 'Show Less' }).click();
+  await expect(card.getByRole('button', { name: 'Show More' })).toBeFocused();
   // An internal note isn't the draft: its details wait.
   const note = composer.getByRole('button', { name: 'Internal Note' });
   await note.click();

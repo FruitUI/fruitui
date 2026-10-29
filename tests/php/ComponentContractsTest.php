@@ -545,6 +545,29 @@ class ComponentContractsTest extends TestCase
         }
     }
 
+    public function test_show_more_holds_long_content_and_a_toggle_that_says_whether_all_of_it_shows(): void
+    {
+        $xpath = $this->xpath(Blade::render('<x-fruit::more class="extra" x-show="ready"><p>Long text.</p></x-fruit::more>'));
+        $more = $xpath->query('//div[contains(@class, "f-more")]')->item(0);
+        $this->assertSame('f-more extra', $more->getAttribute('class'));
+        $this->assertSame('fruitMore', $more->getAttribute('x-data'));
+        $this->assertSame('ready', $more->getAttribute('x-show'));
+        // The content, then a native button that starts collapsed; both labels render on the server.
+        $this->assertSame(['div', 'button'], array_map(fn ($child) => $child->tagName, iterator_to_array($xpath->query('./*', $more))));
+        $this->assertSame('Long text.', $xpath->query('./div[@class="f-more__content"]/p', $more)->item(0)->textContent);
+        $toggle = $xpath->query('./button[@class="f-more__toggle"]', $more)->item(0);
+        $this->assertSame('button', $toggle->getAttribute('type'));
+        $this->assertSame('false', $toggle->getAttribute('aria-expanded'));
+        $this->assertSame("showingAll ? 'true' : 'false'", $toggle->getAttribute('x-bind:aria-expanded'));
+        $this->assertSame(['Show More', 'Show Less'], array_map(fn ($label) => $label->textContent, iterator_to_array($xpath->query('./span', $toggle))));
+        $this->assertRejected('<x-fruit::more x-data="{ open: false }">x</x-fruit::more>', 'owns its fruitMore helper');
+        // A suggestion's details sit in one, keeping the details slot's own attributes outside it.
+        $card = $this->xpath(Blade::render('<x-fruit::suggestion title="AI draft"><x-slot:details x-show="draft"><section><h4>Notes</h4></section></x-slot:details></x-fruit::suggestion>'));
+        $details = $card->query('//div[contains(@class, "f-suggestion__details")]')->item(0);
+        $this->assertSame('draft', $details->getAttribute('x-show'));
+        $this->assertSame('Notes', $card->query('./div[@class="f-more"]/div[@class="f-more__content"]/section/h4', $details)->item(0)->textContent);
+    }
+
     public function test_a_page_column_has_a_width_a_header_and_a_save_bar(): void
     {
         $xpath = $this->xpath(Blade::render('<x-fruit::page width="narrow" title="Mailbox" description="How it sends." :level="2"><p>Rows</p><x-slot:actions><button type="button">Restore</button></x-slot:actions><x-slot:footer><button type="submit">Save</button></x-slot:footer></x-fruit::page>'));
